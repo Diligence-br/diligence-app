@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1F3864">
+    <title>DILIGENCE.BR - Controle de Atos</title>
+    
+    <link rel="manifest" href="data:application/manifest+json;utf8,%7B%22name%22%3A%22Diligence%20Atos%22%2C%22short_name%22%3A%22Diligence%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F4F6F9%22%2C%22theme_color%22%3A%22%231F3864%22%7D">
+
+    <style>
+        :root {
+            --primary-red: #A31D24;
+            --secondary-navy: #1F3864;
+            --bg-light: #F4F6F9;
+            --card-white: #FFFFFF;
+            --text-dark: #333333;
+            --border-color: #D9D9D9;
+            --whatsapp-green: #25D366;
+            --orange-pending: #E65100;
+            --green-paid: #2E7D32;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            padding-bottom: 80px;
+        }
+
+        header {
+            background-color: var(--card-white);
+            text-align: center;
+            padding: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 3px solid var(--primary-red);
+        }
+
+        header h1 {
+            color: var(--primary-red);
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background-color: var(--card-white);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 48px;
+            z-index: 99;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px 2px;
+            border: none;
+            background: none;
+            font-weight: bold;
+            font-size: 13px;
+            color: #555;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-red);
+            border-bottom-color: var(--primary-red);
+            background-color: #FFF5F5;
+        }
+
+        .container {
+            padding: 12px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-white);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .card h3 {
+            color: var(--secondary-navy);
+            font-size: 15px;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #F0F0F0;
+            padding-bottom: 6px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #444;
+            text-transform: uppercase;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #CCC;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #FAFAFA;
+        }
+
+        .row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .col {
+            flex: 1;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary { background-color: var(--primary-red); color: white; }
+        .btn-secondary { background-color: var(--secondary-navy); color: white; }
+        .btn-success { background-color: var(--whatsapp-green); color: white; }
+        .btn-install { background-color: #FF9800; color: white; font-size: 12px; padding: 10px; margin-bottom: 12px; border-radius: 8px; display: none; }
+
+        .item-card {
+            border-left: 5px solid var(--secondary-navy);
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #FAFBFD;
+            border-radius: 0 8px 8px 0;
+            border: 1px solid #EAEAEA;
+            border-left-width: 5px;
+        }
+
+        .item-card.pago { border-left-color: var(--green-paid); }
+        .item-card.pendente { border-left-color: var(--orange-pending); }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 13px;
+            color: var(--secondary-navy);
+        }
+
+        .item-sub {
+            font-size: 11px;
+            color: #555;
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .item-actions button {
+            padding: 8px 10px;
+            font-size: 11px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .status-badge-inline {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .status-pendente { background-color: var(--orange-pending); }
+        .status-pago { background-color: var(--green-paid); }
+
+        .total-box {
+            background-color: var(--secondary-navy);
+            color: white;
+            padding: 14px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .total-box h2 {
+            font-size: 22px;
+            color: #FFD700;
+            margin-top: 2px;
+        }
+
+        .hidden { display: none !important; }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 150px;
+            margin-top: 8px;
+            border-radius: 6px;
+            border: 1px solid #DDD;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>DILIGENCE.BR</h1>
+    </header>
+
+    <!-- NAVEGAÇÃO POR ABAS -->
+    <div class="nav-tabs">
+        <button type="button" class="tab-btn" id="tabHeadPerfil">👤 1. Perfil</button>
+        <button type="button" class="tab-btn active" id="tabHeadRegistro">➕ 2. Novo Ato</button>
+        <button type="button" class="tab-btn" id="tabHeadHistorico">📊 3. Relatórios</button>
+    </div>
+
+    <div class="container">
+
+        <button id="btnInstalarApp" class="btn btn-install">📱 Clique aqui para Instalar o App no Celular</button>
+
+        <!-- ABA 1: PERFIL DO CORRESPONDENTE -->
+        <div id="sectionPerfil" class="hidden">
+            <div class="card">
+                <h3>👤 Perfil do Correspondente</h3>
+                <p style="font-size:11px; color:#666; margin-bottom:12px;">Seus dados ficam gravados no celular e saem nos relatórios e cobranças.</p>
+                
+                <div class="form-group">
+                    <label>Nome Completo *</label>
+                    <input type="text" id="perfilNome" placeholder="Digite seu Nome Completo">
+                </div>
+
+                <div class="form-group">
+                    <label>Nº OAB e UF (Se Advogado)</label>
+                    <input type="text" id="perfilOab" placeholder="Ex: OAB/SP 123.456">
+                </div>
+
+                <div class="form-group">
+                    <label>Nº CPF / RG (Se Preposto)</label>
+                    <input type="text" id="perfilCpf" placeholder="Ex: CPF 123.456.789-00">
+                </div>
+
+                <div class="row">
+                    <div class="col form-group">
+                        <label>Celular / WhatsApp *</label>
+                        <input type="text" id="perfilTel" placeholder="(11) 99999-9999">
+                    </div>
+                    <div class="col form-group">
+                        <label>E-mail *</label>
+                        <input type="email" id="perfilEmail" placeholder="seu@email.com">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Chave PIX Padrão *</label>
+                    <input type="text" id="perfilPix" placeholder="Sua Chave PIX">
+                </div>
+
+                <button type="button" class="btn btn-secondary" id="btnSalvarPerfil">💾 SALVAR PERFIL AGORA</button>
+            </div>
+        </div>
+
+        <!-- ABA 2: REGISTRO DE NOVO ATO -->
+        <div id="sectionRegistro">
+            <div id="alertaPerfil" style="background:#FFF3E0; color:#E65100; padding:8px; border-radius:6px; font-size:11px; margin-bottom:10px; text-align:center; font-weight:bold;">
+                ⚠️ Configure seu perfil na aba "1. Perfil" para validar seus relatórios.
+            </div>
+
+            <div class="card">
+                <h3>➕ Cadastrar Ato Realizado</h3>
+                
+                <div class="form-group">
+                    <label>Atuação neste Ato *</label>
+                    <div class="row">
+                        <label style="flex:1; font-weight:normal; font-size:12px; cursor:pointer;">
+                            <input type="radio" name="atuacaoAto" value="Advogado(a)" checked> Advogado(a)
+                        </label>
+                        <label style="flex:1; font-weight:normal; font-size:12px; cursor:pointer;">
+                            <input type="radio" name="atuacaoAto" value="Preposto(a)"> Preposto(a)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Nome do Cliente Representado *</label>
+                    <input type="text" id="cliente" placeholder="Ex: Banco Bradesco, Magazine Luiza">
+                </div>
+
+                <div class="form-group">
+                    <label>Número do Processo *</label>
+                    <input type="text" id="processo" placeholder="0101010-10.2026.5.0000">
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo de Ato Realizado *</label>
+                    <select id="tipoAto">
+                        <option value="">Selecione...</option>
+                        <option value="Audiência Trabalhista">Audiência Trabalhista</option>
+                        <option value="Audiência Cível / Conciliação">Audiência Cível / Conciliação</option>
+                        <option value="Audiência de Instrução">Audiência de Instrução</option>
+                        <option value="Diligência / Cópia de Autos">Diligência / Cópia de Autos</option>
+                        <option value="Protocolo / Despacho">Protocolo / Despacho</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <div class="col form-group">
+                        <label>Data *</label>
+                        <input type="date" id="dataAto">
+                    </div>
+                    <div class="col form-group">
+                        <label>Horário *</label>
+                        <input type="time" id="horaAto">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Valor Acordado (R$) *</label>
+                    <input type="number" step="0.01" id="valorAto" placeholder="0.00">
+                </div>
+
+                <div class="form-group">
+                    <label>Status do Pagamento *</label>
+                    <select id="statusPagamento">
+                        <option value="Pendente">⌛ Pendente (A Receber)</option>
+                        <option value="Pago">✅ Pago (Já Recebido)</option>
+                    </select>
+                </div>
+
+                <!-- ANEXAR ARQUIVO OU FOTO DA GALERIA / CÂMERA -->
+                <div class="form-group" style="border: 1px dashed #A31D24; padding: 10px; border-radius: 8px; background: #FFF9F9;">
+                    <label style="color:#A31D24;">📎 Anexar Cópia da Ata / Comprovante (Foto ou PDF)</label>
+                    <input type="file" id="arquivoAta" accept="image/*,.pdf" capture="environment">
+                    <small style="color:#666; font-size:10px; display:block; margin-top:4px;">* Tire uma foto da ata ou escolha um arquivo do celular.</small>
+                    <div id="previewContainer"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ou Cole o Link da Ata (Google Drive / Dropbox)</label>
+                    <input type="url" id="linkAta" placeholder="https://drive.google.com/...">
+                </div>
+
+                <button type="button" class="btn btn-primary" id="btnGravarAto" style="margin-top: 10px;">💾 GRAVAR ATO NO BANCO DE DADOS</button>
+            </div>
+        </div>
+
+        <!-- ABA 3: RELATÓRIOS, BANCO DE DADOS E EXPORTAÇÃO -->
+        <div id="sectionHistorico" class="hidden">
+            
+            <div class="total-box">
+                <span style="font-size: 11px; opacity: 0.9;">TOTAL DO FILTRO ATIVO</span>
+                <h2 id="totalValor">R$ 0,00</h2>
+                <span id="qtdAtosTexto" style="font-size: 11px; opacity: 0.8;">0 ato(s) encontrado(s)</span>
+            </div>
+
+            <div class="card">
+                <h3>🔍 Filtro e Banco de Dados Único</h3>
+                
+                <div class="form-group">
+                    <label>Filtrar Período:</label>
+                    <select id="tipoFiltro">
+                        <option value="mes">Mensal (Mês Completo)</option>
+                        <option value="todos">Todos os Meses (Banco de Dados Completo)</option>
+                        <option value="dia">Dia Específico</option>
+                        <option value="personalizado">Período Personalizado</option>
+                    </select>
+                </div>
+
+                <div id="boxFiltroMes" class="form-group">
+                    <label>Mês / Ano</label>
+                    <input type="month" id="filtroMesVal">
+                </div>
+
+                <div id="boxFiltroDia" class="form-group hidden">
+                    <label>Data Específica</label>
+                    <input type="date" id="filtroDiaVal">
+                </div>
+
+                <div id="boxFiltroCustom" class="row hidden">
+                    <div class="col form-group">
+                        <label>Data Inicial</label>
+                        <input type="date" id="filtroDataIni">
+                    </div>
+                    <div class="col form-group">
+                        <label>Data Final</label>
+                        <input type="date" id="filtroDataFim">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Filtrar por Status de Pagamento:</label>
+                    <select id="filtroStatus">
+                        <option value="todos">Todos (Pendentes + Pagos)</option>
+                        <option value="Pendente">Apenas Pendentes</option>
+                        <option value="Pago">Apenas Pagos</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>E-mail Adicional para Receber Cópia:</label>
+                    <input type="email" id="emailAdicional" placeholder="ex: pauta@empresa.com">
+                    <small style="color:#666; font-size:10px;">* Cópia automática para controledepautasp@gmail.com</small>
+                </div>
+
+                <div class="row" style="margin-top: 10px;">
+                    <button type="button" class="btn btn-success col" id="btnWhatsPeriodo">💬 Whats Período</button>
+                    <button type="button" class="btn btn-secondary col" id="btnEmailPeriodo">✉️ E-mail Período</button>
+                </div>
+                <button type="button" class="btn btn-primary" id="btnExportarExcel" style="margin-top: 8px;">📊 Exportar Planilha Selecionada (.CSV)</button>
+            </div>
+
+            <div class="card">
+                <h3>Listagem do Banco de Dados</h3>
+                <div id="listaAtos"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        var perfil = { nome: '', oab: '', cpf: '', tel: '', email: '', pix: '' };
+        var atos = [];
+        var arquivoBase64 = "";
+
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Alternância de Abas sem falhas
+            document.getElementById('tabHeadPerfil').onclick = function() { alternarAba('perfil'); };
+            document.getElementById('tabHeadRegistro').onclick = function() { alternarAba('registro'); };
+            document.getElementById('tabHeadHistorico').onclick = function() { alternarAba('historico'); };
+
+            // Botões de ação
+            document.getElementById('btnSalvarPerfil').onclick = salvarPerfil;
+            document.getElementById('btnGravarAto').onclick = salvarAto;
+
+            document.getElementById('tipoFiltro').onchange = mudarTipoFiltro;
+            document.getElementById('filtroStatus').onchange = renderizarAtos;
+
+            document.getElementById('filtroMesVal').onchange = renderizarAtos;
+            document.getElementById('filtroDiaVal').onchange = renderizarAtos;
+            document.getElementById('filtroDataIni').onchange = renderizarAtos;
+            document.getElementById('filtroDataFim').onchange = renderizarAtos;
+
+            document.getElementById('btnWhatsPeriodo').onclick = compartilharPeriodoWhatsApp;
+            document.getElementById('btnEmailPeriodo').onclick = enviarEmailPeriodo;
+            document.getElementById('btnExportarExcel').onclick = exportarExcel;
+
+            // Leitor de Anexo / Foto
+            document.getElementById('arquivoAta').onchange = function(e) {
+                var file = e.target.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(evt) {
+                        arquivoBase64 = evt.target.result;
+                        var preview = document.getElementById('previewContainer');
+                        if (file.type.startsWith('image/')) {
+                            preview.innerHTML = '<img src="' + arquivoBase64 + '" class="preview-img"><br><small>✅ Foto anexada com sucesso!</small>';
+                        } else {
+                            preview.innerHTML = '<div style="font-size:12px; color:green; margin-top:5px;">✅ Arquivo PDF anexado: ' + file.name + '</div>';
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            carregarPerfil();
+            carregarAtos();
+
+            var hoje = new Date();
+            document.getElementById('dataAto').value = hoje.toISOString().split('T')[0];
+            document.getElementById('horaAto').value = hoje.toTimeString().substring(0, 5);
+            
+            document.getElementById('filtroMesVal').value = hoje.toISOString().substring(0, 7);
+            document.getElementById('filtroDiaVal').value = hoje.toISOString().split('T')[0];
+            document.getElementById('filtroDataIni').value = hoje.toISOString().split('T')[0];
+            document.getElementById('filtroDataFim').value = hoje.toISOString().split('T')[0];
+
+            renderizarAtos();
+        });
+
+        function alternarAba(aba) {
+            document.getElementById('tabHeadPerfil').className = 'tab-btn' + (aba === 'perfil' ? ' active' : '');
+            document.getElementById('tabHeadRegistro').className = 'tab-btn' + (aba === 'registro' ? ' active' : '');
+            document.getElementById('tabHeadHistorico').className = 'tab-btn' + (aba === 'historico' ? ' active' : '');
+
+            document.getElementById('sectionPerfil').className = (aba === 'perfil' ? '' : 'hidden');
+            document.getElementById('sectionRegistro').className = (aba === 'registro' ? '' : 'hidden');
+            document.getElementById('sectionHistorico').className = (aba === 'historico' ? '' : 'hidden');
+
+            if (aba === 'historico') renderizarAtos();
+        }
+
+        function carregarPerfil() {
+            try {
+                var p = localStorage.getItem('diligence_db_perfil_v6');
+                if (p) {
+                    perfil = JSON.parse(p);
+                    document.getElementById('perfilNome').value = perfil.nome || '';
+                    document.getElementById('perfilOab').value = perfil.oab || '';
+                    document.getElementById('perfilCpf').value = perfil.cpf || '';
+                    document.getElementById('perfilTel').value = perfil.tel || '';
+                    document.getElementById('perfilEmail').value = perfil.email || '';
+                    document.getElementById('perfilPix').value = perfil.pix || '';
+
+                    if (perfil.nome) {
+                        var alertBox = document.getElementById('alertaPerfil');
+                        alertBox.style.background = "#E8F5E9";
+                        alertBox.style.color = "#2E7D32";
+                        alertBox.innerHTML = "✅ Perfil ativo: <strong>" + perfil.nome + "</strong>";
+                    }
+                }
+            } catch(e) {}
+        }
+
+        function salvarPerfil() {
+            var nome = document.getElementById('perfilNome').value.trim();
+            var tel = document.getElementById('perfilTel').value.trim();
+            var email = document.getElementById('perfilEmail').value.trim();
+            var pix = document.getElementById('perfilPix').value.trim();
+
+            if (!nome || !tel || !email || !pix) {
+                alert("Por favor, preencha todos os campos obrigatórios (*) do seu perfil.");
+                return;
+            }
+
+            perfil = {
+                nome: nome,
+                oab: document.getElementById('perfilOab').value.trim(),
+                cpf: document.getElementById('perfilCpf').value.trim(),
+                tel: tel,
+                email: email,
+                pix: pix
+            };
+
+            localStorage.setItem('diligence_db_perfil_v6', JSON.stringify(perfil));
+            alert("✅ Perfil salvo com sucesso no banco do celular!");
+            carregarPerfil();
+            alternarAba('registro');
+        }
+
+        function carregarAtos() {
+            try {
+                var a = localStorage.getItem('diligence_db_atos_v6');
+                if (a) {
+                    atos = JSON.parse(a);
+                }
+            } catch(e) {}
+        }
+
+        function salvarAto() {
+            if (!perfil.nome) {
+                alert("Atenção: Configure seu cadastro na aba '1. Perfil' antes de gravar atos.");
+                alternarAba('perfil');
+                return;
+            }
+
+            var cliente = document.getElementById('cliente').value.trim();
+            var processo = document.getElementById('processo').value.trim();
+            var tipo = document.getElementById('tipoAto').value;
+            var data = document.getElementById('dataAto').value;
+            var hora = document.getElementById('horaAto').value;
+            var valor = parseFloat(document.getElementById('valorAto').value) || 0;
+            var status = document.getElementById('statusPagamento').value;
+
+            if (!cliente || !processo || !tipo || !data || !hora || valor <= 0) {
+                alert("Preencha todos os campos obrigatórios e um valor válido.");
+                return;
+            }
+
+            var radios = document.getElementsByName('atuacaoAto');
+            var atuacao = "Advogado(a)";
+            for (var i = 0; i < radios.length; i++) {
+                if (radios[i].checked) atuacao = radios[i].value;
+            }
+
+            var ataLink = document.getElementById('linkAta').value.trim();
+
+            var novoAto = {
+                id: Date.now(),
+                atuacao: atuacao,
+                cliente: cliente,
+                processo: processo,
+                tipo: tipo,
+                data: data,
+                hora: hora,
+                valor: valor,
+                status: status,
+                anexo: arquivoBase64,
+                link: ataLink
+            };
+
+            atos.push(novoAto);
+            localStorage.setItem('diligence_db_atos_v6', JSON.stringify(atos));
+
+            alert("✅ Ato gravado com sucesso no banco de dados!");
+            
+            // Reset form
+            document.getElementById('cliente').value = '';
+            document.getElementById('processo').value = '';
+            document.getElementById('tipoAto').value = '';
+            document.getElementById('valorAto').value = '';
+            document.getElementById('linkAta').value = '';
+            document.getElementById('arquivoAta').value = '';
+            document.getElementById('previewContainer').innerHTML = '';
+            arquivoBase64 = "";
+
+            alternarAba('historico');
+        }
+
+        function alternarStatusPagamento(id) {
+            for (var i = 0; i < atos.length; i++) {
+                if (atos[i].id === id) {
+                    atos[i].status = (atos[i].status === 'Pago') ? 'Pendente' : 'Pago';
+                    break;
+                }
+            }
+            localStorage.setItem('diligence_db_atos_v6', JSON.stringify(atos));
+            renderizarAtos();
+        }
+
+        function mudarTipoFiltro() {
+            var tipo = document.getElementById('tipoFiltro').value;
+            document.getElementById('boxFiltroMes').className = (tipo === 'mes' ? 'form-group' : 'form-group hidden');
+            document.getElementById('boxFiltroDia').className = (tipo === 'dia' ? 'form-group' : 'form-group hidden');
+            document.getElementById('boxFiltroCustom').className = (tipo === 'personalizado' ? 'row' : 'row hidden');
+            renderizarAtos();
+        }
+
+        function obterAtosFiltrados() {
+            var tipo = document.getElementById('tipoFiltro').value;
+            var filtroStat = document.getElementById('filtroStatus').value;
+            var res = atos;
+
+            if (tipo === 'mes') {
+                var mes = document.getElementById('filtroMesVal').value;
+                res = res.filter(function(a) { return a.data.substring(0, 7) === mes; });
+            } else if (tipo === 'dia') {
+                var dia = document.getElementById('filtroDiaVal').value;
+                res = res.filter(function(a) { return a.data === dia; });
+            } else if (tipo === 'personalizado') {
+                var ini = document.getElementById('filtroDataIni').value;
+                var fim = document.getElementById('filtroDataFim').value;
+                res = res.filter(function(a) { return a.data >= ini && a.data <= fim; });
+            }
+
+            if (filtroStat !== 'todos') {
+                res = res.filter(function(a) { return a.status === filtroStat; });
+            }
+
+            return res;
+        }
+
+        function renderizarAtos() {
+            var container = document.getElementById('listaAtos');
+            container.innerHTML = '';
+
+            var atosFiltrados = obterAtosFiltrados();
+            var total = 0;
+
+            if (atosFiltrados.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; padding:20px;">Nenhum ato encontrado no banco de dados para este filtro.</p>';
+            } else {
+                for (var i = 0; i < atosFiltrados.length; i++) {
+                    var ato = atosFiltrados[i];
+                    total += ato.valor;
+                    
+                    var isPago = (ato.status === 'Pago');
+                    var cardClass = isPago ? 'item-card pago' : 'item-card pendente';
+                    var statusBadge = isPago ? '<span class="status-badge-inline status-pago">✅ PAGO</span>' : '<span class="status-badge-inline status-pendente">⌛ PENDENTE</span>';
+
+                    var anexoHTML = "";
+                    if (ato.anexo) {
+                        if (ato.anexo.startsWith('data:image')) {
+                            anexoHTML = '<br><a href="' + ato.anexo + '" target="_blank" style="color:#A31D24; font-weight:bold;">🖼️ Ver Foto da Ata</a>';
+                        } else {
+                            anexoHTML = '<br><a href="' + ato.anexo + '" target="_blank" style="color:#A31D24; font-weight:bold;">📄 Ver PDF da Ata</a>';
+                        }
+                    } else if (ato.link) {
+                        anexoHTML = '<br><a href="' + ato.link + '" target="_blank" style="color:#1F3864; font-weight:bold;">🔗 Ver Link da Ata</a>';
+                    }
+
+                    var dataFmt = ato.data.split('-').reverse().join('/');
+
+                    var html = '<div class="' + cardClass + '">' +
+                        '<div class="item-header"><span>' + ato.cliente + '</span><span>R$ ' + ato.valor.toFixed(2).replace('.', ',') + '</span></div>' +
+                        '<div class="item-sub">' +
+                            statusBadge + ' | <strong>Proc:</strong> ' + ato.processo + '<br>' +
+                            '<strong>Ato:</strong> ' + ato.tipo + ' (' + dataFmt + ' às ' + ato.hora + ')' + anexoHTML +
+                        '</div>' +
+                        '<div class="item-actions">' +
+                            '<button type="button" style="background:' + (isPago ? '#E65100' : '#2E7D32') + '; color:white;" onclick="alternarStatusPagamento(' + ato.id + ')">' + (isPago ? 'Marcar Pendente' : 'Marcar como PAGO') + '</button>' +
+                            '<button type="button" class="btn-success" onclick="compartilharWhatsIndividual(' + ato.id + ')">💬 Whats</button>' +
+                            '<button type="button" style="background:#DD3333; color:white;" onclick="excluirAto(' + ato.id + ')">🗑️ Excluir</button>' +
+                        '</div>' +
+                    '</div>';
+
+                    container.innerHTML += html;
+                }
+            }
+
+            document.getElementById('totalValor').innerText = "R$ " + total.toFixed(2).replace('.', ',');
+            document.getElementById('qtdAtosTexto').innerText = atosFiltrados.length + " ato(s) exibido(s)";
+        }
+
+        function excluirAto(id) {
+            if (confirm("Tem certeza que deseja apagar este ato do banco de dados?")) {
+                atos = atos.filter(function(a) { return a.id !== id; });
+                localStorage.setItem('diligence_db_atos_v6', JSON.stringify(atos));
+                renderizarAtos();
+            }
+        }
+
+        function compartilharWhatsIndividual(id) {
+            var ato = null;
+            for (var i = 0; i < atos.length; i++) {
+                if (atos[i].id === id) { ato = atos[i]; break; }
+            }
+            if (!ato) return;
+
+            var dataFmt = ato.data.split('-').reverse().join('/');
+
+            var msg = "*COMPROVANTE DE ATO REALIZADO - DILIGENCE.BR*
+
+" +
+                      "*Executado por:* " + perfil.nome + "
+" +
+                      "*Cliente:* " + ato.cliente + "
+" +
+                      "*Processo:* " + ato.processo + "
+" +
+                      "*Ato:* " + ato.tipo + "
+" +
+                      "*Data/Hora:* " + dataFmt + " às " + ato.hora + "
+" +
+                      "*Valor:* R$ " + ato.valor.toFixed(2) + " (" + ato.status.toUpperCase() + ")
+" +
+                      "*Chave PIX:* " + perfil.pix;
+
+            window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), '_blank');
+        }
+
+        function compartilharPeriodoWhatsApp() {
+            var atosFiltrados = obterAtosFiltrados();
+            var total = 0;
+            for (var i = 0; i < atosFiltrados.length; i++) { total += atosFiltrados[i].valor; }
+
+            var msg = "*RELATÓRIO SELECIONADO - DILIGENCE.BR*
+" +
+                      "*Profissional:* " + perfil.nome + "
+" +
+                      "*Quantidade de Atos:* " + atosFiltrados.length + "
+" +
+                      "*VALOR TOTAL DO FILTRO:* R$ " + total.toFixed(2) + "
+" +
+                      "*Chave PIX:* " + perfil.pix + "
+
+" +
+                      "_Cópia gerada para controledepautasp@gmail.com_";
+
+            window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), '_blank');
+        }
+
+        function enviarEmailPeriodo() {
+            var atosFiltrados = obterAtosFiltrados();
+            var total = 0;
+            for (var i = 0; i < atosFiltrados.length; i++) { total += atosFiltrados[i].valor; }
+
+            var emailExtra = document.getElementById('emailAdicional').value.trim();
+            var dest = "controledepautasp@gmail.com";
+            if (emailExtra) dest += "," + emailExtra;
+
+            var listaTxt = "";
+            for (var i = 0; i < atosFiltrados.length; i++) {
+                var a = atosFiltrados[i];
+                listaTxt += "- " + a.cliente + " | Proc: " + a.processo + " | R$ " + a.valor.toFixed(2) + " [" + a.status + "]
+";
+            }
+
+            var assunto = "Relatório Filtrado de Atos - Diligence.BR - " + perfil.nome;
+            var corpo = "Prezados,
+
+Segue resumo dos atos selecionados:
+
+Profissional: " + perfil.nome + "
+Total de Atos: " + atosFiltrados.length + "
+VALOR TOTAL: R$ " + total.toFixed(2) + "
+Chave PIX: " + perfil.pix + "
+
+LISTA:
+" + listaTxt + "
+
+Atenciosamente,
+" + perfil.nome;
+
+            window.location.href = "mailto:" + dest + "?subject=" + encodeURIComponent(assunto) + "&body=" + encodeURIComponent(corpo);
+        }
+
+        function exportarExcel() {
+            var atosFiltrados = obterAtosFiltrados();
+
+            var csv = "﻿";
+            csv += "CONTRATANTE: DILIGENCE.BR
+";
+            csv += "Executado por:;" + perfil.nome + ";Pix:;" + perfil.pix + "
+
+";
+            csv += "Cliente Representado;Número do Processo;Atuação;Tipo de Ato;Data;Horário;Valor (R$);Status Pagamento
+";
+
+            var total = 0;
+            for (var i = 0; i < atosFiltrados.length; i++) {
+                var a = atosFiltrados[i];
+                total += a.valor;
+                csv += '"' + a.cliente + '";"' + a.processo + '";"' + a.atuacao + '";"' + a.tipo + '";"' + a.data + '";"' + a.hora + '";"' + a.valor.toFixed(2) + '";"' + a.status + '"
+';
+            }
+
+            csv += ";;;;;TOTAL DOS ATOS SELECIONADOS;" + total.toFixed(2) + ";
+";
+
+            var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            var link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", "Banco_Dados_Diligence.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
