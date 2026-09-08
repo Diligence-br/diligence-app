@@ -169,11 +169,17 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
+            transition: all 0.2s ease;
         }
 
         .btn-primary { background-color: var(--primary-red); color: white; }
         .btn-secondary { background-color: var(--secondary-navy); color: white; }
         .btn-success { background-color: var(--whatsapp-green); color: white; }
+
+        .btn-sucesso-tick {
+            background-color: #2E7D32 !important;
+            color: white !important;
+        }
 
         .item-card {
             border-left: 5px solid var(--secondary-navy);
@@ -254,6 +260,37 @@
             border-radius: 6px;
             border: 1px solid #DDD;
         }
+
+        .manual-box {
+            background: #FFFFFF;
+            border: 2px solid var(--secondary-navy);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .manual-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #E0E0E0;
+        }
+
+        .manual-icon {
+            font-size: 22px;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        @media print {
+            header, .nav-tabs, .beta-banner, .card:not(#areaImpressao) { display: none !important; }
+            body { background: white; padding: 0; }
+            .container { max-width: 100%; padding: 0; }
+        }
     </style>
 </head>
 <body>
@@ -271,11 +308,60 @@
 
     <div class="container">
 
-        <!-- BANNER DE AVISO VERSÃO BETA -->
+        <!-- BANNER DE AVISO VERSÃO BETA E MINI MANUAL -->
         <div class="beta-banner">
             <strong>⚠️ APLICATIVO EXPERIMENTAL (BETA)</strong><br>
             Ferramenta para auxílio diário na organização de pautas.<br>
-            <em>Recomendação: Exporte periodicamente seus dados em planilha (.CSV) ou envie um relatório para seu próprio WhatsApp.</em>
+            
+            <div style="margin-top: 8px; display: flex; gap: 6px;">
+                <button type="button" id="btnToggleManual" style="flex:1; background:var(--secondary-navy); color:white; border:none; padding:8px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">📖 Ver Mini Manual Ilustrado</button>
+                <button type="button" id="btnShareManualWhats" style="flex:1; background:var(--whatsapp-green); color:white; border:none; padding:8px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">💬 Compartilhar Manual</button>
+            </div>
+        </div>
+
+        <!-- CONTAINER DO MINI MANUAL ILUSTRADO -->
+        <div id="boxManual" class="manual-box hidden">
+            <h3 style="color:var(--primary-red); border-bottom:2px solid var(--primary-red); padding-bottom:4px; margin-bottom:10px;">📘 Mini Manual de Uso Rápido</h3>
+            
+            <div class="manual-step">
+                <div class="manual-icon">👤</div>
+                <div>
+                    <strong>1º Passo: Cadastre seu Perfil</strong><br>
+                    Acesse a aba <strong>"1. Perfil"</strong> e preencha seu Nome, OAB/CPF, Celular e Chave PIX.
+                </div>
+            </div>
+
+            <div class="manual-step">
+                <div class="manual-icon">📝</div>
+                <div>
+                    <strong>2º Passo: Cadastre a Diligência / Audiência</strong><br>
+                    Na aba <strong>"2. Novo Ato"</strong>, escolha se atuou como <em>Advogado Próprio</em>, <em>Substabelecido</em> ou <em>Preposto</em>.
+                </div>
+            </div>
+
+            <div class="manual-step">
+                <div class="manual-icon">✅</div>
+                <div>
+                    <strong>3º Passo: Confirmação em "Lançado!"</strong><br>
+                    Ao clicar em gravar, o botão exibirá um <strong>tick verde ✅ "Lançado!"</strong>. Clique apenas <strong>UMA VEZ</strong> para não duplicar.
+                </div>
+            </div>
+
+            <div class="manual-step">
+                <div class="manual-icon">📷</div>
+                <div>
+                    <strong>4º Passo: Anexe Fotos da Ata</strong><br>
+                    Tire foto da ata usando a câmera do celular ou anexe arquivos PDF.
+                </div>
+            </div>
+
+            <div class="manual-step" style="border:none; margin-bottom:0; padding-bottom:0;">
+                <div class="manual-icon">💾</div>
+                <div>
+                    <strong>5º Passo: Exportação Diária Obrigatória!</strong><br>
+                    Exporte diariamente na aba <strong>"3. Relatórios"</strong> via WhatsApp, E-mail, PDF ou Excel (.CSV).
+                </div>
+            </div>
         </div>
 
         <!-- ABA 1: PERFIL DO CORRESPONDENTE -->
@@ -337,7 +423,6 @@
                     </select>
                 </div>
 
-                <!-- CAMPO CONDICIONAL DE SUBSTABELECIMENTO -->
                 <div class="form-group hidden" id="boxSubstabelecido">
                     <label>Nome do Advogado(a) Titular / Contratante que Substabeleceu *</label>
                     <input type="text" id="advTitular" placeholder="Ex: Dr. João da Silva (OAB/SP 000.000)">
@@ -390,7 +475,6 @@
                     </select>
                 </div>
 
-                <!-- ANEXAR ARQUIVO OU FOTO DA GALERIA / CÂMERA -->
                 <div class="form-group" style="border: 1px dashed #A31D24; padding: 10px; border-radius: 8px; background: #FFF9F9;">
                     <label style="color:#A31D24;">📎 Anexar Cópia da Ata / Comprovante (Foto ou PDF)</label>
                     <input type="file" id="arquivoAta" accept="image/*,.pdf" capture="environment">
@@ -404,6 +488,10 @@
                 </div>
 
                 <button type="button" class="btn btn-primary" id="btnGravarAto" style="margin-top: 10px;">💾 GRAVAR ATO NO BANCO DE DADOS</button>
+                
+                <p style="color:#A31D24; font-size:11px; text-align:center; font-weight:bold; margin-top:8px;">
+                    👉 Clique apenas UMA VEZ. O botão mudará para "✅ LANÇADO!".
+                </p>
             </div>
         </div>
 
@@ -470,10 +558,11 @@
                     <button type="button" class="btn btn-secondary col" id="btnEmailPeriodo">✉️ E-mail Período</button>
                 </div>
                 <button type="button" class="btn btn-primary" id="btnExportarExcel" style="margin-top: 8px;">📊 Exportar Planilha Selecionada (.CSV)</button>
+                <button type="button" style="background:#1F3864; color:white; width:100%; padding:12px; border:none; border-radius:8px; font-size:13px; font-weight:bold; margin-top:8px; cursor:pointer;" id="btnGerarPDF">📄 Baixar Relatório em PDF</button>
                 <button type="button" style="background:#888; color:white; width:100%; padding:8px; border:none; border-radius:6px; font-size:11px; margin-top:8px; cursor:pointer;" id="btnLimparDuplicados">🧹 Limpar Duplicados Repetidos</button>
             </div>
 
-            <div class="card">
+            <div class="card" id="areaImpressao">
                 <h3>Listagem do Banco de Dados</h3>
                 <div id="listaAtos"></div>
             </div>
@@ -488,12 +577,32 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             
-            // Alternância de Abas
             document.getElementById('tabHeadPerfil').onclick = function() { alternarAba('perfil'); };
             document.getElementById('tabHeadRegistro').onclick = function() { alternarAba('registro'); };
             document.getElementById('tabHeadHistorico').onclick = function() { alternarAba('historico'); };
 
-            // Mostrar / Ocultar campo de Substabelecimento
+            document.getElementById('btnToggleManual').onclick = function() {
+                var box = document.getElementById('boxManual');
+                if (box.className.indexOf('hidden') !== -1) {
+                    box.className = 'manual-box';
+                    this.innerText = '📖 Ocultar Mini Manual';
+                } else {
+                    box.className = 'manual-box hidden';
+                    this.innerText = '📖 Ver Mini Manual Ilustrado';
+                }
+            };
+
+            document.getElementById('btnShareManualWhats').onclick = function() {
+                var manualTxt = "*MINI MANUAL DE USO - DILIGENCE.BR (BETA)*\n\n" +
+                                "👤 *1. PERFIL:* Preencha Nome, OAB/CPF e PIX na aba Perfil.\n" +
+                                "📝 *2. ATUAÇÃO:* Escolha entre Advogado Próprio, Substabelecido ou Preposto.\n" +
+                                "✅ *3. CONFIRMAÇÃO:* Ao clicar em gravar, aguarde o botão piscar '✅ LANÇADO!'.\n" +
+                                "📷 *4. ATAS:* Anexe fotos da ata ou PDF diretamente pelo celular.\n" +
+                                "💾 *5. EXPORTAÇÃO DIÁRIA:* Exporte diariamente para o seu próprio WhatsApp, PDF ou planilha (.CSV).\n\n" +
+                                "Acesse o App em: https://diligence-br.github.io/diligence-app/";
+                window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(manualTxt), '_blank');
+            };
+
             document.getElementById('atuacaoAto').onchange = function() {
                 var val = this.value;
                 var box = document.getElementById('boxSubstabelecido');
@@ -505,7 +614,6 @@
                 }
             };
 
-            // Botões de ação
             document.getElementById('btnSalvarPerfil').onclick = salvarPerfil;
             document.getElementById('btnGravarAto').onclick = salvarAto;
             document.getElementById('btnLimparDuplicados').onclick = limparDuplicados;
@@ -521,8 +629,8 @@
             document.getElementById('btnWhatsPeriodo').onclick = compartilharPeriodoWhatsApp;
             document.getElementById('btnEmailPeriodo').onclick = enviarEmailPeriodo;
             document.getElementById('btnExportarExcel').onclick = exportarExcel;
+            document.getElementById('btnGerarPDF').onclick = gerarPDF;
 
-            // Leitor de Anexo / Foto
             document.getElementById('arquivoAta').onchange = function(e) {
                 var file = e.target.files[0];
                 if (file) {
@@ -674,20 +782,28 @@
             atos.push(novoAto);
             localStorage.setItem('diligence_db_atos_v8', JSON.stringify(atos));
 
-            alert("✅ Ato gravado com sucesso no banco de dados!");
-            
-            // Reset form
-            document.getElementById('cliente').value = '';
-            document.getElementById('processo').value = '';
-            document.getElementById('tipoAto').value = '';
-            document.getElementById('valorAto').value = '';
-            document.getElementById('advTitular').value = '';
-            document.getElementById('linkAta').value = '';
-            document.getElementById('arquivoAta').value = '';
-            document.getElementById('previewContainer').innerHTML = '';
-            arquivoBase64 = "";
+            var btnGravar = document.getElementById('btnGravarAto');
+            btnGravar.className = "btn btn-sucesso-tick";
+            btnGravar.innerHTML = "✅ LANÇADO COM SUCESSO!";
+            btnGravar.disabled = true;
 
-            alternarAba('historico');
+            setTimeout(function() {
+                btnGravar.className = "btn btn-primary";
+                btnGravar.innerHTML = "💾 GRAVAR ATO NO BANCO DE DADOS";
+                btnGravar.disabled = false;
+
+                document.getElementById('cliente').value = '';
+                document.getElementById('processo').value = '';
+                document.getElementById('tipoAto').value = '';
+                document.getElementById('valorAto').value = '';
+                document.getElementById('advTitular').value = '';
+                document.getElementById('linkAta').value = '';
+                document.getElementById('arquivoAta').value = '';
+                document.getElementById('previewContainer').innerHTML = '';
+                arquivoBase64 = "";
+
+                alternarAba('historico');
+            }, 1200);
         }
 
         function limparDuplicados() {
@@ -848,7 +964,7 @@
                       "*Cliente Representado:* " + ato.cliente + "\n" +
                       "*Número do Processo:* " + ato.processo + "\n" +
                       "*Tipo de Ato:* " + ato.tipo + "\n" +
-                      "*Data/Hora:* " + dataFmt + " às " + ato.hora + "\n" +
+                      "*Data/Hora do Ato:* " + dataFmt + " às " + ato.hora + "\n" +
                       "*Valor do Ato:* R$ " + ato.valor.toFixed(2).replace('.', ',') + " (" + ato.status.toUpperCase() + ")\n" +
                       "*Chave PIX para Pagamento:* " + perfil.pix;
 
@@ -863,16 +979,37 @@
             }
 
             var atosFiltrados = obterAtosFiltrados();
+            if (atosFiltrados.length === 0) {
+                alert("Nenhum ato encontrado no filtro atual para exportar.");
+                return;
+            }
+
             var total = 0;
-            for (var i = 0; i < atosFiltrados.length; i++) { total += atosFiltrados[i].valor; }
+            var listaTxt = "";
+
+            for (var i = 0; i < atosFiltrados.length; i++) {
+                var a = atosFiltrados[i];
+                total += a.valor;
+                var dataFmt = a.data.split('-').reverse().join('/');
+                var infoSub = a.advTitular ? " (Substab: " + a.advTitular + ")" : "";
+
+                listaTxt += "\n📌 *Ato " + (i + 1) + ":* " + a.cliente +
+                            "\n• *Processo:* " + a.processo +
+                            "\n• *Data/Hora:* " + dataFmt + " às " + a.hora +
+                            "\n• *Tipo:* " + a.tipo + " | *Atuação:* " + (a.atuacao || 'Advogado') + infoSub +
+                            "\n• *Valor:* R$ " + a.valor.toFixed(2).replace('.', ',') + " [" + a.status.toUpperCase() + "]\n";
+            }
 
             var docProfissional = perfil.oab ? "OAB: " + perfil.oab : (perfil.cpf ? "CPF: " + perfil.cpf : "");
 
-            var msg = "*RELATÓRIO DE PAUTA - DILIGENCE.BR (BETA)*\n\n" +
+            var msg = "*RELATÓRIO DE PAUTA DETALHADO - DILIGENCE.BR (BETA)*\n" +
                       "*Profissional Responsável:* " + perfil.nome + " (" + docProfissional + ")\n" +
-                      "*Quantidade de Atos:* " + atosFiltrados.length + "\n" +
-                      "*VALOR TOTAL SELECIONADO:* R$ " + total.toFixed(2).replace('.', ',') + "\n" +
-                      "*Chave PIX:* " + perfil.pix + "\n\n" +
+                      "*Chave PIX:* " + perfil.pix + "\n" +
+                      "----------------------------------------" +
+                      listaTxt +
+                      "----------------------------------------\n" +
+                      "*TOTAL DE ATOS:* " + atosFiltrados.length + "\n" +
+                      "*VALOR TOTAL DO FILTRO:* R$ " + total.toFixed(2).replace('.', ',') + "\n\n" +
                       "_Ferramenta experimental de auxílio diário._";
 
             window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), '_blank');
@@ -886,22 +1023,33 @@
             }
 
             var atosFiltrados = obterAtosFiltrados();
+            if (atosFiltrados.length === 0) {
+                alert("Nenhum ato encontrado no filtro atual para enviar por e-mail.");
+                return;
+            }
+
             var total = 0;
-            for (var i = 0; i < atosFiltrados.length; i++) { total += atosFiltrados[i].valor; }
+            var listaTxt = "";
+
+            for (var i = 0; i < atosFiltrados.length; i++) {
+                var a = atosFiltrados[i];
+                total += a.valor;
+                var dataFmt = a.data.split('-').reverse().join('/');
+                var sub = a.advTitular ? " (Substabelecido por: " + a.advTitular + ")" : "";
+
+                listaTxt += (i + 1) + ". CLIENTE: " + a.cliente + "\n" +
+                            "   Nº PROCESSO: " + a.processo + "\n" +
+                            "   DATA/HORA: " + dataFmt + " às " + a.hora + "\n" +
+                            "   TIPO/ATUAÇÃO: " + a.tipo + " - " + (a.atuacao || 'Advogado(a)') + sub + "\n" +
+                            "   VALOR: R$ " + a.valor.toFixed(2).replace('.', ',') + " [" + a.status + "]\n\n";
+            }
 
             var emailExtra = document.getElementById('emailAdicional').value.trim();
             var dest = "controledepautasp@gmail.com";
             if (emailExtra) dest += "," + emailExtra;
 
-            var listaTxt = "";
-            for (var i = 0; i < atosFiltrados.length; i++) {
-                var a = atosFiltrados[i];
-                var sub = a.advTitular ? " (Substabelecido por: " + a.advTitular + ")" : "";
-                listaTxt += "- " + a.cliente + " | Proc: " + a.processo + " | Atuação: " + (a.atuacao || 'Advogado(a)') + sub + " | R$ " + a.valor.toFixed(2).replace('.', ',') + " [" + a.status + "]\n";
-            }
-
-            var assunto = "Relatório de Atos - Diligence.BR (BETA) - " + perfil.nome;
-            var corpo = "Prezados,\n\nSegue resumo dos atos selecionados:\n\nExecutado por: " + perfil.nome + "\nOAB/CPF: " + (perfil.oab || perfil.cpf) + "\nTotal de Atos: " + atosFiltrados.length + "\nVALOR TOTAL: R$ " + total.toFixed(2).replace('.', ',') + "\nChave PIX: " + perfil.pix + "\n\nLISTA DETALHADA:\n" + listaTxt + "\n\nAtenciosamente,\n" + perfil.nome;
+            var assunto = "Relatório Detalhado de Atos - Diligence.BR (BETA) - " + perfil.nome;
+            var corpo = "Prezados,\n\nSegue a listagem detalhada dos atos realizados:\n\nExecutado por: " + perfil.nome + "\nOAB/CPF: " + (perfil.oab || perfil.cpf) + "\nChave PIX: " + perfil.pix + "\n\nLISTA DOS PROCESSOS:\n\n" + listaTxt + "TOTAL DE ATOS: " + atosFiltrados.length + "\nVALOR TOTAL DO PERÍODO: R$ " + total.toFixed(2).replace('.', ',') + "\n\nAtenciosamente,\n" + perfil.nome;
 
             window.location.href = "mailto:" + dest + "?subject=" + encodeURIComponent(assunto) + "&body=" + encodeURIComponent(corpo);
         }
@@ -914,20 +1062,25 @@
             }
 
             var atosFiltrados = obterAtosFiltrados();
+            if (atosFiltrados.length === 0) {
+                alert("Nenhum ato encontrado para exportar em planilha.");
+                return;
+            }
 
             var csv = "\uFEFF";
             csv += "CONTRATANTE: DILIGENCE.BR (VERSAO BETA EXPERIMENTAL)\n";
             csv += "Executado por:;" + perfil.nome + ";Documento:;" + (perfil.oab || perfil.cpf) + ";Pix:;" + perfil.pix + "\n\n";
-            csv += "Cliente Representado;Número do Processo;Atuação do Profissional;Advogado Titular (Substabelecimento);Tipo de Ato;Data;Horário;Valor (R$);Status Pagamento\n";
+            csv += "Data do Ato;Horário;Cliente Representado;Número do Processo;Tipo de Ato;Atuação do Profissional;Advogado Titular (Substabelecimento);Valor (R$);Status Pagamento\n";
 
             var total = 0;
             for (var i = 0; i < atosFiltrados.length; i++) {
                 var a = atosFiltrados[i];
                 total += a.valor;
-                csv += '"' + a.cliente + '";"' + a.processo + '";"' + (a.atuacao || 'Advogado(a)') + '";"' + (a.advTitular || 'N/A') + '";"' + a.tipo + '";"' + a.data + '";"' + a.hora + '";"' + a.valor.toFixed(2).replace('.', ',') + '";"' + a.status + '"\n';
+                var dataFmt = a.data.split('-').reverse().join('/');
+                csv += '"' + dataFmt + '";"' + a.hora + '";"' + a.cliente + '";"' + a.processo + '";"' + a.tipo + '";"' + (a.atuacao || 'Advogado(a)') + '";"' + (a.advTitular || 'N/A') + '";"' + a.valor.toFixed(2).replace('.', ',') + '";"' + a.status + '"\n';
             }
 
-            csv += ";;;;;;TOTAL DOS ATOS SELECIONADOS;" + total.toFixed(2).replace('.', ',') + ";\n";
+            csv += ";;;;;;;TOTAL DOS ATOS SELECIONADOS;" + total.toFixed(2).replace('.', ',') + ";\n";
 
             var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             var link = document.createElement("a");
@@ -936,6 +1089,15 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+
+        function gerarPDF() {
+            if (!perfil.nome) {
+                alert("Por favor, cadastre seu perfil na aba '1. Perfil' primeiro.");
+                alternarAba('perfil');
+                return;
+            }
+            window.print();
         }
     </script>
 </body>
