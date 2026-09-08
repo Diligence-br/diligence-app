@@ -151,7 +151,6 @@
         .btn-primary { background-color: var(--primary-red); color: white; }
         .btn-secondary { background-color: var(--secondary-navy); color: white; }
         .btn-success { background-color: var(--whatsapp-green); color: white; }
-        .btn-install { background-color: #FF9800; color: white; font-size: 12px; padding: 10px; margin-bottom: 12px; border-radius: 8px; display: none; }
 
         .item-card {
             border-left: 5px solid var(--secondary-navy);
@@ -160,7 +159,6 @@
             background: #FAFBFD;
             border-radius: 0 8px 8px 0;
             border: 1px solid #EAEAEA;
-            border-left-width: 5px;
         }
 
         .item-card.pago { border-left-color: var(--green-paid); }
@@ -249,8 +247,6 @@
     </div>
 
     <div class="container">
-
-        <button id="btnInstalarApp" class="btn btn-install">📱 Clique aqui para Instalar o App no Celular</button>
 
         <!-- ABA 1: PERFIL DO CORRESPONDENTE -->
         <div id="sectionPerfil" class="hidden">
@@ -458,7 +454,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             
-            // Alternância de Abas sem falhas
+            // Alternância de Abas
             document.getElementById('tabHeadPerfil').onclick = function() { alternarAba('perfil'); };
             document.getElementById('tabHeadRegistro').onclick = function() { alternarAba('registro'); };
             document.getElementById('tabHeadHistorico').onclick = function() { alternarAba('historico'); };
@@ -488,9 +484,9 @@
                         arquivoBase64 = evt.target.result;
                         var preview = document.getElementById('previewContainer');
                         if (file.type.startsWith('image/')) {
-                            preview.innerHTML = '<img src="' + arquivoBase64 + '" class="preview-img"><br><small>✅ Foto anexada com sucesso!</small>';
+                            preview.innerHTML = '<img src="' + arquivoBase64 + '" class="preview-img"><br><small style="color:green; font-weight:bold;">✅ Foto anexada com sucesso!</small>';
                         } else {
-                            preview.innerHTML = '<div style="font-size:12px; color:green; margin-top:5px;">✅ Arquivo PDF anexado: ' + file.name + '</div>';
+                            preview.innerHTML = '<div style="font-size:12px; color:green; margin-top:5px; font-weight:bold;">✅ Arquivo PDF anexado: ' + file.name + '</div>';
                         }
                     };
                     reader.readAsDataURL(file);
@@ -526,7 +522,7 @@
 
         function carregarPerfil() {
             try {
-                var p = localStorage.getItem('diligence_db_perfil_v6');
+                var p = localStorage.getItem('diligence_db_perfil_v7');
                 if (p) {
                     perfil = JSON.parse(p);
                     document.getElementById('perfilNome').value = perfil.nome || '';
@@ -566,15 +562,15 @@
                 pix: pix
             };
 
-            localStorage.setItem('diligence_db_perfil_v6', JSON.stringify(perfil));
-            alert("✅ Perfil salvo com sucesso no banco do celular!");
+            localStorage.setItem('diligence_db_perfil_v7', JSON.stringify(perfil));
+            alert("✅ Perfil salvo com sucesso no celular!");
             carregarPerfil();
             alternarAba('registro');
         }
 
         function carregarAtos() {
             try {
-                var a = localStorage.getItem('diligence_db_atos_v6');
+                var a = localStorage.getItem('diligence_db_atos_v7');
                 if (a) {
                     atos = JSON.parse(a);
                 }
@@ -624,7 +620,7 @@
             };
 
             atos.push(novoAto);
-            localStorage.setItem('diligence_db_atos_v6', JSON.stringify(atos));
+            localStorage.setItem('diligence_db_atos_v7', JSON.stringify(atos));
 
             alert("✅ Ato gravado com sucesso no banco de dados!");
             
@@ -648,7 +644,7 @@
                     break;
                 }
             }
-            localStorage.setItem('diligence_db_atos_v6', JSON.stringify(atos));
+            localStorage.setItem('diligence_db_atos_v7', JSON.stringify(atos));
             renderizarAtos();
         }
 
@@ -704,7 +700,7 @@
 
                     var anexoHTML = "";
                     if (ato.anexo) {
-                        if (ato.anexo.startsWith('data:image')) {
+                        if (ato.anexo.indexOf('data:image') === 0) {
                             anexoHTML = '<br><a href="' + ato.anexo + '" target="_blank" style="color:#A31D24; font-weight:bold;">🖼️ Ver Foto da Ata</a>';
                         } else {
                             anexoHTML = '<br><a href="' + ato.anexo + '" target="_blank" style="color:#A31D24; font-weight:bold;">📄 Ver PDF da Ata</a>';
@@ -739,7 +735,7 @@
         function excluirAto(id) {
             if (confirm("Tem certeza que deseja apagar este ato do banco de dados?")) {
                 atos = atos.filter(function(a) { return a.id !== id; });
-                localStorage.setItem('diligence_db_atos_v6', JSON.stringify(atos));
+                localStorage.setItem('diligence_db_atos_v7', JSON.stringify(atos));
                 renderizarAtos();
             }
         }
@@ -753,21 +749,13 @@
 
             var dataFmt = ato.data.split('-').reverse().join('/');
 
-            var msg = "*COMPROVANTE DE ATO REALIZADO - DILIGENCE.BR*
-
-" +
-                      "*Executado por:* " + perfil.nome + "
-" +
-                      "*Cliente:* " + ato.cliente + "
-" +
-                      "*Processo:* " + ato.processo + "
-" +
-                      "*Ato:* " + ato.tipo + "
-" +
-                      "*Data/Hora:* " + dataFmt + " às " + ato.hora + "
-" +
-                      "*Valor:* R$ " + ato.valor.toFixed(2) + " (" + ato.status.toUpperCase() + ")
-" +
+            var msg = "*COMPROVANTE DE ATO REALIZADO - DILIGENCE.BR*\n\n" +
+                      "*Executado por:* " + perfil.nome + "\n" +
+                      "*Cliente:* " + ato.cliente + "\n" +
+                      "*Processo:* " + ato.processo + "\n" +
+                      "*Ato:* " + ato.tipo + "\n" +
+                      "*Data/Hora:* " + dataFmt + " às " + ato.hora + "\n" +
+                      "*Valor:* R$ " + ato.valor.toFixed(2) + " (" + ato.status.toUpperCase() + ")\n" +
                       "*Chave PIX:* " + perfil.pix;
 
             window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), '_blank');
@@ -778,17 +766,11 @@
             var total = 0;
             for (var i = 0; i < atosFiltrados.length; i++) { total += atosFiltrados[i].valor; }
 
-            var msg = "*RELATÓRIO SELECIONADO - DILIGENCE.BR*
-" +
-                      "*Profissional:* " + perfil.nome + "
-" +
-                      "*Quantidade de Atos:* " + atosFiltrados.length + "
-" +
-                      "*VALOR TOTAL DO FILTRO:* R$ " + total.toFixed(2) + "
-" +
-                      "*Chave PIX:* " + perfil.pix + "
-
-" +
+            var msg = "*RELATÓRIO SELECIONADO - DILIGENCE.BR*\n" +
+                      "*Profissional:* " + perfil.nome + "\n" +
+                      "*Quantidade de Atos:* " + atosFiltrados.length + "\n" +
+                      "*VALOR TOTAL DO FILTRO:* R$ " + total.toFixed(2) + "\n" +
+                      "*Chave PIX:* " + perfil.pix + "\n\n" +
                       "_Cópia gerada para controledepautasp@gmail.com_";
 
             window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), '_blank');
@@ -806,25 +788,11 @@
             var listaTxt = "";
             for (var i = 0; i < atosFiltrados.length; i++) {
                 var a = atosFiltrados[i];
-                listaTxt += "- " + a.cliente + " | Proc: " + a.processo + " | R$ " + a.valor.toFixed(2) + " [" + a.status + "]
-";
+                listaTxt += "- " + a.cliente + " | Proc: " + a.processo + " | R$ " + a.valor.toFixed(2) + " [" + a.status + "]\n";
             }
 
             var assunto = "Relatório Filtrado de Atos - Diligence.BR - " + perfil.nome;
-            var corpo = "Prezados,
-
-Segue resumo dos atos selecionados:
-
-Profissional: " + perfil.nome + "
-Total de Atos: " + atosFiltrados.length + "
-VALOR TOTAL: R$ " + total.toFixed(2) + "
-Chave PIX: " + perfil.pix + "
-
-LISTA:
-" + listaTxt + "
-
-Atenciosamente,
-" + perfil.nome;
+            var corpo = "Prezados,\n\nSegue resumo dos atos selecionados:\n\nProfissional: " + perfil.nome + "\nTotal de Atos: " + atosFiltrados.length + "\nVALOR TOTAL: R$ " + total.toFixed(2) + "\nChave PIX: " + perfil.pix + "\n\nLISTA:\n" + listaTxt + "\n\nAtenciosamente,\n" + perfil.nome;
 
             window.location.href = "mailto:" + dest + "?subject=" + encodeURIComponent(assunto) + "&body=" + encodeURIComponent(corpo);
         }
@@ -832,25 +800,19 @@ Atenciosamente,
         function exportarExcel() {
             var atosFiltrados = obterAtosFiltrados();
 
-            var csv = "﻿";
-            csv += "CONTRATANTE: DILIGENCE.BR
-";
-            csv += "Executado por:;" + perfil.nome + ";Pix:;" + perfil.pix + "
-
-";
-            csv += "Cliente Representado;Número do Processo;Atuação;Tipo de Ato;Data;Horário;Valor (R$);Status Pagamento
-";
+            var csv = "\uFEFF";
+            csv += "CONTRATANTE: DILIGENCE.BR\n";
+            csv += "Executado por:;" + perfil.nome + ";Pix:;" + perfil.pix + "\n\n";
+            csv += "Cliente Representado;Número do Processo;Atuação;Tipo de Ato;Data;Horário;Valor (R$);Status Pagamento\n";
 
             var total = 0;
             for (var i = 0; i < atosFiltrados.length; i++) {
                 var a = atosFiltrados[i];
                 total += a.valor;
-                csv += '"' + a.cliente + '";"' + a.processo + '";"' + a.atuacao + '";"' + a.tipo + '";"' + a.data + '";"' + a.hora + '";"' + a.valor.toFixed(2) + '";"' + a.status + '"
-';
+                csv += '"' + a.cliente + '";"' + a.processo + '";"' + a.atuacao + '";"' + a.tipo + '";"' + a.data + '";"' + a.hora + '";"' + a.valor.toFixed(2) + '";"' + a.status + '"\n';
             }
 
-            csv += ";;;;;TOTAL DOS ATOS SELECIONADOS;" + total.toFixed(2) + ";
-";
+            csv += ";;;;;TOTAL DOS ATOS SELECIONADOS;" + total.toFixed(2) + ";\n";
 
             var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             var link = document.createElement("a");
