@@ -32,7 +32,7 @@
         body {
             background-color: var(--bg-light);
             color: var(--text-dark);
-            padding-bottom: 80px;
+            padding-bottom: 120px;
         }
 
         header {
@@ -75,6 +75,31 @@
             text-align: center;
         }
 
+        .backup-reminder-card {
+            background-color: #E8F5E9;
+            border: 2px solid #2E7D32;
+            color: #1B5E20;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            text-align: center;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .last-backup-badge {
+            background-color: #E0F2F1;
+            border: 1px solid #80CBC4;
+            color: #004D40;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 12px;
+            display: block;
+        }
+
         .nav-tabs {
             display: flex;
             background-color: var(--card-white);
@@ -82,6 +107,7 @@
             position: sticky;
             top: 45px;
             z-index: 99;
+            overflow-x: auto;
         }
 
         .tab-btn {
@@ -90,11 +116,12 @@
             border: none;
             background: none;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
             color: #555;
             cursor: pointer;
             border-bottom: 3px solid transparent;
             text-align: center;
+            white-space: nowrap;
         }
 
         .tab-btn.active {
@@ -176,9 +203,24 @@
         .btn-secondary { background-color: var(--secondary-navy); color: white; }
         .btn-success { background-color: var(--whatsapp-green); color: white; }
 
+        .btn-toggle-select {
+            border: 2px solid #CCC;
+            background: #F8F9FA;
+            color: #444;
+        }
+
+        .btn-toggle-select.selected {
+            border-color: #2E7D32;
+            background: #E8F5E9;
+            color: #2E7D32;
+            font-weight: bold;
+        }
+
         .btn-sucesso-tick {
             background-color: #2E7D32 !important;
             color: white !important;
+            font-size: 15px !important;
+            padding: 15px !important;
         }
 
         .item-card {
@@ -188,10 +230,12 @@
             background: #FAFBFD;
             border-radius: 0 8px 8px 0;
             border: 1px solid #EAEAEA;
+            position: relative;
         }
 
         .item-card.pago { border-left-color: var(--green-paid); }
         .item-card.pendente { border-left-color: var(--orange-pending); }
+        .item-card.debito { border-left-color: var(--primary-red); }
 
         .item-header {
             display: flex;
@@ -235,6 +279,7 @@
 
         .status-pendente { background-color: var(--orange-pending); }
         .status-pago { background-color: var(--green-paid); }
+        .status-debito { background-color: var(--primary-red); }
 
         .total-box {
             background-color: var(--secondary-navy);
@@ -251,14 +296,35 @@
             margin-top: 2px;
         }
 
-        .hidden { display: none !important; }
+        .finance-grid {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
 
-        .preview-img {
-            max-width: 100%;
-            max-height: 150px;
-            margin-top: 8px;
-            border-radius: 6px;
-            border: 1px solid #DDD;
+        .finance-card {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+        }
+
+        .finance-card.credito { background-color: var(--green-paid); }
+        .finance-card.debito { background-color: var(--primary-red); }
+        .finance-card.saldo { background-color: var(--secondary-navy); }
+
+        .finance-card h4 { font-size: 10px; opacity: 0.9; text-transform: uppercase; }
+        .finance-card h3 { font-size: 15px; color: white; border: none; padding: 0; margin-top: 4px; }
+
+        .recibo-box {
+            background: #FFFDE7;
+            border: 2px solid #FBC02D;
+            padding: 14px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 12px;
+            line-height: 1.5;
         }
 
         .manual-box {
@@ -286,8 +352,41 @@
             text-align: center;
         }
 
+        .chk-multi-delete {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            transform: scale(1.3);
+            cursor: pointer;
+        }
+
+        /* ESTILO DO RODAPÉ */
+        footer {
+            margin-top: 25px;
+            padding: 12px 8px;
+            text-align: center;
+            font-size: 9px;
+            color: #777777;
+            border-top: 1px solid #E0E0E0;
+            line-height: 1.4;
+        }
+
+        footer strong {
+            color: var(--secondary-navy);
+        }
+
+        .hidden { display: none !important; }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 150px;
+            margin-top: 8px;
+            border-radius: 6px;
+            border: 1px solid #DDD;
+        }
+
         @media print {
-            header, .nav-tabs, .beta-banner, .card:not(#areaImpressao) { display: none !important; }
+            header, .nav-tabs, .beta-banner, .backup-reminder-card, .last-backup-badge, footer, .card:not(#areaImpressao) { display: none !important; }
             body { background: white; padding: 0; }
             .container { max-width: 100%; padding: 0; }
         }
@@ -304,11 +403,25 @@
         <button type="button" class="tab-btn" id="tabHeadPerfil">👤 1. Perfil</button>
         <button type="button" class="tab-btn active" id="tabHeadRegistro">➕ 2. Novo Ato</button>
         <button type="button" class="tab-btn" id="tabHeadHistorico">📊 3. Relatórios</button>
+        <button type="button" class="tab-btn" id="tabHeadFinanceiro">💰 4. Financeiro</button>
     </div>
 
     <div class="container">
 
-        <!-- BANNER DE AVISO VERSÃO BETA E MINI MANUAL -->
+        <!-- BANNER DE LEMBRETE AUTOMÁTICO DE BACKUP -->
+        <div id="cardLembreteBackup" class="backup-reminder-card hidden">
+            <strong>⏰ HORA DO BACKUP DIÁRIO DE PAUTA!</strong><br>
+            <span id="txtHorarioLembrete">Lembrete programado das 12:00 / 18:00 (Segunda a Sexta).</span><br>
+            <div style="margin-top: 8px; display: flex; gap: 6px;">
+                <button type="button" id="btnFazerBackupAgoraWhats" style="flex:1; background:var(--whatsapp-green); color:white; border:none; padding:8px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">💬 Backup pelo Whats</button>
+                <button type="button" id="btnFazerBackupAgoraExcel" style="flex:1; background:var(--secondary-navy); color:white; border:none; padding:8px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">📊 Baixar Planilha CSV</button>
+            </div>
+        </div>
+
+        <div id="badgeUltimoBackup" class="last-backup-badge">
+            📁 Backup de pauta: Nenhum backup registrado hoje.
+        </div>
+
         <div class="beta-banner">
             <strong>⚠️ APLICATIVO EXPERIMENTAL (BETA)</strong><br>
             Ferramenta para auxílio diário na organização de pautas.<br>
@@ -319,7 +432,7 @@
             </div>
         </div>
 
-        <!-- CONTAINER DO MINI MANUAL ILUSTRADO -->
+        <!-- MINI MANUAL ILUSTRADO -->
         <div id="boxManual" class="manual-box hidden">
             <h3 style="color:var(--primary-red); border-bottom:2px solid var(--primary-red); padding-bottom:4px; margin-bottom:10px;">📘 Mini Manual de Uso Rápido</h3>
             
@@ -332,34 +445,26 @@
             </div>
 
             <div class="manual-step">
-                <div class="manual-icon">📝</div>
+                <div class="manual-icon">💳</div>
                 <div>
-                    <strong>2º Passo: Cadastre a Diligência / Audiência</strong><br>
-                    Na aba <strong>"2. Novo Ato"</strong>, escolha se atuou como <em>Advogado Próprio</em>, <em>Substabelecido</em> ou <em>Preposto</em>.
+                    <strong>2º Passo: Lançamento de Créditos e Débitos</strong><br>
+                    Na aba <strong>"2. Novo Ato"</strong>, escolha o Tipo de Lançamento: <em>Crédito (+)</em> para Honorários ou <em>Débito (-)</em> para despesas.
                 </div>
             </div>
 
             <div class="manual-step">
-                <div class="manual-icon">✅</div>
+                <div class="manual-icon">🧾</div>
                 <div>
-                    <strong>3º Passo: Confirmação em "Lançado!"</strong><br>
-                    Ao clicar em gravar, o botão exibirá um <strong>tick verde ✅ "Lançado!"</strong>. Clique apenas <strong>UMA VEZ</strong> para não duplicar.
+                    <strong>3º Passo: Gerador de Recibos</strong><br>
+                    Gere recibos de um ato individual ou selecione um período/cliente no filtro para gerar um recibo somado completo.
                 </div>
             </div>
 
             <div class="manual-step">
-                <div class="manual-icon">📷</div>
+                <div class="manual-icon">⏰</div>
                 <div>
-                    <strong>4º Passo: Anexe Fotos da Ata</strong><br>
-                    Tire foto da ata usando a câmera do celular ou anexe arquivos PDF.
-                </div>
-            </div>
-
-            <div class="manual-step" style="border:none; margin-bottom:0; padding-bottom:0;">
-                <div class="manual-icon">💾</div>
-                <div>
-                    <strong>5º Passo: Exportação Diária Obrigatória!</strong><br>
-                    Exporte diariamente na aba <strong>"3. Relatórios"</strong> via WhatsApp, E-mail, PDF ou Excel (.CSV).
+                    <strong>4º Passo: Lembrete Diário de Backup</strong><br>
+                    O aplicativo envia alertas às 12:00 e às 18:00 de segunda a sexta para exportação diária.
                 </div>
             </div>
         </div>
@@ -368,7 +473,6 @@
         <div id="sectionPerfil" class="hidden">
             <div class="card">
                 <h3>👤 Perfil do Correspondente</h3>
-                <p style="font-size:11px; color:#666; margin-bottom:12px;">Seus dados ficam gravados no celular e saem nos relatórios e cobranças.</p>
                 
                 <div class="form-group">
                     <label>Nome Completo *</label>
@@ -405,21 +509,30 @@
             </div>
         </div>
 
-        <!-- ABA 2: REGISTRO DE NOVO ATO -->
+        <!-- ABA 2: REGISTRO DE NOVO ATO OU DESPESA -->
         <div id="sectionRegistro">
             <div id="alertaPerfil" style="background:#FFF3E0; color:#E65100; padding:8px; border-radius:6px; font-size:11px; margin-bottom:10px; text-align:center; font-weight:bold;">
                 ⚠️ Configure seu perfil na aba "1. Perfil" para validar seus relatórios.
             </div>
 
             <div class="card">
-                <h3>➕ Cadastrar Ato Realizado</h3>
+                <h3>➕ Cadastrar Lançamento (Crédito ou Débito)</h3>
                 
+                <div class="form-group">
+                    <label>Tipo de Lançamento *</label>
+                    <select id="naturezaAto" style="font-weight:bold; color:#1F3864;">
+                        <option value="Credito">🟢 CRÉDITO (+) Honorário / Entrada de Valor</option>
+                        <option value="Debito">🔴 DÉBITO (-) Despesa / Cópias / Estacionamento / Condução</option>
+                    </select>
+                </div>
+
                 <div class="form-group">
                     <label>Atuação neste Ato *</label>
                     <select id="atuacaoAto">
                         <option value="Advogado(a) Próprio(a)">Advogado(a) Próprio(a)</option>
                         <option value="Advogado(a) Substabelecido(a)">Advogado(a) Substabelecido(a)</option>
                         <option value="Preposto(a)">Preposto(a)</option>
+                        <option value="Reembolso de Despesas">Reembolso de Despesas</option>
                     </select>
                 </div>
 
@@ -429,24 +542,25 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Nome do Cliente Representado *</label>
+                    <label>Nome do Cliente / Empresa Representada *</label>
                     <input type="text" id="cliente" placeholder="Ex: Banco Bradesco, Magazine Luiza">
                 </div>
 
                 <div class="form-group">
-                    <label>Número do Processo *</label>
-                    <input type="text" id="processo" placeholder="0101010-10.2026.5.0000">
+                    <label>Número do Processo / Referência *</label>
+                    <input type="text" id="processo" placeholder="0101010-10.2026.5.0000 ou Recibo 01">
                 </div>
 
                 <div class="form-group">
-                    <label>Tipo de Ato Realizado *</label>
+                    <label>Descrição / Tipo do Ato *</label>
                     <select id="tipoAto">
                         <option value="">Selecione...</option>
                         <option value="Audiência Trabalhista">Audiência Trabalhista</option>
                         <option value="Audiência Cível / Conciliação">Audiência Cível / Conciliação</option>
                         <option value="Audiência de Instrução">Audiência de Instrução</option>
                         <option value="Diligência / Cópia de Autos">Diligência / Cópia de Autos</option>
-                        <option value="Protocolo / Despacho">Protocolo / Despacho</option>
+                        <option value="Despesa de Condução / Combustível">Despesa de Condução / Combustível</option>
+                        <option value="Despesa de Cartório / Certidão">Despesa de Cartório / Certidão</option>
                         <option value="Outro">Outro</option>
                     </select>
                 </div>
@@ -463,15 +577,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Valor Acordado (R$) *</label>
+                    <label>Valor (R$) *</label>
                     <input type="number" step="0.01" id="valorAto" placeholder="0.00">
                 </div>
 
                 <div class="form-group">
                     <label>Status do Pagamento *</label>
                     <select id="statusPagamento">
-                        <option value="Pendente">⌛ Pendente (A Receber)</option>
-                        <option value="Pago">✅ Pago (Já Recebido)</option>
+                        <option value="Pendente">⌛ Pendente (A Receber / A Pagar)</option>
+                        <option value="Pago">✅ Quitado (Pago / Recebido)</option>
                     </select>
                 </div>
 
@@ -487,15 +601,18 @@
                     <input type="url" id="linkAta" placeholder="https://drive.google.com/...">
                 </div>
 
-                <button type="button" class="btn btn-primary" id="btnGravarAto" style="margin-top: 10px;">💾 GRAVAR ATO NO BANCO DE DADOS</button>
+                <button type="button" class="btn btn-primary" id="btnGravarAto" style="margin-top: 10px;">💾 GRAVAR LANÇAMENTO NO BANCO</button>
                 
-                <p style="color:#A31D24; font-size:11px; text-align:center; font-weight:bold; margin-top:8px;">
-                    👉 Clique apenas UMA VEZ. O botão mudará para "✅ LANÇADO!".
-                </p>
+                <div style="text-align:center; margin-top:8px;">
+                    <p style="color:#A31D24; font-size:11px; font-weight:bold;">
+                        👉 Clique apenas UMA VEZ. O botão mudará para "✅ LANÇADO!".
+                    </p>
+                    <button type="button" id="btnDestravar" style="background:none; border:none; color:#1F3864; text-decoration:underline; font-size:11px; font-weight:bold; cursor:pointer; margin-top:4px;">💡 Se ficar travado, clique aqui para destravar</button>
+                </div>
             </div>
         </div>
 
-        <!-- ABA 3: RELATÓRIOS, BANCO DE DADOS E EXPORTAÇÃO -->
+        <!-- ABA 3: RELATÓRIOS E EXPORTAÇÃO COM GERADOR DE RECIBOS -->
         <div id="sectionHistorico" class="hidden">
             
             <div class="total-box">
@@ -505,7 +622,7 @@
             </div>
 
             <div class="card">
-                <h3>🔍 Filtro e Banco de Dados Único</h3>
+                <h3>🔍 Filtro e Seleção Múltipla de Envio</h3>
                 
                 <div class="form-group">
                     <label>Filtrar Período:</label>
@@ -539,26 +656,35 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Filtrar por Status de Pagamento:</label>
+                    <label>Filtrar por Status:</label>
                     <select id="filtroStatus">
                         <option value="todos">Todos (Pendentes + Pagos)</option>
                         <option value="Pendente">Apenas Pendentes</option>
-                        <option value="Pago">Apenas Pagos</option>
+                        <option value="Pago">Apenas Pagos / Quitados</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label>E-mail Adicional para Receber Cópia:</label>
                     <input type="email" id="emailAdicional" placeholder="ex: pauta@empresa.com">
-                    <small style="color:#666; font-size:10px;">* Cópia automática para controledepautasp@gmail.com</small>
                 </div>
 
-                <div class="row" style="margin-top: 10px;">
-                    <button type="button" class="btn btn-success col" id="btnWhatsPeriodo">💬 Whats Período</button>
-                    <button type="button" class="btn btn-secondary col" id="btnEmailPeriodo">✉️ E-mail Período</button>
+                <label style="font-size:11px; font-weight:bold; color:#444; display:block; margin-bottom:6px;">SELECIONE OS CANAIS DE ENVIO (TICK ✅):</label>
+                <div class="row" style="margin-bottom: 8px;">
+                    <button type="button" class="btn btn-toggle-select col" id="chkWhats">💬 WhatsApp</button>
+                    <button type="button" class="btn btn-toggle-select col" id="chkEmail">✉️ E-mail</button>
+                    <button type="button" class="btn btn-toggle-select col" id="chkExcel">📊 Excel (.CSV)</button>
                 </div>
-                <button type="button" class="btn btn-primary" id="btnExportarExcel" style="margin-top: 8px;">📊 Exportar Planilha Selecionada (.CSV)</button>
-                <button type="button" style="background:#1F3864; color:white; width:100%; padding:12px; border:none; border-radius:8px; font-size:13px; font-weight:bold; margin-top:8px; cursor:pointer;" id="btnGerarPDF">📄 Baixar Relatório em PDF</button>
+
+                <button type="button" class="btn btn-success" id="btnDispararSelecionados" style="margin-top: 6px;">🚀 ENVIAR SELECIONADOS AGORA</button>
+                <button type="button" style="background:#FBC02D; color:#333; width:100%; padding:11px; border:none; border-radius:8px; font-size:13px; font-weight:bold; margin-top:8px; cursor:pointer;" id="btnGerarReciboPeriodo">🧾 GERAR RECIBO SOMADO DO PERÍODO</button>
+                <button type="button" style="background:#1F3864; color:white; width:100%; padding:10px; border:none; border-radius:8px; font-size:12px; font-weight:bold; margin-top:8px; cursor:pointer;" id="btnGerarPDF">📄 Baixar Relatório em PDF</button>
+                
+                <div style="margin-top: 12px; border-top: 1px dashed #DDD; padding-top: 10px;">
+                    <button type="button" id="btnModoExcluirVarios" style="background:#E65100; color:white; width:100%; padding:9px; border:none; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">☑️ Selecionar para Excluir Vários</button>
+                    <button type="button" id="btnConfirmarExcluirVarios" class="hidden" style="background:#A31D24; color:white; width:100%; padding:10px; border:none; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer; margin-top:6px;">🗑️ EXCLUIR SELECIONADOS PERMANENTEMENTE</button>
+                </div>
+
                 <button type="button" style="background:#888; color:white; width:100%; padding:8px; border:none; border-radius:6px; font-size:11px; margin-top:8px; cursor:pointer;" id="btnLimparDuplicados">🧹 Limpar Duplicados Repetidos</button>
             </div>
 
@@ -568,6 +694,52 @@
             </div>
         </div>
 
+        <!-- ABA 4: FINANCEIRO COMPLETO (CRÉDITOS X DÉBITOS X RECIBOS) -->
+        <div id="sectionFinanceiro" class="hidden">
+            <div class="card">
+                <h3>💰 Painel Financeiro (Créditos x Débitos)</h3>
+                
+                <div class="finance-grid">
+                    <div class="finance-card credito">
+                        <h4>🟢 Créditos (+)</h4>
+                        <h3 id="finTotalCredito">R$ 0,00</h3>
+                    </div>
+                    <div class="finance-card debito">
+                        <h4>🔴 Débitos (-)</h4>
+                        <h3 id="finTotalDebito">R$ 0,00</h3>
+                    </div>
+                    <div class="finance-card saldo">
+                        <h4>⚖️ Saldo Líquido</h4>
+                        <h3 id="finSaldoLiquido">R$ 0,00</h3>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-success" id="btnGerarReciboFinanceiro" style="margin-top: 8px;">🧾 GERAR RECIBO FINANCEIRO CONSOLIDADO</button>
+            </div>
+
+            <!-- ÁREA DE EXIBIÇÃO DO RECIBO GERADO -->
+            <div id="boxReciboVisual" class="recibo-box hidden">
+                <h3 style="color:#1F3864; border-bottom:2px solid #FBC02D; padding-bottom:4px; margin-bottom:8px;">📜 RECIBO DE PAGAMENTO / QUITAÇÃO</h3>
+                <div id="conteudoReciboTxt"></div>
+                <div style="margin-top:10px; display:flex; gap:6px;">
+                    <button type="button" class="btn btn-success" id="btnShareReciboWhats" style="flex:1; font-size:11px;">💬 Enviar Recibo Whats</button>
+                    <button type="button" class="btn btn-secondary" id="btnImprimirReciboPDF" style="flex:1; font-size:11px;">📄 PDF / Imprimir Recibo</button>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:12px;">
+                <h3>Detalhamento Financeiro de Processos e Despesas</h3>
+                <div id="listaFinanceiroAtos"></div>
+            </div>
+        </div>
+
+        <!-- RODAPÉ DISCRETO COM AVISOS E CRÉDITOS -->
+        <footer>
+            Elaborado por <strong>Patricia Monte</strong>.<br>
+            Ferramenta experimental desenvolvida apenas para auxiliar no controle diário. Faça backup regularmente.<br>
+            <em>Proibida a cópia ou reprodução sem autorização.</em>
+        </footer>
+
     </div>
 
     <script>
@@ -575,11 +747,15 @@
         var atos = [];
         var arquivoBase64 = "";
 
+        var selWhats = false, selEmail = false, selExcel = false;
+        var modoExcluirVarios = false;
+
         document.addEventListener('DOMContentLoaded', function() {
             
             document.getElementById('tabHeadPerfil').onclick = function() { alternarAba('perfil'); };
             document.getElementById('tabHeadRegistro').onclick = function() { alternarAba('registro'); };
             document.getElementById('tabHeadHistorico').onclick = function() { alternarAba('historico'); };
+            document.getElementById('tabHeadFinanceiro').onclick = function() { alternarAba('financeiro'); };
 
             document.getElementById('btnToggleManual').onclick = function() {
                 var box = document.getElementById('boxManual');
@@ -595,10 +771,9 @@
             document.getElementById('btnShareManualWhats').onclick = function() {
                 var manualTxt = "*MINI MANUAL DE USO - DILIGENCE.BR (BETA)*\n\n" +
                                 "👤 *1. PERFIL:* Preencha Nome, OAB/CPF e PIX na aba Perfil.\n" +
-                                "📝 *2. ATUAÇÃO:* Escolha entre Advogado Próprio, Substabelecido ou Preposto.\n" +
-                                "✅ *3. CONFIRMAÇÃO:* Ao clicar em gravar, aguarde o botão piscar '✅ LANÇADO!'.\n" +
-                                "📷 *4. ATAS:* Anexe fotos da ata ou PDF diretamente pelo celular.\n" +
-                                "💾 *5. EXPORTAÇÃO DIÁRIA:* Exporte diariamente para o seu próprio WhatsApp, PDF ou planilha (.CSV).\n\n" +
+                                "💳 *2. CRÉDITOS E DÉBITOS:* Lance honorários (+) e despesas (-).\n" +
+                                "🧾 *3. RECIBOS:* Gere recibos individuais ou somados do período.\n" +
+                                "⏰ *4. LEMBRETE 12h/18h:* Lembretes de backup de segunda a sexta.\n" +
                                 "Acesse o App em: https://diligence-br.github.io/diligence-app/";
                 window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(manualTxt), '_blank');
             };
@@ -614,6 +789,47 @@
                 }
             };
 
+            document.getElementById('btnDestravar').onclick = function() {
+                var btnGravar = document.getElementById('btnGravarAto');
+                btnGravar.className = "btn btn-primary";
+                btnGravar.innerHTML = "💾 GRAVAR LANÇAMENTO NO BANCO";
+                btnGravar.disabled = false;
+                alert("🔓 O botão de gravação foi destravado!");
+            };
+
+            document.getElementById('btnFazerBackupAgoraWhats').onclick = function() {
+                registrarUltimoBackup('12:00 / 18:00 (WhatsApp)');
+                compartilharPeriodoWhatsApp();
+            };
+
+            document.getElementById('btnFazerBackupAgoraExcel').onclick = function() {
+                registrarUltimoBackup('12:00 / 18:00 (Excel CSV)');
+                exportarExcel();
+            };
+
+            document.getElementById('chkWhats').onclick = function() { selWhats = !selWhats; atualizarBotaoTick(this, selWhats, '💬 WhatsApp'); };
+            document.getElementById('chkEmail').onclick = function() { selEmail = !selEmail; atualizarBotaoTick(this, selEmail, '✉️ E-mail'); };
+            document.getElementById('chkExcel').onclick = function() { selExcel = !selExcel; atualizarBotaoTick(this, selExcel, '📊 Excel (.CSV)'); };
+
+            document.getElementById('btnGerarReciboPeriodo').onclick = function() { gerarReciboSomado(obterAtosFiltrados()); };
+            document.getElementById('btnGerarReciboFinanceiro').onclick = function() { gerarReciboSomado(atos); };
+
+            document.getElementById('btnModoExcluirVarios').onclick = function() {
+                modoExcluirVarios = !modoExcluirVarios;
+                var btnConf = document.getElementById('btnConfirmarExcluirVarios');
+                if (modoExcluirVarios) {
+                    this.innerText = '❌ Cancelar Seleção de Exclusão';
+                    btnConf.className = '';
+                } else {
+                    this.innerText = '☑️ Selecionar para Excluir Vários';
+                    btnConf.className = 'hidden';
+                }
+                renderizarAtos();
+            };
+
+            document.getElementById('btnConfirmarExcluirVarios').onclick = excluirSelecionadosEmMassa;
+            document.getElementById('btnDispararSelecionados').onclick = dispararRelatoriosSelecionados;
+
             document.getElementById('btnSalvarPerfil').onclick = salvarPerfil;
             document.getElementById('btnGravarAto').onclick = salvarAto;
             document.getElementById('btnLimparDuplicados').onclick = limparDuplicados;
@@ -626,9 +842,6 @@
             document.getElementById('filtroDataIni').onchange = renderizarAtos;
             document.getElementById('filtroDataFim').onchange = renderizarAtos;
 
-            document.getElementById('btnWhatsPeriodo').onclick = compartilharPeriodoWhatsApp;
-            document.getElementById('btnEmailPeriodo').onclick = enviarEmailPeriodo;
-            document.getElementById('btnExportarExcel').onclick = exportarExcel;
             document.getElementById('btnGerarPDF').onclick = gerarPDF;
 
             document.getElementById('arquivoAta').onchange = function(e) {
@@ -650,6 +863,8 @@
 
             carregarPerfil();
             carregarAtos();
+            carregarUltimoBackup();
+            verificarHorarioLembreteBackup();
 
             var hoje = new Date();
             document.getElementById('dataAto').value = hoje.toISOString().split('T')[0];
@@ -661,24 +876,71 @@
             document.getElementById('filtroDataFim').value = hoje.toISOString().split('T')[0];
 
             renderizarAtos();
+            setInterval(verificarHorarioLembreteBackup, 60000);
         });
+
+        function verificarHorarioLembreteBackup() {
+            var agora = new Date();
+            var diaSemana = agora.getDay();
+            var hora = agora.getHours();
+
+            if (diaSemana >= 1 && diaSemana <= 5) {
+                if (hora === 12 || hora === 18) {
+                    document.getElementById('cardLembreteBackup').className = "backup-reminder-card";
+                } else {
+                    document.getElementById('cardLembreteBackup').className = "backup-reminder-card hidden";
+                }
+            } else {
+                document.getElementById('cardLembreteBackup').className = "backup-reminder-card hidden";
+            }
+        }
+
+        function registrarUltimoBackup(canal) {
+            var agora = new Date();
+            var dia = String(agora.getDate()).padStart(2, '0');
+            var mes = String(agora.getMonth() + 1).padStart(2, '0');
+            var ano = agora.getFullYear();
+            var hora = String(agora.getHours()).padStart(2, '0');
+            var min = String(agora.getMinutes()).padStart(2, '0');
+
+            var txtBackup = "Feito backup às " + hora + ":" + min + " do dia " + dia + "/" + mes + "/" + ano;
+            localStorage.setItem('diligence_ultimo_backup_v8', txtBackup);
+            document.getElementById('badgeUltimoBackup').innerHTML = "📁 " + txtBackup;
+        }
+
+        function carregarUltimoBackup() {
+            var b = localStorage.getItem('diligence_ultimo_backup_v8');
+            if (b) document.getElementById('badgeUltimoBackup').innerHTML = "📁 " + b;
+        }
+
+        function atualizarBotaoTick(btn, ativado, textoOriginal) {
+            if (ativado) {
+                btn.className = "btn btn-toggle-select selected col";
+                btn.innerHTML = "✅ " + textoOriginal;
+            } else {
+                btn.className = "btn btn-toggle-select col";
+                btn.innerHTML = textoOriginal;
+            }
+        }
 
         function alternarAba(aba) {
             document.getElementById('tabHeadPerfil').className = 'tab-btn' + (aba === 'perfil' ? ' active' : '');
             document.getElementById('tabHeadRegistro').className = 'tab-btn' + (aba === 'registro' ? ' active' : '');
             document.getElementById('tabHeadHistorico').className = 'tab-btn' + (aba === 'historico' ? ' active' : '');
+            document.getElementById('tabHeadFinanceiro').className = 'tab-btn' + (aba === 'financeiro' ? ' active' : '');
 
             document.getElementById('sectionPerfil').className = (aba === 'perfil' ? '' : 'hidden');
             document.getElementById('sectionRegistro').className = (aba === 'registro' ? '' : 'hidden');
             document.getElementById('sectionHistorico').className = (aba === 'historico' ? '' : 'hidden');
+            document.getElementById('sectionFinanceiro').className = (aba === 'financeiro' ? '' : 'hidden');
 
             if (aba === 'historico') renderizarAtos();
+            if (aba === 'financeiro') renderizarFinanceiro();
         }
 
         function carregarPerfil() {
             try {
                 var p = localStorage.getItem('diligence_db_perfil_v8');
-                if (!p) p = localStorage.getItem('diligence_db_perfil_v7');
                 if (p) {
                     perfil = JSON.parse(p);
                     document.getElementById('perfilNome').value = perfil.nome || '';
@@ -727,20 +989,18 @@
         function carregarAtos() {
             try {
                 var a = localStorage.getItem('diligence_db_atos_v8');
-                if (!a) a = localStorage.getItem('diligence_db_atos_v7');
-                if (a) {
-                    atos = JSON.parse(a);
-                }
+                if (a) atos = JSON.parse(a);
             } catch(e) {}
         }
 
         function salvarAto() {
             if (!perfil.nome) {
-                alert("Atenção: Configure seu cadastro na aba '1. Perfil' antes de gravar atos.");
+                alert("Atenção: Configure seu cadastro na aba '1. Perfil' antes de gravar lançamentos.");
                 alternarAba('perfil');
                 return;
             }
 
+            var natureza = document.getElementById('naturezaAto').value;
             var cliente = document.getElementById('cliente').value.trim();
             var processo = document.getElementById('processo').value.trim();
             var tipo = document.getElementById('tipoAto').value;
@@ -766,6 +1026,7 @@
 
             var novoAto = {
                 id: Date.now(),
+                natureza: natureza,
                 atuacao: atuacao,
                 advTitular: advTitular,
                 cliente: cliente,
@@ -776,7 +1037,8 @@
                 valor: valor,
                 status: status,
                 anexo: arquivoBase64,
-                link: ataLink
+                link: ataLink,
+                compartilhado: false
             };
 
             atos.push(novoAto);
@@ -789,7 +1051,7 @@
 
             setTimeout(function() {
                 btnGravar.className = "btn btn-primary";
-                btnGravar.innerHTML = "💾 GRAVAR ATO NO BANCO DE DADOS";
+                btnGravar.innerHTML = "💾 GRAVAR LANÇAMENTO NO BANCO";
                 btnGravar.disabled = false;
 
                 document.getElementById('cliente').value = '';
@@ -806,12 +1068,27 @@
             }, 1200);
         }
 
-        function limparDuplicados() {
-            if (atos.length === 0) {
-                alert("Não há lançamentos no banco para verificar.");
-                return;
+        function duplicarAto(id) {
+            var original = null;
+            for (var i = 0; i < atos.length; i++) {
+                if (atos[i].id === id) { original = atos[i]; break; }
             }
-            
+            if (!original) return;
+
+            var copia = JSON.parse(JSON.stringify(original));
+            copia.id = Date.now();
+            copia.cliente += " (Cópia)";
+            copia.compartilhado = false;
+
+            atos.push(copia);
+            localStorage.setItem('diligence_db_atos_v8', JSON.stringify(atos));
+            renderizarAtos();
+            renderizarFinanceiro();
+            alert("📋 Lançamento duplicado!");
+        }
+
+        function limparDuplicados() {
+            if (atos.length === 0) return;
             var unicos = [];
             var chaves = {};
 
@@ -828,8 +1105,7 @@
             atos = unicos;
             localStorage.setItem('diligence_db_atos_v8', JSON.stringify(atos));
             renderizarAtos();
-
-            alert("🧹 Limpeza concluída! " + removidos + " lançamento(s) duplicado(s) foi(ram) removido(s).");
+            alert("🧹 " + removidos + " duplicado(s) removido(s).");
         }
 
         function alternarStatusPagamento(id) {
@@ -841,6 +1117,7 @@
             }
             localStorage.setItem('diligence_db_atos_v8', JSON.stringify(atos));
             renderizarAtos();
+            renderizarFinanceiro();
         }
 
         function mudarTipoFiltro() {
@@ -883,44 +1160,36 @@
             var total = 0;
 
             if (atosFiltrados.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; padding:20px;">Nenhum ato encontrado no banco de dados para este filtro.</p>';
+                container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; padding:20px;">Nenhum lançamento encontrado.</p>';
             } else {
                 for (var i = 0; i < atosFiltrados.length; i++) {
                     var ato = atosFiltrados[i];
-                    total += ato.valor;
+                    var isDebito = (ato.natureza === 'Debito');
+                    total += isDebito ? -ato.valor : ato.valor;
                     
                     var isPago = (ato.status === 'Pago');
-                    var cardClass = isPago ? 'item-card pago' : 'item-card pendente';
-                    var statusBadge = isPago ? '<span class="status-badge-inline status-pago">✅ PAGO</span>' : '<span class="status-badge-inline status-pendente">⌛ PENDENTE</span>';
-
-                    var infoSubstab = "";
-                    if (ato.advTitular) {
-                        infoSubstab = '<br><strong>Substabelecido por:</strong> ' + ato.advTitular;
-                    }
-
-                    var anexoHTML = "";
-                    if (ato.anexo) {
-                        if (ato.anexo.indexOf('data:image') === 0) {
-                            anexoHTML = '<br><a href="' + ato.anexo + '" target="_blank" style="color:#A31D24; font-weight:bold;">🖼️ Ver Foto da Ata</a>';
-                        } else {
-                            anexoHTML = '<br><a href="' + ato.anexo + '" target="_blank" style="color:#A31D24; font-weight:bold;">📄 Ver PDF da Ata</a>';
-                        }
-                    } else if (ato.link) {
-                        anexoHTML = '<br><a href="' + ato.link + '" target="_blank" style="color:#1F3864; font-weight:bold;">🔗 Ver Link da Ata</a>';
-                    }
-
+                    var cardClass = isDebito ? 'item-card debito' : (isPago ? 'item-card pago' : 'item-card pendente');
+                    
+                    var statusBadge = isDebito ? 
+                        '<span class="status-badge-inline status-debito">🔴 DÉBITO</span>' : 
+                        (isPago ? '<span class="status-badge-inline status-pago">✅ QUITADO</span>' : '<span class="status-badge-inline status-pendente">⌛ PENDENTE</span>');
+                    
+                    var checkboxExcluir = modoExcluirVarios ? '<input type="checkbox" class="chk-multi-delete" value="' + ato.id + '">' : '';
                     var dataFmt = ato.data.split('-').reverse().join('/');
 
                     var html = '<div class="' + cardClass + '">' +
-                        '<div class="item-header"><span>' + ato.cliente + '</span><span>R$ ' + ato.valor.toFixed(2).replace('.', ',') + '</span></div>' +
+                        checkboxExcluir +
+                        '<div class="item-header"><span>' + ato.cliente + '</span><span>' + (isDebito ? '-' : '') + 'R$ ' + ato.valor.toFixed(2).replace('.', ',') + '</span></div>' +
                         '<div class="item-sub">' +
-                            statusBadge + ' | <strong>Proc:</strong> ' + ato.processo + '<br>' +
-                            '<strong>Atuação:</strong> ' + (ato.atuacao || 'Advogado(a)') + infoSubstab + '<br>' +
-                            '<strong>Ato:</strong> ' + ato.tipo + ' (' + dataFmt + ' às ' + ato.hora + ')' + anexoHTML +
+                            statusBadge + '<br>' +
+                            '<strong>Proc/Ref:</strong> ' + ato.processo + '<br>' +
+                            '<strong>Ato/Desp:</strong> ' + ato.tipo + ' (' + dataFmt + ' às ' + ato.hora + ')' +
                         '</div>' +
                         '<div class="item-actions">' +
-                            '<button type="button" style="background:' + (isPago ? '#E65100' : '#2E7D32') + '; color:white;" onclick="alternarStatusPagamento(' + ato.id + ')">' + (isPago ? 'Marcar Pendente' : 'Marcar como PAGO') + '</button>' +
+                            '<button type="button" style="background:' + (isPago ? '#E65100' : '#2E7D32') + '; color:white;" onclick="alternarStatusPagamento(' + ato.id + ')">' + (isPago ? 'Marcar Pendente' : 'Marcar Quitado') + '</button>' +
+                            '<button type="button" style="background:#FBC02D; color:#333;" onclick="gerarReciboIndividual(' + ato.id + ')">🧾 Recibo</button>' +
                             '<button type="button" class="btn-success" onclick="compartilharWhatsIndividual(' + ato.id + ')">💬 Whats</button>' +
+                            '<button type="button" style="background:#1F3864; color:white;" onclick="duplicarAto(' + ato.id + ')">📋 Duplicar</button>' +
                             '<button type="button" style="background:#DD3333; color:white;" onclick="excluirAto(' + ato.id + ')">🗑️ Excluir</button>' +
                         '</div>' +
                     '</div>';
@@ -930,24 +1199,138 @@
             }
 
             document.getElementById('totalValor').innerText = "R$ " + total.toFixed(2).replace('.', ',');
-            document.getElementById('qtdAtosTexto').innerText = atosFiltrados.length + " ato(s) exibido(s)";
+            document.getElementById('qtdAtosTexto').innerText = atosFiltrados.length + " lançamento(s) exibido(s)";
         }
 
-        function excluirAto(id) {
-            if (confirm("Tem certeza que deseja apagar este ato do banco de dados?")) {
-                atos = atos.filter(function(a) { return a.id !== id; });
-                localStorage.setItem('diligence_db_atos_v8', JSON.stringify(atos));
-                renderizarAtos();
+        function renderizarFinanceiro() {
+            var container = document.getElementById('listaFinanceiroAtos');
+            container.innerHTML = '';
+
+            var totCredito = 0;
+            var totDebito = 0;
+
+            for (var i = 0; i < atos.length; i++) {
+                var a = atos[i];
+                if (a.natureza === 'Debito') totDebito += a.valor;
+                else totCredito += a.valor;
+
+                var dataFmt = a.data.split('-').reverse().join('/');
+                var isDeb = (a.natureza === 'Debito');
+
+                var html = '<div style="padding:10px; border-bottom:1px solid #EEE; display:flex; justify-content:space-between; align-items:center;">' +
+                    '<div>' +
+                        '<strong>' + a.cliente + '</strong><br>' +
+                        '<small style="color:#666;">Ref: ' + a.processo + ' (' + dataFmt + ')</small>' +
+                    '</div>' +
+                    '<div style="text-align:right;">' +
+                        '<strong style="color:' + (isDeb ? '#A31D24' : '#2E7D32') + ';">' + (isDeb ? '-' : '+') + 'R$ ' + a.valor.toFixed(2).replace('.', ',') + '</strong><br>' +
+                        '<span style="font-size:10px; font-weight:bold;">' + (a.status === 'Pago' ? '✅ QUITADO' : '⌛ PENDENTE') + '</span>' +
+                    '</div>' +
+                '</div>';
+
+                container.innerHTML += html;
             }
+
+            var saldo = totCredito - totDebito;
+
+            document.getElementById('finTotalCredito').innerText = "R$ " + totCredito.toFixed(2).replace('.', ',');
+            document.getElementById('finTotalDebito').innerText = "R$ " + totDebito.toFixed(2).replace('.', ',');
+            document.getElementById('finSaldoLiquido').innerText = "R$ " + saldo.toFixed(2).replace('.', ',');
         }
 
-        function compartilharWhatsIndividual(id) {
+        function gerarReciboSomado(listaAtos) {
             if (!perfil.nome) {
-                alert("Por favor, cadastre seu perfil na aba '1. Perfil' primeiro.");
+                alert("Cadastre seu perfil primeiro.");
                 alternarAba('perfil');
                 return;
             }
 
+            if (listaAtos.length === 0) {
+                alert("Nenhum lançamento para gerar recibo.");
+                return;
+            }
+
+            var total = 0;
+            var detalhamento = "";
+
+            for (var i = 0; i < listaAtos.length; i++) {
+                var a = listaAtos[i];
+                var valFinal = (a.natureza === 'Debito') ? -a.valor : a.valor;
+                total += valFinal;
+
+                var dataFmt = a.data.split('-').reverse().join('/');
+                detalhamento += "• " + a.cliente + " | Proc: " + a.processo + " | " + a.tipo + " (" + dataFmt + "): R$ " + a.valor.toFixed(2).replace('.', ',') + "\n";
+            }
+
+            var doc = perfil.oab ? "OAB: " + perfil.oab : "CPF: " + perfil.cpf;
+
+            var txtRecibo = "*RECIBO DE PAGAMENTO / SERVIÇOS PRESTADOS*\n\n" +
+                            "Recebi(emos) de *DILIGENCE.BR / CONTRATANTE* a quantia total de *R$ " + total.toFixed(2).replace('.', ',') + "* referente aos serviços discriminados abaixo:\n\n" +
+                            detalhamento + "\n" +
+                            "*Emitido por:* " + perfil.nome + " (" + doc + ")\n" +
+                            "*Chave PIX:* " + perfil.pix + "\n" +
+                            "*Data de Emissão:* " + new Date().toLocaleDateString('pt-BR');
+
+            document.getElementById('conteudoReciboTxt').innerText = txtRecibo;
+            document.getElementById('boxReciboVisual').className = "recibo-box";
+
+            document.getElementById('btnShareReciboWhats').onclick = function() {
+                window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(txtRecibo), '_blank');
+            };
+
+            document.getElementById('btnImprimirReciboPDF').onclick = function() {
+                window.print();
+            };
+
+            alternarAba('financeiro');
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        function gerarReciboIndividual(id) {
+            var ato = null;
+            for (var i = 0; i < atos.length; i++) {
+                if (atos[i].id === id) { ato = atos[i]; break; }
+            }
+            if (ato) gerarReciboSomado([ato]);
+        }
+
+        function dispararRelatoriosSelecionados() {
+            if (!selWhats && !selEmail && !selExcel) {
+                alert("Selecione ao menos um canal com tick ✅.");
+                return;
+            }
+            var atosFiltrados = obterAtosFiltrados();
+            if (selWhats) { registrarUltimoBackup('WhatsApp'); compartilharPeriodoWhatsApp(); }
+            if (selEmail) enviarEmailPeriodo();
+            if (selExcel) { registrarUltimoBackup('Excel'); exportarExcel(); }
+        }
+
+        function excluirAto(id) {
+            if (confirm("⚠️ Apagar este lançamento PERMANENTEMENTE?")) {
+                atos = atos.filter(function(a) { return a.id !== id; });
+                localStorage.setItem('diligence_db_atos_v8', JSON.stringify(atos));
+                renderizarAtos();
+                renderizarFinanceiro();
+            }
+        }
+
+        function excluirSelecionadosEmMassa() {
+            var chks = document.querySelectorAll('.chk-multi-delete:checked');
+            if (chks.length === 0) return;
+
+            if (confirm("⚠️ EXCLUIR PERMANENTEMENTE " + chks.length + " registro(s)?")) {
+                var ids = [];
+                for (var i = 0; i < chks.length; i++) ids.push(parseInt(chks[i].value));
+
+                atos = atos.filter(function(a) { return ids.indexOf(a.id) === -1; });
+                localStorage.setItem('diligence_db_atos_v8', JSON.stringify(atos));
+                modoExcluirVarios = false;
+                renderizarAtos();
+                renderizarFinanceiro();
+            }
+        }
+
+        function compartilharWhatsIndividual(id) {
             var ato = null;
             for (var i = 0; i < atos.length; i++) {
                 if (atos[i].id === id) { ato = atos[i]; break; }
@@ -955,150 +1338,97 @@
             if (!ato) return;
 
             var dataFmt = ato.data.split('-').reverse().join('/');
-            var infoSub = ato.advTitular ? "\n*Substabelecido por:* " + ato.advTitular : "";
-            var docProfissional = perfil.oab ? "OAB: " + perfil.oab : (perfil.cpf ? "CPF: " + perfil.cpf : "");
+            var docProfissional = perfil.oab ? "OAB: " + perfil.oab : "CPF: " + perfil.cpf;
 
-            var msg = "*COMPROVANTE DE ATO REALIZADO - DILIGENCE.BR (BETA)*\n\n" +
+            var msg = "*COMPROVANTE DE LANÇAMENTO - DILIGENCE.BR*\n\n" +
                       "*Executado por:* " + perfil.nome + " (" + docProfissional + ")\n" +
-                      "*Atuação:* " + (ato.atuacao || 'Advogado(a)') + infoSub + "\n" +
-                      "*Cliente Representado:* " + ato.cliente + "\n" +
-                      "*Número do Processo:* " + ato.processo + "\n" +
-                      "*Tipo de Ato:* " + ato.tipo + "\n" +
-                      "*Data/Hora do Ato:* " + dataFmt + " às " + ato.hora + "\n" +
-                      "*Valor do Ato:* R$ " + ato.valor.toFixed(2).replace('.', ',') + " (" + ato.status.toUpperCase() + ")\n" +
-                      "*Chave PIX para Pagamento:* " + perfil.pix;
+                      "*Tipo:* " + (ato.natureza === 'Debito' ? 'DÉBITO (-)' : 'CRÉDITO (+)') + "\n" +
+                      "*Cliente/Empresa:* " + ato.cliente + "\n" +
+                      "*Processo/Ref:* " + ato.processo + "\n" +
+                      "*Data/Hora:* " + dataFmt + " às " + ato.hora + "\n" +
+                      "*Valor:* R$ " + ato.valor.toFixed(2).replace('.', ',') + " (" + ato.status.toUpperCase() + ")\n" +
+                      "*PIX:* " + perfil.pix;
 
             window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), '_blank');
         }
 
         function compartilharPeriodoWhatsApp() {
-            if (!perfil.nome) {
-                alert("Por favor, cadastre seu perfil na aba '1. Perfil' primeiro.");
-                alternarAba('perfil');
-                return;
-            }
-
             var atosFiltrados = obterAtosFiltrados();
-            if (atosFiltrados.length === 0) {
-                alert("Nenhum ato encontrado no filtro atual para exportar.");
-                return;
-            }
-
             var total = 0;
             var listaTxt = "";
 
             for (var i = 0; i < atosFiltrados.length; i++) {
                 var a = atosFiltrados[i];
-                total += a.valor;
+                var valFinal = (a.natureza === 'Debito') ? -a.valor : a.valor;
+                total += valFinal;
                 var dataFmt = a.data.split('-').reverse().join('/');
-                var infoSub = a.advTitular ? " (Substab: " + a.advTitular + ")" : "";
 
                 listaTxt += "\n📌 *Ato " + (i + 1) + ":* " + a.cliente +
-                            "\n• *Processo:* " + a.processo +
+                            "\n• *Proc:* " + a.processo +
                             "\n• *Data/Hora:* " + dataFmt + " às " + a.hora +
-                            "\n• *Tipo:* " + a.tipo + " | *Atuação:* " + (a.atuacao || 'Advogado') + infoSub +
-                            "\n• *Valor:* R$ " + a.valor.toFixed(2).replace('.', ',') + " [" + a.status.toUpperCase() + "]\n";
+                            "\n• *Valor:* " + (a.natureza === 'Debito' ? '-' : '') + "R$ " + a.valor.toFixed(2).replace('.', ',') + "\n";
             }
 
-            var docProfissional = perfil.oab ? "OAB: " + perfil.oab : (perfil.cpf ? "CPF: " + perfil.cpf : "");
+            var docProfissional = perfil.oab ? "OAB: " + perfil.oab : "CPF: " + perfil.cpf;
 
-            var msg = "*RELATÓRIO DE PAUTA DETALHADO - DILIGENCE.BR (BETA)*\n" +
-                      "*Profissional Responsável:* " + perfil.nome + " (" + docProfissional + ")\n" +
+            var msg = "*RELATÓRIO DE PAUTA DETALHADO - DILIGENCE.BR*\n" +
+                      "*Profissional:* " + perfil.nome + " (" + docProfissional + ")\n" +
                       "*Chave PIX:* " + perfil.pix + "\n" +
-                      "----------------------------------------" +
-                      listaTxt +
-                      "----------------------------------------\n" +
-                      "*TOTAL DE ATOS:* " + atosFiltrados.length + "\n" +
-                      "*VALOR TOTAL DO FILTRO:* R$ " + total.toFixed(2).replace('.', ',') + "\n\n" +
-                      "_Ferramenta experimental de auxílio diário._";
+                      "----------------------------------------" + listaTxt + "----------------------------------------\n" +
+                      "*TOTAL LÍQUIDO:* R$ " + total.toFixed(2).replace('.', ',');
 
             window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), '_blank');
         }
 
         function enviarEmailPeriodo() {
-            if (!perfil.nome) {
-                alert("Por favor, cadastre seu perfil na aba '1. Perfil' primeiro.");
-                alternarAba('perfil');
-                return;
-            }
-
             var atosFiltrados = obterAtosFiltrados();
-            if (atosFiltrados.length === 0) {
-                alert("Nenhum ato encontrado no filtro atual para enviar por e-mail.");
-                return;
-            }
-
             var total = 0;
             var listaTxt = "";
 
             for (var i = 0; i < atosFiltrados.length; i++) {
                 var a = atosFiltrados[i];
-                total += a.valor;
+                var valFinal = (a.natureza === 'Debito') ? -a.valor : a.valor;
+                total += valFinal;
                 var dataFmt = a.data.split('-').reverse().join('/');
-                var sub = a.advTitular ? " (Substabelecido por: " + a.advTitular + ")" : "";
 
-                listaTxt += (i + 1) + ". CLIENTE: " + a.cliente + "\n" +
-                            "   Nº PROCESSO: " + a.processo + "\n" +
-                            "   DATA/HORA: " + dataFmt + " às " + a.hora + "\n" +
-                            "   TIPO/ATUAÇÃO: " + a.tipo + " - " + (a.atuacao || 'Advogado(a)') + sub + "\n" +
-                            "   VALOR: R$ " + a.valor.toFixed(2).replace('.', ',') + " [" + a.status + "]\n\n";
+                listaTxt += (i + 1) + ". CLIENTE: " + a.cliente + " | PROC: " + a.processo + " | DATA: " + dataFmt + " | VALOR: R$ " + a.valor.toFixed(2).replace('.', ',') + "\n";
             }
 
-            var emailExtra = document.getElementById('emailAdicional').value.trim();
             var dest = "controledepautasp@gmail.com";
-            if (emailExtra) dest += "," + emailExtra;
-
-            var assunto = "Relatório Detalhado de Atos - Diligence.BR (BETA) - " + perfil.nome;
-            var corpo = "Prezados,\n\nSegue a listagem detalhada dos atos realizados:\n\nExecutado por: " + perfil.nome + "\nOAB/CPF: " + (perfil.oab || perfil.cpf) + "\nChave PIX: " + perfil.pix + "\n\nLISTA DOS PROCESSOS:\n\n" + listaTxt + "TOTAL DE ATOS: " + atosFiltrados.length + "\nVALOR TOTAL DO PERÍODO: R$ " + total.toFixed(2).replace('.', ',') + "\n\nAtenciosamente,\n" + perfil.nome;
+            var assunto = "Relatório Detalhado de Atos - " + perfil.nome;
+            var corpo = "Prezados,\n\nListagem dos atos:\n\n" + listaTxt + "\nTOTAL LÍQUIDO: R$ " + total.toFixed(2).replace('.', ',') + "\n\nAtenciosamente,\n" + perfil.nome;
 
             window.location.href = "mailto:" + dest + "?subject=" + encodeURIComponent(assunto) + "&body=" + encodeURIComponent(corpo);
         }
 
         function exportarExcel() {
-            if (!perfil.nome) {
-                alert("Por favor, cadastre seu perfil na aba '1. Perfil' primeiro.");
-                alternarAba('perfil');
-                return;
-            }
-
             var atosFiltrados = obterAtosFiltrados();
-            if (atosFiltrados.length === 0) {
-                alert("Nenhum ato encontrado para exportar em planilha.");
-                return;
-            }
 
             var csv = "\uFEFF";
-            csv += "CONTRATANTE: DILIGENCE.BR (VERSAO BETA EXPERIMENTAL)\n";
             csv += "Executado por:;" + perfil.nome + ";Documento:;" + (perfil.oab || perfil.cpf) + ";Pix:;" + perfil.pix + "\n\n";
-            csv += "Data do Ato;Horário;Cliente Representado;Número do Processo;Tipo de Ato;Atuação do Profissional;Advogado Titular (Substabelecimento);Valor (R$);Status Pagamento\n";
+            csv += "Natureza;Data;Horário;Cliente;Processo;Tipo;Valor (R$);Status\n";
 
             var total = 0;
             for (var i = 0; i < atosFiltrados.length; i++) {
                 var a = atosFiltrados[i];
-                total += a.valor;
+                var valFinal = (a.natureza === 'Debito') ? -a.valor : a.valor;
+                total += valFinal;
                 var dataFmt = a.data.split('-').reverse().join('/');
-                csv += '"' + dataFmt + '";"' + a.hora + '";"' + a.cliente + '";"' + a.processo + '";"' + a.tipo + '";"' + (a.atuacao || 'Advogado(a)') + '";"' + (a.advTitular || 'N/A') + '";"' + a.valor.toFixed(2).replace('.', ',') + '";"' + a.status + '"\n';
+                csv += '"' + (a.natureza || 'Credito') + '";"' + dataFmt + '";"' + a.hora + '";"' + a.cliente + '";"' + a.processo + '";"' + a.tipo + '";"' + valFinal.toFixed(2).replace('.', ',') + '";"' + a.status + '"\n';
             }
 
-            csv += ";;;;;;;TOTAL DOS ATOS SELECIONADOS;" + total.toFixed(2).replace('.', ',') + ";\n";
+            csv += ";;;;;;TOTAL LIQUIDO;" + total.toFixed(2).replace('.', ',') + "\n";
 
             var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             var link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", "Banco_Dados_Diligence_BETA.csv");
+            link.setAttribute("download", "Financeiro_Diligence.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
-        function gerarPDF() {
-            if (!perfil.nome) {
-                alert("Por favor, cadastre seu perfil na aba '1. Perfil' primeiro.");
-                alternarAba('perfil');
-                return;
-            }
-            window.print();
-        }
+        function gerarPDF() { window.print(); }
     </script>
 </body>
 </html>
