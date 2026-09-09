@@ -83,31 +83,27 @@
                 </div>
                 
                 <div class="flex items-center space-x-3">
-                    <!-- Fuso Horário de Brasília -->
                     <div class="text-right text-xs">
                         <div id="clock-time" class="font-bold leading-none">00:00:00</div>
                         <div id="clock-date" class="text-[10px] text-red-200">Brasília (UTC-3)</div>
                     </div>
                     
-                    <!-- Botão Dark Mode -->
-                    <button onclick="toggleDarkMode()" class="p-2 bg-brand-darkred rounded-lg text-sm hover:bg-red-900 transition" title="Alternar Modo Escuro">
+                    <button onclick="toggleDarkMode()" class="p-2 bg-brand-darkred rounded-lg text-sm hover:bg-red-900 transition">
                         <i class="fa-solid font-bold fa-moon dark:hidden"></i>
                         <i class="fa-solid font-bold fa-sun hidden dark:inline"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- Dashboard de Boas-Vindas e Audiências de Hoje -->
             <div class="mt-3 pt-3 border-t border-red-500/50 flex flex-col gap-2">
                 <div class="flex justify-between items-center text-xs bg-red-800/40 p-2 rounded-lg">
                     <span id="daily-message" class="italic text-red-100"><i class="fa-solid fa-quote-left mr-1"></i> "Que o dia seja produtivo e abençoado!"</span>
                     <button onclick="openBackupModal()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] hover:bg-red-50 transition"><i class="fa-solid fa-database mr-1"></i>Backup</button>
                 </div>
                 
-                <!-- Banner Audiências de Hoje -->
                 <div id="today-banner" class="bg-amber-500 text-gray-900 p-2.5 rounded-lg text-xs font-bold flex justify-between items-center hidden">
                     <span><i class="fa-solid fa-bell mr-1.5 animate-bounce"></i> <span id="today-count">0</span> AUDIÊNCIA(S) AGENDADA(S) PARA HOJE!</span>
-                    <button onclick="switchTab('tab-atos'); filterToday();" class="bg-gray-900 text-white px-2 py-1 rounded text-[10px] uppercase">Ver Pauta</button>
+                    <button onclick="switchTab('tab-atos')" class="bg-gray-900 text-white px-2 py-1 rounded text-[10px] uppercase">Ver Pauta</button>
                 </div>
             </div>
         </header>
@@ -118,8 +114,8 @@
             <!-- ABA 1: PERFIL DO CORRESPONDENTE -->
             <section id="tab-perfil" class="tab-content space-y-4">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
-                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Cadastro de Perfil</h3>
-                    <p>Preencha seus dados profissionais abaixo. Essas informações serão inseridas automaticamente em todos os seus **Recibos Sequenciais de Quitação** e relatórios profissionais em PDF.</p>
+                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Perfil do Correspondente</h3>
+                    <p>Preencha seus dados profissionais e chave PIX. Essas informações preencherão automaticamente os Recibos Sequenciais de Quitação e Cartões de Visita compartilhados.</p>
                 </div>
 
                 <form id="form-perfil" onsubmit="savePerfil(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
@@ -142,15 +138,18 @@
                         <label class="text-xs font-semibold">Chave PIX Oficial (para Recebimentos)</label>
                         <input type="text" id="perfil-pix" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
                     </div>
-                    <button type="submit" class="w-full bg-brand-red text-white py-2 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Perfil</button>
+                    <div class="flex gap-2">
+                        <button type="submit" class="flex-1 bg-brand-red text-white py-2 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Perfil</button>
+                        <button type="button" onclick="compartilharCartaoPix()" class="bg-green-600 text-white px-3 py-2 rounded-lg font-bold text-xs"><i class="fa-brands fa-whatsapp mr-1"></i> Cartão PIX</button>
+                    </div>
                 </form>
             </section>
 
-            <!-- ABA 2: NOVO ATO / AGENDAMENTO DA PAUTA -->
+            <!-- ABA 2: PAUTA & CADASTRO DE DILIGÊNCIAS -->
             <section id="tab-atos" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
-                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Cadastro de Diligências e Audiências</h3>
-                    <p>Cadastre aqui novos atos, estipulando datas do ato e **vencimento dos honorários**. Anexe orientações, prints e links do processo integral ou ata/despacho.</p>
+                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Cadastro e Pauta</h3>
+                    <p>Cadastre os atos com data/hora (Horário de Brasília) e vencimento do honorário. Utilize os botões diretos para Teams, Zoom ou GPS. Use a câmera para fotos ou leitor de QR Code. Ao marcar como **PAGO**, o crédito é lançado automaticamente no Financeiro.</p>
                 </div>
 
                 <form id="form-ato" onsubmit="saveAto(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
@@ -182,9 +181,9 @@
                         <div>
                             <label class="text-xs font-semibold">Modalidade / Plataforma</label>
                             <select id="ato-modalidade" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
-                                <option value="presencial">🏛️ Presencial (Fórum)</option>
+                                <option value="presencial">🏛️ Presencial (Fórum/GPS)</option>
                                 <option value="teams">🟣 Cível (Microsoft Teams)</option>
-                                <option value="zoom">🔵 Trabalhista / TRT (Zoom)</option>
+                                <option value="zoom">🔵 TRT/Trabalhista (Zoom)</option>
                                 <option value="outra">📞 Outra Plataforma</option>
                             </select>
                         </div>
@@ -195,11 +194,10 @@
                     </div>
 
                     <div>
-                        <label class="text-xs font-semibold">Link da Sala de Audiência / Reunião Virtual</label>
-                        <input type="url" id="ato-link-sala" placeholder="https://teams.microsoft.com/... ou Zoom" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        <label class="text-xs font-semibold">Link da Sala Virtual / Endereço do Fórum (GPS)</label>
+                        <input type="text" id="ato-link-sala" placeholder="Cole o link do Teams/Zoom ou o endereço para GPS" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
                     </div>
 
-                    <!-- Anexos Separados -->
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="text-xs font-semibold">Link do Processo Integral (Drive/Nuvem)</label>
@@ -207,13 +205,12 @@
                         </div>
                         <div>
                             <label class="text-xs font-semibold">Link do Despacho / Ata de Audiência</label>
-                            <input type="url" id="ato-link-ata" placeholder="Link da ata após o ato" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                            <input type="url" id="ato-link-ata" placeholder="Link da ata pós-audiência" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
                         </div>
                     </div>
 
-                    <!-- Checklist e Orientações com Mídia -->
                     <div class="border p-3 rounded-lg bg-gray-50 dark:bg-gray-700/30 space-y-2">
-                        <span class="font-bold text-xs text-gray-700 dark:text-gray-300">Checklist & Orientações Prévias da Audiência</span>
+                        <span class="font-bold text-xs text-gray-700 dark:text-gray-300">Checklist Prévio & Mídia</span>
                         <div class="grid grid-cols-2 gap-2 text-xs">
                             <label><input type="checkbox" id="chk-preposto"> Carta de Preposto</label>
                             <label><input type="checkbox" id="chk-substab"> Substabelecimento</label>
@@ -221,76 +218,36 @@
                             <label><input type="checkbox" id="chk-testemunhas"> Testemunhas Confirmadas</label>
                         </div>
                         <div>
-                            <label class="text-xs font-semibold">Orientações do Escritório (Instruções/Propostas)</label>
-                            <textarea id="ato-orientacoes" rows="2" placeholder="Digite orientações ou cole detalhes aqui..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm"></textarea>
+                            <label class="text-xs font-semibold">Orientações do Escritório</label>
+                            <textarea id="ato-orientacoes" rows="2" placeholder="Instruções ou proposta de acordo..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm"></textarea>
                         </div>
                         
-                        <!-- Opção de Anexar Mídia / Tirar Foto -->
-                        <div class="flex flex-wrap gap-2 text-xs">
-                            <label class="cursor-pointer bg-gray-200 dark:bg-gray-600 px-3 py-1.5 rounded font-semibold hover:bg-gray-300">
-                                <i class="fa-solid fa-camera mr-1"></i> Foto/Galeria
-                                <input type="file" accept="image/*,application/pdf" id="ato-midia-input" class="hidden" onchange="handleFileSelect(event)">
+                        <!-- Câmera do Celular / Leitor QR Code -->
+                        <div class="flex items-center gap-2 pt-1">
+                            <label class="cursor-pointer bg-gray-200 dark:bg-gray-600 px-3 py-1.5 rounded font-semibold text-xs hover:bg-gray-300">
+                                <i class="fa-solid fa-camera mr-1"></i> Abrir Câmera / Galeria / QR Code
+                                <input type="file" accept="image/*,application/pdf" capture="environment" id="ato-midia-input" class="hidden" onchange="handleFileSelect(event)">
                             </label>
-                            <span id="ato-midia-status" class="text-xs text-green-600 font-semibold self-center"></span>
+                            <span id="ato-midia-status" class="text-xs text-green-600 font-semibold"></span>
                         </div>
                     </div>
 
                     <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Ato na Pauta</button>
                 </form>
 
-                <!-- Lista de Atos / Pauta Cadastrada -->
                 <div class="space-y-2">
                     <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300">Pauta Registrada</h3>
                     <div id="lista-atos" class="space-y-2"></div>
                 </div>
             </section>
 
-            <!-- ABA 3: RELATÓRIOS, RECIBOS & MANUAL -->
-            <section id="tab-relatorios" class="tab-content space-y-4 hidden">
-                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
-                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Relatórios e Recibos com Ciência Digital</h3>
-                    <p>Filtre por cliente ou status. Gere recibos sequenciais trazendo **exclusivamente os processos marcados como PAGOS**. O envio do recibo possui validade jurídica de quitação digital.</p>
-                </div>
-
-                <!-- Filtros Rápido -->
-                <div class="flex flex-wrap gap-2 bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 text-xs">
-                    <input type="text" id="filter-cliente" placeholder="Filtrar por Cliente/Escritório..." oninput="renderRelatorios()" class="flex-1 p-2 border rounded dark:bg-gray-700">
-                    <select id="filter-status" onchange="renderRelatorios()" class="p-2 border rounded dark:bg-gray-700">
-                        <option value="todos">Todos os Status</option>
-                        <option value="pago">Apenas PAGOS</option>
-                        <option value="pendente">A Vencer / Pendentes</option>
-                        <option value="vencido">🔴 VENCIDOS</option>
-                    </select>
-                </div>
-
-                <!-- Ações de Recibo -->
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
-                    <h3 class="font-bold text-sm border-b pb-2">Emissão de Recibo Sequencial de Quitação</h3>
-                    <p class="text-xs text-gray-500">Selecione o cliente para agrupar todos os atos **PAGOS** em um recibo numerado e oficial.</p>
-                    <div class="flex gap-2">
-                        <select id="recibo-cliente-select" class="flex-1 p-2 border rounded dark:bg-gray-700 text-sm"></select>
-                        <button onclick="triggerGerarRecibo()" class="bg-green-600 hover:bg-green-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow"><i class="fa-solid fa-receipt mr-1"></i> Gerar Recibo</button>
-                    </div>
-                </div>
-
-                <div id="relatorios-lista" class="space-y-2"></div>
-
-                <!-- MANUAL GERAL DO APP -->
-                <div class="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-xl border dark:border-gray-700 text-xs space-y-2">
-                    <h3 class="font-bold text-sm text-brand-red dark:text-red-400"><i class="fa-solid fa-book mr-1"></i> Manual de Instruções & Guia PWA</h3>
-                    <p><strong>Como Instalar na Tela Inicial (Android/iPhone):</strong> No Safari (iPhone), toque em 'Compartilhar' e escolha 'Adicionar à Tela de Início'. No Chrome (Android), toque nos 3 pontos e selecione 'Instalar Aplicativo'.</p>
-                    <p><strong>Fuso Horário de Brasília:</strong> Todos os lançamentos e carimbos de horas nos recibos e logs são sincronizados automaticamente no horário oficial de Brasília (UTC-3).</p>
-                </div>
-            </section>
-
-            <!-- ABA 4: FINANCEIRO FLEXÍVEL -->
+            <!-- ABA 3: FINANCEIRO FLEXÍVEL -->
             <section id="tab-financeiro" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
-                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Gestão Financeira Flexível</h3>
-                    <p>Controle entradas de honorários e lance **despesas pessoais ou operacionais**. Despesas pessoais permanecem sob sigilo e não aparecem nos recibos enviados aos clientes.</p>
+                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Gestão Financeira</h3>
+                    <p>Acompanhe as entradas automáticas dos atos quitados e lance despesas operacionais ou pessoais. <em>Importante:</em> Lançamentos pessoais ficam sob sigilo e jamais aparecem nos recibos dos clientes. Alterações de status pago exigem justificativa com notificação operacional.</p>
                 </div>
 
-                <!-- Painel de Saldo -->
                 <div class="grid grid-cols-3 gap-2 text-center text-white">
                     <div class="bg-green-600 p-3 rounded-xl shadow">
                         <span class="text-[10px] uppercase font-bold block">Entradas</span>
@@ -306,9 +263,8 @@
                     </div>
                 </div>
 
-                <!-- Form de Lançamento de Caixa Extra -->
                 <form id="form-financeiro" onsubmit="saveMovimentacaoFinanceira(event)" class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
-                    <h3 class="font-bold text-sm border-b pb-2">Lançar Movimentação de Caixa (Entrada/Saída)</h3>
+                    <h3 class="font-bold text-sm border-b pb-2">Lançar Movimentação de Caixa (Entrada/Saída Extra)</h3>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="text-xs font-semibold">Tipo</label>
@@ -321,14 +277,14 @@
                             <label class="text-xs font-semibold">Categoria</label>
                             <select id="fin-categoria" class="w-full p-2 border rounded dark:bg-gray-700 text-sm">
                                 <option value="profissional">💼 Profissional (Honorários/Pauta)</option>
-                                <option value="pessoal">👤 Pessoal (Despesa Particular)</option>
+                                <option value="pessoal">👤 Pessoal (Despesa Particular - Sigilo)</option>
                             </select>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="text-xs font-semibold">Descrição</label>
-                            <input type="text" id="fin-desc" required placeholder="Ex: Combustível, Almoço, Honorário Extra" class="w-full p-2 border rounded dark:bg-gray-700 text-sm">
+                            <input type="text" id="fin-desc" required placeholder="Ex: Combustível, Almoço" class="w-full p-2 border rounded dark:bg-gray-700 text-sm">
                         </div>
                         <div>
                             <label class="text-xs font-semibold">Valor (R$)</label>
@@ -341,46 +297,139 @@
                 <div id="fin-extrato" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 5: TRABALHISTA, CALCULADORA & NOTAS -->
+            <!-- ABA 4: CALCULADORA TRABALHISTA & BLOCO DE NOTAS -->
             <section id="tab-trabalhista" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
-                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Calculadora Trabalhista & Bloco de Notas</h3>
-                    <p>Realize cálculos trabalhistas rápidos com multas do Art. 467/477 da CLT, gere minutas de acordo para WhatsApp e utilize o bloco de notas multífolhas.</p>
+                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Calculadora Trabalhista & Bloco</h3>
+                    <p>• <strong>Botão Vermelho (Calculadora Simples):</strong> Cálculo direto e exato das verbas rescisórias básicas.<br>
+                    • <strong>Botão Amarelo (Detalhamento & Minuta):</strong> Aplicação das multas dos Arts. 467/477 da CLT e geração de minuta pronta de acordo para o WhatsApp.</p>
                 </div>
 
-                <!-- Calculadora Trabalhista Rápida -->
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
-                    <h3 class="font-bold text-sm text-brand-red border-b pb-2">Calculadora Trabalhista Rápida</h3>
+                    <h3 class="font-bold text-sm text-brand-red border-b pb-2"><i class="fa-solid fa-calculator mr-1"></i> Calculadora de Rescisão Trabalhista</h3>
                     
                     <div class="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                            <label class="font-semibold">Último Salário (R$)</label>
-                            <input type="number" step="0.01" id="calc-salario" class="w-full p-2 border rounded dark:bg-gray-700">
+                            <label class="font-semibold">Último Salário Bruto (R$)</label>
+                            <input type="number" step="0.01" id="calc-salario" placeholder="Ex: 2500.00" class="w-full p-2 border rounded dark:bg-gray-700">
                         </div>
                         <div>
-                            <label class="font-semibold">Meses Trabalhados</label>
-                            <input type="number" id="calc-meses" class="w-full p-2 border rounded dark:bg-gray-700">
+                            <label class="font-semibold">Meses Trabalhados no Ano</label>
+                            <input type="number" id="calc-meses" placeholder="Ex: 8" class="w-full p-2 border rounded dark:bg-gray-700">
                         </div>
                     </div>
 
-                    <div class="flex flex-col gap-1 text-xs">
-                        <label><input type="checkbox" id="calc-multa-467"> Incluir Multa Art. 467 CLT (50% verbas incontroversas)</label>
-                        <label><input type="checkbox" id="calc-multa-477"> Incluir Multa Art. 477 CLT (1 salário por atraso)</label>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                            <label class="font-semibold">Aviso Prévio</label>
+                            <select id="calc-aviso" class="w-full p-2 border rounded dark:bg-gray-700">
+                                <option value="nenhum">Nenhum / Cumprido</option>
+                                <option value="indenizado">Indenizado (1 Salário)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="font-semibold">Saldo FGTS Estimado (R$)</label>
+                            <input type="number" step="0.01" id="calc-fgts" placeholder="Opcional" class="w-full p-2 border rounded dark:bg-gray-700">
+                        </div>
                     </div>
 
-                    <div class="flex gap-2">
-                        <button onclick="calcularRescisao()" class="flex-1 bg-brand-red text-white py-2 rounded-lg font-bold text-xs hover:bg-brand-darkred">Calcular Rescisão Estreita</button>
-                        <button onclick="gerarMinutaAcordo()" class="bg-amber-600 text-white px-3 py-2 rounded-lg font-bold text-xs hover:bg-amber-700">🤝 Gerar Minuta de Acordo</button>
+                    <div class="flex flex-col gap-1 text-xs pt-1 border-t">
+                        <label class="font-semibold text-gray-700 dark:text-gray-300">Multas e Acréscimos Especiais:</label>
+                        <label><input type="checkbox" id="calc-multa-467"> Multa Art. 467 CLT (50% sobre verbas incontroversas)</label>
+                        <label><input type="checkbox" id="calc-multa-477"> Multa Art. 477 CLT (1 salário por atraso na quitação)</label>
                     </div>
 
-                    <div id="calc-resultado" class="hidden p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-xs space-y-1 font-mono"></div>
+                    <!-- BOTÕES DE DESTAQUE: VERMELHO E AMARELO -->
+                    <div class="flex flex-col gap-2 pt-2">
+                        <button onclick="calcularRescisaoExata()" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-3 rounded-xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-calculator text-base"></i> CALCULADORA SIMPLES (VERBAS EXATAS)
+                        </button>
+                        <button onclick="gerarMinutaAcordo()" class="w-full bg-amber-500 hover:bg-amber-600 text-gray-900 py-3 rounded-xl font-extrabold text-sm shadow-md transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-handshake text-base"></i> DETALHAMENTO & MINUTA DE ACORDO (WHATSAPP)
+                        </button>
+                    </div>
+
+                    <div id="calc-resultado" class="hidden p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-xs space-y-1 font-mono border"></div>
                 </div>
 
-                <!-- Bloco de Notas Multífolhas -->
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
-                    <h3 class="font-bold text-sm border-b pb-2">Bloco de Notas Rápidas</h3>
-                    <textarea id="bloco-notas" rows="4" placeholder="Anote orientações rápidas da pauta..." class="w-full p-2 border rounded dark:bg-gray-700 text-xs" oninput="saveNotas()"></textarea>
+                    <h3 class="font-bold text-sm border-b pb-2">Bloco de Notas Rápidas da Pauta</h3>
+                    <textarea id="bloco-notas" rows="3" placeholder="Anote orientações e ocorrências das audiências..." class="w-full p-2 border rounded dark:bg-gray-700 text-xs" oninput="saveNotas()"></textarea>
                     <button onclick="shareNotas()" class="bg-green-600 text-white px-3 py-1.5 rounded text-xs font-bold"><i class="fa-brands fa-whatsapp mr-1"></i> Compartilhar Notas</button>
+                </div>
+            </section>
+
+            <!-- ABA 5 (ÚLTIMA ABA): RELATÓRIOS COMPLETOS, RECIBOS E EXPORTAÇÃO -->
+            <section id="tab-relatorios" class="tab-content space-y-4 hidden">
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
+                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Relatorios Executivos & Quitação</h3>
+                    <p>Digite o nome do cliente para filtrar. Marque as caixinhas <code>[x]</code> para selecionar vários processos. Baixe em **Planilha (.CSV para Excel/Sheets)**, imprima em PDF ou emita o **Recibo Sequencial de Quitação** (contendo apenas processos PAGOS e cláusula de validade digital).</p>
+                </div>
+
+                <!-- Painel Executivo Consolidado -->
+                <div id="relatorio-resumo-card" class="bg-gray-900 text-white p-3 rounded-xl text-xs space-y-1">
+                    <div class="font-bold text-amber-400 border-b border-gray-700 pb-1 flex justify-between">
+                        <span>RESUMO EXECUTIVO DA PAUTA</span>
+                        <span id="relatorio-total-atos">0 Ato(s)</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 pt-1 text-center">
+                        <div>
+                            <span class="text-[9px] text-gray-400 block">TOTAL BRUTO</span>
+                            <span id="relatorio-valor-total" class="font-bold">R$ 0,00</span>
+                        </div>
+                        <div>
+                            <span class="text-[9px] text-green-400 block">QUITADO (PAGO)</span>
+                            <span id="relatorio-valor-pago" class="font-bold text-green-400">R$ 0,00</span>
+                        </div>
+                        <div>
+                            <span class="text-[9px] text-amber-400 block">PENDENTE/VENCIDO</span>
+                            <span id="relatorio-valor-pendente" class="font-bold text-amber-400">R$ 0,00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro de Busca Por Cliente -->
+                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 text-xs space-y-2">
+                    <div class="flex flex-wrap gap-2">
+                        <div class="flex-1">
+                            <label class="font-semibold block mb-1">Buscar por Cliente/Escritório:</label>
+                            <input type="text" id="filter-cliente" placeholder="Digite o nome do cliente (ex: Patrícia)..." oninput="renderRelatorios()" class="w-full p-2 border rounded dark:bg-gray-700">
+                        </div>
+                        <div>
+                            <label class="font-semibold block mb-1">Filtrar Status:</label>
+                            <select id="filter-status" onchange="renderRelatorios()" class="p-2 border rounded dark:bg-gray-700">
+                                <option value="todos">Todos os Status</option>
+                                <option value="pago">Apenas PAGOS</option>
+                                <option value="pendente">A Vencer / Pendentes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Exportação -->
+                    <div class="flex gap-2 pt-2 border-t">
+                        <button onclick="exportarPlanilhaCSV()" class="flex-1 bg-green-700 text-white font-bold py-2 rounded-lg text-xs shadow"><i class="fa-solid fa-file-excel mr-1"></i> Planilha (.CSV/Sheets)</button>
+                        <button onclick="window.print()" class="bg-gray-700 text-white font-bold px-3 py-2 rounded-lg text-xs shadow"><i class="fa-solid fa-print mr-1"></i> PDF / Imprimir</button>
+                        <button onclick="compartilharManualGeral()" class="bg-amber-600 text-white font-bold px-3 py-2 rounded-lg text-xs shadow"><i class="fa-brands fa-whatsapp mr-1"></i> Manual no Whats</button>
+                    </div>
+                </div>
+
+                <!-- Emissão de Recibo em Lote -->
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
+                    <h3 class="font-bold text-sm border-b pb-2">Emissão de Recibo Sequencial de Quitação</h3>
+                    <p class="text-xs text-gray-500">Selecione o cliente para compilar os processos **PAGOS** e emitir o recibo com quitação digital.</p>
+                    <div class="flex gap-2">
+                        <select id="recibo-cliente-select" class="flex-1 p-2 border rounded dark:bg-gray-700 text-sm"></select>
+                        <button onclick="triggerGerarRecibo()" class="bg-brand-red hover:bg-brand-darkred text-white font-bold px-4 py-2 rounded-lg text-xs shadow"><i class="fa-solid fa-receipt mr-1"></i> Gerar Recibo</button>
+                    </div>
+                </div>
+
+                <div id="relatorios-lista" class="space-y-2"></div>
+
+                <!-- Manual Geral do Sistema -->
+                <div class="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-xl border dark:border-gray-700 text-xs space-y-2">
+                    <h3 class="font-bold text-sm text-brand-red dark:text-red-400"><i class="fa-solid fa-book mr-1"></i> Manual de Instruções & PWA</h3>
+                    <p><strong>Instalação PWA:</strong> Toque em 'Compartilhar' (iPhone) ou nos 3 pontos (Android) e escolha 'Adicionar à Tela de Início'.</p>
+                    <p><strong>Integração de Honorários:</strong> Quando o status do ato muda para <strong>PAGO</strong> na pauta, o valor entra automaticamente no Financeiro como crédito de honorário.</p>
                 </div>
             </section>
 
@@ -389,12 +438,12 @@
         <!-- RODAPÉ FIXO -->
         <footer class="bg-gray-900 text-gray-300 p-4 text-center text-xs space-y-2 border-t dark:border-gray-800">
             <p class="font-semibold text-gray-100">DILIGENCE.BR — Elaborado com carinho e dedicação para apoiar a rotina diária de Advogados(as) e Prepostos.</p>
-            <p class="text-[11px] text-gray-400">🚫 <strong>Venda Proibida | Ferramenta 100% Gratuita e Colaborativa:</strong> Desenvolvida de forma experimental com o objetivo único de facilitar o controle de pautas e honorários. É estritamente proibida a comercialização ou revenda deste software. Faça seus backups regularmente.</p>
-            <p class="text-[11px] text-gray-400">💬 <strong>Seu feedback é fundamental!</strong> Mande sua opinião ou sugestão exclusivamente para: <a href="mailto:cj.patriciaamr@gmail.com" class="text-red-400 underline font-bold">cj.patriciaamr@gmail.com</a></p>
+            <p class="text-[11px] text-gray-400">🚫 <strong>Venda Proibida | Ferramenta 100% Gratuita e Colaborativa:</strong> Desenvolvida de forma experimental. É estritamente proibida a comercialização ou revenda deste software. Faça seus backups regularmente.</p>
+            <p class="text-[11px] text-gray-400">💬 <strong>Seu feedback é fundamental!</strong> Mande sua opinião exclusivamente para: <a href="mailto:cj.patriciaamr@gmail.com" class="text-red-400 underline font-bold">cj.patriciaamr@gmail.com</a></p>
             <p class="text-[10px] text-gray-500 pt-1">Idealizado e desenvolvido por <strong>Patricia Monte</strong>.</p>
         </footer>
 
-        <!-- NAVEGAÇÃO INFERIOR POR ABAS -->
+        <!-- NAVEGAÇÃO INFERIOR POR ABAS (RELATÓRIOS REORDENADO PARA ÚLTIMO) -->
         <nav class="bg-white dark:bg-gray-900 border-t dark:border-gray-800 sticky bottom-0 z-30 flex justify-around p-2 text-center text-[10px] font-bold">
             <button onclick="switchTab('tab-perfil')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-perfil">
                 <i class="fa-solid fa-user-gear text-base"></i><span>Perfil</span>
@@ -402,19 +451,43 @@
             <button onclick="switchTab('tab-atos')" class="tab-btn p-1 text-brand-red flex flex-col items-center" id="btn-tab-atos">
                 <i class="fa-solid fa-calendar-check text-base"></i><span>Pauta/Atos</span>
             </button>
-            <button onclick="switchTab('tab-relatorios')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-relatorios">
-                <i class="fa-solid fa-file-invoice text-base"></i><span>Relatórios</span>
-            </button>
             <button onclick="switchTab('tab-financeiro')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-financeiro">
                 <i class="fa-solid fa-wallet text-base"></i><span>Financeiro</span>
             </button>
             <button onclick="switchTab('tab-trabalhista')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-trabalhista">
                 <i class="fa-solid fa-calculator text-base"></i><span>Calculadora</span>
             </button>
+            <button onclick="switchTab('tab-relatorios')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-relatorios">
+                <i class="fa-solid fa-file-invoice text-base"></i><span>Relatórios</span>
+            </button>
         </nav>
     </div>
 
-    <!-- MODAL DE CONFIRMAÇÃO DE CIÊNCIA / QUITAÇÃO DIGITAL -->
+    <!-- MODAL DE LEMBRETE E MENSAGEM LIVRE DE WHATSAPP -->
+    <div id="modal-lembrete" class="fixed inset-0 bg-black/60 modal-blur z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-md w-full space-y-3 shadow-2xl text-xs">
+            <h3 class="font-bold text-sm text-brand-red border-b pb-2"><i class="fa-solid fa-bell mr-1"></i> LEMBRETE DE COMPROMISSO IMINENTE</h3>
+            <p id="lembrete-detalhe-texto" class="font-semibold text-gray-700 dark:text-gray-200"></p>
+            
+            <div class="space-y-2">
+                <label class="font-bold block text-gray-600 dark:text-gray-300">Escolha ou digite a mensagem para o WhatsApp:</label>
+                <select id="lembrete-opcao-select" onchange="toggleTextoLivre()" class="w-full p-2 border rounded dark:bg-gray-700 text-xs">
+                    <option value="presenca">📍 Presença: Já estou no local/sala aguardando o pregão.</option>
+                    <option value="andamento">⏳ Em andamento: Processo anterior em curso, início em instantes.</option>
+                    <option value="concluido">✅ Concluído: Audiência realizada com sucesso!</option>
+                    <option value="outro">✏️ OUTRO: Digitar mensagem personalizada livre...</option>
+                </select>
+                <textarea id="lembrete-texto-livre" rows="3" placeholder="Digite aqui sua mensagem personalizada..." class="w-full p-2 border rounded dark:bg-gray-700 hidden text-xs"></textarea>
+            </div>
+
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeLembreteModal()" class="flex-1 bg-gray-300 dark:bg-gray-600 font-bold py-2 rounded-lg">Fechar Lembrete</button>
+                <button onclick="enviarLembreteWhatsapp()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg"><i class="fa-brands fa-whatsapp mr-1"></i> Enviar WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL RECIBO COM VALIDADE DIGITAL -->
     <div id="modal-recibo" class="fixed inset-0 bg-black/60 modal-blur z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-md w-full space-y-4 shadow-2xl text-xs">
             <h3 class="font-bold text-sm text-brand-red border-b pb-2"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ATENÇÃO: CONFIRMAÇÃO DE EMISSÃO E QUITAÇÃO</h3>
@@ -431,12 +504,12 @@
         </div>
     </div>
 
-    <!-- MODAL DE JUSTIFICATIVA OBRIGATÓRIA DE ESTORNO -->
+    <!-- MODAL ESTORNO -->
     <div id="modal-estorno" class="fixed inset-0 bg-black/60 modal-blur z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-md w-full space-y-3 shadow-2xl text-xs">
             <h3 class="font-bold text-sm text-red-600 border-b pb-2"><i class="fa-solid fa-shield-halved mr-1"></i> TRAVA DE SEGURANÇA: JUSTIFICATIVA DE ESTORNO</h3>
-            <p class="text-gray-600 dark:text-gray-300">Este ato já figurou em recibo ou esteve marcado como PAGO. Para alterar seu status, é obrigatório registrar a justificativa que será enviada ao Controle de Pautas (controledepautasp@gmail.com).</p>
-            <textarea id="estorno-motivo" rows="3" placeholder="Digite o motivo do estorno/alteração..." class="w-full p-2 border rounded dark:bg-gray-700"></textarea>
+            <p class="text-gray-600 dark:text-gray-300">Este ato esteve marcado como PAGO. Para alterar seu status, é obrigatório registrar a justificativa que será enviada ao Controle de Pautas (controledepautasp@gmail.com).</p>
+            <textarea id="estorno-motivo" rows="3" placeholder="Digite o motivo do estorno..." class="w-full p-2 border rounded dark:bg-gray-700"></textarea>
             <div class="flex gap-2">
                 <button onclick="closeEstornoModal()" class="flex-1 bg-gray-300 dark:bg-gray-600 font-bold py-2 rounded-lg">Cancelar</button>
                 <button onclick="confirmarEstornoComNotificacao()" class="flex-1 bg-red-600 text-white font-bold py-2 rounded-lg">Confirmar e Notificar</button>
@@ -444,11 +517,11 @@
         </div>
     </div>
 
-    <!-- MODAL DE BACKUP .JSON -->
+    <!-- MODAL BACKUP -->
     <div id="modal-backup" class="fixed inset-0 bg-black/60 modal-blur z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-md w-full space-y-4 shadow-2xl text-xs">
             <h3 class="font-bold text-sm text-brand-red border-b pb-2">Backup Geral de Segurança (.JSON)</h3>
-            <p>Baixe o arquivo de segurança para garantir a recuperação de todos os seus dados caso troque ou formate o celular.</p>
+            <p>Baixe o arquivo de segurança para garantir a recuperação de todos os seus dados.</p>
             <div class="flex flex-col gap-2">
                 <button onclick="exportBackupJSON()" class="bg-brand-red text-white py-2 rounded-lg font-bold"><i class="fa-solid fa-download mr-1"></i> Baixar Arquivo Backup (.JSON)</button>
                 <label class="bg-gray-800 text-white py-2 rounded-lg font-bold text-center cursor-pointer">
@@ -460,15 +533,12 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT PRINCIPAL -->
+    <!-- LÓGICA JAVASCRIPT -->
     <script>
-        // Credenciais Fixas e Configurações
         const AUTH_USER = "diligence.br*";
         const AUTH_PASS = "320427";
         const EMAIL_OPERACIONAL = "controledepautasp@gmail.com";
-        const WHATSAPP_OPERACIONAL = "5511978386574";
 
-        // Estado Global da Aplicação
         let db = {
             perfil: { nome: '', doc: '', cidade: '', pix: '' },
             atos: [],
@@ -480,8 +550,8 @@
         let tempAtoMidia = null;
         let atoEstornoIndex = null;
         let clienteReciboAtual = null;
+        let atoLembreteAtual = null;
 
-        // Sincronização do Fuso Horário de Brasília
         function updateClock() {
             const now = new Date();
             const options = { timeZone: 'America/Sao_Paulo', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
@@ -492,7 +562,6 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // Autenticação de Acesso
         function handleLogin(e) {
             e.preventDefault();
             const u = document.getElementById('login-user').value;
@@ -506,12 +575,10 @@
             }
         }
 
-        // Alternador de Modo Escuro
         function toggleDarkMode() {
             document.documentElement.classList.toggle('dark');
         }
 
-        // Troca de Abas
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.replace('text-brand-red', 'text-gray-500'));
@@ -523,7 +590,6 @@
             if (tabId === 'tab-financeiro') renderFinanceiro();
         }
 
-        // Persistência em localStorage Local
         function saveData() {
             localStorage.setItem('diligence_db', JSON.stringify(db));
             checkTodayBanner();
@@ -533,7 +599,6 @@
             const saved = localStorage.getItem('diligence_db');
             if (saved) db = JSON.parse(saved);
             
-            // Preencher formulário de perfil
             document.getElementById('perfil-nome').value = db.perfil.nome || '';
             document.getElementById('perfil-doc').value = db.perfil.doc || '';
             document.getElementById('perfil-cidade').value = db.perfil.cidade || '';
@@ -544,7 +609,6 @@
             checkTodayBanner();
         }
 
-        // Perfil
         function savePerfil(e) {
             e.preventDefault();
             db.perfil = {
@@ -557,7 +621,11 @@
             alert('Perfil salvo com sucesso!');
         }
 
-        // Mídia em Base64
+        function compartilharCartaoPix() {
+            const texto = encodeURIComponent(`💳 DADOS PARA PAGAMENTO E CHAVE PIX:\n\nTitular: ${db.perfil.nome || 'Correspondente Jurídico'}\nDoc/OAB: ${db.perfil.doc || ''}\nChave PIX: ${db.perfil.pix || 'Não cadastrada'}\nCidade: ${db.perfil.cidade || ''}`);
+            window.open(`https://api.whatsapp.com/send?text=${texto}`);
+        }
+
         function handleFileSelect(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -569,7 +637,6 @@
             reader.readAsDataURL(file);
         }
 
-        // Cadastro de Atos
         function saveAto(e) {
             e.preventDefault();
             const novoAto = {
@@ -583,13 +650,9 @@
                 linkSala: document.getElementById('ato-link-sala').value,
                 linkIntegral: document.getElementById('ato-link-integral').value,
                 linkAta: document.getElementById('ato-link-ata').value,
-                chkPreposto: document.getElementById('chk-preposto').checked,
-                chkSubstab: document.getElementById('chk-substab').checked,
-                chkDoc: document.getElementById('chk-doc').checked,
-                chkTestemunhas: document.getElementById('chk-testemunhas').checked,
                 orientacoes: document.getElementById('ato-orientacoes').value,
                 midia: tempAtoMidia,
-                status: 'pendente' // pendente, pago
+                status: 'pendente'
             };
 
             db.atos.push(novoAto);
@@ -612,32 +675,73 @@
                 let btnPlataforma = '';
                 if(ato.modalidade === 'teams') btnPlataforma = `<a href="${ato.linkSala}" target="_blank" class="bg-purple-600 text-white px-2 py-1 rounded text-[10px] font-bold">🟣 Entrar (Teams)</a>`;
                 if(ato.modalidade === 'zoom') btnPlataforma = `<a href="${ato.linkSala}" target="_blank" class="bg-blue-600 text-white px-2 py-1 rounded text-[10px] font-bold">🔵 Entrar (Zoom)</a>`;
+                if(ato.modalidade === 'presencial' && ato.linkSala) btnPlataforma = `<a href="https://maps.google.com/?q=${encodeURIComponent(ato.linkSala)}" target="_blank" class="bg-green-600 text-white px-2 py-1 rounded text-[10px] font-bold">📍 GPS / Mapa</a>`;
 
                 card.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div>
                             <span class="font-black text-sm">${ato.processo}</span>
                             <div class="text-gray-500">${ato.cliente} | Data: ${new Date(ato.data).toLocaleString('pt-BR')}</div>
-                            <div class="text-gray-500">Vencimento Honorários: ${ato.vencimento}</div>
+                            <div class="text-gray-500">Vencimento: ${ato.vencimento}</div>
                         </div>
                         <span class="font-black text-brand-red text-sm">R$ ${ato.valor.toFixed(2)}</span>
                     </div>
                     <div class="flex flex-wrap gap-1">
                         ${btnPlataforma}
-                        ${ato.linkIntegral ? `<a href="${ato.linkIntegral}" target="_blank" class="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded text-[10px]"><i class="fa-solid fa-folder mr-1"></i>Processo Integral</a>` : ''}
-                        ${ato.linkAta ? `<a href="${ato.linkAta}" target="_blank" class="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded text-[10px]"><i class="fa-solid fa-file-contract mr-1"></i>Ata/Despacho</a>` : ''}
+                        ${ato.linkIntegral ? `<a href="${ato.linkIntegral}" target="_blank" class="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded text-[10px]">Folder Processo</a>` : ''}
+                        ${ato.linkAta ? `<a href="${ato.linkAta}" target="_blank" class="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded text-[10px]">Ata/Despacho</a>` : ''}
+                        <button onclick="abrirModalLembrete(${index})" class="bg-amber-500 text-gray-900 px-2 py-1 rounded text-[10px] font-bold"><i class="fa-solid fa-bell mr-1"></i> Avisar no Whats</button>
                     </div>
-                    ${ato.orientacoes ? `<div class="p-2 bg-amber-50 dark:bg-gray-700/50 rounded border text-[11px]"><strong>Orientações:</strong> ${ato.orientacoes}</div>` : ''}
                     <div class="flex justify-between items-center pt-2 border-t">
                         <span class="font-bold ${ato.status === 'pago' ? 'text-green-600' : 'text-amber-600'}">Status: ${ato.status.toUpperCase()}</span>
-                        <button onclick="toggleStatusAto(${index})" class="bg-gray-800 text-white px-2 py-1 rounded text-[10px]">Alterar Status</button>
+                        <button onclick="toggleStatusAto(${index})" class="bg-gray-800 text-white px-2 py-1 rounded text-[10px]">Marcar/Alterar Status</button>
                     </div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        // Trava de Estorno Obrigatória
+        // Lembrete & Mensagem Personalizada
+        function abrirModalLembrete(index) {
+            atoLembreteAtual = db.atos[index];
+            document.getElementById('lembrete-detalhe-texto').innerText = `Processo: ${atoLembreteAtual.processo} | Cliente: ${atoLembreteAtual.cliente}`;
+            document.getElementById('modal-lembrete').classList.remove('hidden');
+        }
+
+        function closeLembreteModal() {
+            document.getElementById('modal-lembrete').classList.add('hidden');
+            atoLembreteAtual = null;
+        }
+
+        function toggleTextoLivre() {
+            const opt = document.getElementById('lembrete-opcao-select').value;
+            const campoLivre = document.getElementById('lembrete-texto-livre');
+            if (opt === 'outro') {
+                campoLivre.classList.remove('hidden');
+            } else {
+                campoLivre.classList.add('hidden');
+            }
+        }
+
+        function enviarLembreteWhatsapp() {
+            if(!atoLembreteAtual) return;
+            const opt = document.getElementById('lembrete-opcao-select').value;
+            let statusTexto = '';
+
+            if (opt === 'presenca') statusTexto = "Já estou no local/sala aguardando o pregão.";
+            else if (opt === 'andamento') statusTexto = "Processo anterior em andamento no momento.";
+            else if (opt === 'concluido') statusTexto = "Audiência realizada com sucesso!";
+            else if (opt === 'outro') statusTexto = document.getElementById('lembrete-texto-livre').value;
+
+            if(!statusTexto) return alert('Por favor, digite a mensagem personalizada!');
+
+            const msgFormatada = `⚖️ DILIGENCE.BR — INFORMAÇÃO DE AUDIÊNCIA\n\n• Processo nº: ${atoLembreteAtual.processo}\n• Cliente/Escritório: ${atoLembreteAtual.cliente}\n• Data/Hora: ${new Date(atoLembreteAtual.data).toLocaleString('pt-BR')} (Horário de Brasília)\n• Modalidade: ${atoLembreteAtual.modalidade.toUpperCase()}\n\n📌 SITUAÇÃO DO ATO:\n${statusTexto}\n\n🔗 LINKS:\n${atoLembreteAtual.linkSala ? '• Sala/GPS: ' + atoLembreteAtual.linkSala + '\n' : ''}${atoLembreteAtual.linkAta ? '• Ata/Despacho: ' + atoLembreteAtual.linkAta + '\n' : ''}\n_____________________________________\n${db.perfil.nome || 'Correspondente Jurídico'}\nDoc/OAB: ${db.perfil.doc || ''}\nChave PIX: ${db.perfil.pix || ''}`;
+
+            const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msgFormatada)}`;
+            window.open(url);
+            closeLembreteModal();
+        }
+
         function toggleStatusAto(index) {
             const ato = db.atos[index];
             if (ato.status === 'pago') {
@@ -663,51 +767,90 @@
             ato.status = 'pendente';
             saveData();
 
-            // Disparo de e-mail ao Controle de Pautas
             const subject = encodeURIComponent(`[DILIGENCE.BR] AVISO DE ESTORNO - Proc. ${ato.processo}`);
-            const body = encodeURIComponent(`Notificação de Estorno de Honorários\n\nProcesso: ${ato.processo}\nCliente: ${ato.cliente}\nMotivo da Alteração: ${motivo}\nData/Hora de Brasília: ${new Date().toLocaleString('pt-BR')}`);
+            const body = encodeURIComponent(`Notificação de Estorno\n\nProcesso: ${ato.processo}\nCliente: ${ato.cliente}\nMotivo: ${motivo}`);
             window.open(`mailto:${EMAIL_OPERACIONAL}?subject=${subject}&body=${body}`);
 
             closeEstornoModal();
             renderAtos();
         }
 
-        // Relatórios e Recibos com Filtro de Processos Pagos
+        // RELATÓRIOS COMPLETOS & PLANILHA CSV
         function renderRelatorios() {
-            const clienteFiltro = document.getElementById('filter-cliente').value.toLowerCase();
+            const clienteFiltro = document.getElementById('filter-cliente').value.toLowerCase().trim();
             const statusFiltro = document.getElementById('filter-status').value;
             const container = document.getElementById('relatorios-lista');
             container.innerHTML = '';
 
-            // Atualizar Select de Clientes para Recibo
             const clientesUnicos = [...new Set(db.atos.map(a => a.cliente))];
             const selectCliente = document.getElementById('recibo-cliente-select');
             selectCliente.innerHTML = clientesUnicos.map(c => `<option value="${c}">${c}</option>`).join('');
 
-            db.atos.filter(ato => {
-                const matchCliente = ato.cliente.toLowerCase().includes(clienteFiltro);
+            const atosFiltrados = db.atos.filter(ato => {
+                const matchCliente = clienteFiltro === '' || ato.cliente.toLowerCase().includes(clienteFiltro);
                 const matchStatus = statusFiltro === 'todos' || ato.status === statusFiltro;
                 return matchCliente && matchStatus;
-            }).forEach(ato => {
+            });
+
+            // Atualizar Painel Executivo
+            let totalBruto = atosFiltrados.reduce((acc, a) => acc + a.valor, 0);
+            let totalPago = atosFiltrados.filter(a => a.status === 'pago').reduce((acc, a) => acc + a.valor, 0);
+            let totalPendente = totalBruto - totalPago;
+
+            document.getElementById('relatorio-total-atos').innerText = `${atosFiltrados.length} Ato(s)`;
+            document.getElementById('relatorio-valor-total').innerText = `R$ ${totalBruto.toFixed(2)}`;
+            document.getElementById('relatorio-valor-pago').innerText = `R$ ${totalPago.toFixed(2)}`;
+            document.getElementById('relatorio-valor-pendente').innerText = `R$ ${totalPendente.toFixed(2)}`;
+
+            if(atosFiltrados.length === 0) {
+                container.innerHTML = `<div class="text-center p-4 text-xs text-gray-500">Nenhum processo encontrado com este filtro.</div>`;
+                return;
+            }
+
+            atosFiltrados.forEach(ato => {
                 const card = document.createElement('div');
-                card.className = "bg-white dark:bg-gray-800 p-3 rounded-lg border text-xs flex justify-between items-center";
+                card.className = "bg-white dark:bg-gray-800 p-3 rounded-lg border text-xs flex justify-between items-center shadow-sm";
                 card.innerHTML = `
                     <div>
-                        <span class="font-bold">${ato.processo}</span> (${ato.cliente})
-                        <div class="text-[10px] text-gray-500">Vencimento: ${ato.vencimento}</div>
+                        <span class="font-bold text-sm text-gray-800 dark:text-gray-200">Proc. ${ato.processo}</span>
+                        <div class="text-[11px] text-gray-500">Cliente: <strong>${ato.cliente}</strong> | Vencimento: ${ato.vencimento}</div>
+                        ${ato.orientacoes ? `<div class="text-[10px] text-amber-600 italic">Orientações: ${ato.orientacoes}</div>` : ''}
                     </div>
-                    <span class="font-bold ${ato.status === 'pago' ? 'text-green-600' : 'text-amber-600'}">R$ ${ato.valor.toFixed(2)} - ${ato.status.toUpperCase()}</span>
+                    <span class="font-bold px-2 py-1 rounded ${ato.status === 'pago' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">R$ ${ato.valor.toFixed(2)} - ${ato.status.toUpperCase()}</span>
                 `;
                 container.appendChild(card);
             });
         }
 
+        function exportarPlanilhaCSV() {
+            if(db.atos.length === 0) return alert('Não há dados cadastrados para exportar!');
+            
+            let csvContent = "data:text/csv;charset=utf-8,PROCESSO;CLIENTE;DATA_ATO;VENCIMENTO;VALOR;STATUS;ORIENTACOES\n";
+            db.atos.forEach(a => {
+                csvContent += `"${a.processo}";"${a.cliente}";"${a.data}";"${a.vencimento}";"${a.valor}";"${a.status}";"${a.orientacoes || ''}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `relatorio_pauta_diligence_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+
+        function compartilharManualGeral() {
+            const texto = encodeURIComponent(`📋 MINI MANUAL DE USO — DILIGENCE.BR\n\nAcesse o App em: https://diligence-br.github.io/diligence-app/\n\n👤 1. PERFIL: Preencha Nome, OAB/CPF, Cidade e sua Chave PIX Oficial.\n📅 2. PAUTA & ATOS: Cadastre audiências e diligências com vencimento de honorários, links de salas (Teams/Zoom), GPS e suporte a foto/câmera.\n💼 3. FINANCEIRO: Lançamentos de entradas automáticas ao marcar PAGO e despesas sob sigilo.\n🧮 4. CALCULADORA: Botão Vermelho para rescisão exata e Botão Amarelo para minuta de acordo com multas CLT.\n📊 5. RELATÓRIOS & RECIBOS: Filtros por cliente, planilha (.CSV/Sheets), PDF e Recibos Sequenciais com quitação digital.\n\n🚫 Ferramenta 100% Gratuita e Colaborativa | Venda Proibida\nDúvidas? cj.patriciaamr@gmail.com`);
+            window.open(`https://api.whatsapp.com/send?text=${texto}`);
+        }
+
+        // RECIBO SEQUENCIAL DE QUITAÇÃO
         function triggerGerarRecibo() {
             clienteReciboAtual = document.getElementById('recibo-cliente-select').value;
-            if (!clienteReciboAtual) return alert('Selecione um cliente!');
+            if (!clienteReciboAtual) return alert('Nenhum cliente disponível para emissão de recibo!');
 
             const atosPagos = db.atos.filter(a => a.cliente === clienteReciboAtual && a.status === 'pago');
-            if (atosPagos.length === 0) return alert('Não existem processos marcados como PAGOS para este cliente!');
+            if (atosPagos.length === 0) return alert(`Não existem processos marcados como PAGOS para o cliente: ${clienteReciboAtual}. Marque o status como PAGO na pauta primeiro.`);
 
             const valorTotal = atosPagos.reduce((acc, a) => acc + a.valor, 0);
             const numRecibo = `REC-2026-${db.reciboSeq}`;
@@ -732,7 +875,6 @@
             closeReciboModal();
         }
 
-        // Financeiro Flexível
         function saveMovimentacaoFinanceira(e) {
             e.preventDefault();
             const mov = {
@@ -752,15 +894,30 @@
             const container = document.getElementById('fin-extrato');
             container.innerHTML = '';
 
-            let entradas = db.atos.filter(a => a.status === 'pago').reduce((acc, a) => acc + a.valor, 0);
+            let entradas = 0;
             let saidas = 0;
+
+            const atosPagos = db.atos.filter(a => a.status === 'pago');
+            atosPagos.forEach(ato => {
+                entradas += ato.valor;
+                const card = document.createElement('div');
+                card.className = "bg-green-50 dark:bg-gray-800 p-2 rounded border border-green-200 dark:border-gray-700 text-xs flex justify-between items-center";
+                card.innerHTML = `
+                    <div>
+                        <span class="font-bold text-gray-800 dark:text-gray-200">Proc. ${ato.processo}</span>
+                        <div class="text-[10px] text-gray-500">${ato.cliente} | Honorário Pago</div>
+                    </div>
+                    <span class="font-bold text-green-600">+ R$ ${ato.valor.toFixed(2)}</span>
+                `;
+                container.appendChild(card);
+            });
 
             db.financeiro.forEach(f => {
                 if(f.tipo === 'entrada') entradas += f.valor;
                 if(f.tipo === 'saida') saidas += f.valor;
 
                 const card = document.createElement('div');
-                card.className = "bg-white dark:bg-gray-800 p-2 rounded border text-xs flex justify-between";
+                card.className = "bg-white dark:bg-gray-800 p-2 rounded border text-xs flex justify-between items-center";
                 card.innerHTML = `
                     <span>${f.desc} (${f.categoria}) - <small class="text-gray-400">${f.data}</small></span>
                     <span class="font-bold ${f.tipo === 'entrada' ? 'text-green-600' : 'text-red-600'}">${f.tipo === 'entrada' ? '+' : '-'} R$ ${f.valor.toFixed(2)}</span>
@@ -773,30 +930,49 @@
             document.getElementById('fin-saldo').innerText = `R$ ${(entradas - saidas).toFixed(2)}`;
         }
 
-        // Calculadora Trabalhista
-        function calcularRescisao() {
+        // CALCULADORA TRABALHISTA
+        function calcularRescisaoExata() {
             const sal = parseFloat(document.getElementById('calc-salario').value) || 0;
             const meses = parseInt(document.getElementById('calc-meses').value) || 0;
+            const aviso = document.getElementById('calc-aviso').value;
+            const saldoFgts = parseFloat(document.getElementById('calc-fgts').value) || 0;
+
+            if(sal <= 0) return alert('Por favor, digite o valor do Salário Bruto.');
 
             let prop13 = (sal / 12) * meses;
-            let propFerias = (sal / 12) * meses * 1.333;
-            let total = prop13 + propFerias;
+            let propFerias = (sal / 12) * meses;
+            let terçoFerias = propFerias / 3;
+            let valorAviso = aviso === 'indenizado' ? sal : 0;
+            let multaFgts = saldoFgts * 0.40;
 
-            if (document.getElementById('calc-multa-477').checked) total += sal;
-            if (document.getElementById('calc-multa-467').checked) total += (sal * 0.5);
+            let subtotal = prop13 + propFerias + terçoFerias + valorAviso + multaFgts;
+
+            let valorMulta467 = 0;
+            let valorMulta477 = 0;
+
+            if (document.getElementById('calc-multa-467').checked) valorMulta467 = subtotal * 0.50;
+            if (document.getElementById('calc-multa-477').checked) valorMulta477 = sal;
+
+            let totalGeral = subtotal + valorMulta467 + valorMulta477;
 
             const res = document.getElementById('calc-resultado');
             res.classList.remove('hidden');
             res.innerHTML = `
-                <div><strong>13º Proporcional:</strong> R$ ${prop13.toFixed(2)}</div>
-                <div><strong>Férias Proporcionais + 1/3:</strong> R$ ${propFerias.toFixed(2)}</div>
-                <div class="border-t pt-1 font-bold text-brand-red">Total Estimado: R$ ${total.toFixed(2)}</div>
+                <div class="font-bold text-gray-800 dark:text-gray-200 border-b pb-1 mb-1">Demonstrativo da Rescisão Estreita:</div>
+                <div>• 13º Salário Proporcional (${meses}/12): R$ ${prop13.toFixed(2)}</div>
+                <div>• Férias Proporcionais (${meses}/12): R$ ${propFerias.toFixed(2)}</div>
+                <div>• 1/3 Constitucional de Férias: R$ ${terçoFerias.toFixed(2)}</div>
+                ${valorAviso > 0 ? `<div>• Aviso Prévio Indenizado: R$ ${valorAviso.toFixed(2)}</div>` : ''}
+                ${multaFgts > 0 ? `<div>• Multa de 40% do FGTS: R$ ${multaFgts.toFixed(2)}</div>` : ''}
+                ${valorMulta467 > 0 ? `<div class="text-red-600">• Multa Art. 467 CLT (50%): R$ ${valorMulta467.toFixed(2)}</div>` : ''}
+                ${valorMulta477 > 0 ? `<div class="text-red-600">• Multa Art. 477 CLT (Atraso): R$ ${valorMulta477.toFixed(2)}</div>` : ''}
+                <div class="border-t pt-1 font-black text-sm text-brand-red">TOTAL ESTIMADO DA RESCISÃO: R$ ${totalGeral.toFixed(2)}</div>
             `;
         }
 
         function gerarMinutaAcordo() {
             const sal = document.getElementById('calc-salario').value || '0';
-            const texto = encodeURIComponent(`🤝 MINUTA DE PROPOSTA DE ACORDO TRABALHISTA\n\nCom base nas verbas rescisórias estimadas em R$ ${sal}, apresentamos a proposta para composição amigável da lide.\n\nFicamos à disposição para formalização da transação.`);
+            const texto = encodeURIComponent(`🤝 MINUTA DE PROPOSTA DE ACORDO TRABALHISTA\n\nCom base no último salário bruto informado (R$ ${sal}), apresentamos a proposta para composição amigável da lide em audiência.\n\nFicamos à disposição para a devida formalização da transação.`);
             window.open(`https://api.whatsapp.com/send?text=${texto}`);
         }
 
@@ -810,7 +986,6 @@
             window.open(`https://api.whatsapp.com/send?text=${texto}`);
         }
 
-        // Banner Audiências de Hoje
         function checkTodayBanner() {
             const todayStr = new Date().toISOString().split('T')[0];
             const hojeCount = db.atos.filter(a => a.data.startsWith(todayStr)).length;
@@ -824,12 +999,6 @@
             }
         }
 
-        function filterToday() {
-            document.getElementById('filter-status').value = 'todos';
-            renderRelatorios();
-        }
-
-        // Modais de Backup .JSON
         function openBackupModal() { document.getElementById('modal-backup').classList.remove('hidden'); }
         function closeBackupModal() { document.getElementById('modal-backup').classList.add('hidden'); }
 
@@ -842,9 +1011,8 @@
             downloadAnchor.click();
             downloadAnchor.remove();
 
-            // Cópia de Segurança Operacional
-            const subject = encodeURIComponent(`[DILIGENCE.BR] Cópia de Segurança de Backup - ${db.perfil.nome || 'Usuário'}`);
-            const body = encodeURIComponent(`Aviso de Segurança: O usuário ${db.perfil.nome || 'Usuário'} realizou o backup de segurança das pautas no Horário Oficial de Brasília.`);
+            const subject = encodeURIComponent(`[DILIGENCE.BR] Cópia de Segurança de Backup`);
+            const body = encodeURIComponent(`Aviso de Segurança: O usuário realizou o backup de segurança das pautas no Horário Oficial de Brasília.`);
             window.open(`mailto:${EMAIL_OPERACIONAL}?subject=${subject}&body=${body}`);
         }
 
