@@ -20,11 +20,7 @@
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            red: '#dc2626',
-                            darkred: '#991b1b',
-                            gold: '#d97706'
-                        }
+                        brand: { red: '#dc2626', darkred: '#991b1b', gold: '#d97706' }
                     }
                 }
             }
@@ -83,7 +79,6 @@
                         <div id="clock-time" class="font-bold leading-none">00:00:00</div>
                         <div id="clock-date" class="text-[10px] text-red-200">Brasília (UTC-3)</div>
                     </div>
-                    
                     <button onclick="toggleDarkMode()" class="p-2 bg-brand-darkred rounded-lg text-sm hover:bg-red-900 transition">
                         <i class="fa-solid font-bold fa-moon dark:hidden"></i>
                         <i class="fa-solid font-bold fa-sun hidden dark:inline"></i>
@@ -145,7 +140,7 @@
             <section id="tab-atos" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
                     <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Cadastro e Pauta</h3>
-                    <p>Cadastre os atos com data/hora (Horário de Brasília) e vencimento do honorário. Escolha a modalidade Virtual (Teams/Zoom) ou Presencial. Use os botões diretos 🟢 PAGO e 🟡 PENDENTE no card do ato para alterar o status!</p>
+                    <p>É **obrigatório selecionar o status** no menu suspenso ao lado do valor antes de salvar o ato na pauta.</p>
                 </div>
 
                 <form id="form-ato" onsubmit="saveAto(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
@@ -173,19 +168,32 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold">Modalidade / Plataforma</label>
+                        <select id="ato-modalidade" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm font-semibold">
+                            <option value="teams">🟣 Cível (Virtual - Teams)</option>
+                            <option value="zoom">🔵 TRT/Trabalhista (Virtual - Zoom)</option>
+                            <option value="outra">📞 Outra Plataforma (Virtual)</option>
+                            <option value="presencial">🏛️ Presencial (Fórum / GPS)</option>
+                        </select>
+                    </div>
+
+                    <!-- CAMPO DO VALOR COM O MENU SUSPENSO OBRIGATÓRIO AO LADO -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 p-2.5 bg-red-50 dark:bg-gray-700/60 rounded-xl border-2 border-brand-red">
                         <div>
-                            <label class="text-xs font-semibold">Modalidade / Plataforma</label>
-                            <select id="ato-modalidade" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm font-semibold">
-                                <option value="teams">🟣 Cível (Virtual - Teams)</option>
-                                <option value="zoom">🔵 TRT/Trabalhista (Virtual - Zoom)</option>
-                                <option value="outra">📞 Outra Plataforma (Virtual)</option>
-                                <option value="presencial">🏛️ Presencial (Fórum / GPS)</option>
-                            </select>
+                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Valor Acordado (R$)*</label>
+                            <input type="number" step="0.01" id="ato-valor" required placeholder="0.00" class="w-full p-2 border rounded-lg dark:bg-gray-700 font-bold text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold">Valor Acordado (R$)</label>
-                            <input type="number" step="0.01" id="ato-valor" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Status do Pagamento (Obrigatório)*</label>
+                            <select id="ato-status-select" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-bold bg-white dark:text-white">
+                                <option value="" disabled selected>-- SELECIONE O STATUS --</option>
+                                <option value="pago">🟢 PAGO (Recebido)</option>
+                                <option value="pendente">🟡 PENDENTE (A Receber)</option>
+                                <option value="vencido">🔴 VENCIDO</option>
+                                <option value="troca">🔄 TROCA DE AUDIÊNCIA (Substituição)</option>
+                                <option value="debito">🔴 DÉBITO / SAÍDA</option>
+                            </select>
                         </div>
                     </div>
 
@@ -236,46 +244,83 @@
                 </div>
             </section>
 
-            <!-- ABA 3: FINANCEIRO FLEXÍVEL COM PAINEL A RECEBER -->
+            <!-- ABA 3: FINANCEIRO REESTRUTURADO E COM GERADOR DE RECIBO DE SINALIZAÇÃO -->
             <section id="tab-financeiro" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
-                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Gestão Financeira</h3>
-                    <p>O painel exibe suas entradas recebidas (PAGO), o total **A Receber (PENDENTE)**, despesas e o Saldo Líquido atualizado.</p>
+                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Gestão Financeira & Recibos</h3>
+                    <p>Consolidação de entradas, valores a receber, trocas e saídas. Selecione os processos nas caixinhas para **Gerar Recibo Personalizado** de 1 ou vários valores!</p>
                 </div>
 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-center text-white">
-                    <div class="bg-green-600 p-3 rounded-xl shadow">
-                        <span class="text-[10px] uppercase font-bold block">Entradas (Pago)</span>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-center text-white">
+                    <div class="bg-green-600 p-2.5 rounded-xl shadow">
+                        <span class="text-[9px] uppercase font-bold block">Entradas (Pago)</span>
                         <span id="fin-entradas" class="font-black text-sm">R$ 0,00</span>
                     </div>
-                    <div class="bg-amber-500 p-3 rounded-xl shadow text-gray-900">
-                        <span class="text-[10px] uppercase font-bold block">A Receber (Pendente)</span>
+                    <div class="bg-amber-500 p-2.5 rounded-xl shadow text-gray-900">
+                        <span class="text-[9px] uppercase font-bold block">A Receber</span>
                         <span id="fin-pendentes" class="font-black text-sm">R$ 0,00</span>
                     </div>
-                    <div class="bg-red-600 p-3 rounded-xl shadow">
-                        <span class="text-[10px] uppercase font-bold block">Saídas (Débitos)</span>
+                    <div class="bg-purple-700 p-2.5 rounded-xl shadow">
+                        <span class="text-[9px] uppercase font-bold block">🔄 Trocas</span>
+                        <span id="fin-trocas" class="font-black text-sm">R$ 0,00</span>
+                    </div>
+                    <div class="bg-red-600 p-2.5 rounded-xl shadow">
+                        <span class="text-[9px] uppercase font-bold block">Saídas (Débitos)</span>
                         <span id="fin-saidas" class="font-black text-sm">R$ 0,00</span>
                     </div>
-                    <div class="bg-blue-700 p-3 rounded-xl shadow">
-                        <span class="text-[10px] uppercase font-bold block">Saldo Líquido</span>
+                    <div class="bg-blue-700 p-2.5 rounded-xl shadow col-span-2 md:col-span-1">
+                        <span class="text-[9px] uppercase font-bold block">Saldo Líquido</span>
                         <span id="fin-saldo" class="font-black text-sm">R$ 0,00</span>
                     </div>
                 </div>
 
+                <!-- PAINEL DE EMISSÃO SELETIVA DE RECIBO PERSONALIZADO -->
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border-2 border-brand-red space-y-3 shadow-md">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h3 class="font-bold text-sm text-brand-red dark:text-red-400"><i class="fa-solid fa-receipt mr-1"></i> Emissão Personalizada de Recibo</h3>
+                        <span class="text-[10px] bg-red-100 text-brand-red font-bold px-2 py-0.5 rounded">Personalizar Data/Valor</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
+                        <div>
+                            <label class="font-semibold">Cliente / Contratante:</label>
+                            <select id="fin-recibo-cliente" onchange="renderProcessosParaRecibo()" class="w-full p-2 border rounded dark:bg-gray-700 text-xs font-bold"></select>
+                        </div>
+                        <div>
+                            <label class="font-semibold">Data do Recibo:</label>
+                            <input type="date" id="fin-recibo-data" class="w-full p-2 border rounded dark:bg-gray-700 text-xs font-bold">
+                        </div>
+                        <div>
+                            <label class="font-semibold">Vencimento / Referência:</label>
+                            <input type="month" id="fin-recibo-mes" class="w-full p-2 border rounded dark:bg-gray-700 text-xs font-bold">
+                        </div>
+                    </div>
+
+                    <!-- CAIXINHAS DE SELEÇÃO MÚLTIPLA/INDIVIDUAL ([x]) -->
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-gray-700 dark:text-gray-200">Sinalize os Processos para o Recibo (1, vários ou todos):</label>
+                        <div id="fin-recibo-processos-check" class="max-h-36 overflow-y-auto border p-2 rounded-lg bg-gray-50 dark:bg-gray-700/40 space-y-1 text-xs"></div>
+                    </div>
+
+                    <button onclick="gerarReciboSeletivo()" class="w-full bg-green-600 hover:bg-green-700 text-white font-extrabold py-2.5 rounded-lg text-xs shadow transition flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> GERAR & EMITIR RECIBO SELETO NO WHATSAPP
+                    </button>
+                </div>
+
                 <form id="form-financeiro" onsubmit="saveMovimentacaoFinanceira(event)" class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
-                    <h3 class="font-bold text-sm border-b pb-2">Lançar Movimentação de Caixa (Entrada/Saída Extra)</h3>
+                    <h3 class="font-bold text-sm border-b pb-2">Lançar Movimentação Manual de Caixa (Saídas/DébitosExtras)</h3>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="text-xs font-semibold">Tipo</label>
                             <select id="fin-tipo" class="w-full p-2 border rounded dark:bg-gray-700 text-sm">
-                                <option value="entrada">🟢 Entrada (Crédito)</option>
-                                <option value="saida">🔴 Saída (Débito)</option>
+                                <option value="saida">🔴 Saída (Débito/Pagamento)</option>
+                                <option value="entrada">🟢 Entrada (Crédito Extra)</option>
                             </select>
                         </div>
                         <div>
                             <label class="text-xs font-semibold">Categoria</label>
                             <select id="fin-categoria" class="w-full p-2 border rounded dark:bg-gray-700 text-sm">
-                                <option value="profissional">💼 Profissional (Honorários/Pauta)</option>
+                                <option value="profissional">💼 Profissional (Despesa Operacional)</option>
                                 <option value="pessoal">👤 Pessoal (Despesa Particular - Sigilo)</option>
                             </select>
                         </div>
@@ -283,14 +328,14 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="text-xs font-semibold">Descrição</label>
-                            <input type="text" id="fin-desc" required placeholder="Ex: Combustível, Almoço" class="w-full p-2 border rounded dark:bg-gray-700 text-sm">
+                            <input type="text" id="fin-desc" required placeholder="Ex: Almoço, Estacionamento, Combustível" class="w-full p-2 border rounded dark:bg-gray-700 text-sm">
                         </div>
                         <div>
                             <label class="text-xs font-semibold">Valor (R$)</label>
                             <input type="number" step="0.01" id="fin-valor" required class="w-full p-2 border rounded dark:bg-gray-700 text-sm">
                         </div>
                     </div>
-                    <button type="submit" class="w-full bg-gray-800 dark:bg-gray-700 text-white py-2 rounded-lg font-bold text-xs hover:bg-gray-900">Registrar Movimentação</button>
+                    <button type="submit" class="w-full bg-gray-800 dark:bg-gray-700 text-white py-2 rounded-lg font-bold text-xs hover:bg-gray-900">Registrar Movimentação Manual</button>
                 </form>
 
                 <div id="fin-extrato" class="space-y-2"></div>
@@ -300,8 +345,7 @@
             <section id="tab-trabalhista" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
                     <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Calculadora Trabalhista & Bloco</h3>
-                    <p>• <strong>Botão Vermelho (Calculadora Simples):</strong> Cálculo direto das verbas rescisórias.<br>
-                    • <strong>Botão Amarelo (Detalhamento & Minuta):</strong> Multas dos Arts. 467/477 da CLT e minuta para WhatsApp.</p>
+                    <p>• <strong>Botão Vermelho (Calculadora Simples):</strong> Verbas rescisórias básicas exatas.<br>• <strong>Botão Amarelo (Detalhamento & Minuta):</strong> Multas CLT e minuta de acordo pronta.</p>
                 </div>
 
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
@@ -357,11 +401,11 @@
                 </div>
             </section>
 
-            <!-- ABA 5: RELATÓRIOS & EXPORTAÇÃO -->
+            <!-- ABA 5: RELATÓRIOS COMPLETO & EXPORTAÇÃO -->
             <section id="tab-relatorios" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
                     <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Relatórios Executivos & Quitação</h3>
-                    <p>Filtre por cliente ou status. Baixe em **Planilha (.CSV/Sheets)**, imprima em PDF ou emita **Recibos Sequenciais de Quitação**.</p>
+                    <p>Filtre por cliente ou status. Baixe em **Planilha (.CSV/Sheets)** ou imprima em PDF.</p>
                 </div>
 
                 <div id="relatorio-resumo-card" class="bg-gray-900 text-white p-3 rounded-xl text-xs space-y-1">
@@ -397,6 +441,7 @@
                                 <option value="todos">Todos os Status</option>
                                 <option value="pago">Apenas PAGOS</option>
                                 <option value="pendente">A Vencer / Pendentes</option>
+                                <option value="troca">Troca de Audiência</option>
                             </select>
                         </div>
                     </div>
@@ -405,15 +450,6 @@
                         <button onclick="exportarPlanilhaCSV()" class="flex-1 bg-green-700 text-white font-bold py-2 rounded-lg text-xs shadow"><i class="fa-solid fa-file-excel mr-1"></i> Planilha (.CSV/Sheets)</button>
                         <button onclick="window.print()" class="bg-gray-700 text-white font-bold px-3 py-2 rounded-lg text-xs shadow"><i class="fa-solid fa-print mr-1"></i> PDF / Imprimir</button>
                         <button onclick="compartilharManualGeral()" class="bg-amber-600 text-white font-bold px-3 py-2 rounded-lg text-xs shadow"><i class="fa-brands fa-whatsapp mr-1"></i> Manual no Whats</button>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
-                    <h3 class="font-bold text-sm border-b pb-2">Emissão de Recibo Sequencial de Quitação</h3>
-                    <p class="text-xs text-gray-500">Selecione o cliente para compilar os processos **PAGOS** e emitir o recibo com quitação digital.</p>
-                    <div class="flex gap-2">
-                        <select id="recibo-cliente-select" class="flex-1 p-2 border rounded dark:bg-gray-700 text-sm"></select>
-                        <button onclick="triggerGerarRecibo()" class="bg-brand-red hover:bg-brand-darkred text-white font-bold px-4 py-2 rounded-lg text-xs shadow"><i class="fa-solid fa-receipt mr-1"></i> Gerar Recibo</button>
                     </div>
                 </div>
 
@@ -474,11 +510,11 @@
         </div>
     </div>
 
-    <!-- MODAL RECIBO -->
+    <!-- MODAL CONFIRMAÇÃO DE RECIBO -->
     <div id="modal-recibo" class="fixed inset-0 bg-black/60 modal-blur z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-md w-full space-y-4 shadow-2xl text-xs">
-            <h3 class="font-bold text-sm text-brand-red border-b pb-2"><i class="fa-solid fa-triangle-exclamation mr-1"></i> CONFIRMAÇÃO DE EMISSÃO E QUITAÇÃO</h3>
-            <p class="text-gray-600 dark:text-gray-300">Ao gerar e enviar este recibo, você declara que a transmissão via WhatsApp equivale à sua assinatura e quitação rasa dos valores indicados.</p>
+            <h3 class="font-bold text-sm text-brand-red border-b pb-2"><i class="fa-solid fa-triangle-exclamation mr-1"></i> CONFIRMAÇÃO DE EMISSÃO E QUITAÇÃO DIGITAL</h3>
+            <p class="text-gray-600 dark:text-gray-300">Ao enviar este recibo, você confirma o recebimento formal e quitação rasa do(s) valor(es) selecionado(s).</p>
             <div id="preview-recibo-texto" class="p-2 bg-gray-100 dark:bg-gray-700 rounded font-mono text-[10px] max-h-36 overflow-y-auto whitespace-pre-wrap"></div>
             <div class="flex gap-2 pt-2">
                 <button onclick="closeReciboModal()" class="flex-1 bg-gray-300 dark:bg-gray-600 font-bold py-2 rounded-lg">Cancelar</button>
@@ -491,7 +527,7 @@
     <div id="modal-estorno" class="fixed inset-0 bg-black/60 modal-blur z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-md w-full space-y-3 shadow-2xl text-xs">
             <h3 class="font-bold text-sm text-red-600 border-b pb-2"><i class="fa-solid fa-shield-halved mr-1"></i> TRAVA DE SEGURANÇA: JUSTIFICATIVA DE ESTORNO</h3>
-            <p class="text-gray-600 dark:text-gray-300">Este ato esteve marcado como PAGO. Para alterar para pendente, é obrigatório registrar a justificativa para notificação do controle operacional.</p>
+            <p class="text-gray-600 dark:text-gray-300">Este ato esteve marcado como PAGO. Para alterar para pendente, é obrigatório registrar a justificativa que será enviada ao Controle de Pautas (controledepautasp@gmail.com).</p>
             <textarea id="estorno-motivo" rows="3" placeholder="Digite o motivo do estorno..." class="w-full p-2 border rounded dark:bg-gray-700"></textarea>
             <div class="flex gap-2">
                 <button onclick="closeEstornoModal()" class="flex-1 bg-gray-300 dark:bg-gray-600 font-bold py-2 rounded-lg">Cancelar</button>
@@ -516,6 +552,7 @@
         </div>
     </div>
 
+    <!-- LÓGICA JAVASCRIPT -->
     <script>
         const AUTH_USER = "diligence.br*";
         const AUTH_PASS = "320427";
@@ -531,8 +568,7 @@
 
         let tempAtoMidia = null;
         let atoEstornoIndex = null;
-        let clienteReciboAtual = null;
-        let atoLembreteAtual = null;
+        let textoReciboTemp = '';
 
         function updateClock() {
             const now = new Date();
@@ -583,6 +619,10 @@
             document.getElementById('perfil-pix').value = db.perfil.pix || '';
             document.getElementById('bloco-notas').value = db.notas || '';
 
+            // Data Padrão de Recibo
+            document.getElementById('fin-recibo-data').value = new Date().toISOString().split('T')[0];
+            document.getElementById('fin-recibo-mes').value = new Date().toISOString().substring(0, 7);
+
             renderAtos();
             checkTodayBanner();
         }
@@ -601,6 +641,9 @@
 
         function saveAto(e) {
             e.preventDefault();
+            const statusSel = document.getElementById('ato-status-select').value;
+            if(!statusSel) return alert('É OBRIGATÓRIO SELECIONAR O STATUS DO PAGAMENTO!');
+
             const novoAto = {
                 id: Date.now(),
                 processo: document.getElementById('ato-processo').value,
@@ -609,12 +652,12 @@
                 vencimento: document.getElementById('ato-vencimento').value,
                 modalidade: document.getElementById('ato-modalidade').value,
                 valor: parseFloat(document.getElementById('ato-valor').value),
+                status: statusSel,
                 linkSala: document.getElementById('ato-link-sala').value,
                 linkIntegral: document.getElementById('ato-link-integral').value,
                 linkAta: document.getElementById('ato-link-ata').value,
                 orientacoes: document.getElementById('ato-orientacoes').value,
-                midia: tempAtoMidia,
-                status: 'pendente'
+                midia: tempAtoMidia
             };
 
             db.atos.push(novoAto);
@@ -623,19 +666,19 @@
             tempAtoMidia = null;
             document.getElementById('ato-midia-status').innerText = "";
             renderAtos();
-            alert('Ato cadastrado como PENDENTE na pauta!');
+            alert('Ato cadastrado com sucesso!');
         }
 
         function setAtoStatus(index, novoStatus) {
             const ato = db.atos[index];
-            if (ato.status === 'pago' && novoStatus === 'pendente') {
+            if (ato.status === 'pago' && novoStatus !== 'pago') {
                 atoEstornoIndex = index;
                 document.getElementById('modal-estorno').classList.remove('hidden');
             } else {
                 ato.status = novoStatus;
                 saveData();
                 renderAtos();
-                if(document.getElementById('tab-financeiro').classList.contains('hidden') === false) renderFinanceiro();
+                if(!document.getElementById('tab-financeiro').classList.contains('hidden')) renderFinanceiro();
             }
         }
 
@@ -652,6 +695,13 @@
                 if(ato.modalidade === 'zoom') modalidadeFormatada = '🔵 TRT/Trabalhista (Virtual - Zoom)';
                 if(ato.modalidade === 'outra') modalidadeFormatada = '📞 Outra Plataforma (Virtual)';
 
+                let badgeStatus = '';
+                if(ato.status === 'pago') badgeStatus = '<span class="text-green-600 font-bold">🟢 PAGO</span>';
+                else if(ato.status === 'troca') badgeStatus = '<span class="text-purple-600 font-bold">🔄 TROCA</span>';
+                else if(ato.status === 'debito') badgeStatus = '<span class="text-red-600 font-bold">🔴 DÉBITO</span>';
+                else if(ato.status === 'vencido') badgeStatus = '<span class="text-red-600 font-bold">🔴 VENCIDO</span>';
+                else badgeStatus = '<span class="text-amber-600 font-bold">🟡 PENDENTE</span>';
+
                 card.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div>
@@ -660,14 +710,20 @@
                             <div class="text-gray-400 text-[11px]">${modalidadeFormatada}</div>
                             <div class="text-gray-500 text-[11px]">Data: ${new Date(ato.data).toLocaleString('pt-BR')} | Venc: ${ato.vencimento}</div>
                         </div>
-                        <span class="font-black text-brand-red text-sm">R$ ${ato.valor.toFixed(2)}</span>
+                        <div class="text-right">
+                            <span class="font-black text-brand-red text-sm block">R$ ${ato.valor.toFixed(2)}</span>
+                            ${badgeStatus}
+                        </div>
                     </div>
 
                     <div class="flex flex-wrap gap-1 border-t pt-2 items-center justify-between">
-                        <div class="flex gap-1">
-                            <button onclick="setAtoStatus(${index}, 'pago')" class="px-2.5 py-1 rounded-lg font-bold text-[10px] ${ato.status === 'pago' ? 'bg-green-600 text-white shadow-md' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}">🟢 PAGO</button>
-                            <button onclick="setAtoStatus(${index}, 'pendente')" class="px-2.5 py-1 rounded-lg font-bold text-[10px] ${ato.status === 'pendente' ? 'bg-amber-500 text-gray-900 shadow-md' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}">🟡 PENDENTE</button>
-                        </div>
+                        <select onchange="setAtoStatus(${index}, this.value)" class="p-1 border rounded dark:bg-gray-700 text-[11px] font-bold">
+                            <option value="pago" ${ato.status === 'pago' ? 'selected' : ''}>🟢 Pago</option>
+                            <option value="pendente" ${ato.status === 'pendente' ? 'selected' : ''}>🟡 Pendente</option>
+                            <option value="vencido" ${ato.status === 'vencido' ? 'selected' : ''}>🔴 Vencido</option>
+                            <option value="troca" ${ato.status === 'troca' ? 'selected' : ''}>🔄 Troca de Audiência</option>
+                            <option value="debito" ${ato.status === 'debito' ? 'selected' : ''}>🔴 Débito / Saída</option>
+                        </select>
 
                         <button onclick="abrirModalLembrete(${index})" class="bg-amber-500 text-gray-900 px-2 py-1 rounded-lg text-[10px] font-bold"><i class="fa-solid fa-bell mr-1"></i> Whats</button>
                     </div>
@@ -682,38 +738,104 @@
 
             let entradas = 0;
             let pendentes = 0;
+            let trocas = 0;
             let saidas = 0;
 
             db.atos.forEach(ato => {
-                if (ato.status === 'pago') {
-                    entradas += ato.valor;
-                    const card = document.createElement('div');
-                    card.className = "bg-green-50 dark:bg-gray-800 p-2 rounded border border-green-200 dark:border-gray-700 text-xs flex justify-between items-center";
-                    card.innerHTML = `<div><span class="font-bold">Proc. ${ato.processo}</span><div class="text-[10px] text-gray-500">${ato.cliente} (Quitado)</div></div><span class="font-bold text-green-600">+ R$ ${ato.valor.toFixed(2)}</span>`;
-                    container.appendChild(card);
-                } else {
-                    pendentes += ato.valor;
-                    const card = document.createElement('div');
-                    card.className = "bg-amber-50 dark:bg-gray-800 p-2 rounded border border-amber-200 dark:border-gray-700 text-xs flex justify-between items-center opacity-80";
-                    card.innerHTML = `<div><span class="font-bold text-amber-900 dark:text-amber-200">Proc. ${ato.processo}</span><div class="text-[10px] text-amber-700 dark:text-amber-400">${ato.cliente} (A Receber / Pendente)</div></div><span class="font-bold text-amber-600">⏳ R$ ${ato.valor.toFixed(2)}</span>`;
-                    container.appendChild(card);
-                }
+                if (ato.status === 'pago') entradas += ato.valor;
+                else if (ato.status === 'troca') trocas += ato.valor;
+                else if (ato.status === 'debito') saidas += ato.valor;
+                else pendentes += ato.valor;
             });
 
             db.financeiro.forEach(f => {
                 if(f.tipo === 'entrada') entradas += f.valor;
                 if(f.tipo === 'saida') saidas += f.valor;
-
-                const card = document.createElement('div');
-                card.className = "bg-white dark:bg-gray-800 p-2 rounded border text-xs flex justify-between items-center";
-                card.innerHTML = `<span>${f.desc} (${f.categoria})</span><span class="font-bold ${f.tipo === 'entrada' ? 'text-green-600' : 'text-red-600'}">${f.tipo === 'entrada' ? '+' : '-'} R$ ${f.valor.toFixed(2)}</span>`;
-                container.appendChild(card);
             });
 
             document.getElementById('fin-entradas').innerText = `R$ ${entradas.toFixed(2)}`;
             document.getElementById('fin-pendentes').innerText = `R$ ${pendentes.toFixed(2)}`;
+            document.getElementById('fin-trocas').innerText = `R$ ${trocas.toFixed(2)}`;
             document.getElementById('fin-saidas').innerText = `R$ ${saidas.toFixed(2)}`;
             document.getElementById('fin-saldo').innerText = `R$ ${(entradas - saidas).toFixed(2)}`;
+
+            // Atualizar Seletor de Clientes no Financeiro
+            const clientesUnicos = [...new Set(db.atos.map(a => a.cliente))];
+            const selectCli = document.getElementById('fin-recibo-cliente');
+            selectCli.innerHTML = clientesUnicos.map(c => `<option value="${c}">${c}</option>`).join('');
+
+            renderProcessosParaRecibo();
+        }
+
+        function renderProcessosParaRecibo() {
+            const cli = document.getElementById('fin-recibo-cliente').value;
+            const container = document.getElementById('fin-recibo-processos-check');
+            container.innerHTML = '';
+
+            const atosCli = db.atos.filter(a => a.cliente === cli);
+            if(atosCli.length === 0) {
+                container.innerHTML = '<span class="text-gray-400 italic">Nenhum processo encontrado para este cliente.</span>';
+                return;
+            }
+
+            atosCli.forEach(a => {
+                const item = document.createElement('label');
+                item.className = "flex items-center justify-between p-1 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer";
+                item.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" value="${a.id}" class="recibo-chk-item" ${a.status === 'pago' ? 'checked' : ''}>
+                        <span>Proc. <strong>${a.processo}</strong> <small>(${a.status.toUpperCase()})</small></span>
+                    </div>
+                    <span class="font-bold text-brand-red">R$ ${a.valor.toFixed(2)}</span>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function gerarReciboSeletivo() {
+            const cli = document.getElementById('fin-recibo-cliente').value;
+            const dataEmissao = document.getElementById('fin-recibo-data').value;
+            const mesRef = document.getElementById('fin-recibo-mes').value;
+
+            const chks = document.querySelectorAll('.recibo-chk-item:checked');
+            if(chks.length === 0) return alert('Por favor, marque pelo menos 1 processo nas caixinhas para emitir o recibo!');
+
+            const idsSelecionados = Array.from(chks).map(c => parseInt(c.value));
+            const atosSelecionados = db.atos.filter(a => idsSelecionados.includes(a.id));
+
+            const total = atosSelecionados.reduce((acc, a) => acc + a.valor, 0);
+            const numRecibo = `REC-2026-${db.reciboSeq}`;
+
+            let relacao = atosSelecionados.map(a => `• Proc. nº ${a.processo} - R$ ${a.valor.toFixed(2)} (${a.status.toUpperCase()})`).join('\n');
+
+            textoReciboTemp = `=====================================================\n          RECIBO DE QUITAÇÃO DE HONORÁRIOS\n          RECIBO Nº: ${numRecibo}\n=====================================================\n\nRecebi(emos) de ${cli}, a quantia total de R$ ${total.toFixed(2)}, referente ao pagamento dos atos indicados abaixo:\n\n-----------------------------------------------------\nRELAÇÃO SELECIONADA DE PROCESSOS:\n${relacao}\n-----------------------------------------------------\n\nMês de Referência: ${mesRef}\nData da Emissão: ${new Date(dataEmissao).toLocaleDateString('pt-BR')}\nChave PIX de Crédito: ${db.perfil.pix || 'Não informada'}\n\nCLÁUSULA DE QUITAÇÃO:\nDou/damos a mais ampla, geral e irrevogável quitação exclusivamente para o(s) processo(s) listado(s) acima.\n\n_____________________________________________________\n${db.perfil.nome || 'Correspondente Jurídico'}\nDoc/OAB: ${db.perfil.doc || ''}\nValidade Digital: O envio deste documento via mensagem formaliza a quitação rasa.`;
+
+            document.getElementById('preview-recibo-texto').innerText = textoReciboTemp;
+            document.getElementById('modal-recibo').classList.remove('hidden');
+        }
+
+        function closeReciboModal() { document.getElementById('modal-recibo').classList.add('hidden'); }
+
+        function confirmarEEnviarRecibo() {
+            db.reciboSeq++;
+            saveData();
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoReciboTemp)}`);
+            closeReciboModal();
+        }
+
+        function saveMovimentacaoFinanceira(e) {
+            e.preventDefault();
+            const mov = {
+                tipo: document.getElementById('fin-tipo').value,
+                categoria: document.getElementById('fin-categoria').value,
+                desc: document.getElementById('fin-desc').value,
+                valor: parseFloat(document.getElementById('fin-valor').value),
+                data: new Date().toLocaleDateString('pt-BR')
+            };
+            db.financeiro.push(mov);
+            saveData();
+            document.getElementById('form-financeiro').reset();
+            renderFinanceiro();
         }
 
         function closeEstornoModal() { document.getElementById('modal-estorno').classList.add('hidden'); atoEstornoIndex = null; }
@@ -726,7 +848,7 @@
             ato.status = 'pendente';
             saveData();
 
-            window.open(`mailto:${EMAIL_OPERACIONAL}?subject=${encodeURIComponent(`[DILIGENCE.BR] ESTORNO - Proc. ${ato.processo}`)}&body=${encodeURIComponent(`Motivo do estorno: ${motivo}`)}`);
+            window.open(`mailto:${EMAIL_OPERACIONAL}?subject=${encodeURIComponent(`[DILIGENCE.BR] ESTORNO - Proc. ${ato.processo}`)}&body=${encodeURIComponent(`Motivo: ${motivo}`)}`);
 
             closeEstornoModal();
             renderAtos();
