@@ -2,1433 +2,863 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#1F3864">
-    <title>DILIGENCE.BR - Controle de Atos (BETA)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DILIGENCE.BR</title>
     
-    <link rel="manifest" href="data:application/manifest+json;utf8,%7B%22name%22%3A%22Diligence%20Atos%22%2C%22short_name%22%3A%22Diligence%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F4F6F9%22%2C%22theme_color%22%3A%22%231F3864%22%7D">
-
-    <style>
-        :root {
-            --primary-red: #A31D24;
-            --secondary-navy: #1F3864;
-            --bg-light: #F4F6F9;
-            --card-white: #FFFFFF;
-            --text-dark: #333333;
-            --border-color: #D9D9D9;
-            --whatsapp-green: #25D366;
-            --orange-pending: #E65100;
-            --green-paid: #2E7D32;
-        }
-
-        * {
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-            padding-bottom: 120px;
-        }
-
-        header {
-            background-color: var(--card-white);
-            text-align: center;
-            padding: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 3px solid var(--primary-red);
-        }
-
-        header h1 {
-            color: var(--primary-red);
-            font-size: 18px;
-            font-weight: 800;
-        }
-
-        .beta-badge {
-            background: #FFECB3;
-            color: #896200;
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-weight: bold;
-            display: inline-block;
-            margin-left: 5px;
-        }
-
-        .beta-banner {
-            background-color: #FFF3E0;
-            border: 1px solid #FFE0B2;
-            color: #E65100;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 11px;
-            line-height: 1.4;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .backup-reminder-card {
-            background-color: #E8F5E9;
-            border: 2px solid #2E7D32;
-            color: #1B5E20;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 12px;
-            text-align: center;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        }
-
-        .last-backup-badge {
-            background-color: #E0F2F1;
-            border: 1px solid #80CBC4;
-            color: #004D40;
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 12px;
-            display: block;
-        }
-
-        .nav-tabs {
-            display: flex;
-            background-color: var(--card-white);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 45px;
-            z-index: 99;
-            overflow-x: auto;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 12px 2px;
-            border: none;
-            background: none;
-            font-weight: bold;
-            font-size: 12px;
-            color: #555;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .tab-btn.active {
-            color: var(--primary-red);
-            border-bottom-color: var(--primary-red);
-            background-color: #FFF5F5;
-        }
-
-        .container {
-            padding: 12px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .card {
-            background: var(--card-white);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color);
-        }
-
-        .card h3 {
-            color: var(--secondary-navy);
-            font-size: 15px;
-            margin-bottom: 12px;
-            border-bottom: 2px solid #F0F0F0;
-            padding-bottom: 6px;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 11px;
-            font-weight: 700;
-            margin-bottom: 4px;
-            color: #444;
-            text-transform: uppercase;
-        }
-
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 11px;
-            border: 1px solid #CCC;
-            border-radius: 8px;
-            font-size: 14px;
-            background: #FAFAFA;
-        }
-
-        .row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .col {
-            flex: 1;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-primary { background-color: var(--primary-red); color: white; }
-        .btn-secondary { background-color: var(--secondary-navy); color: white; }
-        .btn-success { background-color: var(--whatsapp-green); color: white; }
-
-        .btn-toggle-select {
-            border: 2px solid #CCC;
-            background: #F8F9FA;
-            color: #444;
-        }
-
-        .btn-toggle-select.selected {
-            border-color: #2E7D32;
-            background: #E8F5E9;
-            color: #2E7D32;
-            font-weight: bold;
-        }
-
-        .btn-sucesso-tick {
-            background-color: #2E7D32 !important;
-            color: white !important;
-            font-size: 15px !important;
-            padding: 15px !important;
-        }
-
-        .item-card {
-            border-left: 5px solid var(--secondary-navy);
-            padding: 12px;
-            margin-bottom: 10px;
-            background: #FAFBFD;
-            border-radius: 0 8px 8px 0;
-            border: 1px solid #EAEAEA;
-            position: relative;
-        }
-
-        .item-card.pago { border-left-color: var(--green-paid); }
-        .item-card.pendente { border-left-color: var(--orange-pending); }
-        .item-card.debito { border-left-color: var(--primary-red); }
-
-        .item-header {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            font-size: 13px;
-            color: var(--secondary-navy);
-        }
-
-        .item-sub {
-            font-size: 11px;
-            color: #555;
-            margin-top: 6px;
-            line-height: 1.4;
-        }
-
-        .item-actions {
-            display: flex;
-            gap: 6px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .item-actions button {
-            padding: 8px 10px;
-            font-size: 11px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .status-badge-inline {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .status-pendente { background-color: var(--orange-pending); }
-        .status-pago { background-color: var(--green-paid); }
-        .status-debito { background-color: var(--primary-red); }
-
-        .total-box {
-            background-color: var(--secondary-navy);
-            color: white;
-            padding: 14px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 12px;
-        }
-
-        .total-box h2 {
-            font-size: 22px;
-            color: #FFD700;
-            margin-top: 2px;
-        }
-
-        .finance-grid {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .finance-card {
-            flex: 1;
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            color: white;
-        }
-
-        .finance-card.credito { background-color: var(--green-paid); }
-        .finance-card.debito { background-color: var(--primary-red); }
-        .finance-card.saldo { background-color: var(--secondary-navy); }
-
-        .finance-card h4 { font-size: 10px; opacity: 0.9; text-transform: uppercase; }
-        .finance-card h3 { font-size: 15px; color: white; border: none; padding: 0; margin-top: 4px; }
-
-        .recibo-box {
-            background: #FFFDE7;
-            border: 2px solid #FBC02D;
-            padding: 14px;
-            border-radius: 10px;
-            margin-top: 10px;
-            font-size: 12px;
-            line-height: 1.5;
-        }
-
-        .manual-box {
-            background: #FFFFFF;
-            border: 2px solid var(--secondary-navy);
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 12px;
-            font-size: 12px;
-            line-height: 1.5;
-        }
-
-        .manual-step {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed #E0E0E0;
-        }
-
-        .manual-icon {
-            font-size: 22px;
-            min-width: 32px;
-            text-align: center;
-        }
-
-        .chk-multi-delete {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            transform: scale(1.3);
-            cursor: pointer;
-        }
-
-        /* ESTILO DO RODAPÉ */
-        footer {
-            margin-top: 25px;
-            padding: 12px 8px;
-            text-align: center;
-            font-size: 9px;
-            color: #777777;
-            border-top: 1px solid #E0E0E0;
-            line-height: 1.4;
-        }
-
-        footer strong {
-            color: var(--secondary-navy);
-        }
-
-        .hidden { display: none !important; }
-
-        .preview-img {
-            max-width: 100%;
-            max-height: 150px;
-            margin-top: 8px;
-            border-radius: 6px;
-            border: 1px solid #DDD;
-        }
-
-        @media print {
-            header, .nav-tabs, .beta-banner, .backup-reminder-card, .last-backup-badge, footer, .card:not(#areaImpressao) { display: none !important; }
-            body { background: white; padding: 0; }
-            .container { max-width: 100%; padding: 0; }
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1>DILIGENCE.BR <span class="beta-badge">BETA</span></h1>
-    </header>
-
-    <!-- NAVEGAÇÃO POR ABAS -->
-    <div class="nav-tabs">
-        <button type="button" class="tab-btn" id="tabHeadPerfil">👤 1. Perfil</button>
-        <button type="button" class="tab-btn active" id="tabHeadRegistro">➕ 2. Novo Ato</button>
-        <button type="button" class="tab-btn" id="tabHeadHistorico">📊 3. Relatórios</button>
-        <button type="button" class="tab-btn" id="tabHeadFinanceiro">💰 4. Financeiro</button>
-    </div>
-
-    <div class="container">
-
-        <!-- BANNER DE LEMBRETE AUTOMÁTICO DE BACKUP -->
-        <div id="cardLembreteBackup" class="backup-reminder-card hidden">
-            <strong>⏰ HORA DO BACKUP DIÁRIO DE PAUTA!</strong><br>
-            <span id="txtHorarioLembrete">Lembrete programado das 12:00 / 18:00 (Segunda a Sexta).</span><br>
-            <div style="margin-top: 8px; display: flex; gap: 6px;">
-                <button type="button" id="btnFazerBackupAgoraWhats" style="flex:1; background:var(--whatsapp-green); color:white; border:none; padding:8px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">💬 Backup pelo Whats</button>
-                <button type="button" id="btnFazerBackupAgoraExcel" style="flex:1; background:var(--secondary-navy); color:white; border:none; padding:8px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">📊 Baixar Planilha CSV</button>
-            </div>
-        </div>
-
-        <div id="badgeUltimoBackup" class="last-backup-badge">
-            📁 Backup de pauta: Nenhum backup registrado hoje.
-        </div>
-
-        <div class="beta-banner">
-            <strong>⚠️ APLICATIVO EXPERIMENTAL (BETA)</strong><br>
-            Ferramenta para auxílio diário na organização de pautas.<br>
-            
-            <div style="margin-top: 8px; display: flex; gap: 6px;">
-                <button type="button" id="btnToggleManual" style="flex:1; background:var(--secondary-navy); color:white; border:none; padding:8px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">📖 Ver Mini Manual Ilustrado</button>
-                <button type="button" id="btnShareManualWhats" style="flex:1; background:var(--whatsapp-green); color:white; border:none; padding:8px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">💬 Compartilhar Manual</button>
-            </div>
-        </div>
-
-        <!-- MINI MANUAL ILUSTRADO -->
-        <div id="boxManual" class="manual-box hidden">
-            <h3 style="color:var(--primary-red); border-bottom:2px solid var(--primary-red); padding-bottom:4px; margin-bottom:10px;">📘 Mini Manual de Uso Rápido</h3>
-            
-            <div class="manual-step">
-                <div class="manual-icon">👤</div>
-                <div>
-                    <strong>1º Passo: Cadastre seu Perfil</strong><br>
-                    Acesse a aba <strong>"1. Perfil"</strong> e preencha seu Nome, OAB/CPF, Celular e Chave PIX.
-                </div>
-            </div>
-
-            <div class="manual-step">
-                <div class="manual-icon">💳</div>
-                <div>
-                    <strong>2º Passo: Lançamento de Créditos e Débitos</strong><br>
-                    Na aba <strong>"2. Novo Ato"</strong>, escolha o Tipo de Lançamento: <em>Crédito (+)</em> para Honorários ou <em>Débito (-)</em> para despesas.
-                </div>
-            </div>
-
-            <div class="manual-step">
-                <div class="manual-icon">🧾</div>
-                <div>
-                    <strong>3º Passo: Gerador de Recibos</strong><br>
-                    Gere recibos de um ato individual ou selecione um período/cliente no filtro para gerar um recibo somado completo.
-                </div>
-            </div>
-
-            <div class="manual-step">
-                <div class="manual-icon">⏰</div>
-                <div>
-                    <strong>4º Passo: Lembrete Diário de Backup</strong><br>
-                    O aplicativo envia alertas às 12:00 e às 18:00 de segunda a sexta para exportação diária.
-                </div>
-            </div>
-        </div>
-
-        <!-- ABA 1: PERFIL DO CORRESPONDENTE -->
-        <div id="sectionPerfil" class="hidden">
-            <div class="card">
-                <h3>👤 Perfil do Correspondente</h3>
-                
-                <div class="form-group">
-                    <label>Nome Completo *</label>
-                    <input type="text" id="perfilNome" placeholder="Digite seu Nome Completo">
-                </div>
-
-                <div class="form-group">
-                    <label>Nº OAB e UF (Se Advogado)</label>
-                    <input type="text" id="perfilOab" placeholder="Ex: OAB/SP 123.456">
-                </div>
-
-                <div class="form-group">
-                    <label>Nº CPF / RG (Se Preposto)</label>
-                    <input type="text" id="perfilCpf" placeholder="Ex: CPF 123.456.789-00">
-                </div>
-
-                <div class="row">
-                    <div class="col form-group">
-                        <label>Celular / WhatsApp *</label>
-                        <input type="text" id="perfilTel" placeholder="(11) 99999-9999">
-                    </div>
-                    <div class="col form-group">
-                        <label>E-mail *</label>
-                        <input type="email" id="perfilEmail" placeholder="seu@email.com">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Chave PIX Padrão *</label>
-                    <input type="text" id="perfilPix" placeholder="Sua Chave PIX">
-                </div>
-
-                <button type="button" class="btn btn-secondary" id="btnSalvarPerfil">💾 SALVAR PERFIL AGORA</button>
-            </div>
-        </div>
-
-        <!-- ABA 2: REGISTRO DE NOVO ATO OU DESPESA -->
-        <div id="sectionRegistro">
-            <div id="alertaPerfil" style="background:#FFF3E0; color:#E65100; padding:8px; border-radius:6px; font-size:11px; margin-bottom:10px; text-align:center; font-weight:bold;">
-                ⚠️ Configure seu perfil na aba "1. Perfil" para validar seus relatórios.
-            </div>
-
-            <div class="card">
-                <h3>➕ Cadastrar Lançamento (Crédito ou Débito)</h3>
-                
-                <div class="form-group">
-                    <label>Tipo de Lançamento *</label>
-                    <select id="naturezaAto" style="font-weight:bold; color:#1F3864;">
-                        <option value="Credito">🟢 CRÉDITO (+) Honorário / Entrada de Valor</option>
-                        <option value="Debito">🔴 DÉBITO (-) Despesa / Cópias / Estacionamento / Condução</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Atuação neste Ato *</label>
-                    <select id="atuacaoAto">
-                        <option value="Advogado(a) Próprio(a)">Advogado(a) Próprio(a)</option>
-                        <option value="Advogado(a) Substabelecido(a)">Advogado(a) Substabelecido(a)</option>
-                        <option value="Preposto(a)">Preposto(a)</option>
-                        <option value="Reembolso de Despesas">Reembolso de Despesas</option>
-                    </select>
-                </div>
-
-                <div class="form-group hidden" id="boxSubstabelecido">
-                    <label>Nome do Advogado(a) Titular / Contratante que Substabeleceu *</label>
-                    <input type="text" id="advTitular" placeholder="Ex: Dr. João da Silva (OAB/SP 000.000)">
-                </div>
-
-                <div class="form-group">
-                    <label>Nome do Cliente / Empresa Representada *</label>
-                    <input type="text" id="cliente" placeholder="Ex: Banco Bradesco, Magazine Luiza">
-                </div>
-
-                <div class="form-group">
-                    <label>Número do Processo / Referência *</label>
-                    <input type="text" id="processo" placeholder="0101010-10.2026.5.0000 ou Recibo 01">
-                </div>
-
-                <div class="form-group">
-                    <label>Descrição / Tipo do Ato *</label>
-                    <select id="tipoAto">
-                        <option value="">Selecione...</option>
-                        <option value="Audiência Trabalhista">Audiência Trabalhista</option>
-                        <option value="Audiência Cível / Conciliação">Audiência Cível / Conciliação</option>
-                        <option value="Audiência de Instrução">Audiência de Instrução</option>
-                        <option value="Diligência / Cópia de Autos">Diligência / Cópia de Autos</option>
-                        <option value="Despesa de Condução / Combustível">Despesa de Condução / Combustível</option>
-                        <option value="Despesa de Cartório / Certidão">Despesa de Cartório / Certidão</option>
-                        <option value="Outro">Outro</option>
-                    </select>
-                </div>
-
-                <div class="row">
-                    <div class="col form-group">
-                        <label>Data *</label>
-                        <input type="date" id="dataAto">
-                    </div>
-                    <div class="col form-group">
-                        <label>Horário *</label>
-                        <input type="time" id="horaAto">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Valor (R$) *</label>
-                    <input type="number" step="0.01" id="valorAto" placeholder="0.00">
-                </div>
-
-                <div class="form-group">
-                    <label>Status do Pagamento *</label>
-                    <select id="statusPagamento">
-                        <option value="Pendente">⌛ Pendente (A Receber / A Pagar)</option>
-                        <option value="Pago">✅ Quitado (Pago / Recebido)</option>
-                    </select>
-                </div>
-
-                <div class="form-group" style="border: 1px dashed #A31D24; padding: 10px; border-radius: 8px; background: #FFF9F9;">
-                    <label style="color:#A31D24;">📎 Anexar Cópia da Ata / Comprovante (Foto ou PDF)</label>
-                    <input type="file" id="arquivoAta" accept="image/*,.pdf" capture="environment">
-                    <small style="color:#666; font-size:10px; display:block; margin-top:4px;">* Tire uma foto da ata ou escolha um arquivo do celular.</small>
-                    <div id="previewContainer"></div>
-                </div>
-
-                <div class="form-group">
-                    <label>Ou Cole o Link da Ata (Google Drive / Dropbox)</label>
-                    <input type="url" id="linkAta" placeholder="https://drive.google.com/...">
-                </div>
-
-                <button type="button" class="btn btn-primary" id="btnGravarAto" style="margin-top: 10px;">💾 GRAVAR LANÇAMENTO NO BANCO</button>
-                
-                <div style="text-align:center; margin-top:8px;">
-                    <p style="color:#A31D24; font-size:11px; font-weight:bold;">
-                        👉 Clique apenas UMA VEZ. O botão mudará para "✅ LANÇADO!".
-                    </p>
-                    <button type="button" id="btnDestravar" style="background:none; border:none; color:#1F3864; text-decoration:underline; font-size:11px; font-weight:bold; cursor:pointer; margin-top:4px;">💡 Se ficar travado, clique aqui para destravar</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ABA 3: RELATÓRIOS E EXPORTAÇÃO COM GERADOR DE RECIBOS -->
-        <div id="sectionHistorico" class="hidden">
-            
-            <div class="total-box">
-                <span style="font-size: 11px; opacity: 0.9;">TOTAL DO FILTRO ATIVO</span>
-                <h2 id="totalValor">R$ 0,00</h2>
-                <span id="qtdAtosTexto" style="font-size: 11px; opacity: 0.8;">0 ato(s) encontrado(s)</span>
-            </div>
-
-            <div class="card">
-                <h3>🔍 Filtro e Seleção Múltipla de Envio</h3>
-                
-                <div class="form-group">
-                    <label>Filtrar Período:</label>
-                    <select id="tipoFiltro">
-                        <option value="mes">Mensal (Mês Completo)</option>
-                        <option value="todos">Todos os Meses (Banco de Dados Completo)</option>
-                        <option value="dia">Dia Específico</option>
-                        <option value="personalizado">Período Personalizado</option>
-                    </select>
-                </div>
-
-                <div id="boxFiltroMes" class="form-group">
-                    <label>Mês / Ano</label>
-                    <input type="month" id="filtroMesVal">
-                </div>
-
-                <div id="boxFiltroDia" class="form-group hidden">
-                    <label>Data Específica</label>
-                    <input type="date" id="filtroDiaVal">
-                </div>
-
-                <div id="boxFiltroCustom" class="row hidden">
-                    <div class="col form-group">
-                        <label>Data Inicial</label>
-                        <input type="date" id="filtroDataIni">
-                    </div>
-                    <div class="col form-group">
-                        <label>Data Final</label>
-                        <input type="date" id="filtroDataFim">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Filtrar por Status:</label>
-                    <select id="filtroStatus">
-                        <option value="todos">Todos (Pendentes + Pagos)</option>
-                        <option value="Pendente">Apenas Pendentes</option>
-                        <option value="Pago">Apenas Pagos / Quitados</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>E-mail Adicional para Receber Cópia:</label>
-                    <input type="email" id="emailAdicional" placeholder="ex: pauta@empresa.com">
-                </div>
-
-                <label style="font-size:11px; font-weight:bold; color:#444; display:block; margin-bottom:6px;">SELECIONE OS CANAIS DE ENVIO (TICK ✅):</label>
-                <div class="row" style="margin-bottom: 8px;">
-                    <button type="button" class="btn btn-toggle-select col" id="chkWhats">💬 WhatsApp</button>
-                    <button type="button" class="btn btn-toggle-select col" id="chkEmail">✉️ E-mail</button>
-                    <button type="button" class="btn btn-toggle-select col" id="chkExcel">📊 Excel (.CSV)</button>
-                </div>
-
-                <button type="button" class="btn btn-success" id="btnDispararSelecionados" style="margin-top: 6px;">🚀 ENVIAR SELECIONADOS AGORA</button>
-                <button type="button" style="background:#FBC02D; color:#333; width:100%; padding:11px; border:none; border-radius:8px; font-size:13px; font-weight:bold; margin-top:8px; cursor:pointer;" id="btnGerarReciboPeriodo">🧾 GERAR RECIBO SOMADO DO PERÍODO</button>
-                <button type="button" style="background:#1F3864; color:white; width:100%; padding:10px; border:none; border-radius:8px; font-size:12px; font-weight:bold; margin-top:8px; cursor:pointer;" id="btnGerarPDF">📄 Baixar Relatório em PDF</button>
-                
-                <div style="margin-top: 12px; border-top: 1px dashed #DDD; padding-top: 10px;">
-                    <button type="button" id="btnModoExcluirVarios" style="background:#E65100; color:white; width:100%; padding:9px; border:none; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">☑️ Selecionar para Excluir Vários</button>
-                    <button type="button" id="btnConfirmarExcluirVarios" class="hidden" style="background:#A31D24; color:white; width:100%; padding:10px; border:none; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer; margin-top:6px;">🗑️ EXCLUIR SELECIONADOS PERMANENTEMENTE</button>
-                </div>
-
-                <button type="button" style="background:#888; color:white; width:100%; padding:8px; border:none; border-radius:6px; font-size:11px; margin-top:8px; cursor:pointer;" id="btnLimparDuplicados">🧹 Limpar Duplicados Repetidos</button>
-            </div>
-
-            <div class="card" id="areaImpressao">
-                <h3>Listagem do Banco de Dados</h3>
-                <div id="listaAtos"></div>
-            </div>
-        </div>
-
-        <!-- ABA 4: FINANCEIRO COMPLETO (CRÉDITOS X DÉBITOS X RECIBOS) -->
-        <div id="sectionFinanceiro" class="hidden">
-            <div class="card">
-                <h3>💰 Painel Financeiro (Créditos x Débitos)</h3>
-                
-                <div class="finance-grid">
-                    <div class="finance-card credito">
-                        <h4>🟢 Créditos (+)</h4>
-                        <h3 id="finTotalCredito">R$ 0,00</h3>
-                    </div>
-                    <div class="finance-card debito">
-                        <h4>🔴 Débitos (-)</h4>
-                        <h3 id="finTotalDebito">R$ 0,00</h3>
-                    </div>
-                    <div class="finance-card saldo">
-                        <h4>⚖️ Saldo Líquido</h4>
-                        <h3 id="finSaldoLiquido">R$ 0,00</h3>
-                    </div>
-                </div>
-
-                <button type="button" class="btn btn-success" id="btnGerarReciboFinanceiro" style="margin-top: 8px;">🧾 GERAR RECIBO FINANCEIRO CONSOLIDADO</button>
-            </div>
-
-            <!-- ÁREA DE EXIBIÇÃO DO RECIBO GERADO -->
-            <div id="boxReciboVisual" class="recibo-box hidden">
-                <h3 style="color:#1F3864; border-bottom:2px solid #FBC02D; padding-bottom:4px; margin-bottom:8px;">📜 RECIBO DE PAGAMENTO / QUITAÇÃO</h3>
-                <div id="conteudoReciboTxt"></div>
-                <div style="margin-top:10px; display:flex; gap:6px;">
-                    <button type="button" class="btn btn-success" id="btnShareReciboWhats" style="flex:1; font-size:11px;">💬 Enviar Recibo Whats</button>
-                    <button type="button" class="btn btn-secondary" id="btnImprimirReciboPDF" style="flex:1; font-size:11px;">📄 PDF / Imprimir Recibo</button>
-                </div>
-            </div>
-
-            <div class="card" style="margin-top:12px;">
-                <h3>Detalhamento Financeiro de Processos e Despesas</h3>
-                <div id="listaFinanceiroAtos"></div>
-            </div>
-        </div>
-
-        <!-- RODAPÉ DISCRETO COM AVISOS E CRÉDITOS -->
-        <footer>
-            Elaborado por <strong>Patricia Monte</strong>.<br>
-            Ferramenta experimental desenvolvida apenas para auxiliar no controle diário. Faça backup regularmente.<br>
-            <em>Proibida a cópia ou reprodução sem autorização.</em>
-        </footer>
-
-    </div>
+    <!-- PWA Manifest & iOS Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#dc2626">
+    <link rel="apple-touch-icon" href="logo.jpg">
+    
+    <!-- Font Awesome & Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Script de Métricas Privadas de Acessos / Dispositivos Únicos -->
+    <script async defer data-website-id="diligence-br-metrics" src="https://analytics.goatcounter.com/count.js"></script>
 
     <script>
-        var perfil = { nome: '', oab: '', cpf: '', tel: '', email: '', pix: '' };
-        var atos = [];
-        var arquivoBase64 = "";
-
-        var selWhats = false, selEmail = false, selExcel = false;
-        var modoExcluirVarios = false;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            
-            document.getElementById('tabHeadPerfil').onclick = function() { alternarAba('perfil'); };
-            document.getElementById('tabHeadRegistro').onclick = function() { alternarAba('registro'); };
-            document.getElementById('tabHeadHistorico').onclick = function() { alternarAba('historico'); };
-            document.getElementById('tabHeadFinanceiro').onclick = function() { alternarAba('financeiro'); };
-
-            document.getElementById('btnToggleManual').onclick = function() {
-                var box = document.getElementById('boxManual');
-                if (box.className.indexOf('hidden') !== -1) {
-                    box.className = 'manual-box';
-                    this.innerText = '📖 Ocultar Mini Manual';
-                } else {
-                    box.className = 'manual-box hidden';
-                    this.innerText = '📖 Ver Mini Manual Ilustrado';
-                }
-            };
-
-            document.getElementById('btnShareManualWhats').onclick = function() {
-                var manualTxt = "*MINI MANUAL DE USO - DILIGENCE.BR (BETA)*\n\n" +
-                                "👤 *1. PERFIL:* Preencha Nome, OAB/CPF e PIX na aba Perfil.\n" +
-                                "💳 *2. CRÉDITOS E DÉBITOS:* Lance honorários (+) e despesas (-).\n" +
-                                "🧾 *3. RECIBOS:* Gere recibos individuais ou somados do período.\n" +
-                                "⏰ *4. LEMBRETE 12h/18h:* Lembretes de backup de segunda a sexta.\n" +
-                                "Acesse o App em: https://diligence-br.github.io/diligence-app/";
-                window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(manualTxt), '_blank');
-            };
-
-            document.getElementById('atuacaoAto').onchange = function() {
-                var val = this.value;
-                var box = document.getElementById('boxSubstabelecido');
-                if (val === 'Advogado(a) Substabelecido(a)') {
-                    box.className = 'form-group';
-                } else {
-                    box.className = 'form-group hidden';
-                    document.getElementById('advTitular').value = '';
-                }
-            };
-
-            document.getElementById('btnDestravar').onclick = function() {
-                var btnGravar = document.getElementById('btnGravarAto');
-                btnGravar.className = "btn btn-primary";
-                btnGravar.innerHTML = "💾 GRAVAR LANÇAMENTO NO BANCO";
-                btnGravar.disabled = false;
-                alert("🔓 O botão de gravação foi destravado!");
-            };
-
-            document.getElementById('btnFazerBackupAgoraWhats').onclick = function() {
-                registrarUltimoBackup('12:00 / 18:00 (WhatsApp)');
-                compartilharPeriodoWhatsApp();
-            };
-
-            document.getElementById('btnFazerBackupAgoraExcel').onclick = function() {
-                registrarUltimoBackup('12:00 / 18:00 (Excel CSV)');
-                exportarExcel();
-            };
-
-            document.getElementById('chkWhats').onclick = function() { selWhats = !selWhats; atualizarBotaoTick(this, selWhats, '💬 WhatsApp'); };
-            document.getElementById('chkEmail').onclick = function() { selEmail = !selEmail; atualizarBotaoTick(this, selEmail, '✉️ E-mail'); };
-            document.getElementById('chkExcel').onclick = function() { selExcel = !selExcel; atualizarBotaoTick(this, selExcel, '📊 Excel (.CSV)'); };
-
-            document.getElementById('btnGerarReciboPeriodo').onclick = function() { gerarReciboSomado(obterAtosFiltrados()); };
-            document.getElementById('btnGerarReciboFinanceiro').onclick = function() { gerarReciboSomado(atos); };
-
-            document.getElementById('btnModoExcluirVarios').onclick = function() {
-                modoExcluirVarios = !modoExcluirVarios;
-                var btnConf = document.getElementById('btnConfirmarExcluirVarios');
-                if (modoExcluirVarios) {
-                    this.innerText = '❌ Cancelar Seleção de Exclusão';
-                    btnConf.className = '';
-                } else {
-                    this.innerText = '☑️ Selecionar para Excluir Vários';
-                    btnConf.className = 'hidden';
-                }
-                renderizarAtos();
-            };
-
-            document.getElementById('btnConfirmarExcluirVarios').onclick = excluirSelecionadosEmMassa;
-            document.getElementById('btnDispararSelecionados').onclick = dispararRelatoriosSelecionados;
-
-            document.getElementById('btnSalvarPerfil').onclick = salvarPerfil;
-            document.getElementById('btnGravarAto').onclick = salvarAto;
-            document.getElementById('btnLimparDuplicados').onclick = limparDuplicados;
-
-            document.getElementById('tipoFiltro').onchange = mudarTipoFiltro;
-            document.getElementById('filtroStatus').onchange = renderizarAtos;
-
-            document.getElementById('filtroMesVal').onchange = renderizarAtos;
-            document.getElementById('filtroDiaVal').onchange = renderizarAtos;
-            document.getElementById('filtroDataIni').onchange = renderizarAtos;
-            document.getElementById('filtroDataFim').onchange = renderizarAtos;
-
-            document.getElementById('btnGerarPDF').onclick = gerarPDF;
-
-            document.getElementById('arquivoAta').onchange = function(e) {
-                var file = e.target.files[0];
-                if (file) {
-                    var reader = new FileReader();
-                    reader.onload = function(evt) {
-                        arquivoBase64 = evt.target.result;
-                        var preview = document.getElementById('previewContainer');
-                        if (file.type.startsWith('image/')) {
-                            preview.innerHTML = '<img src="' + arquivoBase64 + '" class="preview-img"><br><small style="color:green; font-weight:bold;">✅ Foto anexada com sucesso!</small>';
-                        } else {
-                            preview.innerHTML = '<div style="font-size:12px; color:green; margin-top:5px; font-weight:bold;">✅ Arquivo PDF anexado: ' + file.name + '</div>';
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#dc2626',
+                            darkred: '#991b1b',
+                            gold: '#d97706'
                         }
-                    };
-                    reader.readAsDataURL(file);
-                }
-            };
-
-            carregarPerfil();
-            carregarAtos();
-            carregarUltimoBackup();
-            verificarHorarioLembreteBackup();
-
-            var hoje = new Date();
-            document.getElementById('dataAto').value = hoje.toISOString().split('T')[0];
-            document.getElementById('horaAto').value = hoje.toTimeString().substring(0, 5);
-            
-            document.getElementById('filtroMesVal').value = hoje.toISOString().substring(0, 7);
-            document.getElementById('filtroDiaVal').value = hoje.toISOString().split('T')[0];
-            document.getElementById('filtroDataIni').value = hoje.toISOString().split('T')[0];
-            document.getElementById('filtroDataFim').value = hoje.toISOString().split('T')[0];
-
-            renderizarAtos();
-            setInterval(verificarHorarioLembreteBackup, 60000);
-        });
-
-        function verificarHorarioLembreteBackup() {
-            var agora = new Date();
-            var diaSemana = agora.getDay();
-            var hora = agora.getHours();
-
-            if (diaSemana >= 1 && diaSemana <= 5) {
-                if (hora === 12 || hora === 18) {
-                    document.getElementById('cardLembreteBackup').className = "backup-reminder-card";
-                } else {
-                    document.getElementById('cardLembreteBackup').className = "backup-reminder-card hidden";
-                }
-            } else {
-                document.getElementById('cardLembreteBackup').className = "backup-reminder-card hidden";
-            }
-        }
-
-        function registrarUltimoBackup(canal) {
-            var agora = new Date();
-            var dia = String(agora.getDate()).padStart(2, '0');
-            var mes = String(agora.getMonth() + 1).padStart(2, '0');
-            var ano = agora.getFullYear();
-            var hora = String(agora.getHours()).padStart(2, '0');
-            var min = String(agora.getMinutes()).padStart(2, '0');
-
-            var txtBackup = "Feito backup às " + hora + ":" + min + " do dia " + dia + "/" + mes + "/" + ano;
-            localStorage.setItem('diligence_ultimo_backup_v8', txtBackup);
-            document.getElementById('badgeUltimoBackup').innerHTML = "📁 " + txtBackup;
-        }
-
-        function carregarUltimoBackup() {
-            var b = localStorage.getItem('diligence_ultimo_backup_v8');
-            if (b) document.getElementById('badgeUltimoBackup').innerHTML = "📁 " + b;
-        }
-
-        function atualizarBotaoTick(btn, ativado, textoOriginal) {
-            if (ativado) {
-                btn.className = "btn btn-toggle-select selected col";
-                btn.innerHTML = "✅ " + textoOriginal;
-            } else {
-                btn.className = "btn btn-toggle-select col";
-                btn.innerHTML = textoOriginal;
-            }
-        }
-
-        function alternarAba(aba) {
-            document.getElementById('tabHeadPerfil').className = 'tab-btn' + (aba === 'perfil' ? ' active' : '');
-            document.getElementById('tabHeadRegistro').className = 'tab-btn' + (aba === 'registro' ? ' active' : '');
-            document.getElementById('tabHeadHistorico').className = 'tab-btn' + (aba === 'historico' ? ' active' : '');
-            document.getElementById('tabHeadFinanceiro').className = 'tab-btn' + (aba === 'financeiro' ? ' active' : '');
-
-            document.getElementById('sectionPerfil').className = (aba === 'perfil' ? '' : 'hidden');
-            document.getElementById('sectionRegistro').className = (aba === 'registro' ? '' : 'hidden');
-            document.getElementById('sectionHistorico').className = (aba === 'historico' ? '' : 'hidden');
-            document.getElementById('sectionFinanceiro').className = (aba === 'financeiro' ? '' : 'hidden');
-
-            if (aba === 'historico') renderizarAtos();
-            if (aba === 'financeiro') renderizarFinanceiro();
-        }
-
-        function carregarPerfil() {
-            try {
-                var p = localStorage.getItem('diligence_db_perfil_v8');
-                if (p) {
-                    perfil = JSON.parse(p);
-                    document.getElementById('perfilNome').value = perfil.nome || '';
-                    document.getElementById('perfilOab').value = perfil.oab || '';
-                    document.getElementById('perfilCpf').value = perfil.cpf || '';
-                    document.getElementById('perfilTel').value = perfil.tel || '';
-                    document.getElementById('perfilEmail').value = perfil.email || '';
-                    document.getElementById('perfilPix').value = perfil.pix || '';
-
-                    if (perfil.nome) {
-                        var alertBox = document.getElementById('alertaPerfil');
-                        alertBox.style.background = "#E8F5E9";
-                        alertBox.style.color = "#2E7D32";
-                        alertBox.innerHTML = "✅ Perfil ativo: <strong>" + perfil.nome + "</strong>";
                     }
                 }
-            } catch(e) {}
-        }
-
-        function salvarPerfil() {
-            var nome = document.getElementById('perfilNome').value.trim();
-            var tel = document.getElementById('perfilTel').value.trim();
-            var email = document.getElementById('perfilEmail').value.trim();
-            var pix = document.getElementById('perfilPix').value.trim();
-
-            if (!nome || !tel || !email || !pix) {
-                alert("Por favor, preencha todos os campos obrigatórios (*) do seu perfil.");
-                return;
             }
-
-            perfil = {
-                nome: nome,
-                oab: document.getElementById('perfilOab').value.trim(),
-                cpf: document.getElementById('perfilCpf').value.trim(),
-                tel: tel,
-                email: email,
-                pix: pix
-            };
-
-            localStorage.setItem('diligence_db_perfil_v8', JSON.stringify(perfil));
-            alert("✅ Perfil salvo com sucesso no celular!");
-            carregarPerfil();
-            alternarAba('registro');
         }
+    </script>
+    
+    <style>
+        .modal-blur { backdrop-filter: blur(4px); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
 
-        function carregarAtos() {
-            try {
-                var a = localStorage.getItem('diligence_db_atos_v8');
-                if (a) atos = JSON.parse(a);
-            } catch(e) {}
+    <!-- TELA DE LOGIN / AUTENTICAÇÃO -->
+    <div id="login-screen" class="fixed inset-0 z-50 bg-brand-red flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center space-y-4">
+            <div class="flex justify-center">
+                <img src="logo.jpg" alt="DILIGENCE.BR Logo" class="h-24 w-24 object-contain rounded-lg shadow-md border-2 border-brand-red" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\' fill=\'%23dc2626\'><rect width=\'100\' height=\'100\'/><path d=\'M50 20 L80 50 L50 80 L20 50 Z\' fill=\'none\' stroke=\'white\' stroke-width=\'4\'/><text x=\'50\' y=\'58\' font-size=\'24\' font-weight=\'bold\' fill=\'white\' text-anchor=\'middle\'>D</text></svg>'">
+            </div>
+            <div>
+                <h1 class="text-2xl font-black text-brand-red dark:text-red-500 tracking-wider">DILIGENCE.BR</h1>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Controle de Pautas e Honorários</p>
+            </div>
+            <form onsubmit="handleLogin(event)" class="space-y-3 text-left">
+                <div>
+                    <label class="text-xs font-semibold text-gray-600 dark:text-gray-300">Usuário</label>
+                    <input type="text" id="login-user" required class="w-full p-2.5 rounded-lg border dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-brand-red outline-none text-sm">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-gray-600 dark:text-gray-300">Senha</label>
+                    <input type="password" id="login-pass" required class="w-full p-2.5 rounded-lg border dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-brand-red outline-none text-sm">
+                </div>
+                <button type="submit" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-lg font-bold text-sm shadow-md transition">Entrar no Sistema</button>
+            </form>
+            <p id="login-error" class="text-xs text-red-500 font-semibold hidden">Usuário ou senha incorretos!</p>
+        </div>
+    </div>
+
+    <!-- ESTRUTURA PRINCIPAL DO APP -->
+    <div id="app-content" class="hidden flex-1 flex flex-col max-w-4xl w-full mx-auto bg-white dark:bg-gray-800 shadow-xl min-h-screen">
+        
+        <!-- CABEÇALHO / HEADER -->
+        <header class="bg-brand-red text-white p-4 shadow-md sticky top-0 z-30">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <img src="logo.jpg" alt="Logo" class="h-10 w-10 object-contain bg-white rounded-md p-0.5" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\' fill=\'%23dc2626\'><rect width=\'100\' height=\'100\'/><path d=\'M50 20 L80 50 L50 80 L20 50 Z\' fill=\'none\' stroke=\'white\' stroke-width=\'4\'/><text x=\'50\' y=\'58\' font-size=\'24\' font-weight=\'bold\' fill=\'white\' text-anchor=\'middle\'>D</text></svg>'">
+                    <div>
+                        <h1 class="font-black text-lg tracking-wide leading-none">DILIGENCE.BR</h1>
+                        <p class="text-[11px] font-semibold text-red-100">WhatsApp: (11) 97838-6574</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <!-- Fuso Horário de Brasília -->
+                    <div class="text-right text-xs">
+                        <div id="clock-time" class="font-bold leading-none">00:00:00</div>
+                        <div id="clock-date" class="text-[10px] text-red-200">Brasília (UTC-3)</div>
+                    </div>
+                    
+                    <!-- Botão Dark Mode -->
+                    <button onclick="toggleDarkMode()" class="p-2 bg-brand-darkred rounded-lg text-sm hover:bg-red-900 transition" title="Alternar Modo Escuro">
+                        <i class="fa-solid font-bold fa-moon dark:hidden"></i>
+                        <i class="fa-solid font-bold fa-sun hidden dark:inline"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard de Boas-Vindas e Audiências de Hoje -->
+            <div class="mt-3 pt-3 border-t border-red-500/50 flex flex-col gap-2">
+                <div class="flex justify-between items-center text-xs bg-red-800/40 p-2 rounded-lg">
+                    <span id="daily-message" class="italic text-red-100"><i class="fa-solid fa-quote-left mr-1"></i> "Que o dia seja produtivo e abençoado!"</span>
+                    <button onclick="openBackupModal()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] hover:bg-red-50 transition"><i class="fa-solid fa-database mr-1"></i>Backup</button>
+                </div>
+                
+                <!-- Banner Audiências de Hoje -->
+                <div id="today-banner" class="bg-amber-500 text-gray-900 p-2.5 rounded-lg text-xs font-bold flex justify-between items-center hidden">
+                    <span><i class="fa-solid fa-bell mr-1.5 animate-bounce"></i> <span id="today-count">0</span> AUDIÊNCIA(S) AGENDADA(S) PARA HOJE!</span>
+                    <button onclick="switchTab('tab-atos'); filterToday();" class="bg-gray-900 text-white px-2 py-1 rounded text-[10px] uppercase">Ver Pauta</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTEÚDO PRINCIPAL (ABAS) -->
+        <main class="flex-1 p-4 overflow-y-auto">
+
+            <!-- ABA 1: PERFIL DO CORRESPONDENTE -->
+            <section id="tab-perfil" class="tab-content space-y-4">
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
+                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Cadastro de Perfil</h3>
+                    <p>Preencha seus dados profissionais abaixo. Essas informações serão inseridas automaticamente em todos os seus **Recibos Sequenciais de Quitação** e relatórios profissionais em PDF.</p>
+                </div>
+
+                <form id="form-perfil" onsubmit="savePerfil(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
+                    <h2 class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-2">Dados Profissionais</h2>
+                    <div>
+                        <label class="text-xs font-semibold">Nome Completo</label>
+                        <input type="text" id="perfil-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold">OAB ou CPF</label>
+                            <input type="text" id="perfil-doc" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">Cidade / UF Base</label>
+                            <input type="text" id="perfil-cidade" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold">Chave PIX Oficial (para Recebimentos)</label>
+                        <input type="text" id="perfil-pix" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                    </div>
+                    <button type="submit" class="w-full bg-brand-red text-white py-2 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Perfil</button>
+                </form>
+            </section>
+
+            <!-- ABA 2: NOVO ATO / AGENDAMENTO DA PAUTA -->
+            <section id="tab-atos" class="tab-content space-y-4 hidden">
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
+                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Cadastro de Diligências e Audiências</h3>
+                    <p>Cadastre aqui novos atos, estipulando datas do ato e **vencimento dos honorários**. Anexe orientações, prints e links do processo integral ou ata/despacho.</p>
+                </div>
+
+                <form id="form-ato" onsubmit="saveAto(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
+                    <h2 class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-2">Cadastrar Novo Ato / Pauta</h2>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold">Nº do Processo</label>
+                            <input type="text" id="ato-processo" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">Cliente / Escritório Contratante</label>
+                            <input type="text" id="ato-cliente" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold">Data e Hora do Ato</label>
+                            <input type="datetime-local" id="ato-data" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">Vencimento do Pagamento</label>
+                            <input type="date" id="ato-vencimento" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold">Modalidade / Plataforma</label>
+                            <select id="ato-modalidade" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                                <option value="presencial">🏛️ Presencial (Fórum)</option>
+                                <option value="teams">🟣 Cível (Microsoft Teams)</option>
+                                <option value="zoom">🔵 Trabalhista / TRT (Zoom)</option>
+                                <option value="outra">📞 Outra Plataforma</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">Valor Acordado (R$)</label>
+                            <input type="number" step="0.01" id="ato-valor" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold">Link da Sala de Audiência / Reunião Virtual</label>
+                        <input type="url" id="ato-link-sala" placeholder="https://teams.microsoft.com/... ou Zoom" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                    </div>
+
+                    <!-- Anexos Separados -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold">Link do Processo Integral (Drive/Nuvem)</label>
+                            <input type="url" id="ato-link-integral" placeholder="https://drive.google.com/..." class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">Link do Despacho / Ata de Audiência</label>
+                            <input type="url" id="ato-link-ata" placeholder="Link da ata após o ato" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Checklist e Orientações com Mídia -->
+                    <div class="border p-3 rounded-lg bg-gray-50 dark:bg-gray-700/30 space-y-2">
+                        <span class="font-bold text-xs text-gray-700 dark:text-gray-300">Checklist & Orientações Prévias da Audiência</span>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <label><input type="checkbox" id="chk-preposto"> Carta de Preposto</label>
+                            <label><input type="checkbox" id="chk-substab"> Substabelecimento</label>
+                            <label><input type="checkbox" id="chk-doc"> Doc. com Foto Preposto</label>
+                            <label><input type="checkbox" id="chk-testemunhas"> Testemunhas Confirmadas</label>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">Orientações do Escritório (Instruções/Propostas)</label>
+                            <textarea id="ato-orientacoes" rows="2" placeholder="Digite orientações ou cole detalhes aqui..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm"></textarea>
+                        </div>
+                        
+                        <!-- Opção de Anexar Mídia / Tirar Foto -->
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <label class="cursor-pointer bg-gray-200 dark:bg-gray-600 px-3 py-1.5 rounded font-semibold hover:bg-gray-300">
+                                <i class="fa-solid fa-camera mr-1"></i> Foto/Galeria
+                                <input type="file" accept="image/*,application/pdf" id="ato-midia-input" class="hidden" onchange="handleFileSelect(event)">
+                            </label>
+                            <span id="ato-midia-status" class="text-xs text-green-600 font-semibold self-center"></span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Ato na Pauta</button>
+                </form>
+
+                <!-- Lista de Atos / Pauta Cadastrada -->
+                <div class="space-y-2">
+                    <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300">Pauta Registrada</h3>
+                    <div id="lista-atos" class="space-y-2"></div>
+                </div>
+            </section>
+
+            <!-- ABA 3: RELATÓRIOS, RECIBOS & MANUAL -->
+            <section id="tab-relatorios" class="tab-content space-y-4 hidden">
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
+                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Relatórios e Recibos com Ciência Digital</h3>
+                    <p>Filtre por cliente ou status. Gere recibos sequenciais trazendo **exclusivamente os processos marcados como PAGOS**. O envio do recibo possui validade jurídica de quitação digital.</p>
+                </div>
+
+                <!-- Filtros Rápido -->
+                <div class="flex flex-wrap gap-2 bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 text-xs">
+                    <input type="text" id="filter-cliente" placeholder="Filtrar por Cliente/Escritório..." oninput="renderRelatorios()" class="flex-1 p-2 border rounded dark:bg-gray-700">
+                    <select id="filter-status" onchange="renderRelatorios()" class="p-2 border rounded dark:bg-gray-700">
+                        <option value="todos">Todos os Status</option>
+                        <option value="pago">Apenas PAGOS</option>
+                        <option value="pendente">A Vencer / Pendentes</option>
+                        <option value="vencido">🔴 VENCIDOS</option>
+                    </select>
+                </div>
+
+                <!-- Ações de Recibo -->
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
+                    <h3 class="font-bold text-sm border-b pb-2">Emissão de Recibo Sequencial de Quitação</h3>
+                    <p class="text-xs text-gray-500">Selecione o cliente para agrupar todos os atos **PAGOS** em um recibo numerado e oficial.</p>
+                    <div class="flex gap-2">
+                        <select id="recibo-cliente-select" class="flex-1 p-2 border rounded dark:bg-gray-700 text-sm"></select>
+                        <button onclick="triggerGerarRecibo()" class="bg-green-600 hover:bg-green-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow"><i class="fa-solid fa-receipt mr-1"></i> Gerar Recibo</button>
+                    </div>
+                </div>
+
+                <div id="relatorios-lista" class="space-y-2"></div>
+
+                <!-- MANUAL GERAL DO APP -->
+                <div class="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-xl border dark:border-gray-700 text-xs space-y-2">
+                    <h3 class="font-bold text-sm text-brand-red dark:text-red-400"><i class="fa-solid fa-book mr-1"></i> Manual de Instruções & Guia PWA</h3>
+                    <p><strong>Como Instalar na Tela Inicial (Android/iPhone):</strong> No Safari (iPhone), toque em 'Compartilhar' e escolha 'Adicionar à Tela de Início'. No Chrome (Android), toque nos 3 pontos e selecione 'Instalar Aplicativo'.</p>
+                    <p><strong>Fuso Horário de Brasília:</strong> Todos os lançamentos e carimbos de horas nos recibos e logs são sincronizados automaticamente no horário oficial de Brasília (UTC-3).</p>
+                </div>
+            </section>
+
+            <!-- ABA 4: FINANCEIRO FLEXÍVEL -->
+            <section id="tab-financeiro" class="tab-content space-y-4 hidden">
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
+                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Gestão Financeira Flexível</h3>
+                    <p>Controle entradas de honorários e lance **despesas pessoais ou operacionais**. Despesas pessoais permanecem sob sigilo e não aparecem nos recibos enviados aos clientes.</p>
+                </div>
+
+                <!-- Painel de Saldo -->
+                <div class="grid grid-cols-3 gap-2 text-center text-white">
+                    <div class="bg-green-600 p-3 rounded-xl shadow">
+                        <span class="text-[10px] uppercase font-bold block">Entradas</span>
+                        <span id="fin-entradas" class="font-black text-sm">R$ 0,00</span>
+                    </div>
+                    <div class="bg-red-600 p-3 rounded-xl shadow">
+                        <span class="text-[10px] uppercase font-bold block">Saídas</span>
+                        <span id="fin-saidas" class="font-black text-sm">R$ 0,00</span>
+                    </div>
+                    <div class="bg-blue-700 p-3 rounded-xl shadow">
+                        <span class="text-[10px] uppercase font-bold block">Saldo Líquido</span>
+                        <span id="fin-saldo" class="font-black text-sm">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <!-- Form de Lançamento de Caixa Extra -->
+                <form id="form-financeiro" onsubmit="saveMovimentacaoFinanceira(event)" class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
+                    <h3 class="font-bold text-sm border-b pb-2">Lançar Movimentação de Caixa (Entrada/Saída)</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-xs font-semibold">Tipo</label>
+                            <select id="fin-tipo" class="w-full p-2 border rounded dark:bg-gray-700 text-sm">
+                                <option value="entrada">🟢 Entrada (Crédito)</option>
+                                <option value="saida">🔴 Saída (Débito)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">Categoria</label>
+                            <select id="fin-categoria" class="w-full p-2 border rounded dark:bg-gray-700 text-sm">
+                                <option value="profissional">💼 Profissional (Honorários/Pauta)</option>
+                                <option value="pessoal">👤 Pessoal (Despesa Particular)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-xs font-semibold">Descrição</label>
+                            <input type="text" id="fin-desc" required placeholder="Ex: Combustível, Almoço, Honorário Extra" class="w-full p-2 border rounded dark:bg-gray-700 text-sm">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">Valor (R$)</label>
+                            <input type="number" step="0.01" id="fin-valor" required class="w-full p-2 border rounded dark:bg-gray-700 text-sm">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-gray-800 dark:bg-gray-700 text-white py-2 rounded-lg font-bold text-xs hover:bg-gray-900">Registrar Movimentação</button>
+                </form>
+
+                <div id="fin-extrato" class="space-y-2"></div>
+            </section>
+
+            <!-- ABA 5: TRABALHISTA, CALCULADORA & NOTAS -->
+            <section id="tab-trabalhista" class="tab-content space-y-4 hidden">
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
+                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Mini-Manual: Calculadora Trabalhista & Bloco de Notas</h3>
+                    <p>Realize cálculos trabalhistas rápidos com multas do Art. 467/477 da CLT, gere minutas de acordo para WhatsApp e utilize o bloco de notas multífolhas.</p>
+                </div>
+
+                <!-- Calculadora Trabalhista Rápida -->
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
+                    <h3 class="font-bold text-sm text-brand-red border-b pb-2">Calculadora Trabalhista Rápida</h3>
+                    
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                            <label class="font-semibold">Último Salário (R$)</label>
+                            <input type="number" step="0.01" id="calc-salario" class="w-full p-2 border rounded dark:bg-gray-700">
+                        </div>
+                        <div>
+                            <label class="font-semibold">Meses Trabalhados</label>
+                            <input type="number" id="calc-meses" class="w-full p-2 border rounded dark:bg-gray-700">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-1 text-xs">
+                        <label><input type="checkbox" id="calc-multa-467"> Incluir Multa Art. 467 CLT (50% verbas incontroversas)</label>
+                        <label><input type="checkbox" id="calc-multa-477"> Incluir Multa Art. 477 CLT (1 salário por atraso)</label>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button onclick="calcularRescisao()" class="flex-1 bg-brand-red text-white py-2 rounded-lg font-bold text-xs hover:bg-brand-darkred">Calcular Rescisão Estreita</button>
+                        <button onclick="gerarMinutaAcordo()" class="bg-amber-600 text-white px-3 py-2 rounded-lg font-bold text-xs hover:bg-amber-700">🤝 Gerar Minuta de Acordo</button>
+                    </div>
+
+                    <div id="calc-resultado" class="hidden p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-xs space-y-1 font-mono"></div>
+                </div>
+
+                <!-- Bloco de Notas Multífolhas -->
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
+                    <h3 class="font-bold text-sm border-b pb-2">Bloco de Notas Rápidas</h3>
+                    <textarea id="bloco-notas" rows="4" placeholder="Anote orientações rápidas da pauta..." class="w-full p-2 border rounded dark:bg-gray-700 text-xs" oninput="saveNotas()"></textarea>
+                    <button onclick="shareNotas()" class="bg-green-600 text-white px-3 py-1.5 rounded text-xs font-bold"><i class="fa-brands fa-whatsapp mr-1"></i> Compartilhar Notas</button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- RODAPÉ FIXO -->
+        <footer class="bg-gray-900 text-gray-300 p-4 text-center text-xs space-y-2 border-t dark:border-gray-800">
+            <p class="font-semibold text-gray-100">DILIGENCE.BR — Elaborado com carinho e dedicação para apoiar a rotina diária de Advogados(as) e Prepostos.</p>
+            <p class="text-[11px] text-gray-400">🚫 <strong>Venda Proibida | Ferramenta 100% Gratuita e Colaborativa:</strong> Desenvolvida de forma experimental com o objetivo único de facilitar o controle de pautas e honorários. É estritamente proibida a comercialização ou revenda deste software. Faça seus backups regularmente.</p>
+            <p class="text-[11px] text-gray-400">💬 <strong>Seu feedback é fundamental!</strong> Mande sua opinião ou sugestão exclusivamente para: <a href="mailto:cj.patriciaamr@gmail.com" class="text-red-400 underline font-bold">cj.patriciaamr@gmail.com</a></p>
+            <p class="text-[10px] text-gray-500 pt-1">Idealizado e desenvolvido por <strong>Patricia Monte</strong>.</p>
+        </footer>
+
+        <!-- NAVEGAÇÃO INFERIOR POR ABAS -->
+        <nav class="bg-white dark:bg-gray-900 border-t dark:border-gray-800 sticky bottom-0 z-30 flex justify-around p-2 text-center text-[10px] font-bold">
+            <button onclick="switchTab('tab-perfil')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-perfil">
+                <i class="fa-solid fa-user-gear text-base"></i><span>Perfil</span>
+            </button>
+            <button onclick="switchTab('tab-atos')" class="tab-btn p-1 text-brand-red flex flex-col items-center" id="btn-tab-atos">
+                <i class="fa-solid fa-calendar-check text-base"></i><span>Pauta/Atos</span>
+            </button>
+            <button onclick="switchTab('tab-relatorios')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-relatorios">
+                <i class="fa-solid fa-file-invoice text-base"></i><span>Relatórios</span>
+            </button>
+            <button onclick="switchTab('tab-financeiro')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-financeiro">
+                <i class="fa-solid fa-wallet text-base"></i><span>Financeiro</span>
+            </button>
+            <button onclick="switchTab('tab-trabalhista')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-trabalhista">
+                <i class="fa-solid fa-calculator text-base"></i><span>Calculadora</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- MODAL DE CONFIRMAÇÃO DE CIÊNCIA / QUITAÇÃO DIGITAL -->
+    <div id="modal-recibo" class="fixed inset-0 bg-black/60 modal-blur z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-md w-full space-y-4 shadow-2xl text-xs">
+            <h3 class="font-bold text-sm text-brand-red border-b pb-2"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ATENÇÃO: CONFIRMAÇÃO DE EMISSÃO E QUITAÇÃO</h3>
+            <p class="text-gray-600 dark:text-gray-300">Ao gerar e enviar este recibo, você declara e concorda que:</p>
+            <ol class="list-decimal pl-4 space-y-1 font-semibold text-gray-700 dark:text-gray-200">
+                <li>A transmissão deste documento via WhatsApp/E-mail possui validade jurídica e equivale à sua assinatura e aceite formal de quitação.</li>
+                <li>O envio confirma o recebimento integral dos valores referentes EXCLUSIVAMENTE aos processos listados como PAGOS neste recibo.</li>
+            </ol>
+            <div id="preview-recibo-texto" class="p-2 bg-gray-100 dark:bg-gray-700 rounded font-mono text-[10px] max-h-36 overflow-y-auto whitespace-pre-wrap"></div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeReciboModal()" class="flex-1 bg-gray-300 dark:bg-gray-600 font-bold py-2 rounded-lg">Cancelar</button>
+                <button onclick="confirmarEEnviarRecibo()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg"><i class="fa-brands fa-whatsapp mr-1"></i> SIM, CONFIRMAR E ENVIAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE JUSTIFICATIVA OBRIGATÓRIA DE ESTORNO -->
+    <div id="modal-estorno" class="fixed inset-0 bg-black/60 modal-blur z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-md w-full space-y-3 shadow-2xl text-xs">
+            <h3 class="font-bold text-sm text-red-600 border-b pb-2"><i class="fa-solid fa-shield-halved mr-1"></i> TRAVA DE SEGURANÇA: JUSTIFICATIVA DE ESTORNO</h3>
+            <p class="text-gray-600 dark:text-gray-300">Este ato já figurou em recibo ou esteve marcado como PAGO. Para alterar seu status, é obrigatório registrar a justificativa que será enviada ao Controle de Pautas (controledepautasp@gmail.com).</p>
+            <textarea id="estorno-motivo" rows="3" placeholder="Digite o motivo do estorno/alteração..." class="w-full p-2 border rounded dark:bg-gray-700"></textarea>
+            <div class="flex gap-2">
+                <button onclick="closeEstornoModal()" class="flex-1 bg-gray-300 dark:bg-gray-600 font-bold py-2 rounded-lg">Cancelar</button>
+                <button onclick="confirmarEstornoComNotificacao()" class="flex-1 bg-red-600 text-white font-bold py-2 rounded-lg">Confirmar e Notificar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE BACKUP .JSON -->
+    <div id="modal-backup" class="fixed inset-0 bg-black/60 modal-blur z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-md w-full space-y-4 shadow-2xl text-xs">
+            <h3 class="font-bold text-sm text-brand-red border-b pb-2">Backup Geral de Segurança (.JSON)</h3>
+            <p>Baixe o arquivo de segurança para garantir a recuperação de todos os seus dados caso troque ou formate o celular.</p>
+            <div class="flex flex-col gap-2">
+                <button onclick="exportBackupJSON()" class="bg-brand-red text-white py-2 rounded-lg font-bold"><i class="fa-solid fa-download mr-1"></i> Baixar Arquivo Backup (.JSON)</button>
+                <label class="bg-gray-800 text-white py-2 rounded-lg font-bold text-center cursor-pointer">
+                    <i class="fa-solid fa-upload mr-1"></i> Restaurar do Arquivo (.JSON)
+                    <input type="file" accept=".json" onchange="importBackupJSON(event)" class="hidden">
+                </label>
+            </div>
+            <button onclick="closeBackupModal()" class="w-full bg-gray-200 dark:bg-gray-700 font-bold py-1.5 rounded">Fechar</button>
+        </div>
+    </div>
+
+    <!-- LÓGICA JAVASCRIPT PRINCIPAL -->
+    <script>
+        // Credenciais Fixas e Configurações
+        const AUTH_USER = "diligence.br*";
+        const AUTH_PASS = "320427";
+        const EMAIL_OPERACIONAL = "controledepautasp@gmail.com";
+        const WHATSAPP_OPERACIONAL = "5511978386574";
+
+        // Estado Global da Aplicação
+        let db = {
+            perfil: { nome: '', doc: '', cidade: '', pix: '' },
+            atos: [],
+            financeiro: [],
+            reciboSeq: 1001,
+            notas: ''
+        };
+
+        let tempAtoMidia = null;
+        let atoEstornoIndex = null;
+        let clienteReciboAtual = null;
+
+        // Sincronização do Fuso Horário de Brasília
+        function updateClock() {
+            const now = new Date();
+            const options = { timeZone: 'America/Sao_Paulo', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const optionsDate = { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', year: 'numeric' };
+            document.getElementById('clock-time').innerText = now.toLocaleTimeString('pt-BR', options);
+            document.getElementById('clock-date').innerText = now.toLocaleDateString('pt-BR', optionsDate) + " (UTC-3)";
         }
+        setInterval(updateClock, 1000);
+        updateClock();
 
-        function salvarAto() {
-            if (!perfil.nome) {
-                alert("Atenção: Configure seu cadastro na aba '1. Perfil' antes de gravar lançamentos.");
-                alternarAba('perfil');
-                return;
-            }
-
-            var natureza = document.getElementById('naturezaAto').value;
-            var cliente = document.getElementById('cliente').value.trim();
-            var processo = document.getElementById('processo').value.trim();
-            var tipo = document.getElementById('tipoAto').value;
-            var data = document.getElementById('dataAto').value;
-            var hora = document.getElementById('horaAto').value;
-            var valor = parseFloat(document.getElementById('valorAto').value) || 0;
-            var status = document.getElementById('statusPagamento').value;
-
-            var atuacao = document.getElementById('atuacaoAto').value;
-            var advTitular = document.getElementById('advTitular').value.trim();
-
-            if (atuacao === 'Advogado(a) Substabelecido(a)' && !advTitular) {
-                alert("Por favor, informe o nome do Advogado Titular que concedeu o substabelecimento.");
-                return;
-            }
-
-            if (!cliente || !processo || !tipo || !data || !hora || valor <= 0) {
-                alert("Preencha todos os campos obrigatórios e um valor válido.");
-                return;
-            }
-
-            var ataLink = document.getElementById('linkAta').value.trim();
-
-            var novoAto = {
-                id: Date.now(),
-                natureza: natureza,
-                atuacao: atuacao,
-                advTitular: advTitular,
-                cliente: cliente,
-                processo: processo,
-                tipo: tipo,
-                data: data,
-                hora: hora,
-                valor: valor,
-                status: status,
-                anexo: arquivoBase64,
-                link: ataLink,
-                compartilhado: false
-            };
-
-            atos.push(novoAto);
-            localStorage.setItem('diligence_db_atos_v8', JSON.stringify(atos));
-
-            var btnGravar = document.getElementById('btnGravarAto');
-            btnGravar.className = "btn btn-sucesso-tick";
-            btnGravar.innerHTML = "✅ LANÇADO COM SUCESSO!";
-            btnGravar.disabled = true;
-
-            setTimeout(function() {
-                btnGravar.className = "btn btn-primary";
-                btnGravar.innerHTML = "💾 GRAVAR LANÇAMENTO NO BANCO";
-                btnGravar.disabled = false;
-
-                document.getElementById('cliente').value = '';
-                document.getElementById('processo').value = '';
-                document.getElementById('tipoAto').value = '';
-                document.getElementById('valorAto').value = '';
-                document.getElementById('advTitular').value = '';
-                document.getElementById('linkAta').value = '';
-                document.getElementById('arquivoAta').value = '';
-                document.getElementById('previewContainer').innerHTML = '';
-                arquivoBase64 = "";
-
-                alternarAba('historico');
-            }, 1200);
-        }
-
-        function duplicarAto(id) {
-            var original = null;
-            for (var i = 0; i < atos.length; i++) {
-                if (atos[i].id === id) { original = atos[i]; break; }
-            }
-            if (!original) return;
-
-            var copia = JSON.parse(JSON.stringify(original));
-            copia.id = Date.now();
-            copia.cliente += " (Cópia)";
-            copia.compartilhado = false;
-
-            atos.push(copia);
-            localStorage.setItem('diligence_db_atos_v8', JSON.stringify(atos));
-            renderizarAtos();
-            renderizarFinanceiro();
-            alert("📋 Lançamento duplicado!");
-        }
-
-        function limparDuplicados() {
-            if (atos.length === 0) return;
-            var unicos = [];
-            var chaves = {};
-
-            for (var i = 0; i < atos.length; i++) {
-                var a = atos[i];
-                var chave = a.cliente + '|' + a.processo + '|' + a.data + '|' + a.hora + '|' + a.valor;
-                if (!chaves[chave]) {
-                    chaves[chave] = true;
-                    unicos.push(a);
-                }
-            }
-
-            var removidos = atos.length - unicos.length;
-            atos = unicos;
-            localStorage.setItem('diligence_db_atos_v8', JSON.stringify(atos));
-            renderizarAtos();
-            alert("🧹 " + removidos + " duplicado(s) removido(s).");
-        }
-
-        function alternarStatusPagamento(id) {
-            for (var i = 0; i < atos.length; i++) {
-                if (atos[i].id === id) {
-                    atos[i].status = (atos[i].status === 'Pago') ? 'Pendente' : 'Pago';
-                    break;
-                }
-            }
-            localStorage.setItem('diligence_db_atos_v8', JSON.stringify(atos));
-            renderizarAtos();
-            renderizarFinanceiro();
-        }
-
-        function mudarTipoFiltro() {
-            var tipo = document.getElementById('tipoFiltro').value;
-            document.getElementById('boxFiltroMes').className = (tipo === 'mes' ? 'form-group' : 'form-group hidden');
-            document.getElementById('boxFiltroDia').className = (tipo === 'dia' ? 'form-group' : 'form-group hidden');
-            document.getElementById('boxFiltroCustom').className = (tipo === 'personalizado' ? 'row' : 'row hidden');
-            renderizarAtos();
-        }
-
-        function obterAtosFiltrados() {
-            var tipo = document.getElementById('tipoFiltro').value;
-            var filtroStat = document.getElementById('filtroStatus').value;
-            var res = atos;
-
-            if (tipo === 'mes') {
-                var mes = document.getElementById('filtroMesVal').value;
-                res = res.filter(function(a) { return a.data.substring(0, 7) === mes; });
-            } else if (tipo === 'dia') {
-                var dia = document.getElementById('filtroDiaVal').value;
-                res = res.filter(function(a) { return a.data === dia; });
-            } else if (tipo === 'personalizado') {
-                var ini = document.getElementById('filtroDataIni').value;
-                var fim = document.getElementById('filtroDataFim').value;
-                res = res.filter(function(a) { return a.data >= ini && a.data <= fim; });
-            }
-
-            if (filtroStat !== 'todos') {
-                res = res.filter(function(a) { return a.status === filtroStat; });
-            }
-
-            return res;
-        }
-
-        function renderizarAtos() {
-            var container = document.getElementById('listaAtos');
-            container.innerHTML = '';
-
-            var atosFiltrados = obterAtosFiltrados();
-            var total = 0;
-
-            if (atosFiltrados.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; padding:20px;">Nenhum lançamento encontrado.</p>';
+        // Autenticação de Acesso
+        function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('login-user').value;
+            const p = document.getElementById('login-pass').value;
+            if (u === AUTH_USER && p === AUTH_PASS) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-content').classList.remove('hidden');
+                loadData();
             } else {
-                for (var i = 0; i < atosFiltrados.length; i++) {
-                    var ato = atosFiltrados[i];
-                    var isDebito = (ato.natureza === 'Debito');
-                    total += isDebito ? -ato.valor : ato.valor;
-                    
-                    var isPago = (ato.status === 'Pago');
-                    var cardClass = isDebito ? 'item-card debito' : (isPago ? 'item-card pago' : 'item-card pendente');
-                    
-                    var statusBadge = isDebito ? 
-                        '<span class="status-badge-inline status-debito">🔴 DÉBITO</span>' : 
-                        (isPago ? '<span class="status-badge-inline status-pago">✅ QUITADO</span>' : '<span class="status-badge-inline status-pendente">⌛ PENDENTE</span>');
-                    
-                    var checkboxExcluir = modoExcluirVarios ? '<input type="checkbox" class="chk-multi-delete" value="' + ato.id + '">' : '';
-                    var dataFmt = ato.data.split('-').reverse().join('/');
-
-                    var html = '<div class="' + cardClass + '">' +
-                        checkboxExcluir +
-                        '<div class="item-header"><span>' + ato.cliente + '</span><span>' + (isDebito ? '-' : '') + 'R$ ' + ato.valor.toFixed(2).replace('.', ',') + '</span></div>' +
-                        '<div class="item-sub">' +
-                            statusBadge + '<br>' +
-                            '<strong>Proc/Ref:</strong> ' + ato.processo + '<br>' +
-                            '<strong>Ato/Desp:</strong> ' + ato.tipo + ' (' + dataFmt + ' às ' + ato.hora + ')' +
-                        '</div>' +
-                        '<div class="item-actions">' +
-                            '<button type="button" style="background:' + (isPago ? '#E65100' : '#2E7D32') + '; color:white;" onclick="alternarStatusPagamento(' + ato.id + ')">' + (isPago ? 'Marcar Pendente' : 'Marcar Quitado') + '</button>' +
-                            '<button type="button" style="background:#FBC02D; color:#333;" onclick="gerarReciboIndividual(' + ato.id + ')">🧾 Recibo</button>' +
-                            '<button type="button" class="btn-success" onclick="compartilharWhatsIndividual(' + ato.id + ')">💬 Whats</button>' +
-                            '<button type="button" style="background:#1F3864; color:white;" onclick="duplicarAto(' + ato.id + ')">📋 Duplicar</button>' +
-                            '<button type="button" style="background:#DD3333; color:white;" onclick="excluirAto(' + ato.id + ')">🗑️ Excluir</button>' +
-                        '</div>' +
-                    '</div>';
-
-                    container.innerHTML += html;
-                }
+                document.getElementById('login-error').classList.remove('hidden');
             }
-
-            document.getElementById('totalValor').innerText = "R$ " + total.toFixed(2).replace('.', ',');
-            document.getElementById('qtdAtosTexto').innerText = atosFiltrados.length + " lançamento(s) exibido(s)";
         }
 
-        function renderizarFinanceiro() {
-            var container = document.getElementById('listaFinanceiroAtos');
+        // Alternador de Modo Escuro
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        // Troca de Abas
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.replace('text-brand-red', 'text-gray-500'));
+            
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById('btn-' + tabId).classList.replace('text-gray-500', 'text-brand-red');
+
+            if (tabId === 'tab-relatorios') renderRelatorios();
+            if (tabId === 'tab-financeiro') renderFinanceiro();
+        }
+
+        // Persistência em localStorage Local
+        function saveData() {
+            localStorage.setItem('diligence_db', JSON.stringify(db));
+            checkTodayBanner();
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('diligence_db');
+            if (saved) db = JSON.parse(saved);
+            
+            // Preencher formulário de perfil
+            document.getElementById('perfil-nome').value = db.perfil.nome || '';
+            document.getElementById('perfil-doc').value = db.perfil.doc || '';
+            document.getElementById('perfil-cidade').value = db.perfil.cidade || '';
+            document.getElementById('perfil-pix').value = db.perfil.pix || '';
+            document.getElementById('bloco-notas').value = db.notas || '';
+
+            renderAtos();
+            checkTodayBanner();
+        }
+
+        // Perfil
+        function savePerfil(e) {
+            e.preventDefault();
+            db.perfil = {
+                nome: document.getElementById('perfil-nome').value,
+                doc: document.getElementById('perfil-doc').value,
+                cidade: document.getElementById('perfil-cidade').value,
+                pix: document.getElementById('perfil-pix').value
+            };
+            saveData();
+            alert('Perfil salvo com sucesso!');
+        }
+
+        // Mídia em Base64
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                tempAtoMidia = evt.target.result;
+                document.getElementById('ato-midia-status').innerText = "✓ Mídia Anexada";
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Cadastro de Atos
+        function saveAto(e) {
+            e.preventDefault();
+            const novoAto = {
+                id: Date.now(),
+                processo: document.getElementById('ato-processo').value,
+                cliente: document.getElementById('ato-cliente').value,
+                data: document.getElementById('ato-data').value,
+                vencimento: document.getElementById('ato-vencimento').value,
+                modalidade: document.getElementById('ato-modalidade').value,
+                valor: parseFloat(document.getElementById('ato-valor').value),
+                linkSala: document.getElementById('ato-link-sala').value,
+                linkIntegral: document.getElementById('ato-link-integral').value,
+                linkAta: document.getElementById('ato-link-ata').value,
+                chkPreposto: document.getElementById('chk-preposto').checked,
+                chkSubstab: document.getElementById('chk-substab').checked,
+                chkDoc: document.getElementById('chk-doc').checked,
+                chkTestemunhas: document.getElementById('chk-testemunhas').checked,
+                orientacoes: document.getElementById('ato-orientacoes').value,
+                midia: tempAtoMidia,
+                status: 'pendente' // pendente, pago
+            };
+
+            db.atos.push(novoAto);
+            saveData();
+            document.getElementById('form-ato').reset();
+            tempAtoMidia = null;
+            document.getElementById('ato-midia-status').innerText = "";
+            renderAtos();
+            alert('Ato cadastrado com sucesso!');
+        }
+
+        function renderAtos() {
+            const container = document.getElementById('lista-atos');
             container.innerHTML = '';
 
-            var totCredito = 0;
-            var totDebito = 0;
+            db.atos.forEach((ato, index) => {
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 shadow-sm text-xs space-y-2";
+                
+                let btnPlataforma = '';
+                if(ato.modalidade === 'teams') btnPlataforma = `<a href="${ato.linkSala}" target="_blank" class="bg-purple-600 text-white px-2 py-1 rounded text-[10px] font-bold">🟣 Entrar (Teams)</a>`;
+                if(ato.modalidade === 'zoom') btnPlataforma = `<a href="${ato.linkSala}" target="_blank" class="bg-blue-600 text-white px-2 py-1 rounded text-[10px] font-bold">🔵 Entrar (Zoom)</a>`;
 
-            for (var i = 0; i < atos.length; i++) {
-                var a = atos[i];
-                if (a.natureza === 'Debito') totDebito += a.valor;
-                else totCredito += a.valor;
-
-                var dataFmt = a.data.split('-').reverse().join('/');
-                var isDeb = (a.natureza === 'Debito');
-
-                var html = '<div style="padding:10px; border-bottom:1px solid #EEE; display:flex; justify-content:space-between; align-items:center;">' +
-                    '<div>' +
-                        '<strong>' + a.cliente + '</strong><br>' +
-                        '<small style="color:#666;">Ref: ' + a.processo + ' (' + dataFmt + ')</small>' +
-                    '</div>' +
-                    '<div style="text-align:right;">' +
-                        '<strong style="color:' + (isDeb ? '#A31D24' : '#2E7D32') + ';">' + (isDeb ? '-' : '+') + 'R$ ' + a.valor.toFixed(2).replace('.', ',') + '</strong><br>' +
-                        '<span style="font-size:10px; font-weight:bold;">' + (a.status === 'Pago' ? '✅ QUITADO' : '⌛ PENDENTE') + '</span>' +
-                    '</div>' +
-                '</div>';
-
-                container.innerHTML += html;
-            }
-
-            var saldo = totCredito - totDebito;
-
-            document.getElementById('finTotalCredito').innerText = "R$ " + totCredito.toFixed(2).replace('.', ',');
-            document.getElementById('finTotalDebito').innerText = "R$ " + totDebito.toFixed(2).replace('.', ',');
-            document.getElementById('finSaldoLiquido').innerText = "R$ " + saldo.toFixed(2).replace('.', ',');
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="font-black text-sm">${ato.processo}</span>
+                            <div class="text-gray-500">${ato.cliente} | Data: ${new Date(ato.data).toLocaleString('pt-BR')}</div>
+                            <div class="text-gray-500">Vencimento Honorários: ${ato.vencimento}</div>
+                        </div>
+                        <span class="font-black text-brand-red text-sm">R$ ${ato.valor.toFixed(2)}</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1">
+                        ${btnPlataforma}
+                        ${ato.linkIntegral ? `<a href="${ato.linkIntegral}" target="_blank" class="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded text-[10px]"><i class="fa-solid fa-folder mr-1"></i>Processo Integral</a>` : ''}
+                        ${ato.linkAta ? `<a href="${ato.linkAta}" target="_blank" class="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded text-[10px]"><i class="fa-solid fa-file-contract mr-1"></i>Ata/Despacho</a>` : ''}
+                    </div>
+                    ${ato.orientacoes ? `<div class="p-2 bg-amber-50 dark:bg-gray-700/50 rounded border text-[11px]"><strong>Orientações:</strong> ${ato.orientacoes}</div>` : ''}
+                    <div class="flex justify-between items-center pt-2 border-t">
+                        <span class="font-bold ${ato.status === 'pago' ? 'text-green-600' : 'text-amber-600'}">Status: ${ato.status.toUpperCase()}</span>
+                        <button onclick="toggleStatusAto(${index})" class="bg-gray-800 text-white px-2 py-1 rounded text-[10px]">Alterar Status</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         }
 
-        function gerarReciboSomado(listaAtos) {
-            if (!perfil.nome) {
-                alert("Cadastre seu perfil primeiro.");
-                alternarAba('perfil');
-                return;
+        // Trava de Estorno Obrigatória
+        function toggleStatusAto(index) {
+            const ato = db.atos[index];
+            if (ato.status === 'pago') {
+                atoEstornoIndex = index;
+                document.getElementById('modal-estorno').classList.remove('hidden');
+            } else {
+                ato.status = 'pago';
+                saveData();
+                renderAtos();
             }
+        }
 
-            if (listaAtos.length === 0) {
-                alert("Nenhum lançamento para gerar recibo.");
-                return;
-            }
+        function closeEstornoModal() {
+            document.getElementById('modal-estorno').classList.add('hidden');
+            atoEstornoIndex = null;
+        }
 
-            var total = 0;
-            var detalhamento = "";
+        function confirmarEstornoComNotificacao() {
+            const motivo = document.getElementById('estorno-motivo').value;
+            if (!motivo) return alert('É obrigatório digitar o motivo do estorno!');
 
-            for (var i = 0; i < listaAtos.length; i++) {
-                var a = listaAtos[i];
-                var valFinal = (a.natureza === 'Debito') ? -a.valor : a.valor;
-                total += valFinal;
+            const ato = db.atos[atoEstornoIndex];
+            ato.status = 'pendente';
+            saveData();
 
-                var dataFmt = a.data.split('-').reverse().join('/');
-                detalhamento += "• " + a.cliente + " | Proc: " + a.processo + " | " + a.tipo + " (" + dataFmt + "): R$ " + a.valor.toFixed(2).replace('.', ',') + "\n";
-            }
+            // Disparo de e-mail ao Controle de Pautas
+            const subject = encodeURIComponent(`[DILIGENCE.BR] AVISO DE ESTORNO - Proc. ${ato.processo}`);
+            const body = encodeURIComponent(`Notificação de Estorno de Honorários\n\nProcesso: ${ato.processo}\nCliente: ${ato.cliente}\nMotivo da Alteração: ${motivo}\nData/Hora de Brasília: ${new Date().toLocaleString('pt-BR')}`);
+            window.open(`mailto:${EMAIL_OPERACIONAL}?subject=${subject}&body=${body}`);
 
-            var doc = perfil.oab ? "OAB: " + perfil.oab : "CPF: " + perfil.cpf;
+            closeEstornoModal();
+            renderAtos();
+        }
 
-            var txtRecibo = "*RECIBO DE PAGAMENTO / SERVIÇOS PRESTADOS*\n\n" +
-                            "Recebi(emos) de *DILIGENCE.BR / CONTRATANTE* a quantia total de *R$ " + total.toFixed(2).replace('.', ',') + "* referente aos serviços discriminados abaixo:\n\n" +
-                            detalhamento + "\n" +
-                            "*Emitido por:* " + perfil.nome + " (" + doc + ")\n" +
-                            "*Chave PIX:* " + perfil.pix + "\n" +
-                            "*Data de Emissão:* " + new Date().toLocaleDateString('pt-BR');
+        // Relatórios e Recibos com Filtro de Processos Pagos
+        function renderRelatorios() {
+            const clienteFiltro = document.getElementById('filter-cliente').value.toLowerCase();
+            const statusFiltro = document.getElementById('filter-status').value;
+            const container = document.getElementById('relatorios-lista');
+            container.innerHTML = '';
 
-            document.getElementById('conteudoReciboTxt').innerText = txtRecibo;
-            document.getElementById('boxReciboVisual').className = "recibo-box";
+            // Atualizar Select de Clientes para Recibo
+            const clientesUnicos = [...new Set(db.atos.map(a => a.cliente))];
+            const selectCliente = document.getElementById('recibo-cliente-select');
+            selectCliente.innerHTML = clientesUnicos.map(c => `<option value="${c}">${c}</option>`).join('');
 
-            document.getElementById('btnShareReciboWhats').onclick = function() {
-                window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(txtRecibo), '_blank');
+            db.atos.filter(ato => {
+                const matchCliente = ato.cliente.toLowerCase().includes(clienteFiltro);
+                const matchStatus = statusFiltro === 'todos' || ato.status === statusFiltro;
+                return matchCliente && matchStatus;
+            }).forEach(ato => {
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-gray-800 p-3 rounded-lg border text-xs flex justify-between items-center";
+                card.innerHTML = `
+                    <div>
+                        <span class="font-bold">${ato.processo}</span> (${ato.cliente})
+                        <div class="text-[10px] text-gray-500">Vencimento: ${ato.vencimento}</div>
+                    </div>
+                    <span class="font-bold ${ato.status === 'pago' ? 'text-green-600' : 'text-amber-600'}">R$ ${ato.valor.toFixed(2)} - ${ato.status.toUpperCase()}</span>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function triggerGerarRecibo() {
+            clienteReciboAtual = document.getElementById('recibo-cliente-select').value;
+            if (!clienteReciboAtual) return alert('Selecione um cliente!');
+
+            const atosPagos = db.atos.filter(a => a.cliente === clienteReciboAtual && a.status === 'pago');
+            if (atosPagos.length === 0) return alert('Não existem processos marcados como PAGOS para este cliente!');
+
+            const valorTotal = atosPagos.reduce((acc, a) => acc + a.valor, 0);
+            const numRecibo = `REC-2026-${db.reciboSeq}`;
+
+            let relacaoProcessos = atosPagos.map(a => `• Proc. nº ${a.processo} - R$ ${a.valor.toFixed(2)}`).join('\n');
+
+            const textoRecibo = `=====================================================\n          RECIBO DE QUITAÇÃO DE HONORÁRIOS\n          RECIBO Nº: ${numRecibo}\n=====================================================\n\nRecebi(emos) de ${clienteReciboAtual}, a quantia de R$ ${valorTotal.toFixed(2)}, referente ao pagamento ESTRITAMENTE dos atos prestados nos processos abaixo indicados:\n\n-----------------------------------------------------\nRELAÇÃO EXCLUSIVA DE PROCESSOS QUITADOS (PAGOS):\n${relacaoProcessos}\n-----------------------------------------------------\n\nCLÁUSULA DE QUITAÇÃO:\nCom o recebimento do valor especificado, dou/damos a mais ampla, geral, plena, rasa e irrevogável quitação de honorários EXCLUSIVAMENTE para os números de processos discriminados acima.\n\nData de Emissão: ${new Date().toLocaleDateString('pt-BR')} (Horário de Brasília)\nChave PIX de Crédito: ${db.perfil.pix || 'Não informada'}\n\n_____________________________________________________\n${db.perfil.nome || 'Correspondente Jurídico'}\nDoc/OAB: ${db.perfil.doc || ''}\nValidade Digital: O envio deste documento via mensagem formaliza a ciência e quitação rasa do lote.`;
+
+            document.getElementById('preview-recibo-texto').innerText = textoRecibo;
+            document.getElementById('modal-recibo').classList.remove('hidden');
+        }
+
+        function closeReciboModal() {
+            document.getElementById('modal-recibo').classList.add('hidden');
+        }
+
+        function confirmarEEnviarRecibo() {
+            db.reciboSeq++;
+            saveData();
+            const texto = encodeURIComponent(document.getElementById('preview-recibo-texto').innerText);
+            window.open(`https://api.whatsapp.com/send?text=${texto}`);
+            closeReciboModal();
+        }
+
+        // Financeiro Flexível
+        function saveMovimentacaoFinanceira(e) {
+            e.preventDefault();
+            const mov = {
+                tipo: document.getElementById('fin-tipo').value,
+                categoria: document.getElementById('fin-categoria').value,
+                desc: document.getElementById('fin-desc').value,
+                valor: parseFloat(document.getElementById('fin-valor').value),
+                data: new Date().toLocaleDateString('pt-BR')
             };
+            db.financeiro.push(mov);
+            saveData();
+            document.getElementById('form-financeiro').reset();
+            renderFinanceiro();
+        }
 
-            document.getElementById('btnImprimirReciboPDF').onclick = function() {
-                window.print();
+        function renderFinanceiro() {
+            const container = document.getElementById('fin-extrato');
+            container.innerHTML = '';
+
+            let entradas = db.atos.filter(a => a.status === 'pago').reduce((acc, a) => acc + a.valor, 0);
+            let saidas = 0;
+
+            db.financeiro.forEach(f => {
+                if(f.tipo === 'entrada') entradas += f.valor;
+                if(f.tipo === 'saida') saidas += f.valor;
+
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-gray-800 p-2 rounded border text-xs flex justify-between";
+                card.innerHTML = `
+                    <span>${f.desc} (${f.categoria}) - <small class="text-gray-400">${f.data}</small></span>
+                    <span class="font-bold ${f.tipo === 'entrada' ? 'text-green-600' : 'text-red-600'}">${f.tipo === 'entrada' ? '+' : '-'} R$ ${f.valor.toFixed(2)}</span>
+                `;
+                container.appendChild(card);
+            });
+
+            document.getElementById('fin-entradas').innerText = `R$ ${entradas.toFixed(2)}`;
+            document.getElementById('fin-saidas').innerText = `R$ ${saidas.toFixed(2)}`;
+            document.getElementById('fin-saldo').innerText = `R$ ${(entradas - saidas).toFixed(2)}`;
+        }
+
+        // Calculadora Trabalhista
+        function calcularRescisao() {
+            const sal = parseFloat(document.getElementById('calc-salario').value) || 0;
+            const meses = parseInt(document.getElementById('calc-meses').value) || 0;
+
+            let prop13 = (sal / 12) * meses;
+            let propFerias = (sal / 12) * meses * 1.333;
+            let total = prop13 + propFerias;
+
+            if (document.getElementById('calc-multa-477').checked) total += sal;
+            if (document.getElementById('calc-multa-467').checked) total += (sal * 0.5);
+
+            const res = document.getElementById('calc-resultado');
+            res.classList.remove('hidden');
+            res.innerHTML = `
+                <div><strong>13º Proporcional:</strong> R$ ${prop13.toFixed(2)}</div>
+                <div><strong>Férias Proporcionais + 1/3:</strong> R$ ${propFerias.toFixed(2)}</div>
+                <div class="border-t pt-1 font-bold text-brand-red">Total Estimado: R$ ${total.toFixed(2)}</div>
+            `;
+        }
+
+        function gerarMinutaAcordo() {
+            const sal = document.getElementById('calc-salario').value || '0';
+            const texto = encodeURIComponent(`🤝 MINUTA DE PROPOSTA DE ACORDO TRABALHISTA\n\nCom base nas verbas rescisórias estimadas em R$ ${sal}, apresentamos a proposta para composição amigável da lide.\n\nFicamos à disposição para formalização da transação.`);
+            window.open(`https://api.whatsapp.com/send?text=${texto}`);
+        }
+
+        function saveNotas() {
+            db.notas = document.getElementById('bloco-notas').value;
+            saveData();
+        }
+
+        function shareNotas() {
+            const texto = encodeURIComponent(`📝 NOTAS DA PAUTA (DILIGENCE.BR):\n\n${db.notas}`);
+            window.open(`https://api.whatsapp.com/send?text=${texto}`);
+        }
+
+        // Banner Audiências de Hoje
+        function checkTodayBanner() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const hojeCount = db.atos.filter(a => a.data.startsWith(todayStr)).length;
+            
+            const banner = document.getElementById('today-banner');
+            if (hojeCount > 0) {
+                banner.classList.remove('hidden');
+                document.getElementById('today-count').innerText = hojeCount;
+            } else {
+                banner.classList.add('hidden');
+            }
+        }
+
+        function filterToday() {
+            document.getElementById('filter-status').value = 'todos';
+            renderRelatorios();
+        }
+
+        // Modais de Backup .JSON
+        function openBackupModal() { document.getElementById('modal-backup').classList.remove('hidden'); }
+        function closeBackupModal() { document.getElementById('modal-backup').classList.add('hidden'); }
+
+        function exportBackupJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `diligence_backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+
+            // Cópia de Segurança Operacional
+            const subject = encodeURIComponent(`[DILIGENCE.BR] Cópia de Segurança de Backup - ${db.perfil.nome || 'Usuário'}`);
+            const body = encodeURIComponent(`Aviso de Segurança: O usuário ${db.perfil.nome || 'Usuário'} realizou o backup de segurança das pautas no Horário Oficial de Brasília.`);
+            window.open(`mailto:${EMAIL_OPERACIONAL}?subject=${subject}&body=${body}`);
+        }
+
+        function importBackupJSON(e) {
+            const fileReader = new FileReader();
+            fileReader.onload = function (event) {
+                db = JSON.parse(event.target.result);
+                saveData();
+                loadData();
+                closeBackupModal();
+                alert('Backup restaurado com sucesso!');
             };
-
-            alternarAba('financeiro');
-            window.scrollTo(0, document.body.scrollHeight);
+            fileReader.readAsText(e.target.files[0]);
         }
-
-        function gerarReciboIndividual(id) {
-            var ato = null;
-            for (var i = 0; i < atos.length; i++) {
-                if (atos[i].id === id) { ato = atos[i]; break; }
-            }
-            if (ato) gerarReciboSomado([ato]);
-        }
-
-        function dispararRelatoriosSelecionados() {
-            if (!selWhats && !selEmail && !selExcel) {
-                alert("Selecione ao menos um canal com tick ✅.");
-                return;
-            }
-            var atosFiltrados = obterAtosFiltrados();
-            if (selWhats) { registrarUltimoBackup('WhatsApp'); compartilharPeriodoWhatsApp(); }
-            if (selEmail) enviarEmailPeriodo();
-            if (selExcel) { registrarUltimoBackup('Excel'); exportarExcel(); }
-        }
-
-        function excluirAto(id) {
-            if (confirm("⚠️ Apagar este lançamento PERMANENTEMENTE?")) {
-                atos = atos.filter(function(a) { return a.id !== id; });
-                localStorage.setItem('diligence_db_atos_v8', JSON.stringify(atos));
-                renderizarAtos();
-                renderizarFinanceiro();
-            }
-        }
-
-        function excluirSelecionadosEmMassa() {
-            var chks = document.querySelectorAll('.chk-multi-delete:checked');
-            if (chks.length === 0) return;
-
-            if (confirm("⚠️ EXCLUIR PERMANENTEMENTE " + chks.length + " registro(s)?")) {
-                var ids = [];
-                for (var i = 0; i < chks.length; i++) ids.push(parseInt(chks[i].value));
-
-                atos = atos.filter(function(a) { return ids.indexOf(a.id) === -1; });
-                localStorage.setItem('diligence_db_atos_v8', JSON.stringify(atos));
-                modoExcluirVarios = false;
-                renderizarAtos();
-                renderizarFinanceiro();
-            }
-        }
-
-        function compartilharWhatsIndividual(id) {
-            var ato = null;
-            for (var i = 0; i < atos.length; i++) {
-                if (atos[i].id === id) { ato = atos[i]; break; }
-            }
-            if (!ato) return;
-
-            var dataFmt = ato.data.split('-').reverse().join('/');
-            var docProfissional = perfil.oab ? "OAB: " + perfil.oab : "CPF: " + perfil.cpf;
-
-            var msg = "*COMPROVANTE DE LANÇAMENTO - DILIGENCE.BR*\n\n" +
-                      "*Executado por:* " + perfil.nome + " (" + docProfissional + ")\n" +
-                      "*Tipo:* " + (ato.natureza === 'Debito' ? 'DÉBITO (-)' : 'CRÉDITO (+)') + "\n" +
-                      "*Cliente/Empresa:* " + ato.cliente + "\n" +
-                      "*Processo/Ref:* " + ato.processo + "\n" +
-                      "*Data/Hora:* " + dataFmt + " às " + ato.hora + "\n" +
-                      "*Valor:* R$ " + ato.valor.toFixed(2).replace('.', ',') + " (" + ato.status.toUpperCase() + ")\n" +
-                      "*PIX:* " + perfil.pix;
-
-            window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), '_blank');
-        }
-
-        function compartilharPeriodoWhatsApp() {
-            var atosFiltrados = obterAtosFiltrados();
-            var total = 0;
-            var listaTxt = "";
-
-            for (var i = 0; i < atosFiltrados.length; i++) {
-                var a = atosFiltrados[i];
-                var valFinal = (a.natureza === 'Debito') ? -a.valor : a.valor;
-                total += valFinal;
-                var dataFmt = a.data.split('-').reverse().join('/');
-
-                listaTxt += "\n📌 *Ato " + (i + 1) + ":* " + a.cliente +
-                            "\n• *Proc:* " + a.processo +
-                            "\n• *Data/Hora:* " + dataFmt + " às " + a.hora +
-                            "\n• *Valor:* " + (a.natureza === 'Debito' ? '-' : '') + "R$ " + a.valor.toFixed(2).replace('.', ',') + "\n";
-            }
-
-            var docProfissional = perfil.oab ? "OAB: " + perfil.oab : "CPF: " + perfil.cpf;
-
-            var msg = "*RELATÓRIO DE PAUTA DETALHADO - DILIGENCE.BR*\n" +
-                      "*Profissional:* " + perfil.nome + " (" + docProfissional + ")\n" +
-                      "*Chave PIX:* " + perfil.pix + "\n" +
-                      "----------------------------------------" + listaTxt + "----------------------------------------\n" +
-                      "*TOTAL LÍQUIDO:* R$ " + total.toFixed(2).replace('.', ',');
-
-            window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), '_blank');
-        }
-
-        function enviarEmailPeriodo() {
-            var atosFiltrados = obterAtosFiltrados();
-            var total = 0;
-            var listaTxt = "";
-
-            for (var i = 0; i < atosFiltrados.length; i++) {
-                var a = atosFiltrados[i];
-                var valFinal = (a.natureza === 'Debito') ? -a.valor : a.valor;
-                total += valFinal;
-                var dataFmt = a.data.split('-').reverse().join('/');
-
-                listaTxt += (i + 1) + ". CLIENTE: " + a.cliente + " | PROC: " + a.processo + " | DATA: " + dataFmt + " | VALOR: R$ " + a.valor.toFixed(2).replace('.', ',') + "\n";
-            }
-
-            var dest = "controledepautasp@gmail.com";
-            var assunto = "Relatório Detalhado de Atos - " + perfil.nome;
-            var corpo = "Prezados,\n\nListagem dos atos:\n\n" + listaTxt + "\nTOTAL LÍQUIDO: R$ " + total.toFixed(2).replace('.', ',') + "\n\nAtenciosamente,\n" + perfil.nome;
-
-            window.location.href = "mailto:" + dest + "?subject=" + encodeURIComponent(assunto) + "&body=" + encodeURIComponent(corpo);
-        }
-
-        function exportarExcel() {
-            var atosFiltrados = obterAtosFiltrados();
-
-            var csv = "\uFEFF";
-            csv += "Executado por:;" + perfil.nome + ";Documento:;" + (perfil.oab || perfil.cpf) + ";Pix:;" + perfil.pix + "\n\n";
-            csv += "Natureza;Data;Horário;Cliente;Processo;Tipo;Valor (R$);Status\n";
-
-            var total = 0;
-            for (var i = 0; i < atosFiltrados.length; i++) {
-                var a = atosFiltrados[i];
-                var valFinal = (a.natureza === 'Debito') ? -a.valor : a.valor;
-                total += valFinal;
-                var dataFmt = a.data.split('-').reverse().join('/');
-                csv += '"' + (a.natureza || 'Credito') + '";"' + dataFmt + '";"' + a.hora + '";"' + a.cliente + '";"' + a.processo + '";"' + a.tipo + '";"' + valFinal.toFixed(2).replace('.', ',') + '";"' + a.status + '"\n';
-            }
-
-            csv += ";;;;;;TOTAL LIQUIDO;" + total.toFixed(2).replace('.', ',') + "\n";
-
-            var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            var link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", "Financeiro_Diligence.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function gerarPDF() { window.print(); }
     </script>
 </body>
 </html>
