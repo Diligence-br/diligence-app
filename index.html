@@ -169,7 +169,7 @@
             <section id="tab-perfil" class="tab-content space-y-4">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
                     <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Perfil do Correspondente</h3>
-                    <p>Preencha seus dados para habilitar recibos digitais e compartilhamentos automáticos.</p>
+                    <p>Preencha seus dados para habilitar recibos digitais, checklists e compartilhamentos.</p>
                 </div>
 
                 <form id="form-perfil" onsubmit="savePerfil(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
@@ -185,7 +185,7 @@
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs font-semibold">OAB ou CPF</label>
+                            <label class="text-xs font-semibold">OAB / RG / CPF</label>
                             <input type="text" id="perfil-doc" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
                         </div>
                         <div>
@@ -195,13 +195,17 @@
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
+                            <label class="text-xs font-semibold">Celular / WhatsApp (DDD)</label>
+                            <input type="text" id="perfil-celular" placeholder="(11) 99999-9999" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
+                        <div>
                             <label class="text-xs font-semibold">Chave PIX Oficial</label>
                             <input type="text" id="perfil-pix" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
                         </div>
-                        <div>
-                            <label class="text-xs font-semibold">E-mail Pessoal (p/ Backup)</label>
-                            <input type="email" id="perfil-email" placeholder="seuemail@email.com" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
-                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold">E-mail do Correspondente</label>
+                        <input type="email" id="perfil-email" placeholder="seuemail@email.com" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
                     </div>
                     
                     <button type="submit" class="w-full bg-brand-red text-white py-2 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Perfil</button>
@@ -219,7 +223,7 @@
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
                     <div>
                         <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-circle-info mr-1"></i> Cadastro e Pauta de Diligências</h3>
-                        <p>Atos cadastrados refletem automaticamente no Financeiro e Caixa.</p>
+                        <p>Atos cadastrados refletem automaticamente no Financeiro, Caixa e Checklists.</p>
                     </div>
                     <button type="button" onclick="capturarLocalizacaoGPS()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-2.5 py-1.5 rounded-lg text-[10px] shadow flex items-center gap-1">
                         <i class="fa-solid fa-location-dot"></i> Check-in Fórum GPS
@@ -264,6 +268,10 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                         <div>
+                            <label class="text-xs font-semibold">Cidade do Ato / Comarca*</label>
+                            <input type="text" id="ato-cidade" required placeholder="Ex: São Paulo - SP" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
+                        </div>
+                        <div>
                             <label class="text-xs font-semibold">Modalidade / Plataforma</label>
                             <select id="ato-modalidade" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-semibold">
                                 <option value="teams">🟣 Cível (Virtual - Teams)</option>
@@ -272,10 +280,11 @@
                                 <option value="presencial">🏛️ Presencial (Fórum / GPS)</option>
                             </select>
                         </div>
-                        <div>
-                            <label class="text-xs font-semibold">Link da Sala Virtual (Opcional)</label>
-                            <input type="url" id="ato-link" placeholder="https://teams.microsoft.com/..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
-                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold">Link da Sala Virtual (Opcional)</label>
+                        <input type="url" id="ato-link" placeholder="https://teams.microsoft.com/..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
                     </div>
 
                     <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-2">
@@ -792,8 +801,8 @@
                         <i class="fa-solid fa-list-ol"></i> 1. MANUAL DE INSTRUÇÕES DETALHADO POR ABA
                     </h2>
                     <div class="space-y-2 text-gray-700 dark:text-gray-300">
-                        <p><strong>• Aba 1 (Perfil):</strong> Cadastre seu nome, OAB/CPF, cidade e chave PIX. Esses dados são inseridos automaticamente em recibos e relatórios.</p>
-                        <p><strong>• Aba 2 (Pauta & Duplicidade [D]):</strong> Registre suas audiências e diligências. O sistema possui trava inteligente contra duplicidades: se aceitar duplicar, ele marcará <strong>[D]</strong>. Atos com data de vencimento vão direto para o <i>A Receber</i>.</p>
+                        <p><strong>• Aba 1 (Perfil):</strong> Cadastre seu nome, OAB/CPF/RG, celular, cidade, e-mail e chave PIX. Esses dados são inseridos automaticamente em recibos, relatórios e no Checklist Pós-Audiência.</p>
+                        <p><strong>• Aba 2 (Pauta, Duplicidade [D] & Checklist 📋):</strong> Registre suas audiências. Clique no botão <i>"📋 Checklist Pós-Audiência"</i> para abrir o formulário automático com dados do ato e do perfil. Se a ATA não for anexada, o sistema gera o alerta de confirmação. Ao enviar, o ato recebe a marca verde permanente <strong>✓ Formulário Enviado para Diligence</strong>.</p>
                         <p><strong>• Aba 3 (Agenda de Contatos):</strong> Cadastre advogados, prepostos e clientes. Permite selecionar contatos com caixas [x] e enviar via WhatsApp ou E-mail.</p>
                         <p><strong>• Aba 4 (Financeiro & Lote 🔍):</strong> Acompanhe os totais da pauta. Clique na lupa 🔍 ao lado de qualquer item para ver a ficha completa da pauta. Emita recibos em lote exclusivamente para itens quitados (PAGO).</p>
                         <p><strong>• Aba 5 (Livro Caixa / Fluxo):</strong> Registre suas despesas diárias (Uber, cópias, alimentação) e entradas. Quando um ato é dado como PAGO na pauta, ele lança automaticamente uma entrada de honorários no caixa. Se o status "PAGO" for revertido para pendente/vencido (após envio de justificativa no WhatsApp do ADM), o lançamento correspondente no Caixa é estornado automaticamente.</p>
@@ -814,7 +823,7 @@
                         </p>
                         <p><strong>• Autonomia e Guarda dos Dados:</strong> Como os dados ficam salvos localmente no seu dispositivo, a administração do aplicativo não guarda cópia e não possui acesso às suas informações. Salve o arquivo `.json` no celular, Google Drive ou e-mail pessoal.</p>
                         <p><strong>• Restauração em Celular Novo:</strong> Para migrar de aparelho, acesse o botão <i>"Restaurar"</i> no topo da tela e selecione o seu arquivo `.json` salvo previamente.</p>
-                        <p><strong>• Trava de Alteração de Status Protegido:</strong> Para alterar qualquer valor já dado como `PAGO` de volta para `PENDENTE`, `VENCIDO` ou `TROCA`, o app exigirá a confirmação do envio do motivo para o WhatsApp do ADM <code>(11) 97838-6574</code> para liberar a alteração no sistema.</p>
+                        <p><strong>• Formulário Pós-Audiência & Envio Direto:</strong> O formulário é enviado para o WhatsApp ADM <code>(11) 97838-6574</code> e para o e-mail <code>ec.cortez@uol.com.br</code> com carimbo em Horário de Brasília.</p>
                     </div>
                 </div>
             </section>
@@ -857,7 +866,113 @@
         </nav>
     </div>
 
-    <!-- MODAL DE FICHA DETALHADA DO ATO (ÍCONE 🔍 NO FINANCEIRO) -->
+    <!-- MODAL FORMULÁRIO CHECKLIST PÓS-AUDIÊNCIA -->
+    <div id="modal-checklist" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-lg w-full space-y-4 shadow-2xl border-2 border-brand-red my-8">
+            <div class="flex justify-between items-center border-b pb-2">
+                <div>
+                    <h3 class="font-extrabold text-sm text-brand-red flex items-center gap-1">
+                        <i class="fa-solid fa-list-check"></i> CONTROLE DE PAGAMENTO - DILIGÊNCIAS
+                    </h3>
+                    <p class="text-[10px] text-gray-500">Informações preenchidas automaticamente pelo app</p>
+                </div>
+                <button onclick="fecharModalChecklist()" class="text-gray-400 font-bold text-lg">&times;</button>
+            </div>
+            
+            <form id="form-checklist" class="space-y-3 text-xs">
+                <input type="hidden" id="chk-ato-id">
+                
+                <div class="grid grid-cols-2 gap-2 bg-gray-50 dark:bg-gray-700/50 p-2.5 rounded-xl border">
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">1. E-mail do Correspondente:*</label>
+                        <input type="email" id="chk-email" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">2. Nome e OAB/RG/CPF:*</label>
+                        <input type="text" id="chk-nome-doc" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">3. Celular com DDD:*</label>
+                        <input type="text" id="chk-celular" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">4. Data/Hora do Ato:*</label>
+                        <input type="text" id="chk-data-ato" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">5. Nº do Processo:*</label>
+                        <input type="text" id="chk-processo" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">6. Cidade:*</label>
+                        <input type="text" id="chk-cidade" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="font-extrabold text-brand-red dark:text-red-400 block mb-1">7. Serviço Prestado (Marque todas que se aplicam):*</label>
+                    <div class="grid grid-cols-2 gap-1.5 bg-gray-50 dark:bg-gray-700/30 p-2 rounded-lg border text-[11px]">
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Acompanhamento em banco"> Acompanhamento em banco</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Advogado"> Advogado</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Advogado + Preposto"> Advogado + Preposto</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Preposto"> Preposto</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Cópia"> Cópia</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Protocolo"> Protocolo</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Delegacia"> Delegacia</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Perícia"> Perícia</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Procon"> Procon</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Outros"> Outros</label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">8. Dados Bancários / Chave PIX:*</label>
+                        <input type="text" id="chk-pix" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">12. Valor Acordado (R$):*</label>
+                        <input type="text" id="chk-valor" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-extrabold text-brand-red">
+                    </div>
+                </div>
+
+                <div id="box-alerta-obs" class="hidden p-2 bg-red-100 border border-red-400 text-red-700 font-bold rounded text-[11px]">
+                    ⚠️ ATENÇÃO: Por favor, descreva como foi a diligência/audiência no campo de observações abaixo antes de enviar!
+                </div>
+
+                <div>
+                    <label class="font-extrabold text-brand-red dark:text-red-400 flex justify-between items-center">
+                        <span>9. Observações / Como foi a diligência:*</span>
+                        <button type="button" onclick="iniciarDitadoVoz('chk-obs')" class="text-xs text-brand-red font-bold underline"><i class="fa-solid fa-microphone"></i> Ditar</button>
+                    </label>
+                    <textarea id="chk-obs" rows="2" placeholder="Descreva o que ocorreu (ex: houve acordo, adiamento, emenda, renúncia, etc)..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-semibold focus:ring-2 focus:ring-brand-red outline-none"></textarea>
+                </div>
+
+                <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-1">
+                    <label class="font-bold text-gray-700 dark:text-gray-200 block text-[11px]">
+                        10. Anexar ATA ou Print da Audiência:
+                    </label>
+                    <input type="file" id="chk-ata-file" accept="image/*" capture="environment" onchange="previewImagemAtaChecklist(event)" class="w-full p-1 border rounded text-[11px]">
+                    
+                    <div id="chk-preview-ata-container" class="pt-1 text-center hidden">
+                        <span class="text-[10px] font-bold text-green-600 block">✓ ATA Anexada ao Formulário:</span>
+                        <img id="chk-img-preview-ata" src="" class="max-h-28 mx-auto rounded border shadow-sm object-contain">
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t flex gap-2 font-bold">
+                    <button type="button" onclick="enviarChecklistWhatsApp()" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl shadow text-xs flex items-center justify-center gap-1">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp ADM
+                    </button>
+                    <button type="button" onclick="enviarChecklistEmail()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl shadow text-xs flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-envelope"></i> E-mail Cortez
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE FICHA DETALHADA DO ATO -->
     <div id="modal-detalhes-ato" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-md w-full space-y-4 shadow-2xl border-2 border-brand-red">
             <div class="flex justify-between items-center border-b pb-2">
@@ -970,9 +1085,10 @@
         const AUTH_USER = "diligence.br*";
         const AUTH_PASS = "320427";
         const WHATS_ADM = "5511978386574";
+        const EMAIL_CORTEZ = "ec.cortez@uol.com.br";
 
         let db = {
-            perfil: { nome: '', doc: '', cidade: '', pix: '', email: '' },
+            perfil: { nome: '', doc: '', cidade: '', pix: '', email: '', celular: '' },
             atos: [],
             contatos: [],
             caixa: [],
@@ -990,6 +1106,7 @@
         let atoPendenteAlteracaoId = null;
         let atoNovoStatusPretendido = null;
         let tipoRecuperacaoAtual = 'senha';
+        let imagemAtaChecklistTemp = null;
 
         function updateClock() {
             const now = new Date();
@@ -1096,12 +1213,14 @@
             
             if(!db.contatos) db.contatos = [];
             if(!db.caixa) db.caixa = [];
+            if(!db.perfil.celular) db.perfil.celular = '';
 
             document.getElementById('perfil-nome').value = db.perfil.nome || '';
             document.getElementById('perfil-doc').value = db.perfil.doc || '';
             document.getElementById('perfil-cidade').value = db.perfil.cidade || '';
             document.getElementById('perfil-pix').value = db.perfil.pix || '';
             document.getElementById('perfil-email').value = db.perfil.email || '';
+            document.getElementById('perfil-celular').value = db.perfil.celular || '';
             document.getElementById('bloco-notas').value = db.notas || '';
             document.getElementById('caixa-data').value = new Date().toISOString().split('T')[0];
             document.getElementById('contato-data-envio').value = new Date().toISOString().split('T')[0];
@@ -1158,13 +1277,16 @@
                 cliente: document.getElementById('ato-cliente').value.trim(),
                 data: document.getElementById('ato-data').value,
                 vencimento: document.getElementById('ato-vencimento').value,
+                cidade: document.getElementById('ato-cidade').value.trim(),
                 modalidade: document.getElementById('ato-modalidade').value,
                 link: document.getElementById('ato-link').value || '',
                 valor: parseFloat(document.getElementById('ato-valor').value),
                 status: statusSel,
                 dataPagamento: statusSel === 'pago' ? new Date().toLocaleString('pt-BR') : null,
                 ataImg: ataBase64,
-                duplicado: ehDuplicado
+                duplicado: ehDuplicado,
+                checklistEnviado: false,
+                checklistDataEnvio: null
             };
 
             db.atos.push(novoAto);
@@ -1203,10 +1325,13 @@
                 card.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div>
-                            <strong class="text-sm">Proc: ${ato.processo}</strong> ${ato.duplicado ? '<span class="bg-purple-600 text-white font-extrabold px-1 rounded text-[9px]">[D] DUPLICADO</span>' : ''} - ${ato.cliente}<br>
-                            <span class="text-gray-400"><i class="fa-regular fa-clock mr-1"></i>${new Date(ato.data).toLocaleString('pt-BR')}</span>
+                            <strong class="text-sm">Proc: ${ato.processo}</strong> 
+                            ${ato.duplicado ? '<span class="bg-purple-600 text-white font-extrabold px-1 rounded text-[9px]">[D] DUPLICADO</span>' : ''} 
+                            - ${ato.cliente}<br>
+                            <span class="text-gray-400"><i class="fa-regular fa-clock mr-1"></i>${new Date(ato.data).toLocaleString('pt-BR')} | 📍 ${ato.cidade || 'N/I'}</span>
                             ${ato.vencimento ? `<div class="text-[10px] font-bold ${vencidoOuHoje ? 'text-red-600' : 'text-gray-500'}">Venc. Pagamento: ${new Date(ato.vencimento + 'T00:00:00').toLocaleDateString('pt-BR')} ${vencidoOuHoje ? '⚠️ (COBRAR HORA!)' : ''}</div>` : ''}
                             ${ato.dataPagamento ? `<div class="text-[10px] font-bold text-green-600"><i class="fa-solid fa-circle-check mr-1"></i>Pago em: ${ato.dataPagamento}</div>` : ''}
+                            ${ato.checklistEnviado ? `<div class="text-[10px] font-extrabold text-green-600 bg-green-50 dark:bg-gray-700 p-1 rounded mt-1 border border-green-300 inline-block"><i class="fa-solid fa-check-double mr-1"></i>✓ Formulário enviado para Diligence em ${ato.checklistDataEnvio}</div>` : ''}
                         </div>
                         <div class="text-right">
                             <span class="font-bold text-brand-red text-sm block">R$ ${ato.valor.toFixed(2)}</span>
@@ -1214,7 +1339,8 @@
                         </div>
                     </div>
                     <div class="flex justify-between items-center pt-1 border-t">
-                        <div class="flex gap-2 flex-wrap">
+                        <div class="flex gap-1.5 flex-wrap">
+                            <button onclick="abrirModalChecklist(${ato.id})" class="inline-flex items-center gap-1 bg-brand-red text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-brand-darkred shadow"><i class="fa-solid fa-list-check"></i> 📋 Checklist Pós-Audiência</button>
                             ${ato.link ? `<a href="${ato.link}" target="_blank" class="inline-flex items-center gap-1 bg-purple-600 text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-purple-700"><i class="fa-solid fa-video"></i> Sala Virtual</a>` : ''}
                             ${ato.ataImg ? `<button onclick="verAtaAnexo(${ato.id})" class="inline-flex items-center gap-1 bg-gray-700 text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-gray-800"><i class="fa-solid fa-image"></i> Ver ATA</button>` : ''}
                         </div>
@@ -1236,6 +1362,128 @@
             }
         }
 
+        /* --- CHECKLIST PÓS-AUDIÊNCIA (NOVA FUNCIONALIDADE) --- */
+        function abrirModalChecklist(atoId) {
+            const ato = db.atos.find(a => a.id === atoId);
+            if (!ato) return;
+
+            document.getElementById('chk-ato-id').value = ato.id;
+            document.getElementById('chk-email').value = db.perfil.email || '';
+            document.getElementById('chk-nome-doc').value = `${db.perfil.nome || ''} (${db.perfil.doc || ''})`;
+            document.getElementById('chk-celular').value = db.perfil.celular || '';
+            document.getElementById('chk-data-ato').value = new Date(ato.data).toLocaleString('pt-BR');
+            document.getElementById('chk-processo').value = ato.processo;
+            document.getElementById('chk-cidade').value = ato.cidade || db.perfil.cidade || '';
+            document.getElementById('chk-pix').value = db.perfil.pix || '';
+            document.getElementById('chk-valor').value = `R$ ${ato.valor.toFixed(2)}`;
+            document.getElementById('chk-obs').value = '';
+            document.getElementById('box-alerta-obs').classList.add('hidden');
+
+            document.querySelectorAll('.chk-servico').forEach(c => c.checked = false);
+
+            imagemAtaChecklistTemp = ato.ataImg || null;
+            const previewContainer = document.getElementById('chk-preview-ata-container');
+            if (imagemAtaChecklistTemp) {
+                document.getElementById('chk-img-preview-ata').src = imagemAtaChecklistTemp;
+                previewContainer.classList.remove('hidden');
+            } else {
+                previewContainer.classList.add('hidden');
+            }
+
+            document.getElementById('modal-checklist').classList.remove('hidden');
+        }
+
+        function fecharModalChecklist() {
+            document.getElementById('modal-checklist').classList.add('hidden');
+        }
+
+        function previewImagemAtaChecklist(evt) {
+            const file = evt.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagemAtaChecklistTemp = e.target.result;
+                    document.getElementById('chk-img-preview-ata').src = imagemAtaChecklistTemp;
+                    document.getElementById('chk-preview-ata-container').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function validarEMontarTextoChecklist() {
+            const obs = document.getElementById('chk-obs').value.trim();
+            const boxAlerta = document.getElementById('box-alerta-obs');
+
+            // 1. Validação de Observações Obrigatórias
+            if (!obs) {
+                boxAlerta.classList.remove('hidden');
+                document.getElementById('chk-obs').focus();
+                return null;
+            } else {
+                boxAlerta.classList.add('hidden');
+            }
+
+            // 2. Trava de Segurança da ATA (Sim ou Cancelar)
+            let avisoAtaTexto = "";
+            if (!imagemAtaChecklistTemp) {
+                const querSemAta = confirm("⚠️ Tem certeza que deseja compartilhar sem a ATA?");
+                if (!querDuplicarEEnviar(querSemAta)) return null;
+                avisoAtaTexto = "\n⚠️ ENVIADO SEM ATA DA AUDIÊNCIA";
+            }
+
+            // Captura Horário de Brasília
+            const agora = new Date();
+            const dataHoraBSB = agora.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }) + " às " + agora.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+
+            const servicosSel = Array.from(document.querySelectorAll('.chk-servico:checked')).map(c => c.value).join(', ') || 'Não especificado';
+
+            const texto = `=======================================\n CONTROLE DE PAGAMENTO - DILIGÊNCIAS\n DILIGENCE.BR — FORMULÁRIO DE PÓS-AUDIÊNCIA\n=======================================\n\n` +
+                          `1. E-mail: ${document.getElementById('chk-email').value}\n` +
+                          `2. Correspondente: ${document.getElementById('chk-nome-doc').value}\n` +
+                          `3. Celular: ${document.getElementById('chk-celular').value}\n` +
+                          `4. Data/Hora do Ato: ${document.getElementById('chk-data-ato').value}\n` +
+                          `5. Nº do Processo: ${document.getElementById('chk-processo').value}\n` +
+                          `6. Cidade: ${document.getElementById('chk-cidade').value}\n` +
+                          `7. Serviço Prestado: ${servicosSel}\n` +
+                          `8. PIX / Dados Bancários: ${document.getElementById('chk-pix').value}\n` +
+                          `9. Observações: "${obs}"\n` +
+                          `10. Anexo ATA: ${imagemAtaChecklistTemp ? '✓ ATA / Print Anexado' : '❌ SEM ATA'}${avisoAtaTexto}\n` +
+                          `11. E-mail Confirmação: ${document.getElementById('chk-email').value}\n` +
+                          `12. Valor Acordado: ${document.getElementById('chk-valor').value}\n\n` +
+                          `🗓️ Registrado e enviado em: ${dataHoraBSB} (Horário de Brasília)`;
+
+            // Atualiza o ato na Pauta com o marcador verde
+            const atoId = parseInt(document.getElementById('chk-ato-id').value);
+            const ato = db.atos.find(a => a.id === atoId);
+            if (ato) {
+                ato.checklistEnviado = true;
+                ato.checklistDataEnvio = dataHoraBSB;
+                if (imagemAtaChecklistTemp && !ato.ataImg) ato.ataImg = imagemAtaChecklistTemp;
+                saveData();
+                renderAtos();
+            }
+
+            return { texto, dataHoraBSB };
+        }
+
+        function querDuplicarEEnviar(confirmou) { return confirmou; }
+
+        function enviarChecklistWhatsApp() {
+            const res = validarEMontarTextoChecklist();
+            if (!res) return;
+
+            fecharModalChecklist();
+            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(res.texto)}`);
+        }
+
+        function enviarChecklistEmail() {
+            const res = validarEMontarTextoChecklist();
+            if (!res) return;
+
+            fecharModalChecklist();
+            window.open(`mailto:${EMAIL_CORTEZ}?subject=${encodeURIComponent(`Controle de Pagamento - Proc. ${document.getElementById('chk-processo').value}`)}&body=${encodeURIComponent(res.texto)}`);
+        }
+
         /* --- ABA FINANCEIRO COM LUPA 🔍 DE FICHA COMPLETA --- */
         function verDetalhesAtoPauta(atoId) {
             const ato = db.atos.find(a => a.id === atoId);
@@ -1247,11 +1495,13 @@
                     <p><strong>• Processo nº:</strong> ${ato.processo}</p>
                     <p><strong>• Cliente / Contratante:</strong> ${ato.cliente}</p>
                     <p><strong>• Data/Hora do Ato:</strong> ${new Date(ato.data).toLocaleString('pt-BR')}</p>
+                    <p><strong>• Cidade / Comarca:</strong> ${ato.cidade || 'N/I'}</p>
                     <p><strong>• Vencimento Pagamento:</strong> ${ato.vencimento ? new Date(ato.vencimento + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/I'}</p>
                     <p><strong>• Modalidade:</strong> ${ato.modalidade.toUpperCase()}</p>
                     <p><strong>• Valor Acordado:</strong> <span class="text-brand-red font-bold">R$ ${ato.valor.toFixed(2)}</span></p>
                     <p><strong>• Status Atual:</strong> <span class="font-bold uppercase">${ato.status}</span></p>
                     ${ato.dataPagamento ? `<p><strong>• Data da Baixa / Pagamento:</strong> ${ato.dataPagamento}</p>` : ''}
+                    ${ato.checklistEnviado ? `<p class="text-green-600 font-bold"><strong>• Checklist Diligence:</strong> Enviado em ${ato.checklistDataEnvio}</p>` : ''}
                     ${ato.link ? `<p><strong>• Link Sala Virtual:</strong> <a href="${ato.link}" target="_blank" class="text-blue-600 underline">${ato.link}</a></p>` : ''}
                 </div>
                 ${ato.ataImg ? `<div class="text-center pt-2"><span class="font-bold text-[11px] block mb-1">Foto do Documento/ATA:</span><img src="${ato.ataImg}" class="max-h-48 mx-auto rounded border"></div>` : '<p class="text-gray-400 italic">Sem anexo de ATA fotografado.</p>'}
@@ -1402,7 +1652,7 @@
             // ABA PAUTA
             texto += `📋 1. ABA PAUTA & DILIGÊNCIAS:\n• Total de Atos: ${filtrados.length}\n• Pauta Bruta: R$ ${totalBruto.toFixed(2)}\n• Pauta Quitada (Pago): R$ ${totalPago.toFixed(2)}\n• Honorários a Receber: R$ ${totalPendente.toFixed(2)}\n-----------------------------------------\n`;
             filtrados.forEach((a, i) => {
-                texto += `${i+1}. Proc: ${a.processo} (${a.cliente}) - R$ ${a.valor.toFixed(2)} [${a.status.toUpperCase()}]\n`;
+                texto += `${i+1}. Proc: ${a.processo} (${a.cliente}) - R$ ${a.valor.toFixed(2)} [${a.status.toUpperCase()}] ${a.checklistEnviado ? '✓ Checklist Enviado' : ''}\n`;
             });
 
             // ABA LIVRO CAIXA
@@ -1429,7 +1679,7 @@
 
         /* --- MANUAIS --- */
         function gerarTextoManuais() {
-            return `=========================================\n CENTRAL DE MANUAIS — DILIGENCE.BR\n=========================================\n\n1. MANUAL DAS ABAS:\n• Perfil: Dados pessoais e PIX.\n• Pauta [D]: Trava de duplicidade com aviso e tag [D].\n• Agenda: Contatos selecionáveis [x].\n• Financeiro 🔍: Ficha completa ao clicar no ícone do ato e recibos em lote.\n• Livro Caixa: Lançamentos de entradas/saídas e estorno automático de honorários quando "PAGO" é desfeito.\n• Calc & Notas: Cálculos trabalhistas e ditado por voz.\n• Relatórios: Envio discriminado por abas.\n\n2. BACKUP E AUTONOMIA (2X AO DIA):\nO correspondente é responsável por exportar seu backup diário às 12:00 e 17:00.`;
+            return `=========================================\n CENTRAL DE MANUAIS — DILIGENCE.BR\n=========================================\n\n1. MANUAL DAS ABAS:\n• Perfil: Dados pessoais, celular e PIX.\n• Pauta [D] & Checklist 📋: Trava de duplicidade [D], botão de Checklist com envio para WhatsApp ADM e E-mail ec.cortez@uol.com.br, trava sem ATA e selo verde ✓.\n• Agenda: Contatos selecionáveis [x].\n• Financeiro 🔍: Ficha completa ao clicar no ícone do ato e recibos em lote.\n• Livro Caixa: Lançamentos de entradas/saídas e estorno automático ao desfazer PAGO.\n• Calc & Notas: Cálculos trabalhistas e ditado por voz.\n• Relatórios: Envio discriminado por abas.\n\n2. BACKUP E AUTONOMIA (2X AO DIA):\nO correspondente é responsável por exportar seu backup diário às 12:00 e 17:00.`;
         }
 
         function compartilharManualWhats() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(gerarTextoManuais())}`); }
@@ -1440,13 +1690,11 @@
             const ato = db.atos.find(a => a.id === atoId);
             if (!ato) return;
 
-            // CASO 1: Mudar para PAGO (Dar Baixa)
             if (novoStatus === 'pago' && ato.status !== 'pago') {
                 if (confirm(`🟢 CONFIRMAR RECEBIMENTO DE PAGAMENTO?\n\nProcesso: ${ato.processo}\nValor: R$ ${ato.valor.toFixed(2)}`)) {
                     ato.status = 'pago';
                     ato.dataPagamento = new Date().toLocaleString('pt-BR');
                     
-                    // Lança automaticamente a entrada no Livro Caixa
                     db.caixa.push({
                         id: Date.now(),
                         atoRefId: ato.id,
@@ -1468,7 +1716,6 @@
                 return;
             }
 
-            // CASO 2: Tentar desfazer um PAGO (exige trava e WhatsApp do ADM)
             if (ato.status === 'pago' && novoStatus !== 'pago') {
                 atoPendenteAlteracaoId = atoId;
                 atoNovoStatusPretendido = novoStatus;
@@ -1478,7 +1725,6 @@
                 return;
             }
 
-            // CASO 3: Alteração normal de outros status (ex: Pendente -> Vencido ou Troca)
             ato.status = novoStatus;
             saveData();
             renderAtos();
@@ -1510,8 +1756,6 @@
             if(ato) {
                 ato.status = atoNovoStatusPretendido;
                 ato.dataPagamento = null;
-                
-                // Remove / Estorna o lançamento automático correspondente do Livro Caixa
                 db.caixa = db.caixa.filter(c => c.atoRefId !== ato.id);
 
                 saveData();
@@ -1853,7 +2097,7 @@
 
         function confirmarLimparAba(aba) {
             if (confirm("⚠️ TEM CERTEZA QUE DESEJA LIMPAR ESTA ABA?")) {
-                if (aba === 'perfil') db.perfil = { nome: '', doc: '', cidade: '', pix: '', email: '' };
+                if (aba === 'perfil') db.perfil = { nome: '', doc: '', cidade: '', pix: '', email: '', celular: '' };
                 else if (aba === 'atos') db.atos = [];
                 else if (aba === 'contatos') db.contatos = [];
                 else if (aba === 'caixa') db.caixa = [];
@@ -1865,7 +2109,7 @@
         function confirmarZerarTudoGeral() {
             if (confirm("🚨 ATENÇÃO: Deseja ZERAR TODO o aplicativo?")) {
                 if (confirm("❓ Tem certeza absoluta?")) {
-                    db = { perfil: { nome: '', doc: '', cidade: '', pix: '', email: '' }, atos: [], contatos: [], caixa: [], reciboSeq: 1001, notas: '', ultimoBackup: null };
+                    db = { perfil: { nome: '', doc: '', cidade: '', pix: '', email: '', celular: '' }, atos: [], contatos: [], caixa: [], reciboSeq: 1001, notas: '', ultimoBackup: null };
                     saveData();
                     loadData();
                     fecharModalBackup();
@@ -1892,7 +2136,8 @@
                 doc: document.getElementById('perfil-doc').value,
                 cidade: document.getElementById('perfil-cidade').value,
                 pix: document.getElementById('perfil-pix').value,
-                email: document.getElementById('perfil-email').value
+                email: document.getElementById('perfil-email').value,
+                celular: document.getElementById('perfil-celular').value
             };
             saveData();
             alert('Perfil salvo com sucesso!');
