@@ -218,8 +218,8 @@
             <section id="tab-atos" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
                     <div>
-                        <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-circle-info mr-1"></i> Cadastro e Pauta</h3>
-                        <p>Cadastre os atos com voz, valor, link e anexo de ATA via Câmera/Galeria.</p>
+                        <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-circle-info mr-1"></i> Cadastro e Pauta de Diligências</h3>
+                        <p>Atos cadastrados refletem automaticamente no Financeiro e Caixa.</p>
                     </div>
                     <button type="button" onclick="capturarLocalizacaoGPS()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-2.5 py-1.5 rounded-lg text-[10px] shadow flex items-center gap-1">
                         <i class="fa-solid fa-location-dot"></i> Check-in Fórum GPS
@@ -278,7 +278,6 @@
                         </div>
                     </div>
 
-                    <!-- CAMPO DE FOTO DA ATA COM CÂMERA E PRÉ-VISUALIZAÇÃO -->
                     <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-2">
                         <label class="text-xs font-bold text-gray-700 dark:text-gray-200 flex items-center gap-1">
                             <i class="fa-solid fa-camera text-brand-red"></i> Fotografar ATA ou Selecionar da Galeria:
@@ -471,12 +470,93 @@
                 </div>
 
                 <div class="space-y-2">
-                    <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300"><i class="fa-solid fa-list-check mr-1"></i> Gerenciar Baixa dos Processos</h3>
+                    <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300"><i class="fa-solid fa-list-check mr-1"></i> Gerenciar Baixa dos Processos (Reflete da Pauta)</h3>
                     <div id="fin-gerenciador-baixas" class="space-y-2"></div>
                 </div>
             </section>
 
-            <!-- ABA 5: CALCULADORAS AVANÇADAS & BLOCO DE NOTAS POR VOZ -->
+            <!-- ABA 5: LIVRO CAIXA (FLUXO DE CAIXA: CONTAS A PAGAR E RECEBER) -->
+            <section id="tab-caixa" class="tab-content space-y-4 hidden">
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-cash-register mr-1"></i> Livro Caixa & Fluxo de Despesas</h3>
+                        <p>Controle de Entradas, Despesas da Rua e Gastos Operacionais.</p>
+                    </div>
+                    <button type="button" onclick="confirmarLimparAba('caixa')" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-white dark:bg-gray-800 px-2 py-1 rounded border border-red-200 shadow-sm">
+                        <i class="fa-solid fa-trash-can"></i> Limpar Caixa
+                    </button>
+                </div>
+
+                <!-- CARD DE RESUMO DO CAIXA -->
+                <div class="grid grid-cols-3 gap-2 text-center text-white">
+                    <div class="bg-green-600 p-2.5 rounded-xl shadow">
+                        <span class="text-[9px] uppercase font-bold block">Entradas (+)</span>
+                        <span id="caixa-total-entradas" class="font-black text-sm">R$ 0,00</span>
+                    </div>
+                    <div class="bg-red-600 p-2.5 rounded-xl shadow">
+                        <span class="text-[9px] uppercase font-bold block">Saídas / Despesas (-)</span>
+                        <span id="caixa-total-saidas" class="font-black text-sm">R$ 0,00</span>
+                    </div>
+                    <div class="bg-blue-800 p-2.5 rounded-xl shadow">
+                        <span class="text-[9px] uppercase font-bold block">Saldo em Caixa</span>
+                        <span id="caixa-saldo-liquido" class="font-black text-sm">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <!-- FORMULÁRIO DE LANÇAMENTO NO CAIXA -->
+                <form id="form-caixa" onsubmit="saveLancamentoCaixa(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
+                    <h2 class="font-bold text-sm text-gray-700 dark:text-gray-200 border-b pb-1"><i class="fa-solid fa-plus-circle mr-1"></i> Novo Lançamento no Fluxo de Caixa</h2>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold">Data do Lançamento</label>
+                            <input type="date" id="caixa-data" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-bold">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">Tipo de Transação</label>
+                            <select id="caixa-tipo" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-bold">
+                                <option value="saida">🔴 SAÍDA / DESPESA (-)</option>
+                                <option value="entrada">🟢 ENTRADA / RECEBIMENTO (+)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold">Categoria / Tipo de Despesa</label>
+                        <select id="caixa-categoria-select" onchange="tratarSelecaoCategoriaCaixa(this)" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-semibold">
+                            <option value="Uber / Táxi / Transporte">🚗 Uber / Táxi / Transporte</option>
+                            <option value="Cópias Extras / Autenticações">📄 Cópias Extras / Autenticações</option>
+                            <option value="Diligência PROCON / Órgãos Públicos">🏛️ Diligência PROCON / Órgãos Públicos</option>
+                            <option value="Cliente Particular / Avulso">👤 Cliente Particular / Avulso</option>
+                            <option value="Mensalidade Celular / Internet">📱 Mensalidade Celular / Internet</option>
+                            <option value="Alimentação / Estacionamento / Outros">☕ Alimentação / Estacionamento / Outros</option>
+                            <option value="outro">✏️ Outras Despesas (Escrever detalhadamente)...</option>
+                        </select>
+                    </div>
+
+                    <div id="box-caixa-descricao-livre">
+                        <label class="text-xs font-semibold">Descrição / Detalhamento da História</label>
+                        <textarea id="caixa-descricao" rows="2" placeholder="Escreva aqui seus gastos e historico..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs placeholder-gray-400 dark:placeholder-gray-500"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-brand-red dark:text-red-400">Valor da Operação (R$)*</label>
+                        <input type="number" step="0.01" id="caixa-valor" required placeholder="0.00" class="w-full p-2 border rounded-lg dark:bg-gray-700 font-bold text-sm">
+                    </div>
+
+                    <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Registrar Transação no Caixa
+                    </button>
+                </form>
+
+                <!-- EXTRATO DO CAIXA -->
+                <div class="space-y-2">
+                    <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300"><i class="fa-solid fa-receipt mr-1"></i> Extrato de Contas do Caixa</h3>
+                    <div id="lista-caixa" class="space-y-2"></div>
+                </div>
+            </section>
+
+            <!-- ABA 6: CALCULADORAS AVANÇADAS & BLOCO DE NOTAS POR VOZ -->
             <section id="tab-trabalhista" class="tab-content space-y-4 hidden">
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
                     <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200 border-b pb-2"><i class="fa-solid fa-calculator mr-1"></i> 1. Calculadora Matemática Comum</h3>
@@ -613,20 +693,20 @@
                 </div>
             </section>
 
-            <!-- ABA 6: RELATÓRIOS -->
+            <!-- ABA 7: RELATÓRIOS SEPARADOS E CONSOLIDADOS -->
             <section id="tab-relatorios" class="tab-content space-y-4 hidden">
                 <div id="relatorio-resumo-card" class="bg-gray-900 text-white p-4 rounded-xl text-xs space-y-2 shadow-lg">
                     <div class="font-bold text-amber-400 border-b border-gray-700 pb-1 flex justify-between items-center">
-                        <span>PAINEL DE TOTALIZADORES DO PERÍODO</span>
+                        <span>PAINEL DE TOTALIZADORES CONSOLIDADOS</span>
                         <span id="relatorio-total-atos" class="bg-amber-400/20 px-2 py-0.5 rounded text-amber-300">0 Atos</span>
                     </div>
                     <div class="grid grid-cols-3 gap-2 text-center pt-1">
                         <div class="bg-gray-800 p-2.5 rounded-lg border border-gray-700">
-                            <span class="text-[9px] text-gray-400 block font-bold uppercase">TOTAL BRUTO</span>
+                            <span class="text-[9px] text-gray-400 block font-bold uppercase">PAUTA BRUTA</span>
                             <span id="relatorio-valor-total" class="font-black text-white text-base">R$ 0,00</span>
                         </div>
                         <div class="bg-gray-800 p-2.5 rounded-lg border border-green-800">
-                            <span class="text-[9px] text-green-400 block font-bold uppercase">QUITADO (PAGO)</span>
+                            <span class="text-[9px] text-green-400 block font-bold uppercase">PAUTA QUITADA</span>
                             <span id="relatorio-valor-pago" class="font-black text-green-400 text-base">R$ 0,00</span>
                         </div>
                         <div class="bg-gray-800 p-2.5 rounded-lg border border-amber-800">
@@ -680,21 +760,21 @@
                     </div>
 
                     <div class="flex gap-2 pt-2 border-t text-xs font-bold">
-                        <button onclick="compartilharRelatorioWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg shadow"><i class="fa-brands fa-whatsapp mr-1"></i> Whats (Completo)</button>
+                        <button onclick="compartilharRelatorioWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg shadow"><i class="fa-brands fa-whatsapp mr-1"></i> Whats (Separado por Abas)</button>
                         <button onclick="compartilharRelatorioEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-envelope mr-1"></i> E-mail (Completo)</button>
-                        <button onclick="exportarPlanilhaCSV()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-file-excel mr-1"></i> Planilha</button>
+                        <button onclick="exportarPlanilhaCSV()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-file-excel mr-1"></i> Planilha (.CSV)</button>
                     </div>
                 </div>
 
                 <div id="relatorios-lista" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 7: MANUAIS E ORIENTAÇÕES -->
+            <!-- ABA 8: CENTRAL DE MANUAIS ATUALIZADA -->
             <section id="tab-manuais" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
                     <div>
                         <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-book-open mr-1"></i> Central de Manuais do DILIGENCE.BR</h3>
-                        <p>Consulte e compartilhe as diretrizes do sistema e rotinas de backup.</p>
+                        <p>Manuais atualizados detalhados por aba e diretrizes completas do sistema.</p>
                     </div>
                 </div>
 
@@ -706,15 +786,19 @@
                     </div>
                 </div>
 
-                <!-- MANUAL GERAL -->
+                <!-- MANUAL COMPLETO POR ABA -->
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3 shadow-sm text-xs">
                     <h2 class="font-bold text-sm text-brand-red border-b pb-1 flex items-center gap-1">
-                        <i class="fa-solid fa-book"></i> 1. MANUAL GERAL DO SISTEMA (DILIGENCE.BR)
+                        <i class="fa-solid fa-list-ol"></i> 1. MANUAL DE INSTRUÇÕES DETALHADO POR ABA
                     </h2>
                     <div class="space-y-2 text-gray-700 dark:text-gray-300">
-                        <p><strong>• Propósito do App:</strong> O DILIGENCE.BR é um ecossistema Web/PWA voltado para a gestão seletiva e descentralizada de diligências, pautas, agenda de contatos e controle financeiro de correspondentes jurídicos.</p>
-                        <p><strong>• Armazenamento Local Nativo:</strong> O aplicativo armazena todas as informações diretamente no navegador/celular do usuário (`localStorage`), garantindo funcionamento contínuo mesmo sem sinal de internet.</p>
-                        <p><strong>• Módulo Financeiro & Recibos:</strong> Recibos de quitação só podem ser gerados para processos com baixa efetiva (`PAGO`). O sistema permite marcação em lote por mês/período.</p>
+                        <p><strong>• Aba 1 (Perfil):</strong> Cadastre seu nome, OAB/CPF, cidade e chave PIX. Esses dados são inseridos automaticamente em recibos e relatórios.</p>
+                        <p><strong>• Aba 2 (Pauta & Duplicidade [D]):</strong> Registre suas audiências e diligências. O sistema possui trava inteligente contra duplicidades: se aceitar duplicar, ele marcará <strong>[D]</strong>. Atos com data de vencimento vão direto para o <i>A Receber</i>.</p>
+                        <p><strong>• Aba 3 (Agenda de Contatos):</strong> Cadastre advogados, prepostos e clientes. Permite selecionar contatos com caixas [x] e enviar via WhatsApp ou E-mail.</p>
+                        <p><strong>• Aba 4 (Financeiro & Lote 🔍):</strong> Acompanhe os totais da pauta. Clique na lupa 🔍 ao lado de qualquer item para ver a ficha completa da pauta. Emita recibos em lote exclusivamente para itens quitados (PAGO).</p>
+                        <p><strong>• Aba 5 (Livro Caixa / Fluxo):</strong> Registre suas despesas diárias (Uber, cópias, alimentação) e entradas. Quando um ato é dado como PAGO na pauta, ele lança automaticamente uma entrada de honorários no caixa. Se o status "PAGO" for revertido para pendente/vencido (após envio de justificativa no WhatsApp do ADM), o lançamento correspondente no Caixa é estornado automaticamente.</p>
+                        <p><strong>• Aba 6 (Calculadoras & Notas):</strong> Calculadora comum e rescisória trabalhista completa com geração de minutas de acordo e ditado por voz.</p>
+                        <p><strong>• Aba 7 (Relatórios):</strong> Exportação consolidada separando os totais da pauta e o livro caixa.</p>
                     </div>
                 </div>
 
@@ -729,8 +813,8 @@
                             É de responsabilidade **exclusiva e integral do(a) correspondente** realizar a exportação do backup diário duas vezes ao dia: às 12:00 (almoço) e às 17:00 (fim do expediente).
                         </p>
                         <p><strong>• Autonomia e Guarda dos Dados:</strong> Como os dados ficam salvos localmente no seu dispositivo, a administração do aplicativo não guarda cópia e não possui acesso às suas informações. Salve o arquivo `.json` no celular, Google Drive ou e-mail pessoal.</p>
-                        <p><strong>• Restauração em Celular Novo:</strong> Para migrar de aparelho, acesse o botão <i>"Restaurar"</i> no topo da tela e selecione o seu arquivo `.json` salvo previamente (todas as pautas, contatos e fotos de ATAs serão restaurados).</p>
-                        <p><strong>• Alteração de Status Protegido:</strong> Para alterar qualquer valor já dado como `PAGO` de volta para `PENDENTE` ou `TROCA`, o app exigirá a confirmação do envio do motivo para o WhatsApp do ADM <code>(11) 97838-6574</code>.</p>
+                        <p><strong>• Restauração em Celular Novo:</strong> Para migrar de aparelho, acesse o botão <i>"Restaurar"</i> no topo da tela e selecione o seu arquivo `.json` salvo previamente.</p>
+                        <p><strong>• Trava de Alteração de Status Protegido:</strong> Para alterar qualquer valor já dado como `PAGO` de volta para `PENDENTE`, `VENCIDO` ou `TROCA`, o app exigirá a confirmação do envio do motivo para o WhatsApp do ADM <code>(11) 97838-6574</code> para liberar a alteração no sistema.</p>
                     </div>
                 </div>
             </section>
@@ -758,6 +842,9 @@
             <button onclick="switchTab('tab-financeiro')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-financeiro">
                 <i class="fa-solid fa-wallet text-base"></i><span>Financeiro</span>
             </button>
+            <button onclick="switchTab('tab-caixa')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-caixa">
+                <i class="fa-solid fa-cash-register text-base"></i><span>Caixa</span>
+            </button>
             <button onclick="switchTab('tab-trabalhista')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-trabalhista">
                 <i class="fa-solid fa-calculator text-base"></i><span>Calc.</span>
             </button>
@@ -768,6 +855,22 @@
                 <i class="fa-solid fa-book-open text-base"></i><span>Manuais</span>
             </button>
         </nav>
+    </div>
+
+    <!-- MODAL DE FICHA DETALHADA DO ATO (ÍCONE 🔍 NO FINANCEIRO) -->
+    <div id="modal-detalhes-ato" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-md w-full space-y-4 shadow-2xl border-2 border-brand-red">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-magnifying-glass mr-1"></i> DETALHES COMPLETOS DO ATO PAUTA</h3>
+                <button onclick="fecharModalDetalhesAto()" class="text-gray-400 font-bold text-lg">&times;</button>
+            </div>
+            
+            <div id="conteudo-detalhes-ato" class="space-y-2 text-xs text-gray-700 dark:text-gray-200 max-h-[60vh] overflow-y-auto"></div>
+
+            <button onclick="fecharModalDetalhesAto()" class="w-full bg-gray-800 text-white py-2 rounded-xl font-bold text-xs">
+                Fechar Ficha
+            </button>
+        </div>
     </div>
 
     <!-- MODAL DE VISUALIZAÇÃO DE ATA / ANEXO -->
@@ -793,7 +896,7 @@
             </div>
             
             <p class="text-xs text-gray-700 dark:text-gray-300">
-                Este processo consta como <strong>PAGO</strong>. Para alterar de volta para pendente ou outro status, é <u>obrigatório</u> enviar uma mensagem de ciência para o WhatsApp da Administração:
+                Este processo consta como <strong>PAGO</strong>. Para alterar de volta para pendente, vencido ou outro status, é <u>obrigatório</u> enviar uma mensagem de ciência para o WhatsApp da Administração:
             </p>
             
             <div class="p-2 bg-red-50 dark:bg-gray-700 rounded-lg text-center font-bold text-xs text-brand-red">
@@ -855,7 +958,6 @@
                 </button>
             </div>
 
-            <!-- MENSAGEM JURÍDICA DE ISENÇÃO DE RESPONSABILIDADE DO ADM -->
             <div class="bg-amber-50 dark:bg-gray-700/60 p-2.5 rounded-lg border border-amber-200 dark:border-gray-600 text-[10px] text-amber-900 dark:text-amber-200 space-y-1">
                 <strong>⚠️ AVISO IMPORTANTE SOBRE SEUS DADOS:</strong>
                 <p>O DILIGENCE.BR opera com armazenamento local no dispositivo. A responsabilidade pela realização (2x ao dia: 12h e 17h), guarda e restauração de backups diários é **exclusivamente do(a) correspondente**. A administração do app não guarda e não possui acesso aos dados dos usuários.</p>
@@ -873,7 +975,7 @@
             perfil: { nome: '', doc: '', cidade: '', pix: '', email: '' },
             atos: [],
             contatos: [],
-            financeiro: [],
+            caixa: [],
             reciboSeq: 1001,
             notas: '',
             ultimoBackup: null
@@ -887,7 +989,7 @@
 
         let atoPendenteAlteracaoId = null;
         let atoNovoStatusPretendido = null;
-        let tipoRecuperacaoAtual = 'senha'; // 'usuario' ou 'senha'
+        let tipoRecuperacaoAtual = 'senha';
 
         function updateClock() {
             const now = new Date();
@@ -906,14 +1008,14 @@
                 if (btnBackup) btnBackup.classList.add('backup-pulse');
                 if (!alertaAlmocoExibido) {
                     alertaAlmocoExibido = true;
-                    alert(`⏰ LEMBRETE DE BACKUP (12:00 - ALMOÇO)\n\nOlá, Patricia!\nChegou o horário do seu 1º backup do dia.\n\nÚltimo Backup Registrado: ${dataUltimoBkp}\n\nLembre-se: A realização e guarda do backup diário é de responsabilidade exclusiva do correspondente.`);
+                    alert(`⏰ LEMBRETE DE BACKUP (12:00 - ALMOÇO)\n\nOlá, Patricia!\nChegou o horário do seu 1º backup do dia.\n\nÚltimo Backup Registrado: ${dataUltimoBkp}`);
                     abrirModalBackup();
                 }
             } else if (horas === 17 && minutos === 0) {
                 if (btnBackup) btnBackup.classList.add('backup-pulse');
                 if (!alertaFimDiaExibido) {
                     alertaFimDiaExibido = true;
-                    alert(`⏰ LEMBRETE DE BACKUP (17:00 - FIM DO EXPEDIENTE)\n\nOlá, Patricia!\nChegou o horário do seu 2º backup do dia.\n\nÚltimo Backup Registrado: ${dataUltimoBkp}\n\nFaça o backup para encerrar o dia com total segurança!`);
+                    alert(`⏰ LEMBRETE DE BACKUP (17:00 - FIM DO EXPEDIENTE)\n\nOlá, Patricia!\nChegou o horário do seu 2º backup do dia.\n\nÚltimo Backup Registrado: ${dataUltimoBkp}`);
                     abrirModalBackup();
                 }
             } else {
@@ -947,36 +1049,23 @@
             }
         }
 
-        /* --- ESQUECI O USUÁRIO / ESQUECI A SENHA --- */
         function abrirModalRecuperacao(tipo) {
             tipoRecuperacaoAtual = tipo;
             const titulo = document.getElementById('rec-modal-titulo');
-            
-            if (tipo === 'usuario') {
-                titulo.innerHTML = `<i class="fa-solid fa-user-lock mr-1"></i> RECUPERAÇÃO DE USUÁRIO`;
-            } else {
-                titulo.innerHTML = `<i class="fa-solid fa-key mr-1"></i> RECUPERAÇÃO DE SENHA`;
-            }
-            
+            if (tipo === 'usuario') titulo.innerHTML = `<i class="fa-solid fa-user-lock mr-1"></i> RECUPERAÇÃO DE USUÁRIO`;
+            else titulo.innerHTML = `<i class="fa-solid fa-key mr-1"></i> RECUPERAÇÃO DE SENHA`;
             document.getElementById('modal-recuperacao-login').classList.remove('hidden');
         }
 
-        function fecharModalRecuperacao() {
-            document.getElementById('modal-recuperacao-login').classList.add('hidden');
-        }
+        function fecharModalRecuperacao() { document.getElementById('modal-recuperacao-login').classList.add('hidden'); }
 
         function enviarRecuperacaoWhats() {
             const nome = document.getElementById('rec-nome').value.trim();
             const celular = document.getElementById('rec-celular').value.trim();
-
-            if (!nome || !celular) {
-                alert("Por favor, preencha seu Nome e Celular antes de enviar.");
-                return;
-            }
+            if (!nome || !celular) return alert("Por favor, preencha seu Nome e Celular antes de enviar.");
 
             const itemSolicitado = tipoRecuperacaoAtual === 'usuario' ? 'o meu usuário' : 'a minha senha';
             const texto = `Esqueci ${itemSolicitado}, pode me ajudar?\n\n👤 Nome: ${nome}\n📱 Celular: ${celular}`;
-            
             window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(texto)}`);
             fecharModalRecuperacao();
         }
@@ -992,6 +1081,7 @@
 
             if (tabId === 'tab-relatorios') renderRelatorios();
             if (tabId === 'tab-financeiro') renderFinanceiro();
+            if (tabId === 'tab-caixa') renderCaixa();
             if (tabId === 'tab-contatos') renderContatos();
         }
 
@@ -1000,238 +1090,12 @@
             localStorage.setItem('diligence_db_mirror', JSON.stringify(db));
         }
 
-        function restaurarBackupInternoEmergencia() {
-            const mirror = localStorage.getItem('diligence_db_mirror');
-            if (mirror) {
-                if(confirm("Deseja restaurar a última cópia interna automática espelhada?")) {
-                    db = JSON.parse(mirror);
-                    saveData();
-                    loadData();
-                    alert("✅ Cópia interna restaurada!");
-                }
-            } else {
-                alert("Nenhuma cópia interna encontrada.");
-            }
-        }
-
-        /* --- RECURSOS DO FÓRUM: DITADO POR VOZ E GPS --- */
-        function iniciarDitadoVoz(elementId) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert("O seu navegador ou celular não suporta o ditado por voz nativo. Use o teclado.");
-                return;
-            }
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'pt-BR';
-            recognition.continuous = false;
-            
-            const targetEl = document.getElementById(elementId);
-            const valorAntigo = targetEl.value;
-            targetEl.value = "🎙️ Ouvindo...";
-
-            recognition.onresult = function(event) {
-                const textoDitado = event.results[0][0].transcript;
-                targetEl.value = valorAntigo ? `${valorAntigo} ${textoDitado}` : textoDitado;
-                if(elementId === 'bloco-notas') saveNotas();
-            };
-
-            recognition.onerror = function() {
-                targetEl.value = valorAntigo;
-                alert("Não foi possível reconhecer a voz. Tente novamente.");
-            };
-
-            recognition.start();
-        }
-
-        function capturarLocalizacaoGPS() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    const lat = position.coords.latitude.toFixed(5);
-                    const lng = position.coords.longitude.toFixed(5);
-                    const horaAtual = new Date().toLocaleTimeString('pt-BR');
-                    const linkMaps = `https://maps.google.com/?q=${lat},${lng}`;
-                    
-                    const notasEl = document.getElementById('bloco-notas');
-                    notasEl.value += `\n📍 [PRESENÇA FÓRUM GPS às ${horaAtual}]: Lat ${lat}, Lng ${lng} - Ver Mapa: ${linkMaps}`;
-                    saveNotas();
-                    
-                    alert(`✅ PRESENÇA CONFIRMADA NO FÓRUM!\n\nHorário: ${horaAtual}\nCoordenadas: ${lat}, ${lng}\n\nO registro foi salvo automaticamente no seu Bloco de Notas para comprovação.`);
-                }, function(error) {
-                    alert("Erro ao obter localização GPS. Verifique se a localização do celular está ativada.");
-                });
-            } else {
-                alert("Geolocalização não suportada neste aparelho.");
-            }
-        }
-
-        /* --- FUNÇÕES DE LIMPEZA E RESET DE DADOS --- */
-        function confirmarLimparAba(aba) {
-            let mensagem = "";
-            if (aba === 'perfil') mensagem = "⚠️ TEM CERTEZA QUE DESEJA APAGAR OS DADOS DO PERFIL?\n\nOs campos de Nome, CPF/OAB, PIX e E-mail serão limpos.";
-            else if (aba === 'atos') mensagem = "⚠️ TEM CERTEZA QUE DESEJA APAGAR TODA A PAUTA?\n\nTodos os atos cadastrados e anexos de ATAs serão permanentemente deletados desta aba.";
-            else if (aba === 'contatos') mensagem = "⚠️ TEM CERTEZA QUE DESEJA APAGAR TODA A AGENDA?\n\nTodos os contatos cadastrados serão permanentemente deletados.";
-
-            if (confirm(mensagem)) {
-                if (aba === 'perfil') {
-                    db.perfil = { nome: '', doc: '', cidade: '', pix: '', email: '' };
-                    document.getElementById('perfil-nome').value = '';
-                    document.getElementById('perfil-doc').value = '';
-                    document.getElementById('perfil-cidade').value = '';
-                    document.getElementById('perfil-pix').value = '';
-                    document.getElementById('perfil-email').value = '';
-                } else if (aba === 'atos') {
-                    db.atos = [];
-                    renderAtos();
-                    if(document.getElementById('tab-financeiro')) renderFinanceiro();
-                } else if (aba === 'contatos') {
-                    db.contatos = [];
-                    renderContatos();
-                }
-                saveData();
-                alert("✅ Informações da aba limpas com sucesso!");
-            }
-        }
-
-        function confirmarZerarTudoGeral() {
-            const confirma1 = confirm("🚨 ATENÇÃO: ZERAR TODO O APLICATIVO!\n\nVocê está prestes a apagar TODOS os dados do aplicativo (Perfil, Pauta, Contatos, Histórico Financeiro e Notas) para deixá-lo completamente NOVINHO.\n\nRecomendamos realizar um backup antes.\n\nDeseja continuar?");
-            if (confirma1) {
-                const confirma2 = confirm("❓ ÚLTIMA CONFIRMAÇÃO:\n\nTem certeza absoluta que deseja deletar tudo e reiniciar o app zerado?");
-                if (confirma2) {
-                    db = {
-                        perfil: { nome: '', doc: '', cidade: '', pix: '', email: '' },
-                        atos: [],
-                        contatos: [],
-                        financeiro: [],
-                        reciboSeq: 1001,
-                        notas: '',
-                        ultimoBackup: null
-                    };
-                    saveData();
-                    loadData();
-                    fecharModalBackup();
-                    alert("✨ Aplicativo completamente limpo e pronto para novo uso!");
-                }
-            }
-        }
-
-        function abrirModalBackup() {
-            saveData();
-            document.getElementById('modal-backup').classList.remove('hidden');
-        }
-
-        function fecharModalBackup() {
-            document.getElementById('modal-backup').classList.add('hidden');
-        }
-
-        function enviarBackupEmailPessoal() {
-            registrarHorarioBackup();
-            const emailDestino = db.perfil.email || prompt("Digite seu e-mail pessoal para receber a cópia do backup:");
-            if (!emailDestino) return alert("E-mail não informado!");
-
-            const nomeCorr = db.perfil.nome || 'Correspondente';
-            const dataHoje = new Date().toLocaleDateString('pt-BR');
-
-            const mensagemAviso = `📦 BACKUP DE SEGURANÇA PESSOAL - DILIGENCE.BR\n\nOlá, ${nomeCorr}!\n\nSegue abaixo a cópia dos seus dados de cadastro, pauta e honorários gerada em ${dataHoje}.\n\nGuarde esta mensagem ou o arquivo no seu Google Drive/E-mail para restaurar em qualquer celular novo quando precisar.\n\n-----------------------------------\nDADOS DE BACKUP (JSON com imagens):\n\n${JSON.stringify(db)}`;
-
-            const subject = encodeURIComponent(`Meu Backup DILIGENCE.BR - ${dataHoje}`);
-            const body = encodeURIComponent(mensagemAviso);
-
-            window.open(`mailto:${emailDestino}?subject=${subject}&body=${body}`);
-            fecharModalBackup();
-        }
-
-        async function fazerBackupCelularJSON() {
-            registrarHorarioBackup();
-            const nomeCorr = (db.perfil.nome || 'Correspondente').replace(/[^a-zA-Z0-9]/g, '_');
-            const jsonStr = JSON.stringify(db, null, 2);
-            const nomeArquivo = `Backup_DILIGENCE_${nomeCorr}_${new Date().toISOString().split('T')[0]}.json`;
-            const file = new File([jsonStr], nomeArquivo, { type: 'application/json' });
-
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        title: 'Backup DILIGENCE.BR',
-                        text: `Segue o backup de segurança de ${db.perfil.nome || 'Correspondente'}.`,
-                        files: [file]
-                    });
-                    fecharModalBackup();
-                    return;
-                } catch (e) {}
-            }
-
-            const blob = new Blob([jsonStr], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = nomeArquivo;
-            a.click();
-            fecharModalBackup();
-        }
-
-        function acionarRestauracao() {
-            fecharModalBackup();
-            document.getElementById('input-restaurar-file').click();
-        }
-
-        function processarRestauracaoFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const dadosRestaurados = JSON.parse(e.target.result);
-                    if (dadosRestaurados && (dadosRestaurados.atos || dadosRestaurados.perfil)) {
-                        db = dadosRestaurados;
-                        saveData();
-                        loadData();
-                        alert("✅ RESTAURAÇÃO CONCLUÍDA COM SUCESSO!\n\nTodos os seus dados, fotos das ATAs, pauta e perfil foram recuperados neste aparelho.");
-                    } else {
-                        alert("⚠️ Arquivo inválido! Selecione um arquivo de backup (.JSON) válido gerado pelo DILIGENCE.BR.");
-                    }
-                } catch (err) {
-                    alert("❌ Erro ao ler o arquivo de backup. Verifique se escolheu o arquivo .json correto.");
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        async function exportarPlanilhaCSV() {
-            if (db.atos.length === 0) return alert('Nenhum ato cadastrado na pauta!');
-            
-            let csv = "Processo,Cliente,Data,Valor,Status\n";
-            db.atos.forEach(a => { csv += `"${a.processo}","${a.cliente}","${a.data}",${a.valor},"${a.status}"\n`; });
-            
-            const nomeCorr = (db.perfil.nome || 'Correspondente').replace(/[^a-zA-Z0-9]/g, '_');
-            const nomeArquivo = `Pauta_DILIGENCE_${nomeCorr}_${new Date().toISOString().split('T')[0]}.csv`;
-            const file = new File([csv], nomeArquivo, { type: 'text/csv' });
-
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        title: 'Planilha DILIGENCE.BR',
-                        text: `Segue a planilha de atos de ${db.perfil.nome || 'Correspondente'}.`,
-                        files: [file]
-                    });
-                    fecharModalBackup();
-                    return;
-                } catch (e) {}
-            }
-
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('href', url);
-            a.setAttribute('download', nomeArquivo);
-            a.click();
-            fecharModalBackup();
-        }
-
         function loadData() {
             const saved = localStorage.getItem('diligence_db');
             if (saved) db = JSON.parse(saved);
             
             if(!db.contatos) db.contatos = [];
+            if(!db.caixa) db.caixa = [];
 
             document.getElementById('perfil-nome').value = db.perfil.nome || '';
             document.getElementById('perfil-doc').value = db.perfil.doc || '';
@@ -1239,6 +1103,7 @@
             document.getElementById('perfil-pix').value = db.perfil.pix || '';
             document.getElementById('perfil-email').value = db.perfil.email || '';
             document.getElementById('bloco-notas').value = db.notas || '';
+            document.getElementById('caixa-data').value = new Date().toISOString().split('T')[0];
             document.getElementById('contato-data-envio').value = new Date().toISOString().split('T')[0];
             document.getElementById('filter-mes-select').value = new Date().toISOString().substring(0, 7);
             document.getElementById('fin-recibo-mes').value = new Date().toISOString().substring(0, 7);
@@ -1246,42 +1111,28 @@
             atualizarExibicaoUltimoBackup();
             renderAtos();
             renderContatos();
+            renderCaixa();
         }
 
-        function savePerfil(e) {
-            e.preventDefault();
-            db.perfil = {
-                nome: document.getElementById('perfil-nome').value,
-                doc: document.getElementById('perfil-doc').value,
-                cidade: document.getElementById('perfil-cidade').value,
-                pix: document.getElementById('perfil-pix').value,
-                email: document.getElementById('perfil-email').value
-            };
-            saveData();
-            alert('Perfil salvo com sucesso!');
-        }
-
-        function previewImagemAta(evt) {
-            const file = evt.target.files[0];
-            const container = document.getElementById('preview-ata-container');
-            const imgPreview = document.getElementById('img-preview-ata');
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imgPreview.src = e.target.result;
-                    container.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                container.classList.add('hidden');
-            }
-        }
-
+        /* --- TRAVA DE DUPLICIDADE E SALVAMENTO DE ATOS --- */
         function saveAto(e) {
             e.preventDefault();
             const statusSel = document.getElementById('ato-status-select').value;
             if(!statusSel) return alert('Selecione o status do pagamento!');
+
+            const proc = document.getElementById('ato-processo').value.trim();
+            const cliente = document.getElementById('ato-cliente').value.trim();
+            const dataHora = document.getElementById('ato-data').value;
+
+            // Trava de verificação de duplicidade
+            const jaExiste = db.atos.find(a => a.processo.toLowerCase() === proc.toLowerCase() && a.cliente.toLowerCase() === cliente.toLowerCase() && a.data === dataHora);
+
+            let ehDuplicado = false;
+            if (jaExiste) {
+                const querDuplicar = confirm(`⚠️ ATENÇÃO: DUPLICIDADE DETECTADA!\n\nJá existe um ato registrado para o Processo "${proc}" (${cliente}) nesta mesma data e horário.\n\nDeseja realmente cadastrar este registro em duplicidade?`);
+                if (!querDuplicar) return;
+                ehDuplicado = true;
+            }
 
             const fileInput = document.getElementById('ato-ata-file');
             const file = fileInput.files[0];
@@ -1289,19 +1140,22 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(evt) {
-                    cadastrarAtoComAnexo(statusSel, evt.target.result);
+                    cadastrarAtoComAnexo(statusSel, evt.target.result, ehDuplicado);
                 };
                 reader.readAsDataURL(file);
             } else {
-                cadastrarAtoComAnexo(statusSel, null);
+                cadastrarAtoComAnexo(statusSel, null, ehDuplicado);
             }
         }
 
-        function cadastrarAtoComAnexo(statusSel, ataBase64) {
+        function cadastrarAtoComAnexo(statusSel, ataBase64, ehDuplicado) {
+            let procNome = document.getElementById('ato-processo').value.trim();
+            if (ehDuplicado) procNome += " [D]";
+
             const novoAto = {
                 id: Date.now(),
-                processo: document.getElementById('ato-processo').value,
-                cliente: document.getElementById('ato-cliente').value,
+                processo: procNome,
+                cliente: document.getElementById('ato-cliente').value.trim(),
                 data: document.getElementById('ato-data').value,
                 vencimento: document.getElementById('ato-vencimento').value,
                 modalidade: document.getElementById('ato-modalidade').value,
@@ -1309,10 +1163,25 @@
                 valor: parseFloat(document.getElementById('ato-valor').value),
                 status: statusSel,
                 dataPagamento: statusSel === 'pago' ? new Date().toLocaleString('pt-BR') : null,
-                ataImg: ataBase64
+                ataImg: ataBase64,
+                duplicado: ehDuplicado
             };
 
             db.atos.push(novoAto);
+
+            // Se for cadastrado como PAGO, envia lançamento de honorários direto para o Caixa
+            if (statusSel === 'pago') {
+                db.caixa.push({
+                    id: Date.now() + 1,
+                    atoRefId: novoAto.id,
+                    data: novoAto.data.substring(0, 10),
+                    tipo: 'entrada',
+                    categoria: 'Honorários de Pauta',
+                    descricao: `Honorários: Proc. ${novoAto.processo} - ${novoAto.cliente}`,
+                    valor: novoAto.valor
+                });
+            }
+
             saveData();
             document.getElementById('form-ato').reset();
             document.getElementById('preview-ata-container').classList.add('hidden');
@@ -1320,22 +1189,9 @@
             alert('Ato cadastrado na pauta com sucesso!');
         }
 
-        function verAtaAnexo(atoId) {
-            const ato = db.atos.find(a => a.id === atoId);
-            if(ato && ato.ataImg) {
-                document.getElementById('img-modal-ata').src = ato.ataImg;
-                document.getElementById('modal-ver-ata').classList.remove('hidden');
-            }
-        }
-
-        function fecharModalAta() {
-            document.getElementById('modal-ver-ata').classList.add('hidden');
-        }
-
         function renderAtos() {
             const container = document.getElementById('lista-atos');
             container.innerHTML = '';
-
             const hojeStr = new Date().toISOString().split('T')[0];
 
             db.atos.forEach((ato) => {
@@ -1347,7 +1203,7 @@
                 card.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div>
-                            <strong class="text-sm">Proc: ${ato.processo}</strong> - ${ato.cliente}<br>
+                            <strong class="text-sm">Proc: ${ato.processo}</strong> ${ato.duplicado ? '<span class="bg-purple-600 text-white font-extrabold px-1 rounded text-[9px]">[D] DUPLICADO</span>' : ''} - ${ato.cliente}<br>
                             <span class="text-gray-400"><i class="fa-regular fa-clock mr-1"></i>${new Date(ato.data).toLocaleString('pt-BR')}</span>
                             ${ato.vencimento ? `<div class="text-[10px] font-bold ${vencidoOuHoje ? 'text-red-600' : 'text-gray-500'}">Venc. Pagamento: ${new Date(ato.vencimento + 'T00:00:00').toLocaleDateString('pt-BR')} ${vencidoOuHoje ? '⚠️ (COBRAR HORA!)' : ''}</div>` : ''}
                             ${ato.dataPagamento ? `<div class="text-[10px] font-bold text-green-600"><i class="fa-solid fa-circle-check mr-1"></i>Pago em: ${ato.dataPagamento}</div>` : ''}
@@ -1357,42 +1213,272 @@
                             <span class="uppercase font-bold text-[10px] px-1.5 py-0.5 rounded ${ato.status === 'pago' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${ato.status}</span>
                         </div>
                     </div>
-                    <div class="flex gap-2 flex-wrap pt-1">
-                        ${ato.link ? `<a href="${ato.link}" target="_blank" class="inline-flex items-center gap-1 bg-purple-600 text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-purple-700"><i class="fa-solid fa-video"></i> Entrar na Sala Virtual</a>` : ''}
-                        ${ato.ataImg ? `<button onclick="verAtaAnexo(${ato.id})" class="inline-flex items-center gap-1 bg-gray-700 text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-gray-800"><i class="fa-solid fa-image"></i> Ver ATA / Anexo</button>` : ''}
+                    <div class="flex justify-between items-center pt-1 border-t">
+                        <div class="flex gap-2 flex-wrap">
+                            ${ato.link ? `<a href="${ato.link}" target="_blank" class="inline-flex items-center gap-1 bg-purple-600 text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-purple-700"><i class="fa-solid fa-video"></i> Sala Virtual</a>` : ''}
+                            ${ato.ataImg ? `<button onclick="verAtaAnexo(${ato.id})" class="inline-flex items-center gap-1 bg-gray-700 text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-gray-800"><i class="fa-solid fa-image"></i> Ver ATA</button>` : ''}
+                        </div>
+                        <button onclick="excluirAtoPauta(${ato.id})" class="text-red-600 font-bold hover:underline text-[10px]"><i class="fa-solid fa-trash-can mr-1"></i> Excluir</button>
                     </div>
                 `;
                 container.appendChild(card);
             });
         }
 
+        function excluirAtoPauta(id) {
+            if (confirm("Tem certeza que deseja excluir este ato da pauta?")) {
+                db.atos = db.atos.filter(a => a.id !== id);
+                db.caixa = db.caixa.filter(c => c.atoRefId !== id);
+                saveData();
+                renderAtos();
+                renderFinanceiro();
+                renderCaixa();
+            }
+        }
+
+        /* --- ABA FINANCEIRO COM LUPA 🔍 DE FICHA COMPLETA --- */
+        function verDetalhesAtoPauta(atoId) {
+            const ato = db.atos.find(a => a.id === atoId);
+            if (!ato) return;
+
+            const container = document.getElementById('conteudo-detalhes-ato');
+            container.innerHTML = `
+                <div class="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg space-y-1">
+                    <p><strong>• Processo nº:</strong> ${ato.processo}</p>
+                    <p><strong>• Cliente / Contratante:</strong> ${ato.cliente}</p>
+                    <p><strong>• Data/Hora do Ato:</strong> ${new Date(ato.data).toLocaleString('pt-BR')}</p>
+                    <p><strong>• Vencimento Pagamento:</strong> ${ato.vencimento ? new Date(ato.vencimento + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/I'}</p>
+                    <p><strong>• Modalidade:</strong> ${ato.modalidade.toUpperCase()}</p>
+                    <p><strong>• Valor Acordado:</strong> <span class="text-brand-red font-bold">R$ ${ato.valor.toFixed(2)}</span></p>
+                    <p><strong>• Status Atual:</strong> <span class="font-bold uppercase">${ato.status}</span></p>
+                    ${ato.dataPagamento ? `<p><strong>• Data da Baixa / Pagamento:</strong> ${ato.dataPagamento}</p>` : ''}
+                    ${ato.link ? `<p><strong>• Link Sala Virtual:</strong> <a href="${ato.link}" target="_blank" class="text-blue-600 underline">${ato.link}</a></p>` : ''}
+                </div>
+                ${ato.ataImg ? `<div class="text-center pt-2"><span class="font-bold text-[11px] block mb-1">Foto do Documento/ATA:</span><img src="${ato.ataImg}" class="max-h-48 mx-auto rounded border"></div>` : '<p class="text-gray-400 italic">Sem anexo de ATA fotografado.</p>'}
+            `;
+            document.getElementById('modal-detalhes-ato').classList.remove('hidden');
+        }
+
+        function fecharModalDetalhesAto() { document.getElementById('modal-detalhes-ato').classList.add('hidden'); }
+
+        function renderGerenciadorBaixas() {
+            const container = document.getElementById('fin-gerenciador-baixas');
+            container.innerHTML = '';
+
+            if (db.atos.length === 0) {
+                container.innerHTML = '<div class="p-3 text-center text-gray-400 text-xs">Nenhum processo cadastrado.</div>';
+                return;
+            }
+
+            db.atos.forEach(a => {
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 text-xs flex justify-between items-center shadow-sm";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center gap-1">
+                            <strong class="text-sm">Proc: ${a.processo}</strong>
+                            <button onclick="verDetalhesAtoPauta(${a.id})" class="text-brand-red hover:text-red-800 font-bold text-xs" title="Ver Ficha Completa do Ato">
+                                <i class="fa-solid fa-circle-info text-sm"></i>
+                            </button>
+                        </div>
+                        <span class="text-gray-500 font-semibold">${a.cliente}</span> - <span class="font-bold text-brand-red">R$ ${a.valor.toFixed(2)}</span>
+                        ${a.dataPagamento ? `<div class="text-[10px] text-green-600 font-bold">Pago em: ${a.dataPagamento}</div>` : ''}
+                    </div>
+                    <div>
+                        <select onchange="gerenciarAlteracaoStatus(${a.id}, this.value)" class="p-1.5 border rounded-lg text-xs font-bold ${a.status === 'pago' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}">
+                            <option value="pendente" ${a.status === 'pendente' ? 'selected' : ''}>🟡 PENDENTE</option>
+                            <option value="pago" ${a.status === 'pago' ? 'selected' : ''}>🟢 PAGO (Baixa)</option>
+                            <option value="vencido" ${a.status === 'vencido' ? 'selected' : ''}>🔴 VENCIDO</option>
+                            <option value="troca" ${a.status === 'troca' ? 'selected' : ''}>🔄 TROCA</option>
+                        </select>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        /* --- ABA 5: LIVRO CAIXA & FLUXO DE CAIXA --- */
+        function tratarSelecaoCategoriaCaixa(selectEl) {
+            const boxLivre = document.getElementById('box-caixa-descricao-livre');
+            const txtArea = document.getElementById('caixa-descricao');
+            if (selectEl.value === 'outro') {
+                boxLivre.classList.remove('hidden');
+                txtArea.value = '';
+                txtArea.focus();
+            } else {
+                boxLivre.classList.remove('hidden');
+            }
+        }
+
+        function saveLancamentoCaixa(e) {
+            e.preventDefault();
+            const tipo = document.getElementById('caixa-tipo').value;
+            const catSel = document.getElementById('caixa-categoria-select').value;
+            const descLivre = document.getElementById('caixa-descricao').value.trim();
+            const valor = parseFloat(document.getElementById('caixa-valor').value);
+
+            let descFinal = catSel === 'outro' ? (descLivre || 'Despesa Outras') : `${catSel}${descLivre ? ' - ' + descLivre : ''}`;
+
+            const novoItem = {
+                id: Date.now(),
+                data: document.getElementById('caixa-data').value,
+                tipo: tipo,
+                categoria: catSel,
+                descricao: descFinal,
+                valor: valor
+            };
+
+            db.caixa.push(novoItem);
+            saveData();
+            document.getElementById('form-caixa').reset();
+            document.getElementById('caixa-data').value = new Date().toISOString().split('T')[0];
+            renderCaixa();
+            alert('Lançamento registrado no Fluxo de Caixa!');
+        }
+
+        function renderCaixa() {
+            const container = document.getElementById('lista-caixa');
+            if(!container) return;
+            container.innerHTML = '';
+
+            let totalEntradas = 0;
+            let totalSaidas = 0;
+
+            if (db.caixa.length === 0) {
+                container.innerHTML = '<div class="p-3 text-center text-gray-400 text-xs">Nenhuma movimentação registrada no Livro Caixa.</div>';
+            } else {
+                db.caixa.forEach((c) => {
+                    if (c.tipo === 'entrada') totalEntradas += c.valor;
+                    else totalSaidas += c.valor;
+
+                    const item = document.createElement('div');
+                    const isEntrada = c.tipo === 'entrada';
+                    item.className = `bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 text-xs flex justify-between items-center shadow-sm border-l-4 ${isEntrada ? 'border-l-green-500' : 'border-l-red-500'}`;
+                    
+                    item.innerHTML = `
+                        <div>
+                            <strong class="text-sm ${isEntrada ? 'text-green-600' : 'text-red-600'}">${isEntrada ? '🟢 ENTRADA' : '🔴 SAÍDA'}: ${c.descricao}</strong>
+                            <div class="text-gray-400 text-[10px]"><i class="fa-regular fa-calendar mr-1"></i>Data: ${new Date(c.data + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
+                        </div>
+                        <div class="text-right flex items-center gap-2">
+                            <div>
+                                <span class="font-extrabold text-sm block ${isEntrada ? 'text-green-600' : 'text-red-600'}">${isEntrada ? '+' : '-'} R$ ${c.valor.toFixed(2)}</span>
+                            </div>
+                            <button onclick="excluirItemCaixa(${c.id})" class="text-red-500 font-bold hover:underline text-xs p-1"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            }
+
+            document.getElementById('caixa-total-entradas').innerText = `R$ ${totalEntradas.toFixed(2)}`;
+            document.getElementById('caixa-total-saidas').innerText = `R$ ${totalSaidas.toFixed(2)}`;
+            document.getElementById('caixa-saldo-liquido').innerText = `R$ ${(totalEntradas - totalSaidas).toFixed(2)}`;
+        }
+
+        function excluirItemCaixa(id) {
+            if (confirm("Tem certeza que deseja excluir esta movimentação do Livro Caixa?")) {
+                db.caixa = db.caixa.filter(c => c.id !== id);
+                saveData();
+                renderCaixa();
+            }
+        }
+
+        /* --- RELATÓRIOS SEPARADOS POR ABA E CONSOLIDADOS --- */
+        function gerarTextoRelatorioCompleto() {
+            const filtrados = obterAtosFiltradosRelatorio();
+            let totalBruto = 0, totalPago = 0, totalPendente = 0;
+            filtrados.forEach(a => {
+                totalBruto += a.valor;
+                if (a.status === 'pago') totalPago += a.valor;
+                else if (a.status === 'pendente' || a.status === 'vencido') totalPendente += a.valor;
+            });
+
+            const nomeCorr = db.perfil.nome || 'Correspondente';
+            const dataHoje = new Date().toLocaleDateString('pt-BR');
+
+            let texto = `=========================================\n RELATÓRIO CONSOLIDADO — DILIGENCE.BR\n Data: ${dataHoje} | Profissional: ${nomeCorr}\n=========================================\n\n`;
+            
+            // ABA PAUTA
+            texto += `📋 1. ABA PAUTA & DILIGÊNCIAS:\n• Total de Atos: ${filtrados.length}\n• Pauta Bruta: R$ ${totalBruto.toFixed(2)}\n• Pauta Quitada (Pago): R$ ${totalPago.toFixed(2)}\n• Honorários a Receber: R$ ${totalPendente.toFixed(2)}\n-----------------------------------------\n`;
+            filtrados.forEach((a, i) => {
+                texto += `${i+1}. Proc: ${a.processo} (${a.cliente}) - R$ ${a.valor.toFixed(2)} [${a.status.toUpperCase()}]\n`;
+            });
+
+            // ABA LIVRO CAIXA
+            let caixEntradas = 0, caixSaidas = 0;
+            db.caixa.forEach(c => { if(c.tipo === 'entrada') caixEntradas += c.valor; else caixSaidas += c.valor; });
+
+            texto += `\n💰 2. ABA LIVRO CAIXA (CONTAS A PAGAR / RECEBER):\n• Entradas (+) : R$ ${caixEntradas.toFixed(2)}\n• Saídas / Despesas (-): R$ ${caixSaidas.toFixed(2)}\n• Saldo Final em Caixa: R$ ${(caixEntradas - caixSaidas).toFixed(2)}\n-----------------------------------------\n`;
+            db.caixa.forEach((c, i) => {
+                texto += `${i+1}. [${c.tipo.toUpperCase()}] ${c.descricao} - R$ ${c.valor.toFixed(2)}\n`;
+            });
+
+            return texto;
+        }
+
+        function compartilharRelatorioWhats() {
+            const texto = gerarTextoRelatorioCompleto();
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`);
+        }
+
+        function compartilharRelatorioEmail() {
+            const texto = gerarTextoRelatorioCompleto();
+            window.open(`mailto:?subject=${encodeURIComponent(`Relatório Consolidado - DILIGENCE.BR`)}&body=${encodeURIComponent(texto)}`);
+        }
+
+        /* --- MANUAIS --- */
+        function gerarTextoManuais() {
+            return `=========================================\n CENTRAL DE MANUAIS — DILIGENCE.BR\n=========================================\n\n1. MANUAL DAS ABAS:\n• Perfil: Dados pessoais e PIX.\n• Pauta [D]: Trava de duplicidade com aviso e tag [D].\n• Agenda: Contatos selecionáveis [x].\n• Financeiro 🔍: Ficha completa ao clicar no ícone do ato e recibos em lote.\n• Livro Caixa: Lançamentos de entradas/saídas e estorno automático de honorários quando "PAGO" é desfeito.\n• Calc & Notas: Cálculos trabalhistas e ditado por voz.\n• Relatórios: Envio discriminado por abas.\n\n2. BACKUP E AUTONOMIA (2X AO DIA):\nO correspondente é responsável por exportar seu backup diário às 12:00 e 17:00.`;
+        }
+
+        function compartilharManualWhats() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(gerarTextoManuais())}`); }
+        function compartilharManualEmail() { window.open(`mailto:?subject=${encodeURIComponent(`Manuais DILIGENCE.BR`)}&body=${encodeURIComponent(gerarTextoManuais())}`); }
+
+        /* --- LÓGICA DE TROCA DE STATUS E SINCRONIZAÇÃO DA PAUTA / FINANCEIRO / CAIXA --- */
         function gerenciarAlteracaoStatus(atoId, novoStatus) {
             const ato = db.atos.find(a => a.id === atoId);
             if (!ato) return;
 
+            // CASO 1: Mudar para PAGO (Dar Baixa)
             if (novoStatus === 'pago' && ato.status !== 'pago') {
-                const confirma = confirm(`🟢 CONFIRMAÇÃO DE RECEBIMENTO DE PAGAMENTO\n\nTem certeza que deseja dar baixa como "PAGO" neste ato?\n\nProcesso: ${ato.processo}\nCliente: ${ato.cliente}\nValor: R$ ${ato.valor.toFixed(2)}\n\nIsso registrará a data de pagamento na pauta e liberará a emissão de recibos.`);
-                if (confirma) {
+                if (confirm(`🟢 CONFIRMAR RECEBIMENTO DE PAGAMENTO?\n\nProcesso: ${ato.processo}\nValor: R$ ${ato.valor.toFixed(2)}`)) {
                     ato.status = 'pago';
                     ato.dataPagamento = new Date().toLocaleString('pt-BR');
+                    
+                    // Lança automaticamente a entrada no Livro Caixa
+                    db.caixa.push({
+                        id: Date.now(),
+                        atoRefId: ato.id,
+                        data: new Date().toISOString().split('T')[0],
+                        tipo: 'entrada',
+                        categoria: 'Honorários de Pauta',
+                        descricao: `Honorários: Proc. ${ato.processo} - ${ato.cliente}`,
+                        valor: ato.valor
+                    });
+
                     saveData();
                     renderAtos();
                     renderFinanceiro();
-                    alert("✅ Pagamento dado baixa com sucesso e liberado para recibo!");
+                    renderCaixa();
+                    alert("✅ Pagamento dado baixa e lançado automaticamente no Livro Caixa!");
+                } else {
+                    renderGerenciadorBaixas();
                 }
                 return;
             }
 
+            // CASO 2: Tentar desfazer um PAGO (exige trava e WhatsApp do ADM)
             if (ato.status === 'pago' && novoStatus !== 'pago') {
                 atoPendenteAlteracaoId = atoId;
                 atoNovoStatusPretendido = novoStatus;
-                
                 document.getElementById('modal-trava-desfazer-pago').classList.remove('hidden');
                 document.getElementById('btn-confirmar-desfazer-pago').disabled = true;
                 document.getElementById('btn-confirmar-desfazer-pago').classList.add('opacity-50', 'cursor-not-allowed');
                 return;
             }
 
+            // CASO 3: Alteração normal de outros status (ex: Pendente -> Vencido ou Troca)
             ato.status = novoStatus;
             saveData();
             renderAtos();
@@ -1400,9 +1486,7 @@
         }
 
         function toggleMotivoOutroInput(selectEl) {
-            const outroArea = document.getElementById('trava-motivo-outro');
-            if (selectEl.value === 'outro') outroArea.classList.remove('hidden');
-            else outroArea.classList.add('hidden');
+            document.getElementById('trava-motivo-outro').classList.toggle('hidden', selectEl.value !== 'outro');
         }
 
         function enviarJustificativaWhatsAppADM() {
@@ -1410,16 +1494,9 @@
             if(!ato) return;
 
             const motivoSel = document.getElementById('trava-motivo-select').value;
-            let textoMotivo = "";
+            let textoMotivo = motivoSel === 'outro' ? document.getElementById('trava-motivo-outro').value : "Ajuste operacional de status.";
 
-            if (motivoSel === '1') textoMotivo = "Lancei 'PAGO', mas o valor não foi compensado na planilha.";
-            else if (motivoSel === '2') textoMotivo = "Lancei 'PAGO', mas tínhamos uma troca pendente.";
-            else if (motivoSel === '3') textoMotivo = "Lancei 'PAGO' erroneamente por engano do processo.";
-            else textoMotivo = document.getElementById('trava-motivo-outro').value || "Ajuste operacional de status.";
-
-            const nomeCorr = db.perfil.nome || 'Correspondente';
-            const mensagem = `⚠️ SOLICITAÇÃO DE ALTERAÇÃO DE STATUS (PAGO -> ${atoNovoStatusPretendido.toUpperCase()})\n\nCorrespondente: ${nomeCorr}\nProcesso nº: ${ato.processo}\nCliente: ${ato.cliente}\nValor: R$ ${ato.valor.toFixed(2)}\n\n📝 MOTIVO / JUSTIFICATIVA:\n"${textoMotivo}"\n\nEstou alterando este status no app para adequação dos relatórios.`;
-
+            const mensagem = `⚠️ SOLICITAÇÃO DE ALTERAÇÃO DE STATUS (PAGO -> ${atoNovoStatusPretendido.toUpperCase()})\n\nProcesso: ${ato.processo}\nCliente: ${ato.cliente}\nValor: R$ ${ato.valor.toFixed(2)}\nMotivo: "${textoMotivo}"`;
             window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(mensagem)}`);
 
             const btnConf = document.getElementById('btn-confirmar-desfazer-pago');
@@ -1433,23 +1510,26 @@
             if(ato) {
                 ato.status = atoNovoStatusPretendido;
                 ato.dataPagamento = null;
+                
+                // Remove / Estorna o lançamento automático correspondente do Livro Caixa
+                db.caixa = db.caixa.filter(c => c.atoRefId !== ato.id);
+
                 saveData();
                 renderAtos();
                 renderFinanceiro();
+                renderCaixa();
                 fecharModalTravaDesfazer();
-                alert("✅ Status alterado com sucesso no sistema!");
+                alert("✅ Status alterado na pauta/financeiro e estornado do Caixa!");
             }
         }
 
-        function fecharModalTravaDesfazer() {
-            document.getElementById('modal-trava-desfazer-pago').classList.add('hidden');
-            atoPendenteAlteracaoId = null;
-            atoNovoStatusPretendido = null;
+        function fecharModalTravaDesfazer() { 
+            document.getElementById('modal-trava-desfazer-pago').classList.add('hidden'); 
+            renderGerenciadorBaixas();
         }
 
         function renderFinanceiro() {
             let entradas = 0, pendentes = 0, trocas = 0, saidas = 0;
-
             db.atos.forEach(ato => {
                 if (ato.status === 'pago') entradas += ato.valor;
                 else if (ato.status === 'troca') trocas += ato.valor;
@@ -1471,37 +1551,6 @@
             renderGerenciadorBaixas();
         }
 
-        function renderGerenciadorBaixas() {
-            const container = document.getElementById('fin-gerenciador-baixas');
-            container.innerHTML = '';
-
-            if (db.atos.length === 0) {
-                container.innerHTML = '<div class="p-3 text-center text-gray-400 text-xs">Nenhum processo cadastrado.</div>';
-                return;
-            }
-
-            db.atos.forEach(a => {
-                const card = document.createElement('div');
-                card.className = "bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 text-xs flex justify-between items-center shadow-sm";
-                card.innerHTML = `
-                    <div>
-                        <strong class="text-sm">Proc: ${a.processo}</strong> (${a.cliente})<br>
-                        <span class="text-gray-400">Valor: R$ ${a.valor.toFixed(2)}</span>
-                        ${a.dataPagamento ? `<div class="text-[10px] text-green-600 font-bold">Pago em: ${a.dataPagamento}</div>` : ''}
-                    </div>
-                    <div>
-                        <select onchange="gerenciarAlteracaoStatus(${a.id}, this.value)" class="p-1.5 border rounded-lg text-xs font-bold ${a.status === 'pago' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}">
-                            <option value="pendente" ${a.status === 'pendente' ? 'selected' : ''}>🟡 PENDENTE</option>
-                            <option value="pago" ${a.status === 'pago' ? 'selected' : ''}>🟢 PAGO (Baixa)</option>
-                            <option value="vencido" ${a.status === 'vencido' ? 'selected' : ''}>🔴 VENCIDO</option>
-                            <option value="troca" ${a.status === 'troca' ? 'selected' : ''}>🔄 TROCA</option>
-                        </select>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
         function renderProcessosParaRecibo() {
             const cli = document.getElementById('fin-recibo-cliente').value;
             const mesRef = document.getElementById('fin-recibo-mes').value;
@@ -1509,9 +1558,8 @@
             container.innerHTML = '';
 
             const atosPagos = db.atos.filter(a => a.cliente === cli && a.status === 'pago' && a.data && a.data.substring(0, 7) === mesRef);
-
             if(atosPagos.length === 0) {
-                container.innerHTML = '<span class="text-gray-400 italic">Nenhum processo com status "PAGO" neste mês para este cliente. Dê a baixa primeiro abaixo.</span>';
+                container.innerHTML = '<span class="text-gray-400 italic">Nenhum processo com status "PAGO" neste mês para este cliente.</span>';
                 return;
             }
 
@@ -1548,7 +1596,7 @@
 
             let relacao = atosSelecionados.map(a => `• Proc. nº ${a.processo} - R$ ${a.valor.toFixed(2)} (Pago em: ${a.dataPagamento || 'Confirmado'})`).join('\n');
 
-            const textoRecibo = `=====================================================\n          RECIBO DE QUITAÇÃO DE HONORÁRIOS\n          RECIBO Nº: ${numRecibo}\n=====================================================\n\nRecebi(emos) de ${cli}, a quantia total de R$ ${total.toFixed(2)}, referente ao pagamento quitado dos atos indicados abaixo:\n\n-----------------------------------------------------\nRELAÇÃO DE PROCESSOS QUITADOS:\n${relacao}\n-----------------------------------------------------\n\nMês de Referência: ${mesRef}\nData da Emissão: ${new Date(dataEmissao + 'T00:00:00').toLocaleDateString('pt-BR')}\nChave PIX de Crédito: ${db.perfil.pix || 'Não informada'}\n\nCLÁUSULA DE QUITAÇÃO:\nDou/damos a mais ampla e irrevogável quitação exclusivamente para o(s) processo(s) listado(s) acima.\n\n_____________________________________________________\n${db.perfil.nome || 'Correspondente Jurídico'}\nDoc/OAB: ${db.perfil.doc || ''}\nValidade Digital: O envio deste documento via WhatsApp formaliza a quitação rasa.`;
+            const textoRecibo = `=======================================\n       RECIBO DE QUITAÇÃO DE HONORÁRIOS\n       RECIBO Nº: ${numRecibo}\n=======================================\n\nRecebi(emos) de ${cli}, a quantia total de R$ ${total.toFixed(2)}, referente aos atos quitados:\n\n${relacao}\n\nMês Ref: ${mesRef}\nData Emissão: ${new Date(dataEmissao + 'T00:00:00').toLocaleDateString('pt-BR')}\nChave PIX: ${db.perfil.pix || 'N/I'}\n\n_____________________________________\n${db.perfil.nome || 'Correspondente Jurídico'}\nDoc/OAB: ${db.perfil.doc || ''}`;
 
             saveData();
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoRecibo)}`);
@@ -1568,7 +1616,6 @@
                 email: document.getElementById('ct-email').value,
                 obs: document.getElementById('ct-obs').value
             };
-
             db.contatos.push(novoContato);
             saveData();
             document.getElementById('form-contato').reset();
@@ -1585,7 +1632,7 @@
             const filtrados = db.contatos.filter(c => c.nome.toLowerCase().includes(busca) || (c.oab && c.oab.toLowerCase().includes(busca)) || (c.celular && c.celular.includes(busca)));
 
             if(filtrados.length === 0) {
-                container.innerHTML = '<div class="p-3 text-center text-gray-400 text-xs">Nenhum contato cadastrado ou encontrado.</div>';
+                container.innerHTML = '<div class="p-3 text-center text-gray-400 text-xs">Nenhum contato encontrado.</div>';
                 return;
             }
 
@@ -1604,9 +1651,7 @@
                         <span>📱 Cel: <strong>${c.celular}</strong></span>
                         <span>🎓 OAB: <strong>${c.oab || 'N/I'}</strong></span>
                         <span>📄 CPF: ${c.cpf || 'N/I'} | RG: ${c.rg || 'N/I'}</span>
-                        <span>🎂 Nasc: ${c.nascimento ? new Date(c.nascimento + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/I'}</span>
                         <span class="col-span-2">✉️ E-mail: ${c.email || 'N/I'}</span>
-                        ${c.obs ? `<span class="col-span-2 italic bg-gray-50 dark:bg-gray-700/50 p-1 rounded">Obs: ${c.obs}</span>` : ''}
                     </div>
                 `;
                 container.appendChild(item);
@@ -1634,32 +1679,17 @@
         function compartilharContatosWhats() {
             const selecionados = obterContatosSelecionados();
             if (!selecionados) return;
-
-            const dataEnvio = document.getElementById('contato-data-envio').value;
-            const dataFmt = new Date(dataEnvio + 'T00:00:00').toLocaleDateString('pt-BR');
-
-            let texto = `===============================\n   AGENDA DE CONTATOS (DILIGENCE.BR)\n   Data do Envio: ${dataFmt}\n===============================\n\n`;
-
-            selecionados.forEach(c => {
-                texto += `👤 NOME: ${c.nome}\n📱 Celular: ${c.celular}\n🎓 OAB: ${c.oab || 'N/I'}\n📄 CPF: ${c.cpf || 'N/I'} | RG: ${c.rg || 'N/I'}\n🎂 Nasc: ${c.nascimento ? new Date(c.nascimento + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/I'}\n✉️ E-mail: ${c.email || 'N/I'}\n📝 Obs: ${c.obs || 'Nenhuma'}\n-------------------------------\n`;
-            });
-
+            let texto = `AGENDA DE CONTATOS (DILIGENCE.BR)\n\n`;
+            selecionados.forEach(c => { texto += `👤 ${c.nome}\n📱 Cel: ${c.celular}\n🎓 OAB: ${c.oab || 'N/I'}\n-------------------------------\n`; });
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`);
         }
 
         function compartilharContatosEmail() {
             const selecionados = obterContatosSelecionados();
             if (!selecionados) return;
-
-            const dataEnvio = document.getElementById('contato-data-envio').value;
-            const dataFmt = new Date(dataEnvio + 'T00:00:00').toLocaleDateString('pt-BR');
-
-            let texto = `AGENDA DE CONTATOS - DILIGENCE.BR (Envio: ${dataFmt})\n\n`;
-            selecionados.forEach(c => {
-                texto += `Nome: ${c.nome}\nCelular: ${c.celular}\nOAB: ${c.oab || 'N/I'}\nCPF: ${c.cpf || 'N/I'} | RG: ${c.rg || 'N/I'}\nNascimento: ${c.nascimento || 'N/I'}\nE-mail: ${c.email || 'N/I'}\nObs: ${c.obs || 'Nenhuma'}\n\n`;
-            });
-
-            window.open(`mailto:?subject=${encodeURIComponent(`Contatos Selecionados - ${dataFmt}`)}&body=${encodeURIComponent(texto)}`);
+            let texto = `AGENDA DE CONTATOS\n\n`;
+            selecionados.forEach(c => { texto += `Nome: ${c.nome} - Cel: ${c.celular} - OAB: ${c.oab || 'N/I'}\n`; });
+            window.open(`mailto:?subject=Contatos&body=${encodeURIComponent(texto)}`);
         }
 
         /* --- CALCULADORAS --- */
@@ -1706,8 +1736,7 @@
 
             let valFeriasVencidas = 0;
             if (feriasVencidasOpt === '1') valFeriasVencidas = salario + (salario / 3);
-            else if (feriasVencidasOpt === '2') valFeriasVencidas = (salario * 2) + ((salario * 2) / 3);
-            else if (feriasVencidasOpt === '1_dobro') valFeriasVencidas = (salario * 2) + ((salario * 2) / 3);
+            else if (feriasVencidasOpt === '2' || feriasVencidasOpt === '1_dobro') valFeriasVencidas = (salario * 2) + ((salario * 2) / 3);
 
             let diasAviso = 30;
             if (anosEmpresa > 1) diasAviso = Math.min(90, 30 + ((anosEmpresa - 1) * 3));
@@ -1718,7 +1747,6 @@
             else if (tipoMultaFgts === '20') valMultaFgts = fgtsSaldo * 0.20;
 
             let monteBruto = saldoSalario + decimoTerceiro + feriasProp + tercoFeriasProp + valFeriasVencidas + valAviso + horasExtras;
-
             let multa467 = document.getElementById('calc-multa-467').checked ? (monteBruto * 0.5) : 0;
             let multa477 = document.getElementById('calc-multa-477').checked ? salario : 0;
 
@@ -1726,7 +1754,7 @@
             let totalDescontos = descVale + descOutros;
             totalRescisaoLiquidoGlobal = totalBruto - totalDescontos;
 
-            resultadoRescisaoTexto = `--- RESUMO EXECUTIVO DE RESCISÃO TRABALHISTA ---\nSalário Base: R$ ${salario.toFixed(2)}\n• Saldo de Salário (${diasMes}d): R$ ${saldoSalario.toFixed(2)}\n• 13º Proporcional (${meses13}/12): R$ ${decimoTerceiro.toFixed(2)}\n• Férias Proporcionais (${mesesFerias}/12): R$ ${feriasProp.toFixed(2)}\n• 1/3 Constitucional Férias Prop.: R$ ${tercoFeriasProp.toFixed(2)}\n• Férias Vencidas + 1/3: R$ ${valFeriasVencidas.toFixed(2)}\n• Aviso Prévio Indenizado (${diasAviso} dias): R$ ${valAviso.toFixed(2)}\n• Horas Extras / Banco de Horas: R$ ${horasExtras.toFixed(2)}\n• Multa FGTS (${tipoMultaFgts}% s/ R$ ${fgtsSaldo.toFixed(2)}): R$ ${valMultaFgts.toFixed(2)}\n• Multa Art. 467 CLT (50%): R$ ${multa467.toFixed(2)}\n• Multa Art. 477 CLT (1 Salário): R$ ${multa477.toFixed(2)}\n-----------------------------------\nTOTAL BRUTO: R$ ${totalBruto.toFixed(2)}\n(-) DESCONTOS (Adiantamento/VT/VA): R$ ${totalDescontos.toFixed(2)}\n===================================\nTOTAL LÍQUIDO A RECEBER: R$ ${totalRescisaoLiquidoGlobal.toFixed(2)}`;
+            resultadoRescisaoTexto = `--- RESUMO EXECUTIVO DE RESCISÃO TRABALHISTA ---\nSalário Base: R$ ${salario.toFixed(2)}\nTOTAL BRUTO: R$ ${totalBruto.toFixed(2)}\n(-) DESCONTOS: R$ ${totalDescontos.toFixed(2)}\n===================================\nTOTAL LÍQUIDO A RECEBER: R$ ${totalRescisaoLiquidoGlobal.toFixed(2)}`;
 
             const resDiv = document.getElementById('calc-resultado');
             resDiv.innerText = resultadoRescisaoTexto;
@@ -1734,74 +1762,37 @@
         }
 
         function gerarMinutaAcordo() {
-            if(!totalRescisaoLiquidoGlobal || totalRescisaoLiquidoGlobal === 0) {
-                return alert('Realize o cálculo da rescisão primeiro!');
-            }
-            const minuta = `=======================================\n       TERMO / MINUTA DE PROPOSTA DE ACORDO\n=======================================\n\nÀs Partes / MM. Juízo da Vara do Trabalho:\n\nFormulamos a presente proposta de acordo referente às verbas rescisórias apuradas:\n\n1. VALOR TOTAL DO ACORDO: R$ ${totalRescisaoLiquidoGlobal.toFixed(2)}\n2. FORMA DE PAGAMENTO: A vista via PIX ou em parcelas a combinar.\n3. QUITAÇÃO: Cumprido o pagamento, o(a) Reclamante dará quitação geral e irrestrita quanto ao objeto da ação e ao contrato de trabalho extinto.\n\nAtenciosamente,\n${db.perfil.nome || 'Advogado(a) / Preposto'}\nOAB/Doc: ${db.perfil.doc || 'N/I'}`;
-
+            if(!totalRescisaoLiquidoGlobal) return alert('Realize o cálculo primeiro!');
+            const minuta = `TERMO DE PROPOSTA DE ACORDO\nValor Total: R$ ${totalRescisaoLiquidoGlobal.toFixed(2)}\n\nAdvogado(a): ${db.perfil.nome || 'N/I'}`;
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(minuta)}`);
         }
 
-        /* --- RELATÓRIOS CONSOLIDADOS --- */
+        /* --- OUTRAS FUNÇÕES DE APOIO --- */
         function togglePeriodoInputs() {
             const tipo = document.getElementById('filter-periodo-tipo').value;
             const container = document.getElementById('periodo-inputs-container');
-            const boxMes = document.getElementById('box-filter-mes');
-            const boxRange = document.getElementById('box-filter-range');
-
-            if (tipo === 'todos') {
-                container.classList.add('hidden');
-            } else if (tipo === 'mes') {
-                container.classList.remove('hidden');
-                boxMes.classList.remove('hidden');
-                boxRange.classList.add('hidden');
-            } else if (tipo === 'custom') {
-                container.classList.remove('hidden');
-                boxMes.classList.add('hidden');
-                boxRange.classList.remove('hidden');
-            }
+            container.classList.toggle('hidden', tipo === 'todos');
+            document.getElementById('box-filter-mes').classList.toggle('hidden', tipo !== 'mes');
+            document.getElementById('box-filter-range').classList.toggle('hidden', tipo !== 'custom');
             renderRelatorios();
         }
 
         function obterAtosFiltradosRelatorio() {
             const query = document.getElementById('filter-cliente').value.toLowerCase().trim();
             const statusFiltro = document.getElementById('filter-status').value;
-            const tipoPeriodo = document.getElementById('filter-periodo-tipo').value;
-            const mesSelecionado = document.getElementById('filter-mes-select').value;
-            const dataInicio = document.getElementById('filter-data-inicio').value;
-            const dataFim = document.getElementById('filter-data-fim').value;
-
             return db.atos.filter(a => {
-                const bateTexto = query === '' || 
-                    a.cliente.toLowerCase().includes(query) || 
-                    a.processo.toLowerCase().includes(query) || 
-                    a.status.toLowerCase().includes(query);
-
+                const bateTexto = query === '' || a.cliente.toLowerCase().includes(query) || a.processo.toLowerCase().includes(query);
                 const bateStatus = (statusFiltro === 'todos') || (a.status === statusFiltro);
-
-                let batePeriodo = true;
-                const dataAto = a.data ? a.data.substring(0, 10) : '';
-
-                if (tipoPeriodo === 'mes' && mesSelecionado) {
-                    const mesAto = a.data ? a.data.substring(0, 7) : '';
-                    batePeriodo = (mesAto === mesSelecionado);
-                } else if (tipoPeriodo === 'custom') {
-                    if (dataInicio && dataAto < dataInicio) batePeriodo = false;
-                    if (dataFim && dataAto > dataFim) batePeriodo = false;
-                }
-
-                return bateTexto && bateStatus && batePeriodo;
+                return bateTexto && bateStatus;
             });
         }
 
         function renderRelatorios() {
             const container = document.getElementById('relatorios-lista');
             container.innerHTML = '';
-
             const filtrados = obterAtosFiltradosRelatorio();
 
             let totalBruto = 0, totalPago = 0, totalPendente = 0;
-
             filtrados.forEach(a => {
                 totalBruto += a.valor;
                 if (a.status === 'pago') totalPago += a.valor;
@@ -1814,102 +1805,181 @@
             document.getElementById('relatorio-valor-pendente').innerText = `R$ ${totalPendente.toFixed(2)}`;
 
             if (filtrados.length === 0) {
-                container.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs font-semibold bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700">Nenhum registro encontrado para este filtro de pesquisa/mês.</div>';
+                container.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs">Nenhum registro encontrado.</div>';
                 return;
             }
 
             filtrados.forEach(a => {
                 const item = document.createElement('div');
                 item.className = "p-3 bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 text-xs flex justify-between items-center shadow-sm";
-                
-                let badgeColor = 'text-amber-600 bg-amber-50 border-amber-200';
-                if (a.status === 'pago') badgeColor = 'text-green-600 bg-green-50 border-green-200';
-                else if (a.status === 'troca') badgeColor = 'text-purple-600 bg-purple-50 border-purple-200';
-                else if (a.status === 'debito' || a.status === 'vencido') badgeColor = 'text-red-600 bg-red-50 border-red-200';
-
                 item.innerHTML = `
                     <div>
                         <strong class="text-sm text-gray-800 dark:text-gray-100">${a.cliente}</strong>
                         <div class="text-gray-500 font-semibold">Proc: ${a.processo}</div>
-                        <div class="text-gray-400 text-[10px]"><i class="fa-regular fa-calendar mr-1"></i>${a.data ? new Date(a.data).toLocaleString('pt-BR') : 'Data N/I'}</div>
                     </div>
                     <div class="text-right">
                         <span class="font-black text-brand-red text-sm block">R$ ${a.valor.toFixed(2)}</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase border ${badgeColor}">${a.status}</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase border">${a.status}</span>
                     </div>
                 `;
                 container.appendChild(item);
             });
         }
 
-        function gerarTextoRelatorioCompleto() {
-            const filtrados = obterAtosFiltradosRelatorio();
-            if (filtrados.length === 0) return null;
-
-            let totalBruto = 0, totalPago = 0, totalPendente = 0;
-            filtrados.forEach(a => {
-                totalBruto += a.valor;
-                if (a.status === 'pago') totalPago += a.valor;
-                else if (a.status === 'pendente' || a.status === 'vencido') totalPendente += a.valor;
-            });
-
-            const nomeCorr = db.perfil.nome || 'Correspondente';
-            const dataHoje = new Date().toLocaleDateString('pt-BR');
-
-            let texto = `=========================================\n RELATÓRIO COMPLETO DE PAUTA & HONORÁRIOS\n DILIGENCE.BR — ${dataHoje}\n Correspondent: ${nomeCorr}\n=========================================\n\n`;
-            texto += `📊 RESUMO DOS TOTALIZADORES:\n• Total de Atos: ${filtrados.length}\n• Valor Total Bruto: R$ ${totalBruto.toFixed(2)}\n• Valor Quitado (Pago): R$ ${totalPago.toFixed(2)}\n• Valor a Receber: R$ ${totalPendente.toFixed(2)}\n-----------------------------------------\n\n`;
-            texto += `📋 RELAÇÃO DETALHADA DOS ATOS:\n\n`;
-
-            filtrados.forEach((a, index) => {
-                texto += `${index + 1}. PROC: ${a.processo}\n   Cliente: ${a.cliente}\n   Data/Hora: ${a.data ? new Date(a.data).toLocaleString('pt-BR') : 'N/I'}\n   Valor: R$ ${a.valor.toFixed(2)}\n   Status: [${a.status.toUpperCase()}]\n   ${a.dataPagamento ? `Baixa em: ${a.dataPagamento}\n` : ''}-----------------------------------------\n`;
-            });
-
-            return texto;
+        function iniciarDitadoVoz(elementId) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) return alert("Ditado por voz não suportado neste aparelho.");
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'pt-BR';
+            const targetEl = document.getElementById(elementId);
+            targetEl.value = "🎙️ Ouvindo...";
+            recognition.onresult = function(e) {
+                targetEl.value = e.results[0][0].transcript;
+                if(elementId === 'bloco-notas') saveNotas();
+            };
+            recognition.start();
         }
 
-        function compartilharRelatorioWhats() {
-            const texto = gerarTextoRelatorioCompleto();
-            if(!texto) return alert('Nenhum ato encontrado para gerar o relatório!');
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`);
+        function capturarLocalizacaoGPS() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(pos) {
+                    const hora = new Date().toLocaleTimeString('pt-BR');
+                    document.getElementById('bloco-notas').value += `\n📍 [PRESENÇA FÓRUM GPS às ${hora}]: Lat ${pos.coords.latitude.toFixed(5)}, Lng ${pos.coords.longitude.toFixed(5)}`;
+                    saveNotas();
+                    alert("✅ Presença GPS registrada com sucesso no Bloco de Notas!");
+                });
+            }
         }
 
-        function compartilharRelatorioEmail() {
-            const texto = gerarTextoRelatorioCompleto();
-            if(!texto) return alert('Nenhum ato encontrado para gerar o relatório!');
-            window.open(`mailto:?subject=${encodeURIComponent(`Relatorio Completo de Pauta - DILIGENCE.BR`)}&body=${encodeURIComponent(texto)}`);
+        function confirmarLimparAba(aba) {
+            if (confirm("⚠️ TEM CERTEZA QUE DESEJA LIMPAR ESTA ABA?")) {
+                if (aba === 'perfil') db.perfil = { nome: '', doc: '', cidade: '', pix: '', email: '' };
+                else if (aba === 'atos') db.atos = [];
+                else if (aba === 'contatos') db.contatos = [];
+                else if (aba === 'caixa') db.caixa = [];
+                saveData();
+                loadData();
+            }
         }
 
-        /* --- MANUAIS --- */
-        function gerarTextoManuais() {
-            return `=========================================\n CENTRAL DE MANUAIS — DILIGENCE.BR\n=========================================\n\n1. MANUAL GERAL DO SISTEMA:\n• Propósito: Gestão seletiva e descentralizada de diligências, pautas e controle financeiro.\n• Dados em Nuvem Local: Funcionamento off-line e instantâneo direto no navegador do celular.\n• Módulo Financeiro: Recibos emitidos apenas para processos quitados (PAGO).\n\n-----------------------------------------\n2. MANUAL INDIVIDUAL DO CORRESPONDENTE:\n• ROTINA OBRIGATÓRIA DE BACKUP (2X AO DIA): O correspondente é o único responsável por exportar e salvar o backup (.JSON) diariamente às 12:00 e às 17:00.\n• Guarda de Dados: A ADM não possui acesso aos seus dados locais.\n• Restauração: Trocou de celular? Basta usar o botão 'Restaurar' e selecionar o backup .JSON para recuperar fotos, pautas e contatos.`;
+        function confirmarZerarTudoGeral() {
+            if (confirm("🚨 ATENÇÃO: Deseja ZERAR TODO o aplicativo?")) {
+                if (confirm("❓ Tem certeza absoluta?")) {
+                    db = { perfil: { nome: '', doc: '', cidade: '', pix: '', email: '' }, atos: [], contatos: [], caixa: [], reciboSeq: 1001, notas: '', ultimoBackup: null };
+                    saveData();
+                    loadData();
+                    fecharModalBackup();
+                    alert("✨ Aplicativo completamente zerado!");
+                }
+            }
         }
 
-        function compartilharManualWhats() {
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(gerarTextoManuais())}`);
+        function abrirModalBackup() { saveData(); document.getElementById('modal-backup').classList.remove('hidden'); }
+        function fecharModalBackup() { document.getElementById('modal-backup').classList.add('hidden'); }
+        function fecharModalAta() { document.getElementById('modal-ver-ata').classList.add('hidden'); }
+        function verAtaAnexo(id) {
+            const ato = db.atos.find(a => a.id === id);
+            if (ato && ato.ataImg) {
+                document.getElementById('img-modal-ata').src = ato.ataImg;
+                document.getElementById('modal-ver-ata').classList.remove('hidden');
+            }
         }
 
-        function compartilharManualEmail() {
-            window.open(`mailto:?subject=${encodeURIComponent(`Manual Geral e do Correspondente - DILIGENCE.BR`)}&body=${encodeURIComponent(gerarTextoManuais())}`);
+        function savePerfil(e) {
+            e.preventDefault();
+            db.perfil = {
+                nome: document.getElementById('perfil-nome').value,
+                doc: document.getElementById('perfil-doc').value,
+                cidade: document.getElementById('perfil-cidade').value,
+                pix: document.getElementById('perfil-pix').value,
+                email: document.getElementById('perfil-email').value
+            };
+            saveData();
+            alert('Perfil salvo com sucesso!');
         }
-
-        /* --- COMPARTILHAMENTOS DIVERSOS --- */
-        function compartilharPerfilWhats() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`Correspondente: ${db.perfil.nome} | Doc: ${db.perfil.doc} | PIX: ${db.perfil.pix}`)}`); }
-        function compartilharPerfilEmail() { window.open(`mailto:?subject=Dados Correspondente&body=${encodeURIComponent(`Nome: ${db.perfil.nome}\nDoc: ${db.perfil.doc}\nPIX: ${db.perfil.pix}`)}`); }
-        function compartilharPautaWhats() {
-            const pautaTexto = db.atos.map(a => `• Proc ${a.processo} (${a.cliente}): R$ ${a.valor.toFixed(2)} [${a.status}]`).join('\n');
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`PAUTA DE AUDIÊNCIAS:\n\n${pautaTexto}`)}`);
-        }
-        function compartilharPautaEmail() {
-            const pautaTexto = db.atos.map(a => `• Proc ${a.processo} (${a.cliente}): R$ ${a.valor.toFixed(2)} [${a.status}]`).join('\n');
-            window.open(`mailto:?subject=Pauta de Audiencias&body=${encodeURIComponent(pautaTexto)}`);
-        }
-        function compartilharFinanceiroWhats() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`RESUMO FINANCEIRO:\nEntradas: ${document.getElementById('fin-entradas').innerText}\nA Receber: ${document.getElementById('fin-pendentes').innerText}\nSaldo: ${document.getElementById('fin-saldo').innerText}`)}`); }
-        function compartilharFinanceiroEmail() { window.open(`mailto:?subject=Resumo Financeiro&body=${encodeURIComponent(`Entradas: ${document.getElementById('fin-entradas').innerText}\nA Receber: ${document.getElementById('fin-pendentes').innerText}\nSaldo: ${document.getElementById('fin-saldo').innerText}`)}`); }
-        function compartilharCalcWhats() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(resultadoRescisaoTexto || 'Realize o cálculo primeiro.')}`); }
-        function compartilharCalcEmail() { window.open(`mailto:?subject=Calculo Trabalhista&body=${encodeURIComponent(resultadoRescisaoTexto || 'Realize o cálculo primeiro.')}`); }
-        function compartilharNotasWhats() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`NOTAS DA PAUTA:\n${db.notas}`)}`); }
 
         function saveNotas() { db.notas = document.getElementById('bloco-notas').value; saveData(); }
+        function previewImagemAta(evt) {
+            const file = evt.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('img-preview-ata').src = e.target.result;
+                    document.getElementById('preview-ata-container').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function fazerBackupCelularJSON() {
+            registrarHorarioBackup();
+            const jsonStr = JSON.stringify(db, null, 2);
+            const blob = new Blob([jsonStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `Backup_DILIGENCE_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            fecharModalBackup();
+        }
+
+        function enviarBackupEmailPessoal() {
+            registrarHorarioBackup();
+            const email = db.perfil.email || prompt("Digite seu e-mail:");
+            if (email) {
+                window.open(`mailto:${email}?subject=Backup DILIGENCE&body=${encodeURIComponent(JSON.stringify(db))}`);
+                fecharModalBackup();
+            }
+        }
+
+        async function exportarPlanilhaCSV() {
+            let csv = "Processo,Cliente,Data,Valor,Status\n";
+            db.atos.forEach(a => { csv += `"${a.processo}","${a.cliente}","${a.data}",${a.valor},"${a.status}"\n`; });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Pauta_DILIGENCE_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+        }
+
+        function acionarRestauracao() {
+            fecharModalBackup();
+            document.getElementById('input-restaurar-file').click();
+        }
+
+        function processarRestauracaoFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    db = JSON.parse(evt.target.result);
+                    saveData();
+                    loadData();
+                    alert("✅ Dados e pautas restaurados com sucesso!");
+                } catch(err) { alert("❌ Arquivo de backup inválido."); }
+            };
+            reader.readAsText(file);
+        }
+
+        function restaurarBackupInternoEmergencia() {
+            const mirror = localStorage.getItem('diligence_db_mirror');
+            if (mirror && confirm("Restaurar cópia espelhada interna?")) {
+                db = JSON.parse(mirror);
+                saveData();
+                loadData();
+                alert("✅ Cópia interna restaurada!");
+            }
+        }
+
+        function compartilharPerfilWhats() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`Correspondente: ${db.perfil.nome} | PIX: ${db.perfil.pix}`)}`); }
+        function compartilharPerfilEmail() { window.open(`mailto:?subject=Perfil&body=${encodeURIComponent(`Nome: ${db.perfil.nome}\nPIX: ${db.perfil.pix}`)}`); }
+        function compartilharPautaWhats() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(db.atos.map(a=>`• Proc ${a.processo}: R$ ${a.valor.toFixed(2)} [${a.status}]`).join('\n'))}`); }
+        function compartilharPautaEmail() { window.open(`mailto:?subject=Pauta&body=${encodeURIComponent(db.atos.map(a=>`• Proc ${a.processo}: R$ ${a.valor.toFixed(2)}`).join('\n'))}`); }
+        function compartilharCalcWhats() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(resultadoRescisaoTexto || 'Calcule primeiro.')}`); }
+        function compartilharCalcEmail() { window.open(`mailto:?subject=Calculo&body=${encodeURIComponent(resultadoRescisaoTexto || 'Calcule primeiro.')}`); }
+        function compartilharNotasWhats() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(db.notas)}`); }
     </script>
 </body>
 </html>
