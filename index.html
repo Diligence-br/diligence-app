@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <!-- GOOGLE ANALYTICS (G-QR1STX30J1) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QR1STX30J1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-QR1STX30J1');
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DILIGENCE.BR</title>
@@ -710,7 +719,6 @@
         let alertaAlmocoExibido = false;
         let alertaFimDiaExibido = false;
 
-        // VARIÁVEIS DE CONTROLE DA TRAVA DE PAGO
         let atoPendenteAlteracaoId = null;
         let atoNovoStatusPretendido = null;
 
@@ -783,6 +791,110 @@
 
         function fecharModalBackup() {
             document.getElementById('modal-backup').classList.add('hidden');
+        }
+
+        function enviarBackupEmailPessoal() {
+            saveData();
+            const emailDestino = db.perfil.email || prompt("Digite seu e-mail pessoal para receber a cópia do backup:");
+            if (!emailDestino) return alert("E-mail não informado!");
+
+            const nomeCorr = db.perfil.nome || 'Correspondente';
+            const dataHoje = new Date().toLocaleDateString('pt-BR');
+
+            const mensagemAviso = `📦 BACKUP DE SEGURANÇA PESSOAL - DILIGENCE.BR\n\nOlá, ${nomeCorr}!\n\nSegue abaixo a cópia dos seus dados de cadastro, pauta e honorários gerada em ${dataHoje}.\n\nGuarde esta mensagem ou o arquivo no seu Google Drive/E-mail para restaurar em qualquer celular novo quando precisar.\n\n-----------------------------------\nDADOS DE BACKUP (JSON):\n\n${JSON.stringify(db)}`;
+
+            const subject = encodeURIComponent(`Meu Backup DILIGENCE.BR - ${dataHoje}`);
+            const body = encodeURIComponent(mensagemAviso);
+
+            window.open(`mailto:${emailDestino}?subject=${subject}&body=${body}`);
+            fecharModalBackup();
+        }
+
+        async function fazerBackupCelularJSON() {
+            saveData();
+            const nomeCorr = (db.perfil.nome || 'Correspondente').replace(/[^a-zA-Z0-9]/g, '_');
+            const jsonStr = JSON.stringify(db, null, 2);
+            const nomeArquivo = `Backup_DILIGENCE_${nomeCorr}_${new Date().toISOString().split('T')[0]}.json`;
+            const file = new File([jsonStr], nomeArquivo, { type: 'application/json' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        title: 'Backup DILIGENCE.BR',
+                        text: `Segue o backup de segurança de ${db.perfil.nome || 'Correspondente'}.`,
+                        files: [file]
+                    });
+                    fecharModalBackup();
+                    return;
+                } catch (e) {}
+            }
+
+            const blob = new Blob([jsonStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = nomeArquivo;
+            a.click();
+            fecharModalBackup();
+        }
+
+        function acionarRestauracao() {
+            fecharModalBackup();
+            document.getElementById('input-restaurar-file').click();
+        }
+
+        function processarRestauracaoFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const dadosRestaurados = JSON.parse(e.target.result);
+                    if (dadosRestaurados && (dadosRestaurados.atos || dadosRestaurados.perfil)) {
+                        db = dadosRestaurados;
+                        saveData();
+                        loadData();
+                        alert("✅ RESTAURAÇÃO CONCLUÍDA COM SUCESSO!\n\nTodos os seus dados, pauta e perfil foram recuperados neste aparelho.");
+                    } else {
+                        alert("⚠️ Arquivo inválido! Selecione um arquivo de backup (.JSON) válido gerado pelo DILIGENCE.BR.");
+                    }
+                } catch (err) {
+                    alert("❌ Erro ao ler o arquivo de backup. Verifique se escolheu o arquivo .json correto.");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        async function exportarPlanilhaCSV() {
+            if (db.atos.length === 0) return alert('Nenhum ato cadastrado na pauta!');
+            
+            let csv = "Processo,Cliente,Data,Valor,Status\n";
+            db.atos.forEach(a => { csv += `"${a.processo}","${a.cliente}","${a.data}",${a.valor},"${a.status}"\n`; });
+            
+            const nomeCorr = (db.perfil.nome || 'Correspondente').replace(/[^a-zA-Z0-9]/g, '_');
+            const nomeArquivo = `Pauta_DILIGENCE_${nomeCorr}_${new Date().toISOString().split('T')[0]}.csv`;
+            const file = new File([csv], nomeArquivo, { type: 'text/csv' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        title: 'Planilha DILIGENCE.BR',
+                        text: `Segue a planilha de atos de ${db.perfil.nome || 'Correspondente'}.`,
+                        files: [file]
+                    });
+                    fecharModalBackup();
+                    return;
+                } catch (e) {}
+            }
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', nomeArquivo);
+            a.click();
+            fecharModalBackup();
         }
 
         function loadData() {
@@ -874,12 +986,10 @@
             });
         }
 
-        /* --- GERENCIAMENTO DE STATUS E TRAVAS FINANCEIRAS --- */
         function gerenciarAlteracaoStatus(atoId, novoStatus) {
             const ato = db.atos.find(a => a.id === atoId);
             if (!ato) return;
 
-            // CASO 1: MUDAR PARA PAGO (POPUP DE CONFIRMAÇÃO COM DESTAQUE)
             if (novoStatus === 'pago' && ato.status !== 'pago') {
                 const confirma = confirm(`🟢 CONFIRMAÇÃO DE RECEBIMENTO DE PAGAMENTO\n\nTem certeza que deseja dar baixa como "PAGO" neste ato?\n\nProcesso: ${ato.processo}\nCliente: ${ato.cliente}\nValor: R$ ${ato.valor.toFixed(2)}\n\nIsso registrará a data de pagamento na pauta e liberará a emissão de recibos.`);
                 if (confirma) {
@@ -893,7 +1003,6 @@
                 return;
             }
 
-            // CASO 2: TENTAR DESFAZER OU ALTERAR DE "PAGO" PARA OUTRO STATUS (TRAVA WHATSAPP ADM)
             if (ato.status === 'pago' && novoStatus !== 'pago') {
                 atoPendenteAlteracaoId = atoId;
                 atoNovoStatusPretendido = novoStatus;
@@ -904,7 +1013,6 @@
                 return;
             }
 
-            // CASO PADRÃO
             ato.status = novoStatus;
             saveData();
             renderAtos();
@@ -934,7 +1042,6 @@
 
             window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(mensagem)}`);
 
-            // HABILITA O BOTÃO DE CONFIRMAR ALTERAÇÃO APÓS DISPARAR O WHATSAPP
             const btnConf = document.getElementById('btn-confirmar-desfazer-pago');
             btnConf.disabled = false;
             btnConf.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -960,7 +1067,6 @@
             atoNovoStatusPretendido = null;
         }
 
-        /* --- FINANCEIRO E EMISSÃO DE RECIBOS --- */
         function renderFinanceiro() {
             let entradas = 0, pendentes = 0, trocas = 0, saidas = 0;
 
@@ -1022,7 +1128,6 @@
             const container = document.getElementById('fin-recibo-processos-check');
             container.innerHTML = '';
 
-            // FILTRA APENAS OS QUE FORAM DADOS BAIXA COMO 'PAGO' NO MÊS SELECIONADO
             const atosPagos = db.atos.filter(a => a.cliente === cli && a.status === 'pago' && a.data && a.data.substring(0, 7) === mesRef);
 
             if(atosPagos.length === 0) {
