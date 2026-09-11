@@ -70,7 +70,47 @@
                 </div>
                 <button type="submit" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-lg font-bold text-sm shadow-md transition">Entrar no Sistema</button>
             </form>
-            <p id="login-error" class="text-xs text-red-500 font-semibold hidden">Usuário ou senha incorretos!</p>
+            
+            <div class="pt-2 border-t flex flex-col items-center gap-1">
+                <button onclick="abrirModalEsqueciSenha()" class="text-xs text-brand-red dark:text-red-400 font-bold hover:underline">
+                    <i class="fa-solid fa-key mr-1"></i> Esqueci a minha senha
+                </button>
+                <p id="login-error" class="text-xs text-red-500 font-semibold hidden mt-1">Usuário ou senha incorretos!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ESQUECI A SENHA -->
+    <div id="modal-esqueci-senha" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-2 border-brand-red">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-headset mr-1"></i> RECUPERAÇÃO DE SENHA</h3>
+                <button onclick="fecharModalEsqueciSenha()" class="text-gray-400 font-bold">&times;</button>
+            </div>
+            
+            <p class="text-xs text-gray-600 dark:text-gray-300">
+                Entre em contato direto com a administração via WhatsApp <strong>(11) 97838-6574</strong> para solicitar ajuda com sua senha.
+            </p>
+
+            <div class="space-y-2 text-left">
+                <div>
+                    <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Seu Nome Completo:</label>
+                    <input type="text" id="rec-nome" placeholder="Digite seu nome..." class="w-full p-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-xs font-semibold focus:outline-none">
+                </div>
+                <div>
+                    <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Seu Número de Celular / WhatsApp:</label>
+                    <input type="text" id="rec-celular" placeholder="(11) 99999-9999" class="w-full p-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-xs font-semibold focus:outline-none">
+                </div>
+            </div>
+
+            <div class="pt-2 border-t space-y-2">
+                <button onclick="enviarEsqueciSenhaWhats()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 shadow">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> ENVIAR SOLICITAÇÃO NO WHATSAPP
+                </button>
+                <button onclick="fecharModalEsqueciSenha()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">
+                    Cancelar
+                </button>
+            </div>
         </div>
     </div>
 
@@ -173,9 +213,14 @@
 
             <!-- ABA 2: PAUTA & CADASTRO DE DILIGÊNCIAS -->
             <section id="tab-atos" class="tab-content space-y-4 hidden">
-                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
-                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Cadastro e Pauta</h3>
-                    <p>Cadastre os atos com valor, link da sala virtual, anexo de ATA via Câmera/Galeria e selecione o status.</p>
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-circle-info mr-1"></i> Cadastro e Pauta</h3>
+                        <p>Cadastre os atos com voz, valor, link e anexo de ATA via Câmera/Galeria.</p>
+                    </div>
+                    <button type="button" onclick="capturarLocalizacaoGPS()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-2.5 py-1.5 rounded-lg text-[10px] shadow flex items-center gap-1">
+                        <i class="fa-solid fa-location-dot"></i> Check-in Fórum GPS
+                    </button>
                 </div>
 
                 <form id="form-ato" onsubmit="saveAto(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
@@ -188,11 +233,17 @@
                     
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs font-semibold">Nº do Processo</label>
+                            <label class="text-xs font-semibold flex items-center justify-between">
+                                Nº do Processo
+                                <button type="button" onclick="iniciarDitadoVoz('ato-processo')" class="text-brand-red font-bold hover:underline text-[11px]"><i class="fa-solid fa-microphone"></i> Ditar</button>
+                            </label>
                             <input type="text" id="ato-processo" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold">Cliente / Contratante</label>
+                            <label class="text-xs font-semibold flex items-center justify-between">
+                                Cliente / Contratante
+                                <button type="button" onclick="iniciarDitadoVoz('ato-cliente')" class="text-brand-red font-bold hover:underline text-[11px]"><i class="fa-solid fa-microphone"></i> Ditar</button>
+                            </label>
                             <input type="text" id="ato-cliente" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                     </div>
@@ -285,7 +336,10 @@
                         </button>
                     </div>
                     <div>
-                        <label class="text-xs font-semibold">Nome Completo / Razão Social*</label>
+                        <label class="text-xs font-semibold flex items-center justify-between">
+                            Nome Completo / Razão Social*
+                            <button type="button" onclick="iniciarDitadoVoz('ct-nome')" class="text-brand-red font-bold hover:underline text-[11px]"><i class="fa-solid fa-microphone"></i> Ditar</button>
+                        </label>
                         <input type="text" id="ct-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                     </div>
                     <div class="grid grid-cols-2 gap-3">
@@ -319,7 +373,10 @@
                         </div>
                     </div>
                     <div>
-                        <label class="text-xs font-semibold">Observações / Vínculo</label>
+                        <label class="text-xs font-semibold flex items-center justify-between">
+                            Observações / Vínculo
+                            <button type="button" onclick="iniciarDitadoVoz('ct-obs')" class="text-brand-red font-bold hover:underline text-[11px]"><i class="fa-solid fa-microphone"></i> Ditar</button>
+                        </label>
                         <textarea id="ct-obs" rows="2" placeholder="Ex: Escritório parceiro, preposto contratado..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs"></textarea>
                     </div>
                     <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Contato na Agenda</button>
@@ -416,7 +473,7 @@
                 </div>
             </section>
 
-            <!-- ABA 5: CALCULADORAS AVANÇADAS & BLOCO DE NOTAS -->
+            <!-- ABA 5: CALCULADORAS AVANÇADAS & BLOCO DE NOTAS POR VOZ -->
             <section id="tab-trabalhista" class="tab-content space-y-4 hidden">
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
                     <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200 border-b pb-2"><i class="fa-solid fa-calculator mr-1"></i> 1. Calculadora Matemática Comum</h3>
@@ -542,7 +599,12 @@
                 </div>
 
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
-                    <h3 class="font-bold text-sm border-b pb-2">Bloco de Notas Rápidas da Pauta</h3>
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200">Bloco de Notas Rápidas da Pauta</h3>
+                        <button type="button" onclick="iniciarDitadoVoz('bloco-notas')" class="bg-brand-red text-white font-bold px-2.5 py-1 rounded-lg text-xs shadow flex items-center gap-1">
+                            <i class="fa-solid fa-microphone"></i> Ditar Notas
+                        </button>
+                    </div>
                     <textarea id="bloco-notas" rows="3" placeholder="Anote orientações e ocorrências..." class="w-full p-2 border rounded dark:bg-gray-700 text-xs" oninput="saveNotas()"></textarea>
                     <button onclick="compartilharNotasWhats()" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold text-xs"><i class="fa-brands fa-whatsapp mr-1"></i> Compartilhar Notas no WhatsApp</button>
                 </div>
@@ -781,8 +843,10 @@
                 <button onclick="acionarRestauracao()" class="w-full bg-green-700 hover:bg-green-800 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow border border-green-500">
                     <i class="fa-solid fa-upload"></i> 4. RESTAURAR BACKUP DE CELULAR NOVO
                 </button>
+                <button onclick="restaurarBackupInternoEmergencia()" class="w-full bg-purple-700 hover:bg-purple-800 text-white py-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Restaurar Cópia Interna Automática
+                </button>
                 
-                <!-- BOTÃO DE ZERAR TUDO NOVO -->
                 <button onclick="confirmarZerarTudoGeral()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-extrabold py-2 rounded-xl text-[11px] flex items-center justify-center gap-1 border border-red-300 pt-2">
                     <i class="fa-solid fa-triangle-exclamation"></i> ZERAR/DELETAR TODOS OS DADOS (APP NOVINHO)
                 </button>
@@ -879,6 +943,29 @@
             }
         }
 
+        /* --- ESQUECI A SENHA --- */
+        function abrirModalEsqueciSenha() {
+            document.getElementById('modal-esqueci-senha').classList.remove('hidden');
+        }
+
+        function fecharModalEsqueciSenha() {
+            document.getElementById('modal-esqueci-senha').classList.add('hidden');
+        }
+
+        function enviarEsqueciSenhaWhats() {
+            const nome = document.getElementById('rec-nome').value.trim();
+            const celular = document.getElementById('rec-celular').value.trim();
+
+            if (!nome || !celular) {
+                alert("Por favor, preencha seu Nome e Celular antes de enviar.");
+                return;
+            }
+
+            const texto = `Esqueci a minha senha, pode me ajudar?\n\n👤 Nome: ${nome}\n📱 Celular: ${celular}`;
+            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(texto)}`);
+            fecharModalEsqueciSenha();
+        }
+
         function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
 
         function switchTab(tabId) {
@@ -893,7 +980,74 @@
             if (tabId === 'tab-contatos') renderContatos();
         }
 
-        function saveData() { localStorage.setItem('diligence_db', JSON.stringify(db)); }
+        function saveData() { 
+            localStorage.setItem('diligence_db', JSON.stringify(db)); 
+            localStorage.setItem('diligence_db_mirror', JSON.stringify(db));
+        }
+
+        function restaurarBackupInternoEmergencia() {
+            const mirror = localStorage.getItem('diligence_db_mirror');
+            if (mirror) {
+                if(confirm("Deseja restaurar a última cópia interna automática espelhada?")) {
+                    db = JSON.parse(mirror);
+                    saveData();
+                    loadData();
+                    alert("✅ Cópia interna restaurada!");
+                }
+            } else {
+                alert("Nenhuma cópia interna encontrada.");
+            }
+        }
+
+        /* --- RECURSOS DO FÓRUM: DITADO POR VOZ E GPS --- */
+        function iniciarDitadoVoz(elementId) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("O seu navegador ou celular não suporta o ditado por voz nativo. Use o teclado.");
+                return;
+            }
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'pt-BR';
+            recognition.continuous = false;
+            
+            const targetEl = document.getElementById(elementId);
+            const valorAntigo = targetEl.value;
+            targetEl.value = "🎙️ Ouvindo...";
+
+            recognition.onresult = function(event) {
+                const textoDitado = event.results[0][0].transcript;
+                targetEl.value = valorAntigo ? `${valorAntigo} ${textoDitado}` : textoDitado;
+                if(elementId === 'bloco-notas') saveNotas();
+            };
+
+            recognition.onerror = function() {
+                targetEl.value = valorAntigo;
+                alert("Não foi possível reconhecer a voz. Tente novamente.");
+            };
+
+            recognition.start();
+        }
+
+        function capturarLocalizacaoGPS() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude.toFixed(5);
+                    const lng = position.coords.longitude.toFixed(5);
+                    const horaAtual = new Date().toLocaleTimeString('pt-BR');
+                    const linkMaps = `https://maps.google.com/?q=${lat},${lng}`;
+                    
+                    const notasEl = document.getElementById('bloco-notas');
+                    notasEl.value += `\n📍 [PRESENÇA FÓRUM GPS às ${horaAtual}]: Lat ${lat}, Lng ${lng} - Ver Mapa: ${linkMaps}`;
+                    saveNotas();
+                    
+                    alert(`✅ PRESENÇA CONFIRMADA NO FÓRUM!\n\nHorário: ${horaAtual}\nCoordenadas: ${lat}, ${lng}\n\nO registro foi salvo automaticamente no seu Bloco de Notas para comprovação.`);
+                }, function(error) {
+                    alert("Erro ao obter localização GPS. Verifique se a localização do celular está ativada.");
+                });
+            } else {
+                alert("Geolocalização não suportada neste aparelho.");
+            }
+        }
 
         /* --- FUNÇÕES DE LIMPEZA E RESET DE DADOS --- */
         function confirmarLimparAba(aba) {
