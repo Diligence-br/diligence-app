@@ -161,11 +161,11 @@
                 </form>
             </section>
 
-            <!-- ABA 2: PAUTA & CADASTRO DE DILIGÊNCIAS -->
+            <!-- ABA 2: PAUTA & CADASTRO DE DILIGÊNCIAS (COM ANEXO DE ATA) -->
             <section id="tab-atos" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
                     <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Cadastro e Pauta</h3>
-                    <p>Cadastre os atos com valor, link da sala virtual e selecione o status de pagamento.</p>
+                    <p>Cadastre os atos com valor, link da sala virtual, anexo de ATA e selecione o status de pagamento.</p>
                 </div>
 
                 <form id="form-ato" onsubmit="saveAto(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
@@ -207,6 +207,14 @@
                             <label class="text-xs font-semibold">Link da Sala Virtual (Opcional)</label>
                             <input type="url" id="ato-link" placeholder="https://teams.microsoft.com/..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
                         </div>
+                    </div>
+
+                    <!-- CAMPO DE FOTO DA ATA / GALERIA -->
+                    <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-1">
+                        <label class="text-xs font-bold text-gray-700 dark:text-gray-200 flex items-center gap-1">
+                            <i class="fa-solid fa-camera text-brand-red"></i> Anexar Foto da ATA / Comprovante (Câmera ou Galeria)
+                        </label>
+                        <input type="file" id="ato-ata-file" accept="image/*" capture="environment" class="w-full p-1.5 border rounded-lg text-xs bg-white dark:bg-gray-800">
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2 p-2.5 bg-red-50 dark:bg-gray-700/60 rounded-xl border-2 border-brand-red">
@@ -341,7 +349,6 @@
                     </div>
                 </div>
 
-                <!-- GERENCIAMENTO DE BAIXA E EMISSÃO DE RECIBOS -->
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border-2 border-brand-red space-y-3 shadow-md">
                     <div class="flex justify-between items-center border-b pb-2">
                         <h3 class="font-bold text-sm text-brand-red"><i class="fa-solid fa-receipt mr-1"></i> Emissão de Recibo para Atos QUITADOS (PAGO)</h3>
@@ -363,7 +370,6 @@
                         </div>
                     </div>
 
-                    <!-- CAIXA DE PROCESSO COM MARCAÇÃO EM LOTE DO PERÍODO -->
                     <div class="space-y-1">
                         <div class="flex justify-between items-center text-xs pt-1">
                             <label class="font-bold">Processos QUITADOS do Período:</label>
@@ -379,7 +385,6 @@
                     </button>
                 </div>
 
-                <!-- LISTA COMPLETA DE BAIXAS FINANCEIRAS -->
                 <div class="space-y-2">
                     <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300"><i class="fa-solid fa-list-check mr-1"></i> Gerenciar Baixa dos Processos</h3>
                     <div id="fin-gerenciador-baixas" class="space-y-2"></div>
@@ -624,6 +629,20 @@
                 <i class="fa-solid fa-file-invoice text-base"></i><span>Relatórios</span>
             </button>
         </nav>
+    </div>
+
+    <!-- MODAL DE VISUALIZAÇÃO DE ATA / ANEXO -->
+    <div id="modal-ver-ata" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl max-w-lg w-full space-y-3 shadow-2xl border dark:border-gray-700">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-file-image mr-1"></i> Visualização do Anexo (ATA)</h3>
+                <button onclick="fecharModalAta()" class="text-gray-400 font-bold text-lg">&times;</button>
+            </div>
+            <div class="max-h-[70vh] overflow-auto flex justify-center bg-gray-100 dark:bg-gray-900 p-2 rounded-lg">
+                <img id="img-modal-ata" src="" alt="Foto da ATA" class="max-w-full h-auto rounded shadow">
+            </div>
+            <button onclick="fecharModalAta()" class="w-full bg-gray-800 text-white py-2 rounded-lg font-bold text-xs">Fechar Visualização</button>
+        </div>
     </div>
 
     <!-- MODAL DE DESFAZER PAGO (JUSTIFICATIVA WHATSAPP OBRIGATÓRIA ADM) -->
@@ -935,6 +954,21 @@
             const statusSel = document.getElementById('ato-status-select').value;
             if(!statusSel) return alert('Selecione o status do pagamento!');
 
+            const fileInput = document.getElementById('ato-ata-file');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    cadastrarAtoComAnexo(statusSel, evt.target.result);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                cadastrarAtoComAnexo(statusSel, null);
+            }
+        }
+
+        function cadastrarAtoComAnexo(statusSel, ataBase64) {
             const novoAto = {
                 id: Date.now(),
                 processo: document.getElementById('ato-processo').value,
@@ -945,14 +979,27 @@
                 link: document.getElementById('ato-link').value || '',
                 valor: parseFloat(document.getElementById('ato-valor').value),
                 status: statusSel,
-                dataPagamento: statusSel === 'pago' ? new Date().toLocaleString('pt-BR') : null
+                dataPagamento: statusSel === 'pago' ? new Date().toLocaleString('pt-BR') : null,
+                ataImg: ataBase64
             };
 
             db.atos.push(novoAto);
             saveData();
             document.getElementById('form-ato').reset();
             renderAtos();
-            alert('Ato cadastrado com sucesso!');
+            alert('Ato cadastrado na pauta com sucesso!');
+        }
+
+        function verAtaAnexo(atoId) {
+            const ato = db.atos.find(a => a.id === atoId);
+            if(ato && ato.ataImg) {
+                document.getElementById('img-modal-ata').src = ato.ataImg;
+                document.getElementById('modal-ver-ata').classList.remove('hidden');
+            }
+        }
+
+        function fecharModalAta() {
+            document.getElementById('modal-ver-ata').classList.add('hidden');
         }
 
         function renderAtos() {
@@ -980,7 +1027,10 @@
                             <span class="uppercase font-bold text-[10px] px-1.5 py-0.5 rounded ${ato.status === 'pago' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${ato.status}</span>
                         </div>
                     </div>
-                    ${ato.link ? `<a href="${ato.link}" target="_blank" class="inline-flex items-center gap-1 bg-purple-600 text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-purple-700"><i class="fa-solid fa-video"></i> Entrar na Sala Virtual</a>` : ''}
+                    <div class="flex gap-2 flex-wrap pt-1">
+                        ${ato.link ? `<a href="${ato.link}" target="_blank" class="inline-flex items-center gap-1 bg-purple-600 text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-purple-700"><i class="fa-solid fa-video"></i> Entrar na Sala Virtual</a>` : ''}
+                        ${ato.ataImg ? `<button onclick="verAtaAnexo(${ato.id})" class="inline-flex items-center gap-1 bg-gray-700 text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-gray-800"><i class="fa-solid fa-image"></i> Ver ATA / Anexo</button>` : ''}
+                    </div>
                 `;
                 container.appendChild(card);
             });
