@@ -71,8 +71,11 @@
                 <button type="submit" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-lg font-bold text-sm shadow-md transition">Entrar no Sistema</button>
             </form>
             
-            <div class="pt-2 border-t flex flex-col items-center gap-1">
-                <button onclick="abrirModalEsqueciSenha()" class="text-xs text-brand-red dark:text-red-400 font-bold hover:underline">
+            <div class="pt-2 border-t flex flex-col items-center gap-1.5">
+                <button onclick="abrirModalRecuperacao('usuario')" class="text-xs text-brand-red dark:text-red-400 font-bold hover:underline">
+                    <i class="fa-solid fa-user-lock mr-1"></i> Esqueci o meu usuário
+                </button>
+                <button onclick="abrirModalRecuperacao('senha')" class="text-xs text-brand-red dark:text-red-400 font-bold hover:underline">
                     <i class="fa-solid fa-key mr-1"></i> Esqueci a minha senha
                 </button>
                 <p id="login-error" class="text-xs text-red-500 font-semibold hidden mt-1">Usuário ou senha incorretos!</p>
@@ -80,16 +83,16 @@
         </div>
     </div>
 
-    <!-- MODAL ESQUECI A SENHA -->
-    <div id="modal-esqueci-senha" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
+    <!-- MODAL ESQUECI O USUÁRIO / SENHA -->
+    <div id="modal-recuperacao-login" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-2 border-brand-red">
             <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-headset mr-1"></i> RECUPERAÇÃO DE SENHA</h3>
-                <button onclick="fecharModalEsqueciSenha()" class="text-gray-400 font-bold">&times;</button>
+                <h3 id="rec-modal-titulo" class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-headset mr-1"></i> RECUPERAÇÃO DE ACESSO</h3>
+                <button onclick="fecharModalRecuperacao()" class="text-gray-400 font-bold">&times;</button>
             </div>
             
-            <p class="text-xs text-gray-600 dark:text-gray-300">
-                Entre em contato direto com a administração via WhatsApp <strong>(11) 97838-6574</strong> para solicitar ajuda com sua senha.
+            <p id="rec-modal-subtitulo" class="text-xs text-gray-600 dark:text-gray-300">
+                Entre em contato direto com a administração via WhatsApp <strong>(11) 97838-6574</strong> para solicitar ajuda.
             </p>
 
             <div class="space-y-2 text-left">
@@ -104,10 +107,10 @@
             </div>
 
             <div class="pt-2 border-t space-y-2">
-                <button onclick="enviarEsqueciSenhaWhats()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 shadow">
+                <button onclick="enviarRecuperacaoWhats()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 shadow">
                     <i class="fa-brands fa-whatsapp text-sm"></i> ENVIAR SOLICITAÇÃO NO WHATSAPP
                 </button>
-                <button onclick="fecharModalEsqueciSenha()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">
+                <button onclick="fecharModalRecuperacao()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">
                     Cancelar
                 </button>
             </div>
@@ -884,6 +887,7 @@
 
         let atoPendenteAlteracaoId = null;
         let atoNovoStatusPretendido = null;
+        let tipoRecuperacaoAtual = 'senha'; // 'usuario' ou 'senha'
 
         function updateClock() {
             const now = new Date();
@@ -943,16 +947,25 @@
             }
         }
 
-        /* --- ESQUECI A SENHA --- */
-        function abrirModalEsqueciSenha() {
-            document.getElementById('modal-esqueci-senha').classList.remove('hidden');
+        /* --- ESQUECI O USUÁRIO / ESQUECI A SENHA --- */
+        function abrirModalRecuperacao(tipo) {
+            tipoRecuperacaoAtual = tipo;
+            const titulo = document.getElementById('rec-modal-titulo');
+            
+            if (tipo === 'usuario') {
+                titulo.innerHTML = `<i class="fa-solid fa-user-lock mr-1"></i> RECUPERAÇÃO DE USUÁRIO`;
+            } else {
+                titulo.innerHTML = `<i class="fa-solid fa-key mr-1"></i> RECUPERAÇÃO DE SENHA`;
+            }
+            
+            document.getElementById('modal-recuperacao-login').classList.remove('hidden');
         }
 
-        function fecharModalEsqueciSenha() {
-            document.getElementById('modal-esqueci-senha').classList.add('hidden');
+        function fecharModalRecuperacao() {
+            document.getElementById('modal-recuperacao-login').classList.add('hidden');
         }
 
-        function enviarEsqueciSenhaWhats() {
+        function enviarRecuperacaoWhats() {
             const nome = document.getElementById('rec-nome').value.trim();
             const celular = document.getElementById('rec-celular').value.trim();
 
@@ -961,9 +974,11 @@
                 return;
             }
 
-            const texto = `Esqueci a minha senha, pode me ajudar?\n\n👤 Nome: ${nome}\n📱 Celular: ${celular}`;
+            const itemSolicitado = tipoRecuperacaoAtual === 'usuario' ? 'o meu usuário' : 'a minha senha';
+            const texto = `Esqueci ${itemSolicitado}, pode me ajudar?\n\n👤 Nome: ${nome}\n📱 Celular: ${celular}`;
+            
             window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(texto)}`);
-            fecharModalEsqueciSenha();
+            fecharModalRecuperacao();
         }
 
         function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
