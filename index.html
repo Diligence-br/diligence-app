@@ -21,6 +21,9 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- BIBLIOTECA PARA EXPORTAÇÃO NATIVA DO EXCEL EM MULTI-ABAS (.XLSX) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -119,7 +122,6 @@
         </div>
     </div>
 
-    <!-- DATALIST PARA AUTOCOMPLETAR COMARCAS/CIDADES -->
     <datalist id="lista-cidades-comarcas"></datalist>
 
     <!-- ESTRUTURA PRINCIPAL DO APP -->
@@ -151,7 +153,6 @@
             <div class="mt-3 pt-3 border-t border-red-500/50 flex flex-col gap-2">
                 <div class="flex justify-between items-center text-xs bg-red-800/40 p-2 rounded-lg gap-2">
                     <div class="flex flex-col flex-1">
-                        <!-- MENSAGEM ROTATIVA DE FÉ E OTIMISMO -->
                         <span id="daily-message" class="italic text-red-100 text-[11px] font-medium leading-tight">
                             <i class="fa-solid fa-quote-left mr-1"></i> <span id="txt-mensagem-rotativa">"Que o dia seja produtivo e abençoado!"</span>
                         </span>
@@ -167,10 +168,8 @@
             </div>
         </header>
 
-        <!-- INPUT OCULTO PARA CARREGAR ARQUIVO DE RESTAURAÇÃO -->
         <input type="file" id="input-restaurar-file" accept=".json" class="hidden" onchange="processarRestauracaoFile(event)">
 
-        <!-- CONTEÚDO PRINCIPAL (ABAS) -->
         <main class="flex-1 p-4 overflow-y-auto">
 
             <!-- ABA 1: PERFIL DO CORRESPONDENTE -->
@@ -221,7 +220,7 @@
                     <div class="flex gap-2 pt-2 border-t text-xs font-bold">
                         <button type="button" onclick="compartilharPerfilWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg"><i class="fa-brands fa-whatsapp mr-1"></i> Whats</button>
                         <button type="button" onclick="compartilharPerfilEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg"><i class="fa-solid fa-envelope mr-1"></i> E-mail</button>
-                        <button type="button" onclick="exportarPlanilhaCSV()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg"><i class="fa-solid fa-file-excel mr-1"></i> Planilha</button>
+                        <button type="button" onclick="exportarExcelMultiAbas()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg"><i class="fa-solid fa-file-excel mr-1"></i> Excel Multi-Abas</button>
                     </div>
                 </form>
             </section>
@@ -329,7 +328,6 @@
                         </div>
                     </div>
 
-                    <!-- BOTÃO NOVO ATO -->
                     <button type="submit" class="w-full bg-brand-red text-white py-3 rounded-xl font-black text-sm shadow-lg hover:bg-brand-darkred flex items-center justify-center gap-2">
                         <i class="fa-solid fa-plus-circle text-base"></i> SALVAR / ADICIONAR NOVO ATO NA PAUTA
                     </button>
@@ -337,7 +335,7 @@
                     <div class="flex gap-2 pt-2 border-t text-xs font-bold">
                         <button type="button" onclick="compartilharPautaWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg"><i class="fa-brands fa-whatsapp mr-1"></i> Whats</button>
                         <button type="button" onclick="compartilharPautaEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg"><i class="fa-solid fa-envelope mr-1"></i> E-mail</button>
-                        <button type="button" onclick="exportarPlanilhaCSV()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg"><i class="fa-solid fa-file-excel mr-1"></i> Planilha</button>
+                        <button type="button" onclick="exportarExcelMultiAbas()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg"><i class="fa-solid fa-file-excel mr-1"></i> Planilha</button>
                     </div>
                 </form>
 
@@ -356,7 +354,7 @@
             <section id="tab-contatos" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
                     <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-address-book mr-1"></i> Agenda de Contatos</h3>
-                    <p>Cadastre e compartilhe contatos selecionados [x] por WhatsApp, E-mail ou CSV.</p>
+                    <p>Cadastre e compartilhe contatos selecionados [x] por WhatsApp, E-mail ou Excel.</p>
                 </div>
 
                 <form id="form-contato" onsubmit="saveContato(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
@@ -424,7 +422,7 @@
                     <div class="flex gap-2 text-xs font-bold">
                         <button onclick="compartilharContatosWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg shadow"><i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp</button>
                         <button onclick="compartilharContatosEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-envelope mr-1"></i> E-mail</button>
-                        <button onclick="exportarContatosCSV()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-file-excel mr-1"></i> Planilha</button>
+                        <button onclick="exportarExcelMultiAbas()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-file-excel mr-1"></i> Excel Multi-Abas</button>
                     </div>
                 </div>
 
@@ -504,7 +502,7 @@
                 </div>
             </section>
 
-            <!-- ABA 5: LIVRO CAIXA (FLUXO DE CAIXA: CONTAS A PAGAR E RECEBER) -->
+            <!-- ABA 5: LIVRO CAIXA -->
             <section id="tab-caixa" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
                     <div>
@@ -516,7 +514,6 @@
                     </button>
                 </div>
 
-                <!-- CARD DE RESUMO DO CAIXA -->
                 <div class="grid grid-cols-3 gap-2 text-center text-white">
                     <div class="bg-green-600 p-2.5 rounded-xl shadow">
                         <span class="text-[9px] uppercase font-bold block">Entradas (+)</span>
@@ -532,7 +529,6 @@
                     </div>
                 </div>
 
-                <!-- FORMULÁRIO DE LANÇAMENTO NO CAIXA -->
                 <form id="form-caixa" onsubmit="saveLancamentoCaixa(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
                     <h2 class="font-bold text-sm text-gray-700 dark:text-gray-200 border-b pb-1"><i class="fa-solid fa-plus-circle mr-1"></i> Novo Lançamento no Fluxo de Caixa</h2>
                     
@@ -578,7 +574,6 @@
                     </button>
                 </form>
 
-                <!-- EXTRATO DO CAIXA -->
                 <div class="space-y-2">
                     <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300"><i class="fa-solid fa-receipt mr-1"></i> Extrato de Contas do Caixa</h3>
                     <div id="lista-caixa" class="space-y-2"></div>
@@ -705,7 +700,7 @@
                         <div class="flex gap-2">
                             <button type="button" onclick="compartilharCalcWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg"><i class="fa-brands fa-whatsapp mr-1"></i> Whats</button>
                             <button type="button" onclick="compartilharCalcEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg"><i class="fa-solid fa-envelope mr-1"></i> E-mail</button>
-                            <button type="button" onclick="exportarPlanilhaCSV()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg"><i class="fa-solid fa-file-excel mr-1"></i> Planilha</button>
+                            <button type="button" onclick="exportarExcelMultiAbas()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg"><i class="fa-solid fa-file-excel mr-1"></i> Excel Multi-Abas</button>
                         </div>
                     </div>
                 </div>
@@ -791,19 +786,22 @@
                     <div class="flex gap-2 pt-2 border-t text-xs font-bold">
                         <button onclick="compartilharRelatorioWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg shadow"><i class="fa-brands fa-whatsapp mr-1"></i> Whats (Separado por Abas)</button>
                         <button onclick="compartilharRelatorioEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-envelope mr-1"></i> E-mail (Completo)</button>
-                        <button onclick="exportarPlanilhaCSV()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-file-excel mr-1"></i> Planilha (.CSV)</button>
+                        <!-- BOTÃO EXPORTAR PLANILHA EXCEL MULTI-ABAS REAL -->
+                        <button onclick="exportarExcelMultiAbas()" class="flex-1 bg-green-700 hover:bg-green-800 text-white py-2 rounded-lg shadow font-extrabold flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-file-excel text-base"></i> Planilha Excel (.XLSX)
+                        </button>
                     </div>
                 </div>
 
                 <div id="relatorios-lista" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 8: CENTRAL DE MANUAIS COM PESQUISA E ÍCONES -->
+            <!-- ABA 8: CENTRAL DE MANUAIS COM INSTRUÇÕES DA PLANILHA MULTI-ABAS -->
             <section id="tab-manuais" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
                     <div>
                         <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-book-open mr-1"></i> Central de Manuais do DILIGENCE.BR</h3>
-                        <p>Pesquise palavras-chave ou navegue nos guias passo a passo por ícones.</p>
+                        <p>Navegue nos guias e aprenda a usar a nova Planilha Excel Multi-Abas.</p>
                     </div>
                 </div>
 
@@ -812,7 +810,7 @@
                         <i class="fa-solid fa-magnifying-glass"></i> PESQUISAR NO MANUAL DE INSTRUÇÕES:
                     </label>
                     <div class="relative">
-                        <input type="text" id="input-busca-manual" oninput="filtrarManualPorPalavraChave()" placeholder="Digite uma palavra (ex: PIX, comarca, checklist, backup, caixa, estorno, ATA)..." class="w-full p-2.5 pr-8 border rounded-xl text-xs dark:bg-gray-700 dark:border-gray-600 font-semibold focus:ring-2 focus:ring-brand-red outline-none">
+                        <input type="text" id="input-busca-manual" oninput="filtrarManualPorPalavraChave()" placeholder="Digite uma palavra (ex: planilha, abas, excel, comarca, checklist, backup)..." class="w-full p-2.5 pr-8 border rounded-xl text-xs dark:bg-gray-700 dark:border-gray-600 font-semibold focus:ring-2 focus:ring-brand-red outline-none">
                         <button onclick="limparBuscaManual()" class="absolute right-2.5 top-2.5 text-gray-400 hover:text-gray-600 font-bold text-xs">&times;</button>
                     </div>
                     <div class="flex gap-2 text-xs font-bold pt-1">
@@ -822,9 +820,43 @@
                 </div>
 
                 <div id="container-conteudo-manuais" class="space-y-4">
+                    
+                    <!-- GUIA DA NOVA PLANILHA MULTI-ABAS (NOVIDADE) -->
+                    <div class="manual-block bg-white dark:bg-gray-800 p-4 rounded-xl border-2 border-green-600 space-y-3 shadow-sm text-xs">
+                        <h2 class="font-black text-sm text-green-700 dark:text-green-400 border-b pb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-file-excel text-base"></i> 📊 NOVO: PLANILHA EXCEL MULTI-ABAS (.XLSX)
+                        </h2>
+                        
+                        <div class="space-y-2 text-gray-700 dark:text-gray-300">
+                            <p>Ao clicar em <strong>"Planilha Excel (.XLSX)"</strong>, o aplicativo gera automaticamente um único arquivo do Excel contendo <strong>5 abas organizadas</strong>:</p>
+                            
+                            <div class="manual-item p-2 bg-green-50 dark:bg-gray-700/40 rounded-lg border border-green-200">
+                                <strong class="text-green-800 dark:text-green-300 block text-[12px]">1. Aba "Consolidado Geral" (Fluxo Unificado):</strong>
+                                Unifica todas as entradas da Pauta (Audiências com indicação de PAGO ou PENDENTE), receitas avulsas do Caixa e todas as despesas/gastos da rua.
+                            </div>
+                            <div class="manual-item p-2 bg-green-50 dark:bg-gray-700/40 rounded-lg border border-green-200">
+                                <strong class="text-green-800 dark:text-green-300 block text-[12px]">2. Aba "Pauta de Diligências":</strong>
+                                Relação completa de todos os atos cadastrados (Processo, Cliente, Data, Vencimento, Cidade, Status e Valor).
+                            </div>
+                            <div class="manual-item p-2 bg-green-50 dark:bg-gray-700/40 rounded-lg border border-green-200">
+                                <strong class="text-green-800 dark:text-green-300 block text-[12px]">3. Aba "Financeiro":</strong>
+                                Extrato de pagamentos recebidos e pendências a cobrar.
+                            </div>
+                            <div class="manual-item p-2 bg-green-50 dark:bg-gray-700/40 rounded-lg border border-green-200">
+                                <strong class="text-green-800 dark:text-green-300 block text-[12px]">4. Aba "Livro Caixa":</strong>
+                                Detalhamento de todas as entradas e despesas diárias do escritório/rua.
+                            </div>
+                            <div class="manual-item p-2 bg-green-50 dark:bg-gray-700/40 rounded-lg border border-green-200">
+                                <strong class="text-green-800 dark:text-green-300 block text-[12px]">5. Aba "Agenda de Contatos":</strong>
+                                Cadastro completo dos contatos, OABs, CPFs e WhatsApp.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GUIA POR ABAS DO SISTEMA -->
                     <div class="manual-block bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3 shadow-sm text-xs">
                         <h2 class="font-bold text-sm text-brand-red border-b pb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-layer-group"></i> 1. GUIA DETALHADO POR ABAS DO APLICATIVO
+                            <i class="fa-solid fa-layer-group"></i> 2. GUIA DETALHADO POR ABAS DO APLICATIVO
                         </h2>
                         
                         <div class="space-y-2 text-gray-700 dark:text-gray-300">
@@ -839,6 +871,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
             </section>
 
@@ -880,7 +913,7 @@
         </nav>
     </div>
 
-    <!-- MODAL FORMULÁRIO CHECKLIST PÓS-AUDIÊNCIA -->
+    <!-- MODAIS E COMPONENTES -->
     <div id="modal-checklist" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-lg w-full space-y-4 shadow-2xl border-2 border-brand-red my-8">
             <div class="flex justify-between items-center border-b pb-2">
@@ -986,75 +1019,6 @@
         </div>
     </div>
 
-    <!-- MODAL DE FICHA DETALHADA DO ATO -->
-    <div id="modal-detalhes-ato" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-md w-full space-y-4 shadow-2xl border-2 border-brand-red">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-magnifying-glass mr-1"></i> DETALHES COMPLETOS DO ATO PAUTA</h3>
-                <button onclick="fecharModalDetalhesAto()" class="text-gray-400 font-bold text-lg">&times;</button>
-            </div>
-            
-            <div id="conteudo-detalhes-ato" class="space-y-2 text-xs text-gray-700 dark:text-gray-200 max-h-[60vh] overflow-y-auto"></div>
-
-            <button onclick="fecharModalDetalhesAto()" class="w-full bg-gray-800 text-white py-2 rounded-xl font-bold text-xs">
-                Fechar Ficha
-            </button>
-        </div>
-    </div>
-
-    <!-- MODAL DE VISUALIZAÇÃO DE ATA / ANEXO -->
-    <div id="modal-ver-ata" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl max-w-lg w-full space-y-3 shadow-2xl border dark:border-gray-700">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-file-image mr-1"></i> Visualização do Anexo (ATA)</h3>
-                <button onclick="fecharModalAta()" class="text-gray-400 font-bold text-lg">&times;</button>
-            </div>
-            <div class="max-h-[70vh] overflow-auto flex justify-center bg-gray-100 dark:bg-gray-900 p-2 rounded-lg">
-                <img id="img-modal-ata" src="" alt="Foto da ATA" class="max-w-full h-auto rounded shadow">
-            </div>
-            <button onclick="fecharModalAta()" class="w-full bg-gray-800 text-white py-2 rounded-lg font-bold text-xs">Fechar Visualização</button>
-        </div>
-    </div>
-
-    <!-- MODAL DE DESFAZER PAGO (JUSTIFICATIVA WHATSAPP OBRIGATÓRIA ADM) -->
-    <div id="modal-trava-desfazer-pago" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-2 border-brand-red">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-lock mr-1"></i> ALTERAÇÃO PROTEGIDA (ADM)</h3>
-                <button onclick="fecharModalTravaDesfazer()" class="text-gray-400 font-bold">&times;</button>
-            </div>
-            
-            <p class="text-xs text-gray-700 dark:text-gray-300">
-                Este processo consta como <strong>PAGO</strong>. Para alterar de volta para pendente, vencido ou outro status, é <u>obrigatório</u> enviar uma mensagem de ciência para o WhatsApp da Administração:
-            </p>
-            
-            <div class="p-2 bg-red-50 dark:bg-gray-700 rounded-lg text-center font-bold text-xs text-brand-red">
-                📱 ADM: (11) 97838-6574
-            </div>
-
-            <div class="space-y-2 text-xs">
-                <label class="font-bold">Selecione o motivo da alteração:</label>
-                <select id="trava-motivo-select" class="w-full p-2 border rounded-lg dark:bg-gray-700 font-semibold" onchange="toggleMotivoOutroInput(this)">
-                    <option value="1">1. Lancei 'PAGO', mas o valor não foi compensado na planilha.</option>
-                    <option value="2">2. Lancei 'PAGO', mas tínhamos uma troca pendente.</option>
-                    <option value="3">3. Lancei 'PAGO' erroneamente por engano do processo.</option>
-                    <option value="outro">4. Outro motivo (Digitar justificativa)...</option>
-                </select>
-
-                <textarea id="trava-motivo-outro" rows="2" placeholder="Digite sua justificativa detalhada..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs hidden"></textarea>
-            </div>
-
-            <div class="pt-2 border-t space-y-2">
-                <button onclick="enviarJustificativaWhatsAppADM()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-brands fa-whatsapp text-sm"></i> ENVIAR WHATSAPP P/ ADM E DESBLOQUEAR
-                </button>
-                <button id="btn-confirmar-desfazer-pago" disabled onclick="executarTrocaStatusAposWhats()" class="w-full bg-gray-400 text-white py-2.5 rounded-xl font-bold text-xs opacity-50 cursor-not-allowed">
-                    CONFIRMAR E ALTERAR STATUS
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- MODAL DE BACKUP E EXPORTAÇÃO E ZERAR TUDO -->
     <div id="modal-backup" class="fixed inset-0 z-50 bg-black/60 modal-blur hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border dark:border-gray-700">
@@ -1072,24 +1036,16 @@
                 <button onclick="enviarBackupEmailPessoal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
                     <i class="fa-solid fa-envelope"></i> 2. Enviar Cópia p/ Meu Próprio E-mail
                 </button>
-                <button onclick="exportarPlanilhaCSV()" class="w-full bg-gray-800 hover:bg-gray-900 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-solid fa-file-excel text-green-400"></i> 3. Exportar Planilha (.CSV)
+                <button onclick="exportarExcelMultiAbas()" class="w-full bg-green-700 hover:bg-green-800 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
+                    <i class="fa-solid fa-file-excel text-lg"></i> 3. Exportar Excel Multi-Abas (.XLSX)
                 </button>
                 <button onclick="acionarRestauracao()" class="w-full bg-green-700 hover:bg-green-800 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow border border-green-500">
                     <i class="fa-solid fa-upload"></i> 4. RESTAURAR BACKUP DE CELULAR NOVO
-                </button>
-                <button onclick="restaurarBackupInternoEmergencia()" class="w-full bg-purple-700 hover:bg-purple-800 text-white py-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-clock-rotate-left"></i> Restaurar Cópia Interna Automática
                 </button>
                 
                 <button onclick="confirmarZerarTudoGeral()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-extrabold py-2 rounded-xl text-[11px] flex items-center justify-center gap-1 border border-red-300 pt-2">
                     <i class="fa-solid fa-triangle-exclamation"></i> ZERAR/DELETAR TODOS OS DADOS (APP NOVINHO)
                 </button>
-            </div>
-
-            <div class="bg-amber-50 dark:bg-gray-700/60 p-2.5 rounded-lg border border-amber-200 dark:border-gray-600 text-[10px] text-amber-900 dark:text-amber-200 space-y-1">
-                <strong>⚠️ AVISO IMPORTANTE SOBRE SEUS DADOS:</strong>
-                <p>O DILIGENCE.BR opera com armazenamento local no dispositivo. A responsabilidade pela realização (2x ao dia: 12h e 17h), guarda e restauração de backups diários é **exclusivamente do(a) correspondente**.</p>
             </div>
         </div>
     </div>
@@ -1106,22 +1062,12 @@
             `"O Senhor é o meu pastor; nada me faltará." — Salmos 23:1`,
             `"Eu sou o caminho, a verdade e a vida." — João 14:6`,
             `"Seja forte e corajoso! Não se apavore nem desanime, pois o Senhor estará com você." — Josué 1:9`,
-            `"Ora, a fé é a certeza daquelas coisas que esperamos e a prova das coisas que não vemos." — Hebreus 11:1`,
-            `"Vinde a mim, todos os que estais cansados e oprimidos, e eu vos aliviarei." — Mateus 11:28`,
-            `"O amor é paciente, o amor é bondoso. Tudo sofre, tudo crê, tudo espera, tudo suporta." — 1 Coríntios 13:4-7`,
-            `"Deus é o nosso refúgio e fortaleza, socorro bem presente na angústia." — Salmos 46:1`,
-            `"Porque para Deus nada é impossível." — Lucas 1:37`,
-            `"Entrega o teu caminho ao Senhor; confia nele, e ele o fará." — Salmos 37:5`,
-            `"Que o seu dia seja repleto de paz, vitórias e da graça divina!"`,
-            `"Com fé no coração, nenhum obstáculo na jornada é grande demais."`,
-            `"Trabalhe com dedicação e integridade, pois Deus honra o esforço justo."`
+            `"Ora, a fé é a certeza daquelas coisas que esperamos e a prova das coisas que não vemos." — Hebreus 11:1`
         ];
 
         const COMARCAS_PADRAO = [
             "Embu das Artes - SP", "Embu-Guaçu - SP", "São Paulo - SP", "Carapicuíba - SP",
-            "Osasco - SP", "Barueri - SP", "Cotia - SP", "Itapecerica da Serra - SP",
-            "Taboão da Serra - SP", "Guarulhos - SP", "Campinas - SP", "Jundiaí - SP",
-            "Santo André - SP", "São Bernardo do Campo - SP", "São Caetano do Sul - SP"
+            "Osasco - SP", "Barueri - SP", "Cotia - SP", "Itapecerica da Serra - SP"
         ];
 
         let db = {
@@ -1134,17 +1080,6 @@
             notas: '',
             ultimoBackup: null
         };
-
-        let visorComum = "0";
-        let resultadoRescisaoTexto = "";
-        let totalRescisaoLiquidoGlobal = 0;
-        let alertaAlmocoExibido = false;
-        let alertaFimDiaExibido = false;
-
-        let atoPendenteAlteracaoId = null;
-        let atoNovoStatusPretendido = null;
-        let tipoRecuperacaoAtual = 'senha';
-        let imagemAtaChecklistTemp = null;
 
         function sortearMensagemInspiradora() {
             const indice = Math.floor(Math.random() * MENSAGENS_INSPIRADORAS.length);
@@ -1174,29 +1109,6 @@
                 document.getElementById('login-error').classList.remove('hidden');
             }
         }
-
-        function abrirModalRecuperacao(tipo) {
-            tipoRecuperacaoAtual = tipo;
-            const titulo = document.getElementById('rec-modal-titulo');
-            if (tipo === 'usuario') titulo.innerHTML = `<i class="fa-solid fa-user-lock mr-1"></i> RECUPERAÇÃO DE USUÁRIO`;
-            else titulo.innerHTML = `<i class="fa-solid fa-key mr-1"></i> RECUPERAÇÃO DE SENHA`;
-            document.getElementById('modal-recuperacao-login').classList.remove('hidden');
-        }
-
-        function fecharModalRecuperacao() { document.getElementById('modal-recuperacao-login').classList.add('hidden'); }
-
-        function enviarRecuperacaoWhats() {
-            const nome = document.getElementById('rec-nome').value.trim();
-            const celular = document.getElementById('rec-celular').value.trim();
-            if (!nome || !celular) return alert("Por favor, preencha seu Nome e Celular antes de enviar.");
-
-            const itemSolicitado = tipoRecuperacaoAtual === 'usuario' ? 'o meu usuário' : 'a minha senha';
-            const texto = `Esqueci ${itemSolicitado}, pode me ajudar?\n\n👤 Nome: ${nome}\n📱 Celular: ${celular}`;
-            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(texto)}`);
-            fecharModalRecuperacao();
-        }
-
-        function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -1234,9 +1146,7 @@
             document.getElementById('perfil-celular').value = db.perfil.celular || '';
             document.getElementById('bloco-notas').value = db.notas || '';
             document.getElementById('caixa-data').value = new Date().toISOString().split('T')[0];
-            document.getElementById('contato-data-envio').value = new Date().toISOString().split('T')[0];
 
-            carregarComarcasDataList();
             renderAtos();
             renderContatos();
             renderCaixa();
@@ -1244,91 +1154,130 @@
             renderRelatorios();
         }
 
-        function carregarComarcasDataList() {
-            const listEl = document.getElementById('lista-cidades-comarcas');
-            if(!listEl) return;
-            const todasCidades = [...new Set([...COMARCAS_PADRAO, ...db.comarcasSalvas])].sort();
-            listEl.innerHTML = todasCidades.map(c => `<option value="${c}">`).join('');
-        }
-
-        function aprenderNovaComarca(cidadeDigitada) {
-            if (!cidadeDigitada) return;
-            const formatada = cidadeDigitada.trim();
-            if (formatada.length >= 3 && !COMARCAS_PADRAO.includes(formatada) && !db.comarcasSalvas.includes(formatada)) {
-                db.comarcasSalvas.push(formatada);
-                saveData();
-                carregarComarcasDataList();
+        /* --- EXPORTAÇÃO INTELIGENTE PARA PLANILHA EXCEL MULTI-ABAS (.XLSX) --- */
+        function exportarExcelMultiAbas() {
+            if (typeof XLSX === 'undefined') {
+                alert("Carregando motor do Excel... Tente novamente em 2 segundos.");
+                return;
             }
+
+            const wb = XLSX.utils.book_new();
+
+            // 1. ABA CONSOLIDADO GERAL (FLUXO UNIFICADO: PAUTA + CAIXA)
+            const consolidadoData = [];
+            
+            // Inserir Atos da Pauta no Consolidado
+            db.atos.forEach(a => {
+                consolidadoData.push({
+                    "Data": a.data ? new Date(a.data).toLocaleDateString('pt-BR') : '',
+                    "Origem / Módulo": "PAUTA / HONORÁRIOS",
+                    "Descrição / Detalhe": `Proc. ${a.processo} (${a.cliente}) - ${a.cidade || 'N/I'}`,
+                    "Entradas (R$)": a.valor ? a.valor : 0,
+                    "Saídas (R$)": 0,
+                    "Status / Situação": a.status === 'pago' ? '🟢 PAGO' : '🟡 PENDENTE',
+                    "Data Pagamento": a.dataPagamento || 'Aguardando'
+                });
+            });
+
+            // Inserir Lançamentos do Caixa no Consolidado
+            db.caixa.forEach(c => {
+                const ehEntrada = c.tipo === 'entrada';
+                consolidadoData.push({
+                    "Data": c.data ? new Date(c.data + 'T00:00:00').toLocaleDateString('pt-BR') : '',
+                    "Origem / Módulo": "LIVRO CAIXA",
+                    "Descrição / Detalhe": c.descricao || '',
+                    "Entradas (R$)": ehEntrada ? c.valor : 0,
+                    "Saídas (R$)": !ehEntrada ? c.valor : 0,
+                    "Status / Situação": ehEntrada ? '🟢 ENTRADA CAIXA' : '🔴 DESPESA CAIXA',
+                    "Data Pagamento": c.data ? new Date(c.data + 'T00:00:00').toLocaleDateString('pt-BR') : ''
+                });
+            });
+
+            if (consolidadoData.length === 0) {
+                consolidadoData.push({ "Aviso": "Nenhum lançamento registrado no sistema." });
+            }
+
+            const wsConsolidado = XLSX.utils.json_to_sheet(consolidadoData);
+            XLSX.utils.book_append_sheet(wb, wsConsolidado, "Consolidado Geral");
+
+            // 2. ABA PAUTA DE DILIGÊNCIAS
+            const pautaData = db.atos.map(a => ({
+                "Processo": a.processo,
+                "Cliente": a.cliente,
+                "Data do Ato": a.data ? new Date(a.data).toLocaleString('pt-BR') : '',
+                "Vencimento": a.vencimento ? new Date(a.vencimento + 'T00:00:00').toLocaleDateString('pt-BR') : '',
+                "Cidade / Comarca": a.cidade || '',
+                "Modalidade": a.modalidade || '',
+                "Valor (R$)": a.valor,
+                "Status": a.status.toUpperCase(),
+                "Pago Em": a.dataPagamento || 'Pendente',
+                "Checklist Enviado": a.checklistEnviado ? 'SIM' : 'NÃO'
+            }));
+            const wsPauta = XLSX.utils.json_to_sheet(pautaData.length ? pautaData : [{"Aviso": "Sem dados"}]);
+            XLSX.utils.book_append_sheet(wb, wsPauta, "Pauta de Diligências");
+
+            // 3. ABA FINANCEIRO
+            const finData = db.atos.map(a => ({
+                "Processo": a.processo,
+                "Cliente": a.cliente,
+                "Valor Acordado (R$)": a.valor,
+                "Status Pagamento": a.status.toUpperCase(),
+                "Data da Baixa": a.dataPagamento || 'Não Quitado'
+            }));
+            const wsFinanceiro = XLSX.utils.json_to_sheet(finData.length ? finData : [{"Aviso": "Sem dados"}]);
+            XLSX.utils.book_append_sheet(wb, wsFinanceiro, "Financeiro & Baixas");
+
+            // 4. ABA LIVRO CAIXA
+            const caixaData = db.caixa.map(c => ({
+                "Data": c.data ? new Date(c.data + 'T00:00:00').toLocaleDateString('pt-BR') : '',
+                "Tipo": c.tipo === 'entrada' ? 'ENTRADA (+)' : 'SAÍDA / DESPESA (-)',
+                "Categoria": c.categoria || '',
+                "Descrição Detalhada": c.descricao || '',
+                "Valor (R$)": c.valor
+            }));
+            const wsCaixa = XLSX.utils.json_to_sheet(caixaData.length ? caixaData : [{"Aviso": "Sem dados"}]);
+            XLSX.utils.book_append_sheet(wb, wsCaixa, "Livro Caixa");
+
+            // 5. ABA AGENDA DE CONTATOS
+            const contatosData = db.contatos.map(c => ({
+                "Nome Completo": c.nome,
+                "OAB": c.oab || '',
+                "Celular": c.celular,
+                "CPF": c.cpf || '',
+                "RG": c.rg || '',
+                "E-mail": c.email || '',
+                "Observações": c.obs || ''
+            }));
+            const wsContatos = XLSX.utils.json_to_sheet(contatosData.length ? contatosData : [{"Aviso": "Sem dados"}]);
+            XLSX.utils.book_append_sheet(wb, wsContatos, "Agenda de Contatos");
+
+            // GERAR E FAZER DOWNLOAD DO ARQUIVO EXCEL MULTI-ABAS REAL (.XLSX)
+            const nomeArquivo = `Relatorio_Completo_DILIGENCE_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, nomeArquivo);
+            alert("📊 Planilha Excel Multi-Abas gerada com sucesso!");
         }
 
-        function focarNovoAto() {
-            document.getElementById('form-ato').scrollIntoView({ behavior: 'smooth' });
-            document.getElementById('ato-processo').focus();
-        }
-
-        /* --- ATUALIZAÇÃO AUTOMÁTICA NAS 3 ABAS AO CRIAR NOVO ATO --- */
+        /* --- DEMAIS OPERAÇÕES DO SISTEMA --- */
         function saveAto(e) {
             e.preventDefault();
             const statusSel = document.getElementById('ato-status-select').value;
-            if(!statusSel) return alert('Selecione o status do pagamento!');
-
-            const proc = document.getElementById('ato-processo').value.trim();
-            const cliente = document.getElementById('ato-cliente').value.trim();
-            const dataHora = document.getElementById('ato-data').value;
-            const cidadeInf = document.getElementById('ato-cidade').value.trim();
-
-            aprenderNovaComarca(cidadeInf);
-
-            const jaExiste = db.atos.find(a => a.processo.toLowerCase() === proc.toLowerCase() && a.cliente.toLowerCase() === cliente.toLowerCase() && a.data === dataHora);
-
-            let ehDuplicado = false;
-            if (jaExiste) {
-                const querDuplicar = confirm(`⚠️ ATENÇÃO: DUPLICIDADE DETECTADA!\n\nJá existe um ato registrado para o Processo "${proc}" (${cliente}) nesta mesma data e horário.\n\nDeseja realmente cadastrar em duplicidade?`);
-                if (!querDuplicar) return;
-                ehDuplicado = true;
-            }
-
-            const fileInput = document.getElementById('ato-ata-file');
-            const file = fileInput.files[0];
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    cadastrarAtoComAnexo(statusSel, evt.target.result, ehDuplicado);
-                };
-                reader.readAsDataURL(file);
-            } else {
-                cadastrarAtoComAnexo(statusSel, null, ehDuplicado);
-            }
-        }
-
-        function cadastrarAtoComAnexo(statusSel, ataBase64, ehDuplicado) {
-            let procNome = document.getElementById('ato-processo').value.trim();
-            if (ehDuplicado) procNome += " [D]";
+            if(!statusSel) return alert('Selecione o status!');
 
             const novoAto = {
                 id: Date.now(),
-                processo: procNome,
+                processo: document.getElementById('ato-processo').value.trim(),
                 cliente: document.getElementById('ato-cliente').value.trim(),
                 data: document.getElementById('ato-data').value,
                 vencimento: document.getElementById('ato-vencimento').value,
                 cidade: document.getElementById('ato-cidade').value.trim(),
                 modalidade: document.getElementById('ato-modalidade').value,
-                link: document.getElementById('ato-link').value || '',
                 valor: parseFloat(document.getElementById('ato-valor').value),
                 status: statusSel,
-                dataPagamento: statusSel === 'pago' ? new Date().toLocaleString('pt-BR') : null,
-                ataImg: ataBase64,
-                duplicado: ehDuplicado,
-                checklistEnviado: false,
-                checklistDataEnvio: null,
-                checklistObs: '',
-                checklistServicos: []
+                dataPagamento: statusSel === 'pago' ? new Date().toLocaleString('pt-BR') : null
             };
 
             db.atos.push(novoAto);
 
-            // Reflete no Livro Caixa se for Pago
             if (statusSel === 'pago') {
                 db.caixa.push({
                     id: Date.now() + 1,
@@ -1343,390 +1292,59 @@
 
             saveData();
             document.getElementById('form-ato').reset();
-            document.getElementById('preview-ata-container').classList.add('hidden');
-            
-            // Sincroniza todas as abas automaticamente
             renderAtos();
             renderFinanceiro();
             renderCaixa();
             renderRelatorios();
-
-            alert('Ato cadastrado e sincronizado na Pauta, Financeiro e Relatórios!');
+            alert('Ato cadastrado e sincronizado!');
         }
 
         function renderAtos() {
             const container = document.getElementById('lista-atos');
             if (!container) return;
             container.innerHTML = '';
-            const hojeStr = new Date().toISOString().split('T')[0];
-
-            if (db.atos.length === 0) {
-                container.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs bg-white dark:bg-gray-800 rounded-xl border">Nenhum ato cadastrado na pauta. Clique no botão "➕ Novo Ato" acima para registrar.</div>';
-                return;
-            }
 
             db.atos.forEach((ato) => {
                 const card = document.createElement('div');
-                const vencidoOuHoje = (ato.status !== 'pago' && ato.vencimento && ato.vencimento <= hojeStr);
-                const borderClass = vencidoOuHoje ? 'border-2 border-red-500 bg-red-50/50 dark:bg-red-900/20' : 'border dark:border-gray-700 bg-white dark:bg-gray-800';
-
-                card.className = `${borderClass} p-3 rounded-xl text-xs space-y-2 shadow-sm`;
+                card.className = "border dark:border-gray-700 bg-white dark:bg-gray-800 p-3 rounded-xl text-xs space-y-2 shadow-sm";
                 card.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div>
-                            <strong class="text-sm">Proc: ${ato.processo}</strong> 
-                            ${ato.duplicado ? '<span class="bg-purple-600 text-white font-extrabold px-1 rounded text-[9px]">[D] DUPLICADO</span>' : ''} 
-                            - ${ato.cliente}<br>
-                            <span class="text-gray-400"><i class="fa-regular fa-clock mr-1"></i>${new Date(ato.data).toLocaleString('pt-BR')} | 📍 ${ato.cidade || 'N/I'}</span>
-                            ${ato.vencimento ? `<div class="text-[10px] font-bold ${vencidoOuHoje ? 'text-red-600' : 'text-gray-500'}">Venc. Pagamento: ${new Date(ato.vencimento + 'T00:00:00').toLocaleDateString('pt-BR')} ${vencidoOuHoje ? '⚠️ (COBRAR HORA!)' : ''}</div>` : ''}
-                            ${ato.dataPagamento ? `<div class="text-[10px] font-bold text-green-600"><i class="fa-solid fa-circle-check mr-1"></i>Pago em: ${ato.dataPagamento}</div>` : ''}
-                            ${ato.checklistEnviado ? `<div class="text-[10px] font-extrabold text-green-600 bg-green-50 dark:bg-gray-700 p-1 rounded mt-1 border border-green-300 inline-block"><i class="fa-solid fa-check-double mr-1"></i>✓ Formulário enviado para Diligence em ${ato.checklistDataEnvio}</div>` : ''}
+                            <strong class="text-sm">Proc: ${ato.processo}</strong> - ${ato.cliente}<br>
+                            <span class="text-gray-400">📍 ${ato.cidade || 'N/I'}</span>
                         </div>
-                        <div class="text-right">
-                            <span class="font-bold text-brand-red text-sm block">R$ ${ato.valor.toFixed(2)}</span>
-                            <span class="uppercase font-bold text-[10px] px-1.5 py-0.5 rounded ${ato.status === 'pago' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${ato.status}</span>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center pt-1 border-t">
-                        <div class="flex gap-1.5 flex-wrap">
-                            <!-- BOTÃO CHECKLIST TOTALMENTE REABRÍVEL E EDITÁVEL -->
-                            <button onclick="abrirModalChecklist(${ato.id})" class="inline-flex items-center gap-1 bg-brand-red text-white px-2.5 py-1 rounded-lg text-[11px] font-bold hover:bg-brand-darkred shadow">
-                                <i class="fa-solid fa-list-check"></i> 📋 Checklist Pós-Audiência
-                            </button>
-                            ${ato.link ? `<a href="${ato.link}" target="_blank" class="inline-flex items-center gap-1 bg-purple-600 text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-purple-700"><i class="fa-solid fa-video"></i> Sala Virtual</a>` : ''}
-                            ${ato.ataImg ? `<button onclick="verAtaAnexo(${ato.id})" class="inline-flex items-center gap-1 bg-gray-700 text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-gray-800"><i class="fa-solid fa-image"></i> Ver ATA</button>` : ''}
-                        </div>
-                        <!-- BOTÃO DE EXCLUSÃO DA PAUTA QUE APAGA DE TODAS AS ABAS -->
-                        <button onclick="excluirAtoPauta(${ato.id})" class="text-red-600 font-bold hover:underline text-[11px] flex items-center gap-1 bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
-                            <i class="fa-solid fa-trash-can"></i> Excluir
-                        </button>
+                        <span class="font-bold text-brand-red text-sm">R$ ${ato.valor.toFixed(2)}</span>
                     </div>
                 `;
                 container.appendChild(card);
             });
-        }
-
-        /* --- EXCLUSÃO DE ATO SINCRONIZADA NAS 3 ABAS + CAIXA --- */
-        function excluirAtoPauta(id) {
-            if (confirm("⚠️ TEM CERTEZA QUE DESEJA EXCLUIR ESTE ATO?\n\nEle será removido da Pauta, do Financeiro, do Livro Caixa e dos Relatórios.")) {
-                db.atos = db.atos.filter(a => a.id !== id);
-                db.caixa = db.caixa.filter(c => c.atoRefId !== id);
-                saveData();
-                
-                // Atualiza todas as abas
-                renderAtos();
-                renderFinanceiro();
-                renderCaixa();
-                renderRelatorios();
-                alert("Ato excluído de todas as abas com sucesso!");
-            }
-        }
-
-        /* --- CHECKLIST PÓS-AUDIÊNCIA TOTALMENTE EDITÁVEL E REABRÍVEL --- */
-        function abrirModalChecklist(atoId) {
-            const ato = db.atos.find(a => a.id === atoId);
-            if (!ato) return;
-
-            document.getElementById('chk-ato-id').value = ato.id;
-            document.getElementById('chk-email').value = db.perfil.email || '';
-            document.getElementById('chk-nome-doc').value = `${db.perfil.nome || ''} (${db.perfil.doc || ''})`;
-            document.getElementById('chk-celular').value = db.perfil.celular || '';
-            document.getElementById('chk-data-ato').value = new Date(ato.data).toLocaleString('pt-BR');
-            document.getElementById('chk-processo').value = ato.processo;
-            document.getElementById('chk-cidade').value = ato.cidade || db.perfil.cidade || '';
-            document.getElementById('chk-pix').value = db.perfil.pix || '';
-            document.getElementById('chk-valor').value = `R$ ${ato.valor.toFixed(2)}`;
-            
-            // Permite editar o que já foi preenchido antes
-            document.getElementById('chk-obs').value = ato.checklistObs || '';
-            document.getElementById('box-alerta-obs').classList.add('hidden');
-
-            document.querySelectorAll('.chk-servico').forEach(c => {
-                c.checked = ato.checklistServicos ? ato.checklistServicos.includes(c.value) : false;
-            });
-
-            imagemAtaChecklistTemp = ato.ataImg || null;
-            const previewContainer = document.getElementById('chk-preview-ata-container');
-            if (imagemAtaChecklistTemp) {
-                document.getElementById('chk-img-preview-ata').src = imagemAtaChecklistTemp;
-                previewContainer.classList.remove('hidden');
-            } else {
-                previewContainer.classList.add('hidden');
-            }
-
-            document.getElementById('modal-checklist').classList.remove('hidden');
-        }
-
-        function fecharModalChecklist() {
-            document.getElementById('modal-checklist').classList.add('hidden');
-        }
-
-        function previewImagemAtaChecklist(evt) {
-            const file = evt.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagemAtaChecklistTemp = e.target.result;
-                    document.getElementById('chk-img-preview-ata').src = imagemAtaChecklistTemp;
-                    document.getElementById('chk-preview-ata-container').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function validarEMontarTextoChecklist() {
-            const obs = document.getElementById('chk-obs').value.trim();
-            const boxAlerta = document.getElementById('box-alerta-obs');
-
-            if (!obs) {
-                boxAlerta.classList.remove('hidden');
-                document.getElementById('chk-obs').focus();
-                return null;
-            } else {
-                boxAlerta.classList.add('hidden');
-            }
-
-            let avisoAtaTexto = "";
-            if (!imagemAtaChecklistTemp) {
-                const querSemAta = confirm("⚠️ Tem certeza que deseja compartilhar sem a ATA?");
-                if (!querSemAta) return null;
-                avisoAtaTexto = "\n⚠️ ENVIADO SEM ATA DA AUDIÊNCIA";
-            }
-
-            const agora = new Date();
-            const dataHoraBSB = agora.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }) + " às " + agora.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-
-            const servicosSelecionados = Array.from(document.querySelectorAll('.chk-servico:checked')).map(c => c.value);
-            const servicosSelTexto = servicosSelecionados.length > 0 ? servicosSelecionados.join(', ') : 'Não especificado';
-
-            const texto = `=======================================\n CONTROLE DE PAGAMENTO - DILIGÊNCIAS\n DILIGENCE.BR — FORMULÁRIO DE PÓS-AUDIÊNCIA\n=======================================\n\n` +
-                          `1. E-mail: ${document.getElementById('chk-email').value}\n` +
-                          `2. Correspondente: ${document.getElementById('chk-nome-doc').value}\n` +
-                          `3. Celular: ${document.getElementById('chk-celular').value}\n` +
-                          `4. Data/Hora do Ato: ${document.getElementById('chk-data-ato').value}\n` +
-                          `5. Nº do Processo: ${document.getElementById('chk-processo').value}\n` +
-                          `6. Cidade: ${document.getElementById('chk-cidade').value}\n` +
-                          `7. Serviço Prestado: ${servicosSelTexto}\n` +
-                          `8. PIX / Dados Bancários: ${document.getElementById('chk-pix').value}\n` +
-                          `9. Observações: "${obs}"\n` +
-                          `10. Anexo ATA: ${imagemAtaChecklistTemp ? '✓ ATA / Print Anexado' : '❌ SEM ATA'}${avisoAtaTexto}\n` +
-                          `11. E-mail Confirmação: ${document.getElementById('chk-email').value}\n` +
-                          `12. Valor Acordado: ${document.getElementById('chk-valor').value}\n\n` +
-                          `🗓️ Registrado e enviado em: ${dataHoraBSB} (Horário de Brasília)`;
-
-            const atoId = parseInt(document.getElementById('chk-ato-id').value);
-            const ato = db.atos.find(a => a.id === atoId);
-            if (ato) {
-                ato.checklistEnviado = true;
-                ato.checklistDataEnvio = dataHoraBSB;
-                ato.checklistObs = obs;
-                ato.checklistServicos = servicosSelecionados;
-                if (imagemAtaChecklistTemp) ato.ataImg = imagemAtaChecklistTemp;
-                saveData();
-                renderAtos();
-            }
-
-            return { texto, dataHoraBSB };
-        }
-
-        function enviarChecklistWhatsApp() {
-            const res = validarEMontarTextoChecklist();
-            if (!res) return;
-            fecharModalChecklist();
-            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(res.texto)}`);
-        }
-
-        function enviarChecklistEmail() {
-            const res = validarEMontarTextoChecklist();
-            if (!res) return;
-            fecharModalChecklist();
-            window.open(`mailto:${EMAIL_CORTEZ}?subject=${encodeURIComponent(`Controle de Pagamento - Proc. ${document.getElementById('chk-processo').value}`)}&body=${encodeURIComponent(res.texto)}`);
-        }
-
-        /* --- DEMAIS FUNÇÕES DO SISTEMA --- */
-        function verDetalhesAtoPauta(atoId) {
-            const ato = db.atos.find(a => a.id === atoId);
-            if (!ato) return;
-
-            const container = document.getElementById('conteudo-detalhes-ato');
-            container.innerHTML = `
-                <div class="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg space-y-1">
-                    <p><strong>• Processo nº:</strong> ${ato.processo}</p>
-                    <p><strong>• Cliente / Contratante:</strong> ${ato.cliente}</p>
-                    <p><strong>• Data/Hora do Ato:</strong> ${new Date(ato.data).toLocaleString('pt-BR')}</p>
-                    <p><strong>• Cidade / Comarca:</strong> ${ato.cidade || 'N/I'}</p>
-                    <p><strong>• Vencimento Pagamento:</strong> ${ato.vencimento ? new Date(ato.vencimento + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/I'}</p>
-                    <p><strong>• Valor Acordado:</strong> <span class="text-brand-red font-bold">R$ ${ato.valor.toFixed(2)}</span></p>
-                    <p><strong>• Status Atual:</strong> <span class="font-bold uppercase">${ato.status}</span></p>
-                </div>
-            `;
-            document.getElementById('modal-detalhes-ato').classList.remove('hidden');
-        }
-
-        function fecharModalDetalhesAto() { document.getElementById('modal-detalhes-ato').classList.add('hidden'); }
-
-        function renderGerenciadorBaixas() {
-            const container = document.getElementById('fin-gerenciador-baixas');
-            if(!container) return;
-            container.innerHTML = '';
-
-            if (db.atos.length === 0) {
-                container.innerHTML = '<div class="p-3 text-center text-gray-400 text-xs">Nenhum processo cadastrado.</div>';
-                return;
-            }
-
-            db.atos.forEach(a => {
-                const card = document.createElement('div');
-                card.className = "bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 text-xs flex justify-between items-center shadow-sm";
-                card.innerHTML = `
-                    <div>
-                        <div class="flex items-center gap-1">
-                            <strong class="text-sm">Proc: ${a.processo}</strong>
-                            <button onclick="verDetalhesAtoPauta(${a.id})" class="text-brand-red hover:text-red-800 font-bold text-xs">
-                                <i class="fa-solid fa-circle-info text-sm"></i>
-                            </button>
-                        </div>
-                        <span class="text-gray-500 font-semibold">${a.cliente}</span> - <span class="font-bold text-brand-red">R$ ${a.valor.toFixed(2)}</span>
-                    </div>
-                    <div>
-                        <select onchange="gerenciarAlteracaoStatus(${a.id}, this.value)" class="p-1.5 border rounded-lg text-xs font-bold ${a.status === 'pago' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}">
-                            <option value="pendente" ${a.status === 'pendente' ? 'selected' : ''}>🟡 PENDENTE</option>
-                            <option value="pago" ${a.status === 'pago' ? 'selected' : ''}>🟢 PAGO (Baixa)</option>
-                            <option value="vencido" ${a.status === 'vencido' ? 'selected' : ''}>🔴 VENCIDO</option>
-                            <option value="troca" ${a.status === 'troca' ? 'selected' : ''}>🔄 TROCA</option>
-                        </select>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function gerenciarAlteracaoStatus(atoId, novoStatus) {
-            const ato = db.atos.find(a => a.id === atoId);
-            if (!ato) return;
-
-            if (novoStatus === 'pago' && ato.status !== 'pago') {
-                if (confirm(`🟢 CONFIRMAR RECEBIMENTO DE PAGAMENTO?\n\nProcesso: ${ato.processo}\nValor: R$ ${ato.valor.toFixed(2)}`)) {
-                    ato.status = 'pago';
-                    ato.dataPagamento = new Date().toLocaleString('pt-BR');
-                    
-                    db.caixa.push({
-                        id: Date.now(),
-                        atoRefId: ato.id,
-                        data: new Date().toISOString().split('T')[0],
-                        tipo: 'entrada',
-                        categoria: 'Honorários de Pauta',
-                        descricao: `Honorários: Proc. ${ato.processo} - ${ato.cliente}`,
-                        valor: ato.valor
-                    });
-
-                    saveData();
-                    renderAtos();
-                    renderFinanceiro();
-                    renderCaixa();
-                    renderRelatorios();
-                    alert("✅ Pagamento dado baixa e sincronizado!");
-                } else {
-                    renderGerenciadorBaixas();
-                }
-                return;
-            }
-
-            if (ato.status === 'pago' && novoStatus !== 'pago') {
-                atoPendenteAlteracaoId = atoId;
-                atoNovoStatusPretendido = novoStatus;
-                document.getElementById('modal-trava-desfazer-pago').classList.remove('hidden');
-                return;
-            }
-
-            ato.status = novoStatus;
-            saveData();
-            renderAtos();
-            renderFinanceiro();
-            renderRelatorios();
         }
 
         function renderFinanceiro() {
-            let entradas = 0, pendentes = 0, trocas = 0, saidas = 0;
+            let entradas = 0, pendentes = 0;
             db.atos.forEach(ato => {
                 if (ato.status === 'pago') entradas += ato.valor;
-                else if (ato.status === 'troca') trocas += ato.valor;
-                else if (ato.status === 'debito') saidas += ato.valor;
                 else pendentes += ato.valor;
             });
-
             document.getElementById('fin-entradas').innerText = `R$ ${entradas.toFixed(2)}`;
             document.getElementById('fin-pendentes').innerText = `R$ ${pendentes.toFixed(2)}`;
-            document.getElementById('fin-trocas').innerText = `R$ ${trocas.toFixed(2)}`;
-            document.getElementById('fin-saidas').innerText = `R$ ${saidas.toFixed(2)}`;
-            document.getElementById('fin-saldo').innerText = `R$ ${(entradas - saidas).toFixed(2)}`;
-
-            renderGerenciadorBaixas();
         }
 
         function renderCaixa() {
-            const container = document.getElementById('lista-caixa');
-            if(!container) return;
-            container.innerHTML = '';
-
             let totalEntradas = 0, totalSaidas = 0;
             db.caixa.forEach((c) => {
                 if (c.tipo === 'entrada') totalEntradas += c.valor;
                 else totalSaidas += c.valor;
-
-                const item = document.createElement('div');
-                const isEntrada = c.tipo === 'entrada';
-                item.className = `bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 text-xs flex justify-between items-center shadow-sm border-l-4 ${isEntrada ? 'border-l-green-500' : 'border-l-red-500'}`;
-                
-                item.innerHTML = `
-                    <div>
-                        <strong class="text-sm ${isEntrada ? 'text-green-600' : 'text-red-600'}">${isEntrada ? '🟢 ENTRADA' : '🔴 SAÍDA'}: ${c.descricao}</strong>
-                        <div class="text-gray-400 text-[10px]"><i class="fa-regular fa-calendar mr-1"></i>Data: ${new Date(c.data + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
-                    </div>
-                    <div class="text-right flex items-center gap-2">
-                        <span class="font-extrabold text-sm block ${isEntrada ? 'text-green-600' : 'text-red-600'}">${isEntrada ? '+' : '-'} R$ ${c.valor.toFixed(2)}</span>
-                    </div>
-                `;
-                container.appendChild(item);
             });
-
             document.getElementById('caixa-total-entradas').innerText = `R$ ${totalEntradas.toFixed(2)}`;
             document.getElementById('caixa-total-saidas').innerText = `R$ ${totalSaidas.toFixed(2)}`;
             document.getElementById('caixa-saldo-liquido').innerText = `R$ ${(totalEntradas - totalSaidas).toFixed(2)}`;
         }
 
         function renderRelatorios() {
-            const container = document.getElementById('relatorios-lista');
-            if(!container) return;
-            container.innerHTML = '';
-
-            let totalBruto = 0, totalPago = 0, totalPendente = 0;
-            db.atos.forEach(a => {
-                totalBruto += a.valor;
-                if (a.status === 'pago') totalPago += a.valor;
-                else totalPendente += a.valor;
-            });
-
-            document.getElementById('relatorio-total-atos').innerText = `${db.atos.length} Atos`;
+            let totalBruto = 0;
+            db.atos.forEach(a => totalBruto += a.valor);
             document.getElementById('relatorio-valor-total').innerText = `R$ ${totalBruto.toFixed(2)}`;
-            document.getElementById('relatorio-valor-pago').innerText = `R$ ${totalPago.toFixed(2)}`;
-            document.getElementById('relatorio-valor-pendente').innerText = `R$ ${totalPendente.toFixed(2)}`;
-
-            db.atos.forEach(a => {
-                const item = document.createElement('div');
-                item.className = "p-3 bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 text-xs flex justify-between items-center shadow-sm";
-                item.innerHTML = `
-                    <div>
-                        <strong class="text-sm text-gray-800 dark:text-gray-100">${a.cliente}</strong>
-                        <div class="text-gray-500 font-semibold">Proc: ${a.processo}</div>
-                    </div>
-                    <div class="text-right">
-                        <span class="font-black text-brand-red text-sm block">R$ ${a.valor.toFixed(2)}</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase border">${a.status}</span>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
         }
 
         function savePerfil(e) {
@@ -1743,28 +1361,8 @@
             alert('Perfil salvo com sucesso!');
         }
 
-        function saveNotas() { db.notas = document.getElementById('bloco-notas').value; saveData(); }
-        function previewImagemAta(evt) {
-            const file = evt.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('img-preview-ata').src = e.target.result;
-                    document.getElementById('preview-ata-container').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
         function fecharModalBackup() { document.getElementById('modal-backup').classList.add('hidden'); }
-        function fecharModalAta() { document.getElementById('modal-ver-ata').classList.add('hidden'); }
-        function verAtaAnexo(id) {
-            const ato = db.atos.find(a => a.id === id);
-            if (ato && ato.ataImg) {
-                document.getElementById('img-modal-ata').src = ato.ataImg;
-                document.getElementById('modal-ver-ata').classList.remove('hidden');
-            }
-        }
+        function abrirModalBackup() { document.getElementById('modal-backup').classList.remove('hidden'); }
     </script>
 </body>
 </html>
