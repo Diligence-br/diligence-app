@@ -104,7 +104,6 @@
                 <div class="flex justify-between items-center text-xs bg-red-800/40 p-2 rounded-lg">
                     <div class="flex flex-col">
                         <span id="daily-message" class="italic text-red-100 text-[11px]"><i class="fa-solid fa-quote-left mr-1"></i> "Que o dia seja produtivo e abençoado!"</span>
-                        <!-- EXIBIÇÃO DA DATA/HORA DO ÚLTIMO BACKUP -->
                         <span class="text-[10px] font-bold text-amber-300 mt-0.5" id="header-ultimo-backup">
                             <i class="fa-solid fa-clock-rotate-left mr-1"></i>Último Backup: <span id="txt-ultimo-backup">Nenhum</span>
                         </span>
@@ -131,7 +130,12 @@
                 </div>
 
                 <form id="form-perfil" onsubmit="savePerfil(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <h2 class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-2">Dados Profissionais</h2>
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h2 class="font-bold text-base text-gray-700 dark:text-gray-200">Dados Profissionais</h2>
+                        <button type="button" onclick="confirmarLimparAba('perfil')" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
+                            <i class="fa-solid fa-trash-can"></i> Limpar Perfil
+                        </button>
+                    </div>
                     <div>
                         <label class="text-xs font-semibold">Nome Completo</label>
                         <input type="text" id="perfil-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
@@ -175,7 +179,12 @@
                 </div>
 
                 <form id="form-ato" onsubmit="saveAto(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <h2 class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-2">Cadastrar Novo Ato</h2>
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h2 class="font-bold text-base text-gray-700 dark:text-gray-200">Cadastrar Novo Ato</h2>
+                        <button type="button" onclick="confirmarLimparAba('atos')" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
+                            <i class="fa-solid fa-trash-can"></i> Limpar Toda a Pauta
+                        </button>
+                    </div>
                     
                     <div class="grid grid-cols-2 gap-3">
                         <div>
@@ -222,7 +231,6 @@
                         </label>
                         <input type="file" id="ato-ata-file" accept="image/*" capture="environment" onchange="previewImagemAta(event)" class="w-full p-1.5 border rounded-lg text-xs bg-white dark:bg-gray-800">
                         
-                        <!-- ÁREA DE PRÉ-VISUALIZAÇÃO -->
                         <div id="preview-ata-container" class="hidden pt-1 text-center space-y-1">
                             <span class="text-[10px] font-bold text-green-600 block">✓ Pré-visualização do Documento Fotografado:</span>
                             <img id="img-preview-ata" src="" class="max-h-36 mx-auto rounded border shadow-sm object-contain">
@@ -270,7 +278,12 @@
                 </div>
 
                 <form id="form-contato" onsubmit="saveContato(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <h2 class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-2">Cadastrar Novo Contato</h2>
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h2 class="font-bold text-base text-gray-700 dark:text-gray-200">Cadastrar Novo Contato</h2>
+                        <button type="button" onclick="confirmarLimparAba('contatos')" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
+                            <i class="fa-solid fa-trash-can"></i> Limpar Toda a Agenda
+                        </button>
+                    </div>
                     <div>
                         <label class="text-xs font-semibold">Nome Completo / Razão Social*</label>
                         <input type="text" id="ct-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
@@ -602,8 +615,8 @@
                     </div>
 
                     <div class="flex gap-2 pt-2 border-t text-xs font-bold">
-                        <button onclick="compartilharRelatorioWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg shadow"><i class="fa-brands fa-whatsapp mr-1"></i> Whats</button>
-                        <button onclick="compartilharRelatorioEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-envelope mr-1"></i> E-mail</button>
+                        <button onclick="compartilharRelatorioWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg shadow"><i class="fa-brands fa-whatsapp mr-1"></i> Whats (Completo)</button>
+                        <button onclick="compartilharRelatorioEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-envelope mr-1"></i> E-mail (Completo)</button>
                         <button onclick="exportarPlanilhaCSV()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-file-excel mr-1"></i> Planilha</button>
                     </div>
                 </div>
@@ -613,9 +626,19 @@
 
             <!-- ABA 7: MANUAIS E ORIENTAÇÕES -->
             <section id="tab-manuais" class="tab-content space-y-4 hidden">
-                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
-                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-book-open mr-1"></i> Central de Manuais do DILIGENCE.BR</h3>
-                    <p>Consulte as diretrizes do sistema, responsabilidades de backup e orientações operacionais.</p>
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-book-open mr-1"></i> Central de Manuais do DILIGENCE.BR</h3>
+                        <p>Consulte e compartilhe as diretrizes do sistema e rotinas de backup.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 space-y-2">
+                    <span class="font-bold text-xs text-brand-red block border-b pb-1"><i class="fa-solid fa-share-nodes mr-1"></i> Compartilhar Manuais:</span>
+                    <div class="flex gap-2 text-xs font-bold">
+                        <button onclick="compartilharManualWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg shadow"><i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp</button>
+                        <button onclick="compartilharManualEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-envelope mr-1"></i> E-mail</button>
+                    </div>
                 </div>
 
                 <!-- MANUAL GERAL -->
@@ -735,7 +758,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE BACKUP E EXPORTAÇÃO -->
+    <!-- MODAL DE BACKUP E EXPORTAÇÃO E ZERAR TUDO -->
     <div id="modal-backup" class="fixed inset-0 z-50 bg-black/60 modal-blur hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border dark:border-gray-700">
             <div class="flex justify-between items-center border-b pb-2">
@@ -757,6 +780,11 @@
                 </button>
                 <button onclick="acionarRestauracao()" class="w-full bg-green-700 hover:bg-green-800 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow border border-green-500">
                     <i class="fa-solid fa-upload"></i> 4. RESTAURAR BACKUP DE CELULAR NOVO
+                </button>
+                
+                <!-- BOTÃO DE ZERAR TUDO NOVO -->
+                <button onclick="confirmarZerarTudoGeral()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-extrabold py-2 rounded-xl text-[11px] flex items-center justify-center gap-1 border border-red-300 pt-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i> ZERAR/DELETAR TODOS OS DADOS (APP NOVINHO)
                 </button>
             </div>
 
@@ -866,6 +894,56 @@
         }
 
         function saveData() { localStorage.setItem('diligence_db', JSON.stringify(db)); }
+
+        /* --- FUNÇÕES DE LIMPEZA E RESET DE DADOS --- */
+        function confirmarLimparAba(aba) {
+            let mensagem = "";
+            if (aba === 'perfil') mensagem = "⚠️ TEM CERTEZA QUE DESEJA APAGAR OS DADOS DO PERFIL?\n\nOs campos de Nome, CPF/OAB, PIX e E-mail serão limpos.";
+            else if (aba === 'atos') mensagem = "⚠️ TEM CERTEZA QUE DESEJA APAGAR TODA A PAUTA?\n\nTodos os atos cadastrados e anexos de ATAs serão permanentemente deletados desta aba.";
+            else if (aba === 'contatos') mensagem = "⚠️ TEM CERTEZA QUE DESEJA APAGAR TODA A AGENDA?\n\nTodos os contatos cadastrados serão permanentemente deletados.";
+
+            if (confirm(mensagem)) {
+                if (aba === 'perfil') {
+                    db.perfil = { nome: '', doc: '', cidade: '', pix: '', email: '' };
+                    document.getElementById('perfil-nome').value = '';
+                    document.getElementById('perfil-doc').value = '';
+                    document.getElementById('perfil-cidade').value = '';
+                    document.getElementById('perfil-pix').value = '';
+                    document.getElementById('perfil-email').value = '';
+                } else if (aba === 'atos') {
+                    db.atos = [];
+                    renderAtos();
+                    if(document.getElementById('tab-financeiro')) renderFinanceiro();
+                } else if (aba === 'contatos') {
+                    db.contatos = [];
+                    renderContatos();
+                }
+                saveData();
+                alert("✅ Informações da aba limpas com sucesso!");
+            }
+        }
+
+        function confirmarZerarTudoGeral() {
+            const confirma1 = confirm("🚨 ATENÇÃO: ZERAR TODO O APLICATIVO!\n\nVocê está prestes a apagar TODOS os dados do aplicativo (Perfil, Pauta, Contatos, Histórico Financeiro e Notas) para deixá-lo completamente NOVINHO.\n\nRecomendamos realizar um backup antes.\n\nDeseja continuar?");
+            if (confirma1) {
+                const confirma2 = confirm("❓ ÚLTIMA CONFIRMAÇÃO:\n\nTem certeza absoluta que deseja deletar tudo e reiniciar o app zerado?");
+                if (confirma2) {
+                    db = {
+                        perfil: { nome: '', doc: '', cidade: '', pix: '', email: '' },
+                        atos: [],
+                        contatos: [],
+                        financeiro: [],
+                        reciboSeq: 1001,
+                        notas: '',
+                        ultimoBackup: null
+                    };
+                    saveData();
+                    loadData();
+                    fecharModalBackup();
+                    alert("✨ Aplicativo completamente limpo e pronto para novo uso!");
+                }
+            }
+        }
 
         function abrirModalBackup() {
             saveData();
@@ -1495,7 +1573,7 @@
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(minuta)}`);
         }
 
-        /* --- RELATÓRIOS --- */
+        /* --- RELATÓRIOS CONSOLIDADOS --- */
         function togglePeriodoInputs() {
             const tipo = document.getElementById('filter-periodo-tipo').value;
             const container = document.getElementById('periodo-inputs-container');
@@ -1516,7 +1594,7 @@
             renderRelatorios();
         }
 
-        function renderRelatorios() {
+        function obterAtosFiltradosRelatorio() {
             const query = document.getElementById('filter-cliente').value.toLowerCase().trim();
             const statusFiltro = document.getElementById('filter-status').value;
             const tipoPeriodo = document.getElementById('filter-periodo-tipo').value;
@@ -1524,10 +1602,7 @@
             const dataInicio = document.getElementById('filter-data-inicio').value;
             const dataFim = document.getElementById('filter-data-fim').value;
 
-            const container = document.getElementById('relatorios-lista');
-            container.innerHTML = '';
-
-            const filtrados = db.atos.filter(a => {
+            return db.atos.filter(a => {
                 const bateTexto = query === '' || 
                     a.cliente.toLowerCase().includes(query) || 
                     a.processo.toLowerCase().includes(query) || 
@@ -1548,6 +1623,13 @@
 
                 return bateTexto && bateStatus && batePeriodo;
             });
+        }
+
+        function renderRelatorios() {
+            const container = document.getElementById('relatorios-lista');
+            container.innerHTML = '';
+
+            const filtrados = obterAtosFiltradosRelatorio();
 
             let totalBruto = 0, totalPago = 0, totalPendente = 0;
 
@@ -1591,7 +1673,57 @@
             });
         }
 
-        /* --- COMPARTILHAMENTOS --- */
+        function gerarTextoRelatorioCompleto() {
+            const filtrados = obterAtosFiltradosRelatorio();
+            if (filtrados.length === 0) return null;
+
+            let totalBruto = 0, totalPago = 0, totalPendente = 0;
+            filtrados.forEach(a => {
+                totalBruto += a.valor;
+                if (a.status === 'pago') totalPago += a.valor;
+                else if (a.status === 'pendente' || a.status === 'vencido') totalPendente += a.valor;
+            });
+
+            const nomeCorr = db.perfil.nome || 'Correspondente';
+            const dataHoje = new Date().toLocaleDateString('pt-BR');
+
+            let texto = `=========================================\n RELATÓRIO COMPLETO DE PAUTA & HONORÁRIOS\n DILIGENCE.BR — ${dataHoje}\n Correspondent: ${nomeCorr}\n=========================================\n\n`;
+            texto += `📊 RESUMO DOS TOTALIZADORES:\n• Total de Atos: ${filtrados.length}\n• Valor Total Bruto: R$ ${totalBruto.toFixed(2)}\n• Valor Quitado (Pago): R$ ${totalPago.toFixed(2)}\n• Valor a Receber: R$ ${totalPendente.toFixed(2)}\n-----------------------------------------\n\n`;
+            texto += `📋 RELAÇÃO DETALHADA DOS ATOS:\n\n`;
+
+            filtrados.forEach((a, index) => {
+                texto += `${index + 1}. PROC: ${a.processo}\n   Cliente: ${a.cliente}\n   Data/Hora: ${a.data ? new Date(a.data).toLocaleString('pt-BR') : 'N/I'}\n   Valor: R$ ${a.valor.toFixed(2)}\n   Status: [${a.status.toUpperCase()}]\n   ${a.dataPagamento ? `Baixa em: ${a.dataPagamento}\n` : ''}-----------------------------------------\n`;
+            });
+
+            return texto;
+        }
+
+        function compartilharRelatorioWhats() {
+            const texto = gerarTextoRelatorioCompleto();
+            if(!texto) return alert('Nenhum ato encontrado para gerar o relatório!');
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`);
+        }
+
+        function compartilharRelatorioEmail() {
+            const texto = gerarTextoRelatorioCompleto();
+            if(!texto) return alert('Nenhum ato encontrado para gerar o relatório!');
+            window.open(`mailto:?subject=${encodeURIComponent(`Relatorio Completo de Pauta - DILIGENCE.BR`)}&body=${encodeURIComponent(texto)}`);
+        }
+
+        /* --- MANUAIS --- */
+        function gerarTextoManuais() {
+            return `=========================================\n CENTRAL DE MANUAIS — DILIGENCE.BR\n=========================================\n\n1. MANUAL GERAL DO SISTEMA:\n• Propósito: Gestão seletiva e descentralizada de diligências, pautas e controle financeiro.\n• Dados em Nuvem Local: Funcionamento off-line e instantâneo direto no navegador do celular.\n• Módulo Financeiro: Recibos emitidos apenas para processos quitados (PAGO).\n\n-----------------------------------------\n2. MANUAL INDIVIDUAL DO CORRESPONDENTE:\n• ROTINA OBRIGATÓRIA DE BACKUP (2X AO DIA): O correspondente é o único responsável por exportar e salvar o backup (.JSON) diariamente às 12:00 e às 17:00.\n• Guarda de Dados: A ADM não possui acesso aos seus dados locais.\n• Restauração: Trocou de celular? Basta usar o botão 'Restaurar' e selecionar o backup .JSON para recuperar fotos, pautas e contatos.`;
+        }
+
+        function compartilharManualWhats() {
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(gerarTextoManuais())}`);
+        }
+
+        function compartilharManualEmail() {
+            window.open(`mailto:?subject=${encodeURIComponent(`Manual Geral e do Correspondente - DILIGENCE.BR`)}&body=${encodeURIComponent(gerarTextoManuais())}`);
+        }
+
+        /* --- COMPARTILHAMENTOS DIVERSOS --- */
         function compartilharPerfilWhats() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`Correspondente: ${db.perfil.nome} | Doc: ${db.perfil.doc} | PIX: ${db.perfil.pix}`)}`); }
         function compartilharPerfilEmail() { window.open(`mailto:?subject=Dados Correspondente&body=${encodeURIComponent(`Nome: ${db.perfil.nome}\nDoc: ${db.perfil.doc}\nPIX: ${db.perfil.pix}`)}`); }
         function compartilharPautaWhats() {
@@ -1607,8 +1739,6 @@
         function compartilharCalcWhats() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(resultadoRescisaoTexto || 'Realize o cálculo primeiro.')}`); }
         function compartilharCalcEmail() { window.open(`mailto:?subject=Calculo Trabalhista&body=${encodeURIComponent(resultadoRescisaoTexto || 'Realize o cálculo primeiro.')}`); }
         function compartilharNotasWhats() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`NOTAS DA PAUTA:\n${db.notas}`)}`); }
-        function compartilharRelatorioWhats() { compartilharPautaWhats(); }
-        function compartilharRelatorioEmail() { compartilharPautaEmail(); }
 
         function saveNotas() { db.notas = document.getElementById('bloco-notas').value; saveData(); }
     </script>
