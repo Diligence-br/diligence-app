@@ -307,7 +307,7 @@
                 </div>
             </section>
 
-            <!-- ABA 4: FINANCEIRO -->
+            <!-- ABA 4: FINANCEIRO & BAIXAS -->
             <section id="tab-financeiro" class="tab-content space-y-4 hidden">
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-center text-white">
                     <div class="bg-green-600 p-2.5 rounded-xl shadow">
@@ -332,10 +332,11 @@
                     </div>
                 </div>
 
+                <!-- GERENCIAMENTO DE BAIXA E EMISSÃO DE RECIBOS -->
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border-2 border-brand-red space-y-3 shadow-md">
                     <div class="flex justify-between items-center border-b pb-2">
-                        <h3 class="font-bold text-sm text-brand-red"><i class="fa-solid fa-receipt mr-1"></i> Gerar Recibo Seletivo com Baixa Automática</h3>
-                        <span class="text-[10px] bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded">Dá baixa ao emitir</span>
+                        <h3 class="font-bold text-sm text-brand-red"><i class="fa-solid fa-receipt mr-1"></i> Emissão de Recibo para Atos QUITADOS (PAGO)</h3>
+                        <span class="text-[10px] bg-green-100 text-green-800 font-bold px-2 py-0.5 rounded">Apenas 'Pago' ativado</span>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
@@ -344,32 +345,36 @@
                             <select id="fin-recibo-cliente" onchange="renderProcessosParaRecibo()" class="w-full p-2 border rounded dark:bg-gray-700 font-bold"></select>
                         </div>
                         <div>
-                            <label class="font-semibold">Data do Recibo:</label>
-                            <input type="date" id="fin-recibo-data" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                            <label class="font-semibold">Mês Referência:</label>
+                            <input type="month" id="fin-recibo-mes" onchange="renderProcessosParaRecibo()" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
                         </div>
                         <div>
-                            <label class="font-semibold">Mês Referência:</label>
-                            <input type="month" id="fin-recibo-mes" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                            <label class="font-semibold">Data Emissão do Recibo:</label>
+                            <input type="date" id="fin-recibo-data" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
                         </div>
                     </div>
 
+                    <!-- CAIXA DE PROCESSO COM MARCAÇÃO EM LOTE DO PERÍODO -->
                     <div class="space-y-1">
-                        <label class="text-xs font-bold">Marque os processos para dar baixa e gerar recibo:</label>
-                        <div id="fin-recibo-processos-check" class="max-h-36 overflow-y-auto border p-2 rounded-lg bg-gray-50 dark:bg-gray-700/40 space-y-1 text-xs"></div>
+                        <div class="flex justify-between items-center text-xs pt-1">
+                            <label class="font-bold">Processos QUITADOS do Período:</label>
+                            <label class="text-[11px] text-brand-red font-bold flex items-center gap-1 cursor-pointer">
+                                <input type="checkbox" id="chk-selecionar-todos-periodo" onchange="toggleSelecionarTodosRecibo(this)"> Selecionar Todos [x]
+                            </label>
+                        </div>
+                        <div id="fin-recibo-processos-check" class="max-h-40 overflow-y-auto border p-2 rounded-lg bg-gray-50 dark:bg-gray-700/40 space-y-1 text-xs"></div>
                     </div>
 
                     <button onclick="gerarReciboSeletivo()" class="w-full bg-green-600 hover:bg-green-700 text-white font-extrabold py-2.5 rounded-lg text-xs shadow flex items-center justify-center gap-2">
-                        <i class="fa-brands fa-whatsapp text-sm"></i> GERAR RECIBO, DAR BAIXA E ENVIAR
+                        <i class="fa-brands fa-whatsapp text-sm"></i> GERAR RECIBO SELETO E COMPARTILHAR
                     </button>
-                    
-                    <div class="flex gap-2 pt-2 border-t text-xs font-bold">
-                        <button type="button" onclick="compartilharFinanceiroWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg"><i class="fa-brands fa-whatsapp mr-1"></i> Whats</button>
-                        <button type="button" onclick="compartilharFinanceiroEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg"><i class="fa-solid fa-envelope mr-1"></i> E-mail</button>
-                        <button type="button" onclick="exportarPlanilhaCSV()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg"><i class="fa-solid fa-file-excel mr-1"></i> Planilha</button>
-                    </div>
                 </div>
 
-                <div id="fin-extrato" class="space-y-2"></div>
+                <!-- LISTA COMPLETA DE BAIXAS FINANCEIRAS -->
+                <div class="space-y-2">
+                    <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300"><i class="fa-solid fa-list-check mr-1"></i> Gerenciar Baixa dos Processos</h3>
+                    <div id="fin-gerenciador-baixas" class="space-y-2"></div>
+                </div>
             </section>
 
             <!-- ABA 5: CALCULADORAS AVANÇADAS & BLOCO DE NOTAS -->
@@ -612,6 +617,45 @@
         </nav>
     </div>
 
+    <!-- MODAL DE DESFAZER PAGO (JUSTIFICATIVA WHATSAPP OBRIGATÓRIA ADM) -->
+    <div id="modal-trava-desfazer-pago" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-2 border-brand-red">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-lock mr-1"></i> ALTERAÇÃO PROTEGIDA (ADM)</h3>
+                <button onclick="fecharModalTravaDesfazer()" class="text-gray-400 font-bold">&times;</button>
+            </div>
+            
+            <p class="text-xs text-gray-700 dark:text-gray-300">
+                Este processo consta como <strong>PAGO</strong>. Para alterar de volta para pendente ou outro status, é <u>obrigatório</u> enviar uma mensagem de ciência para o WhatsApp da Administração:
+            </p>
+            
+            <div class="p-2 bg-red-50 dark:bg-gray-700 rounded-lg text-center font-bold text-xs text-brand-red">
+                📱 ADM: (11) 97838-6574
+            </div>
+
+            <div class="space-y-2 text-xs">
+                <label class="font-bold">Selecione o motivo da alteração:</label>
+                <select id="trava-motivo-select" class="w-full p-2 border rounded-lg dark:bg-gray-700 font-semibold" onchange="toggleMotivoOutroInput(this)">
+                    <option value="1">1. Lancei 'PAGO', mas o valor não foi compensado na planilha.</option>
+                    <option value="2">2. Lancei 'PAGO', mas tínhamos uma troca pendente.</option>
+                    <option value="3">3. Lancei 'PAGO' erroneamente por engano do processo.</option>
+                    <option value="outro">4. Outro motivo (Digitar justificativa)...</option>
+                </select>
+
+                <textarea id="trava-motivo-outro" rows="2" placeholder="Digite sua justificativa detalhada..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs hidden"></textarea>
+            </div>
+
+            <div class="pt-2 border-t space-y-2">
+                <button onclick="enviarJustificativaWhatsAppADM()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 shadow">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> ENVIAR WHATSAPP P/ ADM E DESBLOQUEAR
+                </button>
+                <button id="btn-confirmar-desfazer-pago" disabled onclick="executarTrocaStatusAposWhats()" class="w-full bg-gray-400 text-white py-2.5 rounded-xl font-bold text-xs opacity-50 cursor-not-allowed">
+                    CONFIRMAR E ALTERAR STATUS
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DE BACKUP E EXPORTAÇÃO -->
     <div id="modal-backup" class="fixed inset-0 z-50 bg-black/60 modal-blur hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border dark:border-gray-700">
@@ -649,6 +693,7 @@
     <script>
         const AUTH_USER = "diligence.br*";
         const AUTH_PASS = "320427";
+        const WHATS_ADM = "5511978386574";
 
         let db = {
             perfil: { nome: '', doc: '', cidade: '', pix: '', email: '' },
@@ -664,6 +709,10 @@
         let totalRescisaoLiquidoGlobal = 0;
         let alertaAlmocoExibido = false;
         let alertaFimDiaExibido = false;
+
+        // VARIÁVEIS DE CONTROLE DA TRAVA DE PAGO
+        let atoPendenteAlteracaoId = null;
+        let atoNovoStatusPretendido = null;
 
         function updateClock() {
             const now = new Date();
@@ -736,112 +785,6 @@
             document.getElementById('modal-backup').classList.add('hidden');
         }
 
-        // ENVIO DO BACKUP PARA O E-MAIL PESSOAL DO PRÓPRIO CORRESPONDENTE
-        function enviarBackupEmailPessoal() {
-            saveData();
-            const emailDestino = db.perfil.email || prompt("Digite seu e-mail pessoal para receber a cópia do backup:");
-            if (!emailDestino) return alert("E-mail não informado!");
-
-            const nomeCorr = db.perfil.nome || 'Correspondente';
-            const dataHoje = new Date().toLocaleDateString('pt-BR');
-
-            const mensagemAviso = `📦 BACKUP DE SEGURANÇA PESSOAL - DILIGENCE.BR\n\nOlá, ${nomeCorr}!\n\nSegue abaixo a cópia dos seus dados de cadastro, pauta e honorários gerada em ${dataHoje}.\n\nGuarde esta mensagem ou o arquivo no seu Google Drive/E-mail para restaurar em qualquer celular novo quando precisar.\n\n-----------------------------------\nDADOS DE BACKUP (JSON):\n\n${JSON.stringify(db)}`;
-
-            const subject = encodeURIComponent(`Meu Backup DILIGENCE.BR - ${dataHoje}`);
-            const body = encodeURIComponent(mensagemAviso);
-
-            window.open(`mailto:${emailDestino}?subject=${subject}&body=${body}`);
-            fecharModalBackup();
-        }
-
-        async function fazerBackupCelularJSON() {
-            saveData();
-            const nomeCorr = (db.perfil.nome || 'Correspondente').replace(/[^a-zA-Z0-9]/g, '_');
-            const jsonStr = JSON.stringify(db, null, 2);
-            const nomeArquivo = `Backup_DILIGENCE_${nomeCorr}_${new Date().toISOString().split('T')[0]}.json`;
-            const file = new File([jsonStr], nomeArquivo, { type: 'application/json' });
-
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        title: 'Backup DILIGENCE.BR',
-                        text: `Segue o backup de segurança de ${db.perfil.nome || 'Correspondente'}.`,
-                        files: [file]
-                    });
-                    fecharModalBackup();
-                    return;
-                } catch (e) {}
-            }
-
-            const blob = new Blob([jsonStr], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = nomeArquivo;
-            a.click();
-            fecharModalBackup();
-        }
-
-        // RESTAURAÇÃO DE BACKUP EM CELULAR NOVO OU NAVEGADOR
-        function acionarRestauracao() {
-            fecharModalBackup();
-            document.getElementById('input-restaurar-file').click();
-        }
-
-        function processarRestauracaoFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const dadosRestaurados = JSON.parse(e.target.result);
-                    if (dadosRestaurados && (dadosRestaurados.atos || dadosRestaurados.perfil)) {
-                        db = dadosRestaurados;
-                        saveData();
-                        loadData();
-                        alert("✅ RESTAURAÇÃO CONCLUÍDA COM SUCESSO!\n\nTodos os seus dados, pauta e perfil foram recuperados neste aparelho.");
-                    } else {
-                        alert("⚠️ Arquivo inválido! Selecione um arquivo de backup (.JSON) válido gerado pelo DILIGENCE.BR.");
-                    }
-                } catch (err) {
-                    alert("❌ Erro ao ler o arquivo de backup. Verifique se escolheu o arquivo .json correto.");
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        async function exportarPlanilhaCSV() {
-            if (db.atos.length === 0) return alert('Nenhum ato cadastrado na pauta!');
-            
-            let csv = "Processo,Cliente,Data,Valor,Status\n";
-            db.atos.forEach(a => { csv += `"${a.processo}","${a.cliente}","${a.data}",${a.valor},"${a.status}"\n`; });
-            
-            const nomeCorr = (db.perfil.nome || 'Correspondente').replace(/[^a-zA-Z0-9]/g, '_');
-            const nomeArquivo = `Pauta_DILIGENCE_${nomeCorr}_${new Date().toISOString().split('T')[0]}.csv`;
-            const file = new File([csv], nomeArquivo, { type: 'text/csv' });
-
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        title: 'Planilha DILIGENCE.BR',
-                        text: `Segue a planilha de atos de ${db.perfil.nome || 'Correspondente'}.`,
-                        files: [file]
-                    });
-                    fecharModalBackup();
-                    return;
-                } catch (e) {}
-            }
-
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('href', url);
-            a.setAttribute('download', nomeArquivo);
-            a.click();
-            fecharModalBackup();
-        }
-
         function loadData() {
             const saved = localStorage.getItem('diligence_db');
             if (saved) db = JSON.parse(saved);
@@ -856,6 +799,7 @@
             document.getElementById('bloco-notas').value = db.notas || '';
             document.getElementById('contato-data-envio').value = new Date().toISOString().split('T')[0];
             document.getElementById('filter-mes-select').value = new Date().toISOString().substring(0, 7);
+            document.getElementById('fin-recibo-mes').value = new Date().toISOString().substring(0, 7);
 
             renderAtos();
             renderContatos();
@@ -888,7 +832,8 @@
                 modalidade: document.getElementById('ato-modalidade').value,
                 link: document.getElementById('ato-link').value || '',
                 valor: parseFloat(document.getElementById('ato-valor').value),
-                status: statusSel
+                status: statusSel,
+                dataPagamento: statusSel === 'pago' ? new Date().toLocaleString('pt-BR') : null
             };
 
             db.atos.push(novoAto);
@@ -916,6 +861,7 @@
                             <strong class="text-sm">Proc: ${ato.processo}</strong> - ${ato.cliente}<br>
                             <span class="text-gray-400"><i class="fa-regular fa-clock mr-1"></i>${new Date(ato.data).toLocaleString('pt-BR')}</span>
                             ${ato.vencimento ? `<div class="text-[10px] font-bold ${vencidoOuHoje ? 'text-red-600' : 'text-gray-500'}">Venc. Pagamento: ${new Date(ato.vencimento + 'T00:00:00').toLocaleDateString('pt-BR')} ${vencidoOuHoje ? '⚠️ (COBRAR HORA!)' : ''}</div>` : ''}
+                            ${ato.dataPagamento ? `<div class="text-[10px] font-bold text-green-600"><i class="fa-solid fa-circle-check mr-1"></i>Pago em: ${ato.dataPagamento}</div>` : ''}
                         </div>
                         <div class="text-right">
                             <span class="font-bold text-brand-red text-sm block">R$ ${ato.valor.toFixed(2)}</span>
@@ -926,6 +872,201 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        /* --- GERENCIAMENTO DE STATUS E TRAVAS FINANCEIRAS --- */
+        function gerenciarAlteracaoStatus(atoId, novoStatus) {
+            const ato = db.atos.find(a => a.id === atoId);
+            if (!ato) return;
+
+            // CASO 1: MUDAR PARA PAGO (POPUP DE CONFIRMAÇÃO COM DESTAQUE)
+            if (novoStatus === 'pago' && ato.status !== 'pago') {
+                const confirma = confirm(`🟢 CONFIRMAÇÃO DE RECEBIMENTO DE PAGAMENTO\n\nTem certeza que deseja dar baixa como "PAGO" neste ato?\n\nProcesso: ${ato.processo}\nCliente: ${ato.cliente}\nValor: R$ ${ato.valor.toFixed(2)}\n\nIsso registrará a data de pagamento na pauta e liberará a emissão de recibos.`);
+                if (confirma) {
+                    ato.status = 'pago';
+                    ato.dataPagamento = new Date().toLocaleString('pt-BR');
+                    saveData();
+                    renderAtos();
+                    renderFinanceiro();
+                    alert("✅ Pagamento dado baixa com sucesso e liberado para recibo!");
+                }
+                return;
+            }
+
+            // CASO 2: TENTAR DESFAZER OU ALTERAR DE "PAGO" PARA OUTRO STATUS (TRAVA WHATSAPP ADM)
+            if (ato.status === 'pago' && novoStatus !== 'pago') {
+                atoPendenteAlteracaoId = atoId;
+                atoNovoStatusPretendido = novoStatus;
+                
+                document.getElementById('modal-trava-desfazer-pago').classList.remove('hidden');
+                document.getElementById('btn-confirmar-desfazer-pago').disabled = true;
+                document.getElementById('btn-confirmar-desfazer-pago').classList.add('opacity-50', 'cursor-not-allowed');
+                return;
+            }
+
+            // CASO PADRÃO
+            ato.status = novoStatus;
+            saveData();
+            renderAtos();
+            renderFinanceiro();
+        }
+
+        function toggleMotivoOutroInput(selectEl) {
+            const outroArea = document.getElementById('trava-motivo-outro');
+            if (selectEl.value === 'outro') outroArea.classList.remove('hidden');
+            else outroArea.classList.add('hidden');
+        }
+
+        function enviarJustificativaWhatsAppADM() {
+            const ato = db.atos.find(a => a.id === atoPendenteAlteracaoId);
+            if(!ato) return;
+
+            const motivoSel = document.getElementById('trava-motivo-select').value;
+            let textoMotivo = "";
+
+            if (motivoSel === '1') textoMotivo = "Lancei 'PAGO', mas o valor não foi compensado na planilha.";
+            else if (motivoSel === '2') textoMotivo = "Lancei 'PAGO', mas tínhamos uma troca pendente.";
+            else if (motivoSel === '3') textoMotivo = "Lancei 'PAGO' erroneamente por engano do processo.";
+            else textoMotivo = document.getElementById('trava-motivo-outro').value || "Ajuste operacional de status.";
+
+            const nomeCorr = db.perfil.nome || 'Correspondente';
+            const mensagem = `⚠️ SOLICITAÇÃO DE ALTERAÇÃO DE STATUS (PAGO -> ${atoNovoStatusPretendido.toUpperCase()})\n\nCorrespondente: ${nomeCorr}\nProcesso nº: ${ato.processo}\nCliente: ${ato.cliente}\nValor: R$ ${ato.valor.toFixed(2)}\n\n📝 MOTIVO / JUSTIFICATIVA:\n"${textoMotivo}"\n\nEstou alterando este status no app para adequação dos relatórios.`;
+
+            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(mensagem)}`);
+
+            // HABILITA O BOTÃO DE CONFIRMAR ALTERAÇÃO APÓS DISPARAR O WHATSAPP
+            const btnConf = document.getElementById('btn-confirmar-desfazer-pago');
+            btnConf.disabled = false;
+            btnConf.classList.remove('opacity-50', 'cursor-not-allowed');
+            btnConf.classList.replace('bg-gray-400', 'bg-brand-red');
+        }
+
+        function executarTrocaStatusAposWhats() {
+            const ato = db.atos.find(a => a.id === atoPendenteAlteracaoId);
+            if(ato) {
+                ato.status = atoNovoStatusPretendido;
+                ato.dataPagamento = null;
+                saveData();
+                renderAtos();
+                renderFinanceiro();
+                fecharModalTravaDesfazer();
+                alert("✅ Status alterado com sucesso no sistema!");
+            }
+        }
+
+        function fecharModalTravaDesfazer() {
+            document.getElementById('modal-trava-desfazer-pago').classList.add('hidden');
+            atoPendenteAlteracaoId = null;
+            atoNovoStatusPretendido = null;
+        }
+
+        /* --- FINANCEIRO E EMISSÃO DE RECIBOS --- */
+        function renderFinanceiro() {
+            let entradas = 0, pendentes = 0, trocas = 0, saidas = 0;
+
+            db.atos.forEach(ato => {
+                if (ato.status === 'pago') entradas += ato.valor;
+                else if (ato.status === 'troca') trocas += ato.valor;
+                else if (ato.status === 'debito') saidas += ato.valor;
+                else pendentes += ato.valor;
+            });
+
+            document.getElementById('fin-entradas').innerText = `R$ ${entradas.toFixed(2)}`;
+            document.getElementById('fin-pendentes').innerText = `R$ ${pendentes.toFixed(2)}`;
+            document.getElementById('fin-trocas').innerText = `R$ ${trocas.toFixed(2)}`;
+            document.getElementById('fin-saidas').innerText = `R$ ${saidas.toFixed(2)}`;
+            document.getElementById('fin-saldo').innerText = `R$ ${(entradas - saidas).toFixed(2)}`;
+
+            const clientesUnicos = [...new Set(db.atos.map(a => a.cliente))];
+            const selectCli = document.getElementById('fin-recibo-cliente');
+            selectCli.innerHTML = clientesUnicos.length > 0 ? clientesUnicos.map(c => `<option value="${c}">${c}</option>`).join('') : '<option value="">Sem clientes</option>';
+
+            renderProcessosParaRecibo();
+            renderGerenciadorBaixas();
+        }
+
+        function renderGerenciadorBaixas() {
+            const container = document.getElementById('fin-gerenciador-baixas');
+            container.innerHTML = '';
+
+            if (db.atos.length === 0) {
+                container.innerHTML = '<div class="p-3 text-center text-gray-400 text-xs">Nenhum processo cadastrado.</div>';
+                return;
+            }
+
+            db.atos.forEach(a => {
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 text-xs flex justify-between items-center shadow-sm";
+                card.innerHTML = `
+                    <div>
+                        <strong class="text-sm">Proc: ${a.processo}</strong> (${a.cliente})<br>
+                        <span class="text-gray-400">Valor: R$ ${a.valor.toFixed(2)}</span>
+                        ${a.dataPagamento ? `<div class="text-[10px] text-green-600 font-bold">Pago em: ${a.dataPagamento}</div>` : ''}
+                    </div>
+                    <div>
+                        <select onchange="gerenciarAlteracaoStatus(${a.id}, this.value)" class="p-1.5 border rounded-lg text-xs font-bold ${a.status === 'pago' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}">
+                            <option value="pendente" ${a.status === 'pendente' ? 'selected' : ''}>🟡 PENDENTE</option>
+                            <option value="pago" ${a.status === 'pago' ? 'selected' : ''}>🟢 PAGO (Baixa)</option>
+                            <option value="vencido" ${a.status === 'vencido' ? 'selected' : ''}>🔴 VENCIDO</option>
+                            <option value="troca" ${a.status === 'troca' ? 'selected' : ''}>🔄 TROCA</option>
+                        </select>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderProcessosParaRecibo() {
+            const cli = document.getElementById('fin-recibo-cliente').value;
+            const mesRef = document.getElementById('fin-recibo-mes').value;
+            const container = document.getElementById('fin-recibo-processos-check');
+            container.innerHTML = '';
+
+            // FILTRA APENAS OS QUE FORAM DADOS BAIXA COMO 'PAGO' NO MÊS SELECIONADO
+            const atosPagos = db.atos.filter(a => a.cliente === cli && a.status === 'pago' && a.data && a.data.substring(0, 7) === mesRef);
+
+            if(atosPagos.length === 0) {
+                container.innerHTML = '<span class="text-gray-400 italic">Nenhum processo com status "PAGO" neste mês para este cliente. Dê a baixa primeiro abaixo.</span>';
+                return;
+            }
+
+            atosPagos.forEach(a => {
+                const item = document.createElement('label');
+                item.className = "flex items-center justify-between p-1.5 border-b cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700";
+                item.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" value="${a.id}" class="recibo-chk-item cursor-pointer">
+                        <span>Proc. <strong>${a.processo}</strong></span>
+                    </div>
+                    <span class="font-bold text-green-600">R$ ${a.valor.toFixed(2)} (QUITADO)</span>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function toggleSelecionarTodosRecibo(chkMaster) {
+            document.querySelectorAll('.recibo-chk-item').forEach(chk => chk.checked = chkMaster.checked);
+        }
+
+        function gerarReciboSeletivo() {
+            const cli = document.getElementById('fin-recibo-cliente').value;
+            const dataEmissao = document.getElementById('fin-recibo-data').value || new Date().toISOString().split('T')[0];
+            const mesRef = document.getElementById('fin-recibo-mes').value || new Date().toISOString().substring(0, 7);
+
+            const chks = document.querySelectorAll('.recibo-chk-item:checked');
+            if(chks.length === 0) return alert('Selecione pelo menos um processo QUITADO [x] para gerar o recibo!');
+
+            const idsSelecionados = Array.from(chks).map(c => parseInt(c.value));
+            const atosSelecionados = db.atos.filter(a => idsSelecionados.includes(a.id));
+            const total = atosSelecionados.reduce((acc, a) => acc + a.valor, 0);
+            const numRecibo = `REC-2026-${db.reciboSeq++}`;
+
+            let relacao = atosSelecionados.map(a => `• Proc. nº ${a.processo} - R$ ${a.valor.toFixed(2)} (Pago em: ${a.dataPagamento || 'Confirmado'})`).join('\n');
+
+            const textoRecibo = `=====================================================\n          RECIBO DE QUITAÇÃO DE HONORÁRIOS\n          RECIBO Nº: ${numRecibo}\n=====================================================\n\nRecebi(emos) de ${cli}, a quantia total de R$ ${total.toFixed(2)}, referente ao pagamento quitado dos atos indicados abaixo:\n\n-----------------------------------------------------\nRELAÇÃO DE PROCESSOS QUITADOS:\n${relacao}\n-----------------------------------------------------\n\nMês de Referência: ${mesRef}\nData da Emissão: ${new Date(dataEmissao + 'T00:00:00').toLocaleDateString('pt-BR')}\nChave PIX de Crédito: ${db.perfil.pix || 'Não informada'}\n\nCLÁUSULA DE QUITAÇÃO:\nDou/damos a mais ampla e irrevogável quitação exclusivamente para o(s) processo(s) listado(s) acima.\n\n_____________________________________________________\n${db.perfil.nome || 'Correspondente Jurídico'}\nDoc/OAB: ${db.perfil.doc || ''}\nValidade Digital: O envio deste documento via WhatsApp formaliza a quitação rasa.`;
+
+            saveData();
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoRecibo)}`);
         }
 
         /* --- CONTATOS --- */
@@ -1034,82 +1175,6 @@
             });
 
             window.open(`mailto:?subject=${encodeURIComponent(`Contatos Selecionados - ${dataFmt}`)}&body=${encodeURIComponent(texto)}`);
-        }
-
-        /* --- FINANCEIRO --- */
-        function renderFinanceiro() {
-            let entradas = 0, pendentes = 0, trocas = 0, saidas = 0;
-
-            db.atos.forEach(ato => {
-                if (ato.status === 'pago') entradas += ato.valor;
-                else if (ato.status === 'troca') trocas += ato.valor;
-                else if (ato.status === 'debito') saidas += ato.valor;
-                else pendentes += ato.valor;
-            });
-
-            document.getElementById('fin-entradas').innerText = `R$ ${entradas.toFixed(2)}`;
-            document.getElementById('fin-pendentes').innerText = `R$ ${pendentes.toFixed(2)}`;
-            document.getElementById('fin-trocas').innerText = `R$ ${trocas.toFixed(2)}`;
-            document.getElementById('fin-saidas').innerText = `R$ ${saidas.toFixed(2)}`;
-            document.getElementById('fin-saldo').innerText = `R$ ${(entradas - saidas).toFixed(2)}`;
-
-            const clientesUnicos = [...new Set(db.atos.map(a => a.cliente))];
-            const selectCli = document.getElementById('fin-recibo-cliente');
-            selectCli.innerHTML = clientesUnicos.length > 0 ? clientesUnicos.map(c => `<option value="${c}">${c}</option>`).join('') : '<option value="">Sem clientes</option>';
-
-            renderProcessosParaRecibo();
-        }
-
-        function renderProcessosParaRecibo() {
-            const cli = document.getElementById('fin-recibo-cliente').value;
-            const container = document.getElementById('fin-recibo-processos-check');
-            container.innerHTML = '';
-
-            const atosCli = db.atos.filter(a => a.cliente === cli);
-            if(atosCli.length === 0) {
-                container.innerHTML = '<span class="text-gray-400 italic">Nenhum processo cadastrado.</span>';
-                return;
-            }
-
-            atosCli.forEach(a => {
-                const item = document.createElement('label');
-                item.className = "flex items-center justify-between p-1.5 border-b cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700";
-                item.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <input type="checkbox" value="${a.id}" class="recibo-chk-item" ${a.status === 'pago' ? 'checked disabled' : ''}>
-                        <span>Proc. <strong>${a.processo}</strong> (${a.status.toUpperCase()})</span>
-                    </div>
-                    <span class="font-bold text-brand-red">R$ ${a.valor.toFixed(2)}</span>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        function gerarReciboSeletivo() {
-            const cli = document.getElementById('fin-recibo-cliente').value;
-            const dataEmissao = document.getElementById('fin-recibo-data').value || new Date().toISOString().split('T')[0];
-            const mesRef = document.getElementById('fin-recibo-mes').value || new Date().toISOString().substring(0, 7);
-
-            const chks = document.querySelectorAll('.recibo-chk-item:checked:not(:disabled)');
-            if(chks.length === 0) return alert('Selecione pelo menos um processo pendente!');
-
-            const idsSelecionados = Array.from(chks).map(c => parseInt(c.value));
-            
-            db.atos.forEach(a => {
-                if(idsSelecionados.includes(a.id)) a.status = 'pago';
-            });
-
-            const atosSelecionados = db.atos.filter(a => idsSelecionados.includes(a.id));
-            const total = atosSelecionados.reduce((acc, a) => acc + a.valor, 0);
-            const numRecibo = `REC-2026-${db.reciboSeq++}`;
-
-            let relacao = atosSelecionados.map(a => `• Proc. nº ${a.processo} - R$ ${a.valor.toFixed(2)} (QUITADO)`).join('\n');
-
-            const textoRecibo = `=====================================================\n          RECIBO DE QUITAÇÃO DE HONORÁRIOS\n          RECIBO Nº: ${numRecibo}\n=====================================================\n\nRecebi(emos) de ${cli}, a quantia total de R$ ${total.toFixed(2)}, referente ao pagamento dos atos indicados abaixo:\n\n-----------------------------------------------------\nRELAÇÃO DE PROCESSOS QUITADOS:\n${relacao}\n-----------------------------------------------------\n\nMês de Referência: ${mesRef}\nData da Emissão: ${new Date(dataEmissao).toLocaleDateString('pt-BR')}\nChave PIX de Crédito: ${db.perfil.pix || 'Não informada'}\n\nCLÁUSULA DE QUITAÇÃO:\nDou/damos a mais ampla, geral e irrevogável quitação exclusivamente para o(s) processo(s) listado(s) acima.\n\n_____________________________________________________\n${db.perfil.nome || 'Correspondente Jurídico'}\nDoc/OAB: ${db.perfil.doc || ''}\nValidade Digital: O envio deste documento via WhatsApp formaliza a quitação rasa.`;
-
-            saveData();
-            renderFinanceiro();
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoRecibo)}`);
         }
 
         /* --- CALCULADORAS --- */
