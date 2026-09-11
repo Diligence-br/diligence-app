@@ -102,8 +102,14 @@
 
             <div class="mt-3 pt-3 border-t border-red-500/50 flex flex-col gap-2">
                 <div class="flex justify-between items-center text-xs bg-red-800/40 p-2 rounded-lg">
-                    <span id="daily-message" class="italic text-red-100"><i class="fa-solid fa-quote-left mr-1"></i> "Que o dia seja produtivo e abençoado!"</span>
-                    <div class="flex gap-1">
+                    <div class="flex flex-col">
+                        <span id="daily-message" class="italic text-red-100 text-[11px]"><i class="fa-solid fa-quote-left mr-1"></i> "Que o dia seja produtivo e abençoado!"</span>
+                        <!-- EXIBIÇÃO DA DATA/HORA DO ÚLTIMO BACKUP -->
+                        <span class="text-[10px] font-bold text-amber-300 mt-0.5" id="header-ultimo-backup">
+                            <i class="fa-solid fa-clock-rotate-left mr-1"></i>Último Backup: <span id="txt-ultimo-backup">Nenhum</span>
+                        </span>
+                    </div>
+                    <div class="flex gap-1 items-center">
                         <button id="btn-backup-header" onclick="abrirModalBackup()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] hover:bg-red-50 transition shadow"><i class="fa-solid fa-database mr-1"></i>Backup</button>
                         <button onclick="acionarRestauracao()" class="bg-gray-900 text-white font-bold px-2 py-1 rounded text-[11px] hover:bg-black transition shadow"><i class="fa-solid fa-upload mr-1"></i>Restaurar</button>
                     </div>
@@ -161,11 +167,11 @@
                 </form>
             </section>
 
-            <!-- ABA 2: PAUTA & CADASTRO DE DILIGÊNCIAS (COM ANEXO DE ATA) -->
+            <!-- ABA 2: PAUTA & CADASTRO DE DILIGÊNCIAS -->
             <section id="tab-atos" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
                     <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Cadastro e Pauta</h3>
-                    <p>Cadastre os atos com valor, link da sala virtual, anexo de ATA e selecione o status de pagamento.</p>
+                    <p>Cadastre os atos com valor, link da sala virtual, anexo de ATA via Câmera/Galeria e selecione o status.</p>
                 </div>
 
                 <form id="form-ato" onsubmit="saveAto(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
@@ -209,12 +215,18 @@
                         </div>
                     </div>
 
-                    <!-- CAMPO DE FOTO DA ATA / GALERIA -->
-                    <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-1">
+                    <!-- CAMPO DE FOTO DA ATA COM CÂMERA E PRÉ-VISUALIZAÇÃO -->
+                    <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-2">
                         <label class="text-xs font-bold text-gray-700 dark:text-gray-200 flex items-center gap-1">
-                            <i class="fa-solid fa-camera text-brand-red"></i> Anexar Foto da ATA / Comprovante (Câmera ou Galeria)
+                            <i class="fa-solid fa-camera text-brand-red"></i> Fotografar ATA ou Selecionar da Galeria:
                         </label>
-                        <input type="file" id="ato-ata-file" accept="image/*" capture="environment" class="w-full p-1.5 border rounded-lg text-xs bg-white dark:bg-gray-800">
+                        <input type="file" id="ato-ata-file" accept="image/*" capture="environment" onchange="previewImagemAta(event)" class="w-full p-1.5 border rounded-lg text-xs bg-white dark:bg-gray-800">
+                        
+                        <!-- ÁREA DE PRÉ-VISUALIZAÇÃO -->
+                        <div id="preview-ata-container" class="hidden pt-1 text-center space-y-1">
+                            <span class="text-[10px] font-bold text-green-600 block">✓ Pré-visualização do Documento Fotografado:</span>
+                            <img id="img-preview-ata" src="" class="max-h-36 mx-auto rounded border shadow-sm object-contain">
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2 p-2.5 bg-red-50 dark:bg-gray-700/60 rounded-xl border-2 border-brand-red">
@@ -599,6 +611,42 @@
                 <div id="relatorios-lista" class="space-y-2"></div>
             </section>
 
+            <!-- ABA 7: MANUAIS E ORIENTAÇÕES -->
+            <section id="tab-manuais" class="tab-content space-y-4 hidden">
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
+                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-book-open mr-1"></i> Central de Manuais do DILIGENCE.BR</h3>
+                    <p>Consulte as diretrizes do sistema, responsabilidades de backup e orientações operacionais.</p>
+                </div>
+
+                <!-- MANUAL GERAL -->
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3 shadow-sm text-xs">
+                    <h2 class="font-bold text-sm text-brand-red border-b pb-1 flex items-center gap-1">
+                        <i class="fa-solid fa-book"></i> 1. MANUAL GERAL DO SISTEMA (DILIGENCE.BR)
+                    </h2>
+                    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+                        <p><strong>• Propósito do App:</strong> O DILIGENCE.BR é um ecossistema Web/PWA voltado para a gestão seletiva e descentralizada de diligências, pautas, agenda de contatos e controle financeiro de correspondentes jurídicos.</p>
+                        <p><strong>• Armazenamento Local Nativo:</strong> O aplicativo armazena todas as informações diretamente no navegador/celular do usuário (`localStorage`), garantindo funcionamento contínuo mesmo sem sinal de internet.</p>
+                        <p><strong>• Módulo Financeiro & Recibos:</strong> Recibos de quitação só podem ser gerados para processos com baixa efetiva (`PAGO`). O sistema permite marcação em lote por mês/período.</p>
+                    </div>
+                </div>
+
+                <!-- MANUAL INDIVIDUAL DO CORRESPONDENTE -->
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3 shadow-sm text-xs">
+                    <h2 class="font-bold text-sm text-brand-red border-b pb-1 flex items-center gap-1">
+                        <i class="fa-solid fa-user-shield"></i> 2. MANUAL INDIVIDUAL DO CORRESPONDENTE & ROTINA DE BACKUP
+                    </h2>
+                    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+                        <p class="p-2 bg-red-50 dark:bg-gray-700 rounded-lg font-bold text-brand-red dark:text-red-400">
+                            ⚠️ ROTINA OBRIGATÓRIA DE BACKUP (2X AO DIA):<br>
+                            É de responsabilidade **exclusiva e integral do(a) correspondente** realizar a exportação do backup diário duas vezes ao dia: às 12:00 (almoço) e às 17:00 (fim do expediente).
+                        </p>
+                        <p><strong>• Autonomia e Guarda dos Dados:</strong> Como os dados ficam salvos localmente no seu dispositivo, a administração do aplicativo não guarda cópia e não possui acesso às suas informações. Salve o arquivo `.json` no celular, Google Drive ou e-mail pessoal.</p>
+                        <p><strong>• Restauração em Celular Novo:</strong> Para migrar de aparelho, acesse o botão <i>"Restaurar"</i> no topo da tela e selecione o seu arquivo `.json` salvo previamente (todas as pautas, contatos e fotos de ATAs serão restaurados).</p>
+                        <p><strong>• Alteração de Status Protegido:</strong> Para alterar qualquer valor já dado como `PAGO` de volta para `PENDENTE` ou `TROCA`, o app exigirá a confirmação do envio do motivo para o WhatsApp do ADM <code>(11) 97838-6574</code>.</p>
+                    </div>
+                </div>
+            </section>
+
         </main>
 
         <!-- RODAPÉ FIXO -->
@@ -609,7 +657,7 @@
         </footer>
 
         <!-- NAVEGAÇÃO INFERIOR -->
-        <nav class="bg-white dark:bg-gray-900 border-t dark:border-gray-800 sticky bottom-0 z-30 flex justify-around p-2 text-center text-[9px] font-bold">
+        <nav class="bg-white dark:bg-gray-900 border-t dark:border-gray-800 sticky bottom-0 z-30 flex justify-around p-2 text-center text-[8px] font-bold">
             <button onclick="switchTab('tab-perfil')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-perfil">
                 <i class="fa-solid fa-user-gear text-base"></i><span>Perfil</span>
             </button>
@@ -627,6 +675,9 @@
             </button>
             <button onclick="switchTab('tab-relatorios')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-relatorios">
                 <i class="fa-solid fa-file-invoice text-base"></i><span>Relatórios</span>
+            </button>
+            <button onclick="switchTab('tab-manuais')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-manuais">
+                <i class="fa-solid fa-book-open text-base"></i><span>Manuais</span>
             </button>
         </nav>
     </div>
@@ -712,7 +763,7 @@
             <!-- MENSAGEM JURÍDICA DE ISENÇÃO DE RESPONSABILIDADE DO ADM -->
             <div class="bg-amber-50 dark:bg-gray-700/60 p-2.5 rounded-lg border border-amber-200 dark:border-gray-600 text-[10px] text-amber-900 dark:text-amber-200 space-y-1">
                 <strong>⚠️ AVISO IMPORTANTE SOBRE SEUS DADOS:</strong>
-                <p>O DILIGENCE.BR opera com armazenamento local no dispositivo. A responsabilidade pela realização, guarda e restauração de backups diários é **exclusivamente do(a) correspondente**. A administração do app não guarda e não possui acesso aos dados dos usuários.</p>
+                <p>O DILIGENCE.BR opera com armazenamento local no dispositivo. A responsabilidade pela realização (2x ao dia: 12h e 17h), guarda e restauração de backups diários é **exclusivamente do(a) correspondente**. A administração do app não guarda e não possui acesso aos dados dos usuários.</p>
             </div>
         </div>
     </div>
@@ -729,7 +780,8 @@
             contatos: [],
             financeiro: [],
             reciboSeq: 1001,
-            notas: ''
+            notas: '',
+            ultimoBackup: null
         };
 
         let visorComum = "0";
@@ -752,19 +804,20 @@
             const horas = now.getHours();
             const minutos = now.getMinutes();
             const btnBackup = document.getElementById('btn-backup-header');
+            const dataUltimoBkp = db.ultimoBackup || 'Nenhum backup realizado hoje';
 
             if (horas === 12 && minutos === 0) {
                 if (btnBackup) btnBackup.classList.add('backup-pulse');
                 if (!alertaAlmocoExibido) {
                     alertaAlmocoExibido = true;
-                    alert("⏰ LEMBRETE DE BACKUP (12:00)\n\nOlá, Patricia! Chegou a hora do almoço.\nFaça o backup de segurança para garantir seus dados!");
+                    alert(`⏰ LEMBRETE DE BACKUP (12:00 - ALMOÇO)\n\nOlá, Patricia!\nChegou o horário do seu 1º backup do dia.\n\nÚltimo Backup Registrado: ${dataUltimoBkp}\n\nLembre-se: A realização e guarda do backup diário é de responsabilidade exclusiva do correspondente.`);
                     abrirModalBackup();
                 }
             } else if (horas === 17 && minutos === 0) {
                 if (btnBackup) btnBackup.classList.add('backup-pulse');
                 if (!alertaFimDiaExibido) {
                     alertaFimDiaExibido = true;
-                    alert("⏰ LEMBRETE DE BACKUP (17:00)\n\nOlá, Patricia! Fim do expediente.\nFaça o backup diário para fechar o dia com total segurança!");
+                    alert(`⏰ LEMBRETE DE BACKUP (17:00 - FIM DO EXPEDIENTE)\n\nOlá, Patricia!\nChegou o horário do seu 2º backup do dia.\n\nÚltimo Backup Registrado: ${dataUltimoBkp}\n\nFaça o backup para encerrar o dia com total segurança!`);
                     abrirModalBackup();
                 }
             } else {
@@ -775,6 +828,17 @@
         }
         setInterval(updateClock, 1000);
         updateClock();
+
+        function registrarHorarioBackup() {
+            db.ultimoBackup = new Date().toLocaleString('pt-BR');
+            saveData();
+            atualizarExibicaoUltimoBackup();
+        }
+
+        function atualizarExibicaoUltimoBackup() {
+            const el = document.getElementById('txt-ultimo-backup');
+            if (el) el.innerText = db.ultimoBackup || 'Nenhum';
+        }
 
         function handleLogin(e) {
             e.preventDefault();
@@ -813,14 +877,14 @@
         }
 
         function enviarBackupEmailPessoal() {
-            saveData();
+            registrarHorarioBackup();
             const emailDestino = db.perfil.email || prompt("Digite seu e-mail pessoal para receber a cópia do backup:");
             if (!emailDestino) return alert("E-mail não informado!");
 
             const nomeCorr = db.perfil.nome || 'Correspondente';
             const dataHoje = new Date().toLocaleDateString('pt-BR');
 
-            const mensagemAviso = `📦 BACKUP DE SEGURANÇA PESSOAL - DILIGENCE.BR\n\nOlá, ${nomeCorr}!\n\nSegue abaixo a cópia dos seus dados de cadastro, pauta e honorários gerada em ${dataHoje}.\n\nGuarde esta mensagem ou o arquivo no seu Google Drive/E-mail para restaurar em qualquer celular novo quando precisar.\n\n-----------------------------------\nDADOS DE BACKUP (JSON):\n\n${JSON.stringify(db)}`;
+            const mensagemAviso = `📦 BACKUP DE SEGURANÇA PESSOAL - DILIGENCE.BR\n\nOlá, ${nomeCorr}!\n\nSegue abaixo a cópia dos seus dados de cadastro, pauta e honorários gerada em ${dataHoje}.\n\nGuarde esta mensagem ou o arquivo no seu Google Drive/E-mail para restaurar em qualquer celular novo quando precisar.\n\n-----------------------------------\nDADOS DE BACKUP (JSON com imagens):\n\n${JSON.stringify(db)}`;
 
             const subject = encodeURIComponent(`Meu Backup DILIGENCE.BR - ${dataHoje}`);
             const body = encodeURIComponent(mensagemAviso);
@@ -830,7 +894,7 @@
         }
 
         async function fazerBackupCelularJSON() {
-            saveData();
+            registrarHorarioBackup();
             const nomeCorr = (db.perfil.nome || 'Correspondente').replace(/[^a-zA-Z0-9]/g, '_');
             const jsonStr = JSON.stringify(db, null, 2);
             const nomeArquivo = `Backup_DILIGENCE_${nomeCorr}_${new Date().toISOString().split('T')[0]}.json`;
@@ -874,7 +938,7 @@
                         db = dadosRestaurados;
                         saveData();
                         loadData();
-                        alert("✅ RESTAURAÇÃO CONCLUÍDA COM SUCESSO!\n\nTodos os seus dados, pauta e perfil foram recuperados neste aparelho.");
+                        alert("✅ RESTAURAÇÃO CONCLUÍDA COM SUCESSO!\n\nTodos os seus dados, fotos das ATAs, pauta e perfil foram recuperados neste aparelho.");
                     } else {
                         alert("⚠️ Arquivo inválido! Selecione um arquivo de backup (.JSON) válido gerado pelo DILIGENCE.BR.");
                     }
@@ -932,6 +996,7 @@
             document.getElementById('filter-mes-select').value = new Date().toISOString().substring(0, 7);
             document.getElementById('fin-recibo-mes').value = new Date().toISOString().substring(0, 7);
 
+            atualizarExibicaoUltimoBackup();
             renderAtos();
             renderContatos();
         }
@@ -947,6 +1012,23 @@
             };
             saveData();
             alert('Perfil salvo com sucesso!');
+        }
+
+        function previewImagemAta(evt) {
+            const file = evt.target.files[0];
+            const container = document.getElementById('preview-ata-container');
+            const imgPreview = document.getElementById('img-preview-ata');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imgPreview.src = e.target.result;
+                    container.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                container.classList.add('hidden');
+            }
         }
 
         function saveAto(e) {
@@ -986,6 +1068,7 @@
             db.atos.push(novoAto);
             saveData();
             document.getElementById('form-ato').reset();
+            document.getElementById('preview-ata-container').classList.add('hidden');
             renderAtos();
             alert('Ato cadastrado na pauta com sucesso!');
         }
