@@ -94,10 +94,16 @@
             <div class="mt-3 pt-3 border-t border-red-500/50 flex flex-col gap-2">
                 <div class="flex justify-between items-center text-xs bg-red-800/40 p-2 rounded-lg">
                     <span id="daily-message" class="italic text-red-100"><i class="fa-solid fa-quote-left mr-1"></i> "Que o dia seja produtivo e abençoado!"</span>
-                    <button id="btn-backup-header" onclick="fazerBackupManual()" class="bg-white text-brand-red font-bold px-2.5 py-1 rounded text-[11px] hover:bg-red-50 transition shadow"><i class="fa-solid fa-database mr-1"></i>Backup / Salvar</button>
+                    <div class="flex gap-1">
+                        <button id="btn-backup-header" onclick="abrirModalBackup()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] hover:bg-red-50 transition shadow"><i class="fa-solid fa-database mr-1"></i>Backup</button>
+                        <button onclick="acionarRestauracao()" class="bg-gray-900 text-white font-bold px-2 py-1 rounded text-[11px] hover:bg-black transition shadow"><i class="fa-solid fa-upload mr-1"></i>Restaurar</button>
+                    </div>
                 </div>
             </div>
         </header>
+
+        <!-- INPUT OCULTO PARA CARREGAR ARQUIVO DE RESTAURAÇÃO -->
+        <input type="file" id="input-restaurar-file" accept=".json" class="hidden" onchange="processarRestauracaoFile(event)">
 
         <!-- CONTEÚDO PRINCIPAL (ABAS) -->
         <main class="flex-1 p-4 overflow-y-auto">
@@ -125,9 +131,15 @@
                             <input type="text" id="perfil-cidade" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
                         </div>
                     </div>
-                    <div>
-                        <label class="text-xs font-semibold">Chave PIX Oficial</label>
-                        <input type="text" id="perfil-pix" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold">Chave PIX Oficial</label>
+                            <input type="text" id="perfil-pix" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">E-mail Pessoal (p/ Backup)</label>
+                            <input type="email" id="perfil-email" placeholder="seuemail@email.com" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
                     </div>
                     
                     <button type="submit" class="w-full bg-brand-red text-white py-2 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Perfil</button>
@@ -475,7 +487,6 @@
 
                     <div id="calc-resultado" class="hidden p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-xs space-y-2 font-mono border"></div>
 
-                    <!-- BOTÕES DE ENVIAR CÁLCULO E GERAR MINUTA DE ACORDO -->
                     <div class="flex flex-col gap-2 pt-2 border-t text-xs font-bold">
                         <button type="button" onclick="gerarMinutaAcordo()" class="w-full bg-purple-700 text-white py-2.5 rounded-lg shadow"><i class="fa-solid fa-file-contract mr-1"></i> GERAR PROPOSTA / MINUTA DE ACORDO</button>
                         <div class="flex gap-2">
@@ -601,13 +612,46 @@
         </nav>
     </div>
 
-    <!-- JAVASCRIPT COMPLETO CONSOLIDADO -->
+    <!-- MODAL DE BACKUP E EXPORTAÇÃO -->
+    <div id="modal-backup" class="fixed inset-0 z-50 bg-black/60 modal-blur hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border dark:border-gray-700">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-database mr-1"></i> Central de Backup & Autonomia</h3>
+                <button onclick="fecharModalBackup()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">&times;</button>
+            </div>
+            
+            <p class="text-xs text-gray-600 dark:text-gray-300">Escolha a ação desejada abaixo:</p>
+
+            <div class="space-y-2">
+                <button onclick="fazerBackupCelularJSON()" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
+                    <i class="fa-solid fa-file-code"></i> 1. Salvar Backup no Celular/Drive (.JSON)
+                </button>
+                <button onclick="enviarBackupEmailPessoal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
+                    <i class="fa-solid fa-envelope"></i> 2. Enviar Cópia p/ Meu Próprio E-mail
+                </button>
+                <button onclick="exportarPlanilhaCSV()" class="w-full bg-gray-800 hover:bg-gray-900 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
+                    <i class="fa-solid fa-file-excel text-green-400"></i> 3. Exportar Planilha (.CSV)
+                </button>
+                <button onclick="acionarRestauracao()" class="w-full bg-green-700 hover:bg-green-800 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow border border-green-500">
+                    <i class="fa-solid fa-upload"></i> 4. RESTAURAR BACKUP DE CELULAR NOVO
+                </button>
+            </div>
+
+            <!-- MENSAGEM JURÍDICA DE ISENÇÃO DE RESPONSABILIDADE DO ADM -->
+            <div class="bg-amber-50 dark:bg-gray-700/60 p-2.5 rounded-lg border border-amber-200 dark:border-gray-600 text-[10px] text-amber-900 dark:text-amber-200 space-y-1">
+                <strong>⚠️ AVISO IMPORTANTE SOBRE SEUS DADOS:</strong>
+                <p>O DILIGENCE.BR opera com armazenamento local no dispositivo. A responsabilidade pela realização, guarda e restauração de backups diários é **exclusivamente do(a) correspondente**. A administração do app não guarda e não possui acesso aos dados dos usuários.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT CONSOLIDADO -->
     <script>
         const AUTH_USER = "diligence.br*";
         const AUTH_PASS = "320427";
 
         let db = {
-            perfil: { nome: '', doc: '', cidade: '', pix: '' },
+            perfil: { nome: '', doc: '', cidade: '', pix: '', email: '' },
             atos: [],
             contatos: [],
             financeiro: [],
@@ -629,7 +673,6 @@
             document.getElementById('clock-time').innerText = now.toLocaleTimeString('pt-BR', options);
             document.getElementById('clock-date').innerText = now.toLocaleDateString('pt-BR', optionsDate) + " (UTC-3)";
 
-            // POP-UPS E ANIMAÇÕES DE BACKUP AUTOMÁTICO ÀS 12:00 E 17:00
             const horas = now.getHours();
             const minutos = now.getMinutes();
             const btnBackup = document.getElementById('btn-backup-header');
@@ -639,14 +682,14 @@
                 if (!alertaAlmocoExibido) {
                     alertaAlmocoExibido = true;
                     alert("⏰ LEMBRETE DE BACKUP (12:00)\n\nOlá, Patricia! Chegou a hora do almoço.\nFaça o backup de segurança para garantir seus dados!");
-                    fazerBackupManual();
+                    abrirModalBackup();
                 }
             } else if (horas === 17 && minutos === 0) {
                 if (btnBackup) btnBackup.classList.add('backup-pulse');
                 if (!alertaFimDiaExibido) {
                     alertaFimDiaExibido = true;
                     alert("⏰ LEMBRETE DE BACKUP (17:00)\n\nOlá, Patricia! Fim do expediente.\nFaça o backup diário para fechar o dia com total segurança!");
-                    fazerBackupManual();
+                    abrirModalBackup();
                 }
             } else {
                 if (btnBackup) btnBackup.classList.remove('backup-pulse');
@@ -684,15 +727,119 @@
 
         function saveData() { localStorage.setItem('diligence_db', JSON.stringify(db)); }
 
-        function fazerBackupManual() {
+        function abrirModalBackup() {
             saveData();
+            document.getElementById('modal-backup').classList.remove('hidden');
+        }
+
+        function fecharModalBackup() {
+            document.getElementById('modal-backup').classList.add('hidden');
+        }
+
+        // ENVIO DO BACKUP PARA O E-MAIL PESSOAL DO PRÓPRIO CORRESPONDENTE
+        function enviarBackupEmailPessoal() {
+            saveData();
+            const emailDestino = db.perfil.email || prompt("Digite seu e-mail pessoal para receber a cópia do backup:");
+            if (!emailDestino) return alert("E-mail não informado!");
+
+            const nomeCorr = db.perfil.nome || 'Correspondente';
+            const dataHoje = new Date().toLocaleDateString('pt-BR');
+
+            const mensagemAviso = `📦 BACKUP DE SEGURANÇA PESSOAL - DILIGENCE.BR\n\nOlá, ${nomeCorr}!\n\nSegue abaixo a cópia dos seus dados de cadastro, pauta e honorários gerada em ${dataHoje}.\n\nGuarde esta mensagem ou o arquivo no seu Google Drive/E-mail para restaurar em qualquer celular novo quando precisar.\n\n-----------------------------------\nDADOS DE BACKUP (JSON):\n\n${JSON.stringify(db)}`;
+
+            const subject = encodeURIComponent(`Meu Backup DILIGENCE.BR - ${dataHoje}`);
+            const body = encodeURIComponent(mensagemAviso);
+
+            window.open(`mailto:${emailDestino}?subject=${subject}&body=${body}`);
+            fecharModalBackup();
+        }
+
+        async function fazerBackupCelularJSON() {
+            saveData();
+            const nomeCorr = (db.perfil.nome || 'Correspondente').replace(/[^a-zA-Z0-9]/g, '_');
             const jsonStr = JSON.stringify(db, null, 2);
+            const nomeArquivo = `Backup_DILIGENCE_${nomeCorr}_${new Date().toISOString().split('T')[0]}.json`;
+            const file = new File([jsonStr], nomeArquivo, { type: 'application/json' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        title: 'Backup DILIGENCE.BR',
+                        text: `Segue o backup de segurança de ${db.perfil.nome || 'Correspondente'}.`,
+                        files: [file]
+                    });
+                    fecharModalBackup();
+                    return;
+                } catch (e) {}
+            }
+
             const blob = new Blob([jsonStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `Backup_DiligenceBR_${new Date().toISOString().split('T')[0]}.json`;
+            a.download = nomeArquivo;
             a.click();
+            fecharModalBackup();
+        }
+
+        // RESTAURAÇÃO DE BACKUP EM CELULAR NOVO OU NAVEGADOR
+        function acionarRestauracao() {
+            fecharModalBackup();
+            document.getElementById('input-restaurar-file').click();
+        }
+
+        function processarRestauracaoFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const dadosRestaurados = JSON.parse(e.target.result);
+                    if (dadosRestaurados && (dadosRestaurados.atos || dadosRestaurados.perfil)) {
+                        db = dadosRestaurados;
+                        saveData();
+                        loadData();
+                        alert("✅ RESTAURAÇÃO CONCLUÍDA COM SUCESSO!\n\nTodos os seus dados, pauta e perfil foram recuperados neste aparelho.");
+                    } else {
+                        alert("⚠️ Arquivo inválido! Selecione um arquivo de backup (.JSON) válido gerado pelo DILIGENCE.BR.");
+                    }
+                } catch (err) {
+                    alert("❌ Erro ao ler o arquivo de backup. Verifique se escolheu o arquivo .json correto.");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        async function exportarPlanilhaCSV() {
+            if (db.atos.length === 0) return alert('Nenhum ato cadastrado na pauta!');
+            
+            let csv = "Processo,Cliente,Data,Valor,Status\n";
+            db.atos.forEach(a => { csv += `"${a.processo}","${a.cliente}","${a.data}",${a.valor},"${a.status}"\n`; });
+            
+            const nomeCorr = (db.perfil.nome || 'Correspondente').replace(/[^a-zA-Z0-9]/g, '_');
+            const nomeArquivo = `Pauta_DILIGENCE_${nomeCorr}_${new Date().toISOString().split('T')[0]}.csv`;
+            const file = new File([csv], nomeArquivo, { type: 'text/csv' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        title: 'Planilha DILIGENCE.BR',
+                        text: `Segue a planilha de atos de ${db.perfil.nome || 'Correspondente'}.`,
+                        files: [file]
+                    });
+                    fecharModalBackup();
+                    return;
+                } catch (e) {}
+            }
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', nomeArquivo);
+            a.click();
+            fecharModalBackup();
         }
 
         function loadData() {
@@ -705,6 +852,7 @@
             document.getElementById('perfil-doc').value = db.perfil.doc || '';
             document.getElementById('perfil-cidade').value = db.perfil.cidade || '';
             document.getElementById('perfil-pix').value = db.perfil.pix || '';
+            document.getElementById('perfil-email').value = db.perfil.email || '';
             document.getElementById('bloco-notas').value = db.notas || '';
             document.getElementById('contato-data-envio').value = new Date().toISOString().split('T')[0];
             document.getElementById('filter-mes-select').value = new Date().toISOString().substring(0, 7);
@@ -719,7 +867,8 @@
                 nome: document.getElementById('perfil-nome').value,
                 doc: document.getElementById('perfil-doc').value,
                 cidade: document.getElementById('perfil-cidade').value,
-                pix: document.getElementById('perfil-pix').value
+                pix: document.getElementById('perfil-pix').value,
+                email: document.getElementById('perfil-email').value
             };
             saveData();
             alert('Perfil salvo com sucesso!');
@@ -757,8 +906,6 @@
 
             db.atos.forEach((ato) => {
                 const card = document.createElement('div');
-                
-                // ALERTA VISUAL DE VENCIMENTO / COBRANÇA
                 const vencidoOuHoje = (ato.status !== 'pago' && ato.vencimento && ato.vencimento <= hojeStr);
                 const borderClass = vencidoOuHoje ? 'border-2 border-red-500 bg-red-50/50 dark:bg-red-900/20' : 'border dark:border-gray-700 bg-white dark:bg-gray-800';
 
@@ -887,20 +1034,6 @@
             });
 
             window.open(`mailto:?subject=${encodeURIComponent(`Contatos Selecionados - ${dataFmt}`)}&body=${encodeURIComponent(texto)}`);
-        }
-
-        function exportarContatosCSV() {
-            if(db.contatos.length === 0) return alert('Nenhum contato cadastrado para exportar!');
-            let csv = "Nome,OAB,Celular,CPF,RG,DataNascimento,Email,Observacoes\n";
-            db.contatos.forEach(c => {
-                csv += `"${c.nome}","${c.oab || ''}","${c.celular}","${c.cpf || ''}","${c.rg || ''}","${c.nascimento || ''}","${c.email || ''}","${c.obs || ''}"\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('href', url);
-            a.setAttribute('download', 'Agenda_Contatos_DiligenceBR.csv');
-            a.click();
         }
 
         /* --- FINANCEIRO --- */
@@ -1050,7 +1183,6 @@
             resDiv.classList.remove('hidden');
         }
 
-        // GERADOR DE MINUTA DE ACORDO PARA WHATSAPP
         function gerarMinutaAcordo() {
             if(!totalRescisaoLiquidoGlobal || totalRescisaoLiquidoGlobal === 0) {
                 return alert('Realize o cálculo da rescisão primeiro!');
@@ -1175,19 +1307,7 @@
         function compartilharRelatorioWhats() { compartilharPautaWhats(); }
         function compartilharRelatorioEmail() { compartilharPautaEmail(); }
 
-        function exportarPlanilhaCSV() {
-            let csv = "Processo,Cliente,Data,Valor,Status\n";
-            db.atos.forEach(a => { csv += `"${a.processo}","${a.cliente}","${a.data}",${a.valor},"${a.status}"\n`; });
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('href', url);
-            a.setAttribute('download', 'Pauta_DiligenceBR.csv');
-            a.click();
-        }
-
         function saveNotas() { db.notas = document.getElementById('bloco-notas').value; saveData(); }
-        function openBackupModal() { fazerBackupManual(); }
     </script>
 </body>
 </html>
