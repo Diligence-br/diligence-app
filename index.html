@@ -91,7 +91,7 @@
         </div>
     </div>
 
-    <!-- MODAL POP-UP DE RECUPERAÇÃO DE LOGIN E SENHA -->
+    <!-- MODAL POP-UP DE RECUPERAÇÃO -->
     <div id="modal-recuperacao-login" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-2 border-brand-red">
             <div class="flex justify-between items-center border-b pb-2">
@@ -100,11 +100,9 @@
                 </h3>
                 <button type="button" onclick="fecharModalRecuperacao()" class="text-gray-400 font-bold text-lg">&times;</button>
             </div>
-            
             <p class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
                 Entre em contato direto com a Administração via WhatsApp <strong>(11) 97838-6574</strong> para validar seus dados e recuperar seu acesso.
             </p>
-
             <div class="space-y-2 text-left">
                 <div>
                     <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Seu Nome Completo:</label>
@@ -115,7 +113,6 @@
                     <input type="text" id="rec-celular" placeholder="(11) 99999-9999" class="w-full p-2 rounded-lg bg-gray-100 dark:bg-gray-700 border text-xs font-semibold">
                 </div>
             </div>
-
             <div class="pt-2 border-t space-y-2">
                 <button type="button" onclick="enviarRecuperacaoWhats()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 shadow">
                     <i class="fa-brands fa-whatsapp text-sm"></i> ENVIAR SOLICITAÇÃO NO WHATSAPP
@@ -125,7 +122,7 @@
         </div>
     </div>
 
-    <!-- MODAL LEMBRETE DE BACKUP COM HORÁRIOS -->
+    <!-- MODAL LEMBRETE 12:00 E 18:00 -->
     <div id="modal-lembrete-sistema" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-4 border-amber-500 text-center">
             <div class="flex justify-center text-amber-500 text-3xl">
@@ -133,7 +130,7 @@
             </div>
             <div>
                 <h3 class="font-black text-base text-brand-red uppercase">LEMBRETE DE BACKUP DIÁRIO</h3>
-                <p id="lembrete-msg-detalhe" class="text-xs text-gray-600 dark:text-gray-300 mt-2 font-semibold">Alerta de horário configurado! Você já realizou o backup dos seus dados hoje para garantir a segurança?</p>
+                <p id="lembrete-msg-detalhe" class="text-xs text-gray-600 dark:text-gray-300 mt-2 font-semibold">Alerta de horário configurado (12h/18h)! Você já realizou o backup dos seus dados hoje para garantir a segurança?</p>
             </div>
             <div class="space-y-2 pt-2 border-t">
                 <button type="button" onclick="lembreteOpcaoSim()" class="w-full bg-green-600 text-white py-2.5 rounded-xl font-extrabold text-xs shadow">JÁ FIZ O BACKUP AGORA</button>
@@ -162,63 +159,85 @@
                         <div id="clock-time" class="font-bold leading-none">00:00:00</div>
                         <div id="clock-date" class="text-[10px] text-red-200">Brasília</div>
                     </div>
-                    <!-- BOTÃO MODO ESCURO / CLARO (DARK MODE) -->
+                    <!-- BOTÃO MODO ESCURO / CLARO -->
                     <button type="button" onclick="toggleDarkMode()" class="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg text-xs font-bold shadow flex items-center gap-1" title="Alternar Modo Escuro / Claro">
                         <i id="icone-dark-mode" class="fa-solid fa-moon"></i>
-                    </button>
-                    <!-- BOTÃO DE ÁUDIO GLOBAL -->
-                    <button type="button" onclick="ativarReconhecimentoVozGlobal()" title="Comando por Voz" class="bg-amber-400 hover:bg-amber-500 text-gray-900 p-2 rounded-lg text-xs font-black shadow flex items-center gap-1">
-                        <i class="fa-solid fa-microphone"></i>
                     </button>
                     <button type="button" onclick="fazerLogout()" class="bg-black text-white px-2 py-1 rounded text-xs font-bold hover:bg-gray-900 shadow">Sair</button>
                 </div>
             </div>
 
-            <!-- BARRA DE BACKUP E INDICADOR DE ÚLTIMO BACKUP -->
+            <!-- BARRA DE FERRAMENTAS SUPERIOR COM MENUS SUSPENSOS (SEM MENU AMARELO) -->
             <div class="mt-3 pt-2 border-t border-red-500/50 flex flex-wrap justify-between items-center text-xs gap-1.5">
                 <div class="flex flex-wrap items-center gap-1.5">
-                    <button type="button" onclick="fazerBackupJSON()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-solid fa-download"></i> Backup JSON</button>
-                    <button type="button" onclick="fazerBackupCSV()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-solid fa-file-csv"></i> Backup CSV</button>
-                    <button type="button" onclick="salvarGoogleDriveSimulado()" class="bg-blue-600 text-white font-bold px-2 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-brands fa-google-drive"></i> Salvar no Drive</button>
-                    <button type="button" onclick="document.getElementById('input-file-restaurar').click()" class="bg-gray-900 text-white font-bold px-2 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-solid fa-upload"></i> Restaurar</button>
-                    <input type="file" id="input-file-restaurar" accept=".json,.csv" class="hidden" onchange="processarRestauracaoArquivo(event)">
+                    
+                    <!-- MENU SUSPENSO: BACKUP / DADOS -->
+                    <div class="relative">
+                        <button type="button" onclick="toggleMenuDropdown('dropdown-backup')" class="bg-white text-brand-red font-bold px-3 py-1.5 rounded-lg text-xs shadow flex items-center gap-1.5">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Backup & Dados <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                        </button>
+                        <div id="dropdown-backup" class="hidden absolute left-0 mt-1 w-52 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 z-50 p-1.5 space-y-1">
+                            <button type="button" onclick="fazerBackupJSON(); fecharTodosDropdowns();" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-download text-brand-red"></i> Backup JSON</button>
+                            <button type="button" onclick="fazerBackupCSV(); fecharTodosDropdowns();" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-file-csv text-brand-red"></i> Backup CSV</button>
+                            <button type="button" onclick="salvarGoogleDriveSimulado(); fecharTodosDropdowns();" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-brands fa-google-drive text-blue-600"></i> Salvar no Drive</button>
+                            <button type="button" onclick="document.getElementById('input-file-restaurar').click(); fecharTodosDropdowns();" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-upload text-gray-700"></i> Restaurar Dados</button>
+                            <input type="file" id="input-file-restaurar" accept=".json,.csv" class="hidden" onchange="processarRestauracaoArquivo(event)">
+                        </div>
+                    </div>
+
+                    <!-- MENU SUSPENSO: NAVEGAÇÃO ENTRE ABAS -->
+                    <div class="relative">
+                        <button type="button" onclick="toggleMenuDropdown('dropdown-abas')" class="bg-amber-400 hover:bg-amber-500 text-gray-900 font-extrabold px-3 py-1.5 rounded-lg text-xs shadow flex items-center gap-1.5">
+                            <i class="fa-solid fa-bars-staggered"></i> Menu de Abas <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                        </button>
+                        <div id="dropdown-abas" class="hidden absolute left-0 mt-1 w-64 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 z-50 p-1.5 space-y-1">
+                            <button type="button" onclick="selecionarAbaMenu('tab-perfil')" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-user-gear text-brand-red w-5"></i> Perfil Profissional</button>
+                            <button type="button" onclick="selecionarAbaMenu('tab-atos')" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-calendar-check text-brand-red w-5"></i> Pauta de Audiências</button>
+                            <button type="button" onclick="selecionarAbaMenu('tab-contatos')" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-address-book text-brand-red w-5"></i> Agenda de Contatos</button>
+                            <button type="button" onclick="selecionarAbaMenu('tab-financeiro')" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-wallet text-brand-red w-5"></i> Financeiro & Baixas</button>
+                            <button type="button" onclick="selecionarAbaMenu('tab-caixa')" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-cash-register text-brand-red w-5"></i> Livro Caixa</button>
+                            <button type="button" onclick="selecionarAbaMenu('tab-recibo')" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-receipt text-brand-red w-5"></i> Emissão de Recibo</button>
+                            <button type="button" onclick="selecionarAbaMenu('tab-trabalhista')" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-calculator text-brand-red w-5"></i> Calculadora & Prazos</button>
+                            <button type="button" onclick="selecionarAbaMenu('tab-rescisoria')" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-brand-red w-5"></i> Cálculos Judiciais & Minuta</button>
+                            <button type="button" onclick="selecionarAbaMenu('tab-relatorios')" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-file-invoice text-brand-red w-5"></i> Relatórios Consolidados</button>
+                            <button type="button" onclick="selecionarAbaMenu('tab-manuais')" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-book-open text-brand-red w-5"></i> Central de Manuais</button>
+                        </div>
+                    </div>
+
+                    <!-- BOTÃO ZERAR APLICATIVO TODO -->
+                    <button type="button" onclick="zerarAplicativoTodo()" class="bg-gray-900 hover:bg-black text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow flex items-center gap-1" title="Zerar e limpar todos os dados do aplicativo">
+                        <i class="fa-solid fa-trash-can text-red-400"></i> Zerar App
+                    </button>
                 </div>
 
-                <!-- INDICADOR NA TELA DO ÚLTIMO BACKUP FEITO -->
+                <!-- INDICADOR DO ÚLTIMO BACKUP -->
                 <div id="badge-ultimo-backup" class="bg-black/30 px-2.5 py-1 rounded-md text-[10px] text-amber-300 font-bold border border-amber-400/40">
                     <i class="fa-solid fa-clock-rotate-left mr-1"></i> Último Backup: Nenhuma cópia hoje
-                </div>
-                
-                <!-- ABA SUPERIOR AMARELA COM NOMES AO LADO DO ÍCONE -->
-                <div class="relative">
-                    <button type="button" onclick="toggleMenuSuspenso()" class="bg-amber-400 hover:bg-amber-500 text-gray-900 font-extrabold px-3 py-1.5 rounded-lg text-xs shadow flex items-center gap-2">
-                        <i class="fa-solid fa-bars-staggered"></i> Menu & Consulta Rápida <i class="fa-solid fa-chevron-down text-[10px]"></i>
-                    </button>
-                    <div id="menu-suspenso-abas" class="hidden absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border-2 border-brand-red z-50 p-1.5 space-y-1 text-xs">
-                        <button type="button" onclick="selecionarAbaMenu('tab-perfil')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-user-gear text-brand-red w-5"></i> Perfil Profissional</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-atos')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-calendar-check text-brand-red w-5"></i> Pauta de Audiências</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-contatos')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-address-book text-brand-red w-5"></i> Agenda de Contatos</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-financeiro')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-wallet text-brand-red w-5"></i> Financeiro & Baixas</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-caixa')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-cash-register text-brand-red w-5"></i> Livro Caixa</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-recibo')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-receipt text-brand-red w-5"></i> Emissão de Recibo</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-trabalhista')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-calculator text-brand-red w-5"></i> Calculadora & Prazos</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-rescisoria')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-brand-red w-5"></i> Cálculos Judiciais & Minuta</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-relatorios')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-file-invoice text-brand-red w-5"></i> Relatórios Consolidados</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-manuais')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-book-open text-brand-red w-5"></i> Central de Manuais</button>
-                    </div>
                 </div>
             </div>
         </header>
 
+        <!-- PAINEL DE MENSAGENS DE JESUS, FÉ E OTIMISMO ALEATÓRIAS -->
+        <div class="bg-gradient-to-r from-amber-500 via-brand-red to-amber-600 text-white p-3 px-4 shadow-md flex justify-between items-center text-xs">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-dove text-amber-200 text-sm animate-pulse"></i>
+                <span id="mensagem-fe-aleatoria" class="font-bold tracking-wide">"Confie no Senhor de todo o seu coração e não se apoie em sua própria inteligência." (Provérbios 3:5)</span>
+            </div>
+            <button type="button" onclick="sortearMensagemFe()" class="bg-white/20 hover:bg-white/30 px-2 py-1 rounded font-bold text-[10px] shrink-0 ml-2" title="Nova Mensagem">
+                <i class="fa-solid fa-rotate"></i> Outra
+            </button>
+        </div>
+
         <main class="flex-1 p-4 overflow-y-auto space-y-4">
 
-            <!-- BARRA DE FERRAMENTAS UNIVERSAL (PESQUISA, SELEÇÃO MÚLTIPLA E COMPARTILHAMENTO EM LOTE EM TODAS AS ABAS) -->
+            <!-- BARRA DE FERRAMENTAS UNIVERSAL EM TODAS AS ABAS -->
             <div class="bg-amber-50 dark:bg-gray-700/60 p-3 rounded-xl border border-amber-300 dark:border-gray-600 flex flex-wrap items-center justify-between gap-2 text-xs shadow-sm">
                 <div class="flex items-center gap-2 flex-1 min-w-[200px]">
                     <i class="fa-solid fa-magnifying-glass text-amber-600 dark:text-amber-400"></i>
                     <input type="text" id="input-pesquisa-global" oninput="executarPesquisaGlobal(this.value)" placeholder="Localizar / Pesquisar em qualquer aba..." class="w-full p-1.5 rounded-lg border dark:bg-gray-800 text-xs font-semibold">
                 </div>
                 <div class="flex items-center gap-1.5 flex-wrap">
+                    <button type="button" onclick="limparAbaAtual()" class="bg-red-100 hover:bg-red-200 text-red-700 dark:bg-red-900/50 dark:text-red-300 font-bold px-2 py-1 rounded" title="Limpar campos desta aba"><i class="fa-solid fa-eraser mr-1"></i> Limpar Aba</button>
                     <button type="button" onclick="marcarSelecionarTodosGlobal(true)" class="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 text-gray-800 dark:text-gray-100 font-bold px-2 py-1 rounded">Marcar Todos</button>
                     <button type="button" onclick="marcarSelecionarTodosGlobal(false)" class="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 text-gray-800 dark:text-gray-100 font-bold px-2 py-1 rounded">Desmarcar</button>
                     <button type="button" onclick="compartilharSelecionadosWhats()" class="bg-green-600 hover:bg-green-700 text-white font-bold px-2.5 py-1 rounded flex items-center gap-1 shadow"><i class="fa-brands fa-whatsapp"></i> Enviar Whats</button>
@@ -227,22 +246,31 @@
                 </div>
             </div>
 
-            <!-- ABA 1: PERFIL (CRUD COMPLETO) -->
+            <!-- ABA 1: PERFIL -->
             <section id="tab-perfil" class="tab-content space-y-4">
                 <form id="form-perfil" onsubmit="savePerfil(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
                     <input type="hidden" id="perfil-id">
                     <h2 id="perfil-titulo-form" class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-2">Cadastrar / Inserir Perfil Profissional</h2>
                     <div>
-                        <label class="text-xs font-semibold">Nome Completo</label>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-xs font-semibold">Nome Completo</label>
+                            <button type="button" onclick="ativarVozEmCampo('perfil-nome')" class="text-amber-600 hover:text-amber-700 text-xs font-bold flex items-center gap-1" title="Falar por Voz"><i class="fa-solid fa-microphone"></i> Falar</button>
+                        </div>
                         <input type="text" id="perfil-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs font-semibold">OAB / CPF / RG</label>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-xs font-semibold">OAB / CPF / RG</label>
+                                <button type="button" onclick="ativarVozEmCampo('perfil-doc')" class="text-amber-600 hover:text-amber-700 text-xs font-bold" title="Falar por Voz"><i class="fa-solid fa-microphone"></i></button>
+                            </div>
                             <input type="text" id="perfil-doc" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold">Cidade Base</label>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-xs font-semibold">Cidade Base</label>
+                                <button type="button" onclick="ativarVozEmCampo('perfil-cidade')" class="text-amber-600 hover:text-amber-700 text-xs font-bold" title="Falar por Voz"><i class="fa-solid fa-microphone"></i></button>
+                            </div>
                             <input type="text" id="perfil-cidade" oninput="buscarCidadesIBGE(this.value)" list="lista-cidades-br" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                     </div>
@@ -268,12 +296,12 @@
                 <div id="lista-perfis" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 2: PAUTA DE AUDIÊNCIAS (INSERIR, EDITAR, EXCLUIR E CHECKLIST FEEDBACK) -->
+            <!-- ABA 2: PAUTA DE AUDIÊNCIAS -->
             <section id="tab-atos" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 text-xs flex justify-between items-center">
                     <div>
                         <h3 class="font-bold text-brand-red"><i class="fa-solid fa-calendar-check mr-1"></i> Pauta de Audiências e Diligências</h3>
-                        <p>Controle com checklist interativo (estilo feedback), foto da ata e geolocalização GPS.</p>
+                        <p>Controle com checklist interativo, foto da ata e geolocalização GPS.</p>
                     </div>
                     <button type="button" onclick="capturarLocalizacaoGPS()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs shadow">
                         <i class="fa-solid fa-location-dot mr-1"></i> Check-in GPS
@@ -286,11 +314,17 @@
                     
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs font-semibold">Nº do Processo*</label>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-xs font-semibold">Nº do Processo*</label>
+                                <button type="button" onclick="ativarVozEmCampo('ato-processo')" class="text-amber-600 text-xs font-bold"><i class="fa-solid fa-microphone"></i></button>
+                            </div>
                             <input type="text" id="ato-processo" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold">Cliente / Contratante*</label>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-xs font-semibold">Cliente / Contratante*</label>
+                                <button type="button" onclick="ativarVozEmCampo('ato-cliente')" class="text-amber-600 text-xs font-bold"><i class="fa-solid fa-microphone"></i></button>
+                            </div>
                             <input type="text" id="ato-cliente" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                     </div>
@@ -335,12 +369,14 @@
                             <input type="number" step="0.01" id="ato-valor" required class="w-full p-2 border rounded-lg dark:bg-gray-700 font-bold text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold">Tipo de Diligência / Instrução:</label>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-xs font-semibold">Tipo de Diligência / Instrução:</label>
+                                <button type="button" onclick="ativarVozEmCampo('ato-tipo-instrucao')" class="text-amber-600 text-xs font-bold"><i class="fa-solid fa-microphone"></i></button>
+                            </div>
                             <input type="text" id="ato-tipo-instrucao" placeholder="Ex: Oitiva de Testemunhas" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                     </div>
 
-                    <!-- CHECKLIST DETALHADO ESTILO FEEDBACK EDITÁVEL -->
                     <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl border space-y-2">
                         <span class="font-bold text-xs text-brand-red block"><i class="fa-solid fa-list-check"></i> Checklist Detalhado e Feedback do Processo:</span>
                         <div class="grid grid-cols-2 gap-2 text-[11px] font-bold">
@@ -350,12 +386,14 @@
                             <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="chk-ata-assinada" class="h-4 w-4 text-brand-red rounded"> Ata e Termos Conferidos</label>
                         </div>
                         <div class="pt-2">
-                            <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Feedback / Observações Específicas do Ato:</label>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Feedback / Observações Específicas do Ato:</label>
+                                <button type="button" onclick="ativarVozEmCampo('ato-feedback')" class="text-amber-600 text-xs font-bold"><i class="fa-solid fa-microphone"></i> Falar</button>
+                            </div>
                             <textarea id="ato-feedback" rows="2" placeholder="Digite notas ou feedback para este processo..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs"></textarea>
                         </div>
                     </div>
 
-                    <!-- FOTO / ANEXO DA ATA -->
                     <div class="p-3 bg-red-50/50 dark:bg-gray-700/50 rounded-xl border border-red-200 space-y-2">
                         <label class="font-bold text-xs text-brand-red block"><i class="fa-solid fa-camera"></i> Foto / Imagem da Ata da Audiência:</label>
                         <div class="flex items-center gap-3">
@@ -377,13 +415,16 @@
                 <div id="lista-atos" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 3: AGENDA DE CONTATOS (CRUD COMPLETO) -->
+            <!-- ABA 3: AGENDA DE CONTATOS -->
             <section id="tab-contatos" class="tab-content space-y-4 hidden">
                 <form id="form-contato" onsubmit="saveContato(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border shadow-sm text-xs">
                     <input type="hidden" id="ct-id">
                     <h2 id="ct-titulo-form" class="font-bold text-sm text-brand-red border-b pb-1">Inserir / Cadastrar Contato</h2>
                     <div>
-                        <label class="font-semibold">Nome / Escritório*</label>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="font-semibold">Nome / Escritório*</label>
+                            <button type="button" onclick="ativarVozEmCampo('ct-nome')" class="text-amber-600 font-bold"><i class="fa-solid fa-microphone"></i> Falar</button>
+                        </div>
                         <input type="text" id="ct-nome" required class="w-full p-2 border rounded dark:bg-gray-700">
                     </div>
                     <div>
@@ -417,7 +458,7 @@
                 <div id="fin-gerenciador-baixas" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 5: LIVRO CAIXA (CRUD COMPLETO) -->
+            <!-- ABA 5: LIVRO CAIXA -->
             <section id="tab-caixa" class="tab-content space-y-4 hidden">
                 <div class="grid grid-cols-3 gap-2 text-center text-white text-xs">
                     <div class="bg-green-600 p-2.5 rounded-xl shadow">
@@ -450,7 +491,10 @@
                         </div>
                     </div>
                     <div>
-                        <label class="font-semibold">Descrição</label>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="font-semibold">Descrição</label>
+                            <button type="button" onclick="ativarVozEmCampo('caixa-descricao')" class="text-amber-600 font-bold"><i class="fa-solid fa-microphone"></i> Falar</button>
+                        </div>
                         <input type="text" id="caixa-descricao" required placeholder="Ex: Cópias no Fórum" class="w-full p-2 border rounded dark:bg-gray-700">
                     </div>
                     <div class="flex gap-2">
@@ -491,11 +535,13 @@
                     </div>
 
                     <div>
-                        <label class="font-semibold">Observações / Descrição dos Serviços:</label>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="font-semibold">Observações / Descrição dos Serviços:</label>
+                            <button type="button" onclick="ativarVozEmCampo('recibo-obs')" class="text-amber-600 font-bold"><i class="fa-solid fa-microphone"></i> Falar</button>
+                        </div>
                         <input type="text" id="recibo-obs" value="Referente a honorários de correspondência / audiência." class="w-full p-2 border rounded dark:bg-gray-700">
                     </div>
 
-                    <!-- OPÇÕES DE ENVIO: WHATSAPP -->
                     <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl border space-y-2">
                         <span class="font-bold text-xs text-brand-red block"><i class="fa-brands fa-whatsapp"></i> Opções de Envio via WhatsApp:</span>
                         <div class="grid grid-cols-2 gap-2">
@@ -511,7 +557,6 @@
                         </div>
                     </div>
 
-                    <!-- OPÇÕES DE SALVAMENTO / EXPORTAÇÃO -->
                     <div class="p-3 bg-amber-50 dark:bg-gray-700/50 rounded-xl border border-amber-300 space-y-2">
                         <span class="font-bold text-xs text-amber-800 dark:text-amber-400 block"><i class="fa-solid fa-floppy-disk"></i> Opções de Salvamento / Exportação do Recibo:</span>
                         <div class="grid grid-cols-3 gap-2">
@@ -541,7 +586,6 @@
                         </button>
                     </div>
 
-                    <!-- CALCULADORA DE PRAZOS -->
                     <div class="p-3 bg-amber-50 dark:bg-gray-700/60 rounded-xl border border-amber-300 space-y-2 text-xs">
                         <span class="font-bold text-amber-800 dark:text-amber-400 block"><i class="fa-solid fa-calendar-days mr-1"></i> Calculadora de Prazos de Vencimento:</span>
                         <div class="grid grid-cols-3 gap-2">
@@ -569,13 +613,11 @@
                         </div>
                     </div>
 
-                    <!-- FITA BOBINA -->
                     <div id="calc-bobina-fita" class="bobina-paper p-3 rounded-lg border font-mono text-xs max-h-32 overflow-y-auto space-y-1 shadow-inner text-gray-800 dark:text-gray-100">
                         <div class="text-center font-bold text-[10px] border-b pb-1 text-amber-700">--- FITA DE PAPEL DIGITADA ---</div>
                         <div id="bobina-linhas" class="space-y-0.5"></div>
                     </div>
 
-                    <!-- VISOR E TECLADO -->
                     <div class="bg-gray-900 text-green-400 p-3 rounded-lg text-right font-mono text-2xl font-bold border" id="calc-comum-visor">0</div>
                     
                     <div class="grid grid-cols-4 gap-2 text-base font-bold">
@@ -599,9 +641,11 @@
                         <button type="button" onclick="calcComumAdd('.')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">,</button>
                     </div>
 
-                    <!-- BLOCO DE NOTAS -->
                     <div class="pt-3 border-t">
-                        <label class="font-bold text-xs text-brand-red block mb-1"><i class="fa-solid fa-note-sticky mr-1"></i> Bloco de Notas Rápido:</label>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="font-bold text-xs text-brand-red block"><i class="fa-solid fa-note-sticky mr-1"></i> Bloco de Notas Rápido:</label>
+                            <button type="button" onclick="ativarVozEmCampo('bloco-notas-calc')" class="text-amber-600 text-xs font-bold"><i class="fa-solid fa-microphone"></i> Falar</button>
+                        </div>
                         <textarea id="bloco-notas-calc" oninput="salvarBlocoNotasCalc()" rows="3" placeholder="Digite anotações rápidas de cálculos..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs"></textarea>
                     </div>
                 </div>
@@ -615,7 +659,10 @@
                     
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="font-semibold">Reclamante / Cliente:*</label>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="font-semibold">Reclamante / Cliente:*</label>
+                                <button type="button" onclick="ativarVozEmCampo('res-cliente')" class="text-amber-600 text-[11px] font-bold"><i class="fa-solid fa-microphone"></i></button>
+                            </div>
                             <input type="text" id="res-cliente" required placeholder="Nome do reclamante..." class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
                         </div>
                         <div>
@@ -711,19 +758,27 @@
                     </div>
                 </form>
                 
+                <!-- PAINEL DE RESULTADO ABAIXO DA DESCRIÇÃO COM TODAS AS OPÇÕES EXIGIDAS -->
                 <div id="resultado-rescisao-container" class="hidden bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border shadow-sm text-xs space-y-3">
-                    <h3 class="font-black text-brand-red text-sm border-b pb-1">DEMONSTRATIVO DE CÁLCULO E MINUTA DA PETIÇÃO INICIAL</h3>
+                    <h3 class="font-black text-brand-red text-sm border-b pb-1">DEMONSTRATIVO DE CÁLCULO E OPÇÕES DE GERAÇÃO</h3>
                     <div id="resultado-rescisao-detalhes" class="space-y-1 font-mono text-[11px]"></div>
-                    <div class="pt-2 border-t flex gap-2">
-                        <button type="button" onclick="gerarMinutaPeticaoPDF()" class="bg-blue-600 text-white font-bold px-3 py-2 rounded shadow flex-1"><i class="fa-solid fa-file-pdf mr-1"></i> Baixar Minuta PDF / Petição</button>
-                        <button type="button" onclick="compartilharMinutaWhats()" class="bg-green-600 text-white font-bold px-3 py-2 rounded shadow flex-1"><i class="fa-brands fa-whatsapp mr-1"></i> Enviar Petição Whats</button>
+                    <div class="pt-2 border-t grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <button type="button" onclick="gerarMinutaPeticaoPDF()" class="bg-blue-600 text-white font-bold px-3 py-2 rounded shadow text-center"><i class="fa-solid fa-file-pdf block mb-1"></i> Gerar Minuta</button>
+                        <button type="button" onclick="gerarResumoCalculo()" class="bg-amber-600 text-white font-bold px-3 py-2 rounded shadow text-center"><i class="fa-solid fa-file-lines block mb-1"></i> Gerar Resumo</button>
+                        <button type="button" onclick="salvarCalculoAtualManual()" class="bg-brand-red text-white font-bold px-3 py-2 rounded shadow text-center"><i class="fa-solid fa-floppy-disk block mb-1"></i> Salvar</button>
+                        <button type="button" onclick="compartilharMinutaWhats()" class="bg-green-600 text-white font-bold px-3 py-2 rounded shadow text-center"><i class="fa-brands fa-whatsapp block mb-1"></i> WhatsApp</button>
+                    </div>
+                    <div class="pt-2">
+                        <button type="button" onclick="limparFormRescisao(); document.getElementById('res-cliente').focus();" class="w-full bg-gray-900 text-white font-bold py-2 rounded shadow text-xs">
+                            <i class="fa-solid fa-plus mr-1"></i> Inserir Outro Caso / Novo Cálculo
+                        </button>
                     </div>
                 </div>
 
                 <div id="lista-rescisioes" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 9: RELATÓRIOS (PLANILHA EXCEL MULTI-ABAS) -->
+            <!-- ABA 9: RELATÓRIOS -->
             <section id="tab-relatorios" class="tab-content space-y-4 hidden">
                 <div class="bg-gray-900 text-white p-4 rounded-xl text-xs space-y-3 shadow-lg">
                     <span class="font-bold text-amber-400 block border-b border-gray-700 pb-1">TOTALIZADORES CONSOLIDADOS & EXPORTAÇÃO EXCEL MULTI-ABAS</span>
@@ -751,7 +806,7 @@
                 </div>
             </section>
 
-            <!-- ABA 10: MANUAIS DETALHADOS -->
+            <!-- ABA 10: MANUAIS -->
             <section id="tab-manuais" class="tab-content space-y-4 hidden">
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border shadow-sm border-l-4 border-brand-red text-xs space-y-3">
                     <h4 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-book mr-1"></i> Central de Manuais Detalhados</h4>
@@ -764,11 +819,11 @@
                         </div>
                         <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                             <strong class="text-brand-red block mb-1">2. Pauta de Audiências, Inserir/Editar/Excluir & Checklist Feedback</strong>
-                            Cadastre comarcas, processos, valores, datas, checklist interativo (estilo feedback) e foto da ata.
+                            Cadastre comarcas, processos, valores, datas, checklist interativo e foto da ata.
                         </div>
                         <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                             <strong class="text-brand-red block mb-1">3. Cálculos Judiciais & Minuta de Petição</strong>
-                            Insira salário, adicionais, horas extras, VT, VA, INSS, despesas e descontos para gerar automaticamente a **Petição Inicial Trabalhista Completa**.
+                            Insira dados para gerar a Petição Inicial Trabalhista Completa, com opções de gerar minuta, gerar resumo, salvar, compartilhar via WhatsApp e inserir outro caso.
                         </div>
                         <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                             <strong class="text-brand-red block mb-1">4. Relatórios e Backup Completo (JSON, CSV, Drive)</strong>
@@ -820,23 +875,42 @@
         const AUTH_PASS = "320427";
         const WHATS_ADM = "5511978386574";
         const EMAIL_ADM = "adm.diligence@gmail.com";
-        const HORARIOS_LEMBRETE = ["09:00", "13:00", "18:00", "21:00"];
+        const HORARIOS_LEMBRETE = ["12:00", "18:00"];
+
+        const MENSAGENS_FE = [
+            "\"Confie no Senhor de todo o seu coração e não se apoie em sua própria inteligência.\" (Provérbios 3:5)",
+            "\"Tudo posso naquele que me fortalece.\" (Filipenses 4:13)",
+            "\"O Senhor é a minha luz e a minha salvação; a quem temerei?\" (Salmos 27:1)",
+            "\"Entrega o teu caminho ao Senhor; confia nele, e ele o fará.\" (Salmos 37:5)",
+            "\"Porque sou eu que conheço os planos que tenho para vocês, diz o Senhor, planos de fazê-los prosperar.\" (Jeremias 29:11)",
+            "\"Otimismo é a fé que leva à realização. Nada se pode fazer sem esperança e confiança.\" (Hellen Keller)",
+            "\"Creia em si mesmo, em Deus e no seu potencial. Grandes conquistas exigem perseverança e fé diária.\""
+        ];
 
         let db = { perfis: [], atos: [], caixa: [], contatos: [], recibos: [], rescisoes: [], blocoCalc: "", ultimoBackup: null };
         let bobinaHistorico = [];
         let calcVisorVal = '0';
         let lembreteJaDisparouHoje = false;
         let termoPesquisaGlobal = '';
+        let abaAtivaAtual = 'tab-perfil';
 
         document.addEventListener("DOMContentLoaded", () => {
             const hojeIso = new Date().toISOString().split('T')[0];
             const campoInicio = document.getElementById('calc-prazo-inicio');
             if(campoInicio) campoInicio.value = hojeIso;
             loadData();
+            sortearMensagemFe();
             setInterval(verificarHorarioLembreteBackup, 30000);
         });
 
-        /* FUNÇÃO MODO ESCURO / CLARO (DARK MODE) */
+        function sortearMensagemFe() {
+            const el = document.getElementById('mensagem-fe-aleatoria');
+            if(el) {
+                const idx = Math.floor(Math.random() * MENSAGENS_FE.length);
+                el.innerText = MENSAGENS_FE[idx];
+            }
+        }
+
         function toggleDarkMode() {
             const html = document.documentElement;
             html.classList.toggle('dark');
@@ -847,27 +921,32 @@
 
         function atualizarIconeDarkMode(isDark) {
             const icone = document.getElementById('icone-dark-mode');
-            if(icone) {
-                icone.className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
-            }
+            if(icone) icone.className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
         }
 
-        function toggleMenuSuspenso() {
-            const menu = document.getElementById('menu-suspenso-abas');
-            if(menu) menu.classList.toggle('hidden');
+        function toggleMenuDropdown(dropdownId) {
+            fecharTodosDropdowns();
+            const el = document.getElementById(dropdownId);
+            if(el) el.classList.toggle('hidden');
         }
-        function selecionarAbaMenu(tabId) {
-            switchTab(tabId);
-            const menu = document.getElementById('menu-suspenso-abas');
-            if(menu) menu.classList.add('hidden');
+
+        function fecharTodosDropdowns() {
+            ['dropdown-backup', 'dropdown-abas'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.add('hidden');
+            });
         }
+
         window.addEventListener('click', function(e) {
-            const btn = document.querySelector('button[onclick="toggleMenuSuspenso()"]');
-            const menu = document.getElementById('menu-suspenso-abas');
-            if(menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
-                menu.classList.add('hidden');
+            if(!e.target.closest('.relative')) {
+                fecharTodosDropdowns();
             }
         });
+
+        function selecionarAbaMenu(tabId) {
+            switchTab(tabId);
+            fecharTodosDropdowns();
+        }
 
         function handleLogin(e) {
             e.preventDefault();
@@ -909,7 +988,7 @@
                     const dataBackup = new Date(db.ultimoBackup);
                     if (dataBackup.toDateString() === agora.toDateString()) return;
                 }
-                document.getElementById('lembrete-msg-detalhe').innerText = `Alerta de horário (${horaAtualStr})! Você ainda não realizou o backup dos seus dados hoje para garantir a segurança.`;
+                document.getElementById('lembrete-msg-detalhe').innerText = `Alerta de horário (${horaAtualStr})! Você já realizou o backup dos seus dados hoje para garantir a segurança?`;
                 document.getElementById('modal-lembrete-sistema').classList.remove('hidden');
                 lembreteJaDisparouHoje = true;
             }
@@ -932,7 +1011,7 @@
             }
         }
 
-        function ativarReconhecimentoVozGlobal() {
+        function ativarVozEmCampo(elementId) {
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
                 return alert("Seu navegador não suporta reconhecimento de voz.");
             }
@@ -942,11 +1021,9 @@
             recognition.start();
             recognition.onresult = function(event) {
                 const texto = event.results[0][0].transcript;
-                const activeEl = document.activeElement;
-                if(activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
-                    activeEl.value += (activeEl.value ? ' ' : '') + texto;
-                } else {
-                    alert(`Comando de voz capturado: "${texto}"`);
+                const el = document.getElementById(elementId);
+                if(el) {
+                    el.value += (el.value ? ' ' : '') + texto;
                 }
             };
             recognition.onerror = function() { alert("Erro ao capturar áudio."); };
@@ -989,6 +1066,7 @@
         setInterval(updateClock, 1000);
 
         function switchTab(tabId) {
+            abaAtivaAtual = tabId;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.replace('text-brand-red', 'text-gray-500'));
             
@@ -1005,6 +1083,26 @@
             if(tabId === 'tab-rescisoria') renderRescisoes();
             if(tabId === 'tab-perfil') renderPerfis();
             if(tabId === 'tab-recibo') { renderCheckboxesAtosRecibo(); renderHistoricoRecibos(); }
+        }
+
+        function limparAbaAtual() {
+            if(!confirm("Deseja limpar os campos desta aba atual?")) return;
+            if(abaAtivaAtual === 'tab-perfil') limparFormPerfil();
+            else if(abaAtivaAtual === 'tab-atos') limparFormAto();
+            else if(abaAtivaAtual === 'tab-contatos') limparFormContato();
+            else if(abaAtivaAtual === 'tab-caixa') limparFormCaixa();
+            else if(abaAtivaAtual === 'tab-rescisoria') limparFormRescisao();
+            else if(abaAtivaAtual === 'tab-trabalhista') { calcComumLimpar(); limparFitaBobina(); document.getElementById('bloco-notas-calc').value = ''; }
+            else alert("Aba limpa!");
+        }
+
+        function zerarAplicativoTodo() {
+            if(confirm("ATENÇÃO: Deseja realmente ZERAR e apagar todos os dados de todas as abas do aplicativo?\n\nFaça um backup antes se necessário.")) {
+                db = { perfis: [], atos: [], caixa: [], contatos: [], recibos: [], rescisoes: [], blocoCalc: "", ultimoBackup: null };
+                saveData();
+                loadData();
+                alert("Aplicativo zerado com sucesso!");
+            }
         }
 
         function saveData() { localStorage.setItem('diligence_db', JSON.stringify(db)); }
@@ -1102,7 +1200,6 @@
             reader.readAsText(file);
         }
 
-        /* PESQUISA E SELEÇÃO MÚLTIPLA GLOBAL EM TODAS AS ABAS */
         function executarPesquisaGlobal(termo) {
             termoPesquisaGlobal = termo.toLowerCase().trim();
             renderPerfis(); renderAtos(); renderContatos(); renderCaixa(); renderRescisoes();
@@ -1149,7 +1246,7 @@
         }
 
         // ==========================================
-        // PERFIL (CRUD COMPLETO)
+        // PERFIL
         // ==========================================
         function savePerfil(e) {
             e.preventDefault();
@@ -1214,7 +1311,7 @@
         }
 
         // ==========================================
-        // PAUTA DE AUDIÊNCIAS (INSERIR, EDITAR, EXCLUIR E CHECKLIST FEEDBACK)
+        // PAUTA DE AUDIÊNCIAS
         // ==========================================
         function converterFotoAtaParaBase64(e) {
             const file = e.target.files[0];
@@ -1408,7 +1505,7 @@
         }
 
         // ==========================================
-        // AGENDA DE CONTATOS (CRUD COMPLETO)
+        // AGENDA DE CONTATOS
         // ==========================================
         function saveContato(e) {
             e.preventDefault();
@@ -1710,7 +1807,7 @@
         }
 
         // ==========================================
-        // CÁLCULOS JUDICIAIS E MINUTA / PETIÇÃO COMPLETA
+        // CÁLCULOS JUDICIAIS E RESCISÓRIA
         // ==========================================
         function saveRescisao(e) {
             e.preventDefault();
@@ -1781,13 +1878,19 @@
                 selecionadoGlobal: false
             };
 
-            if(id) db.rescisoes = db.rescisoes.map(r => r.id === obj.id ? obj : r);
-            else db.rescisoes.push(obj);
-
-            saveData();
+            window.rescisaoAtualAtiva = obj;
             exibirResultadoRescisao(obj);
+            alert("Cálculo realizado com sucesso! Escolha abaixo a opção de Minuta, Resumo, Salvar ou WhatsApp.");
+        }
+
+        function salvarCalculoAtualManual() {
+            const r = window.rescisaoAtualAtiva;
+            if(!r) return alert("Nenhum cálculo efetuado para salvar.");
+            const idx = db.rescisoes.findIndex(x => x.id === r.id);
+            if(idx >= 0) db.rescisoes[idx] = r; else db.rescisoes.push(r);
+            saveData();
             renderRescisoes();
-            alert("Cálculo e Minuta da Petição gerados com sucesso!");
+            alert("Cálculo salvo com sucesso!");
         }
 
         function exibirResultadoRescisao(res) {
@@ -1799,62 +1902,59 @@
             detalhes.innerHTML = `
                 <div><strong>Reclamante:</strong> ${res.cliente}</div>
                 <div><strong>Salário Efetivo:</strong> R$ ${res.salario.toFixed(2)}</div>
-                <div><strong>Aviso Prévio (${res.diasAviso} dias - Lei 12.506):</strong> R$ ${res.valorAviso.toFixed(2)}</div>
+                <div><strong>Aviso Prévio (${res.diasAviso} dias):</strong> R$ ${res.valorAviso.toFixed(2)}</div>
                 <div><strong>13º Salário Proporcional:</strong> R$ ${res.valor13.toFixed(2)}</div>
                 <div><strong>Férias Proporcionais + 1/3:</strong> R$ ${res.valorFeriasProp.toFixed(2)}</div>
-                <div><strong>FGTS + Multa (${res.multaFgts > 0 ? '40%/20%' : '0%'}):</strong> R$ ${(res.totalFgtsDepositado + res.multaFgts).toFixed(2)}</div>
+                <div><strong>FGTS + Multa:</strong> R$ ${(res.totalFgtsDepositado + res.multaFgts).toFixed(2)}</div>
                 <div><strong>Horas Extras:</strong> R$ ${res.horasExtras.toFixed(2)} | <strong>VT/VA:</strong> R$ ${(res.vt + res.va).toFixed(2)}</div>
-                <div><strong>Despesas:</strong> R$ ${res.despesas.toFixed(2)} | <strong>Descontos/INSS:</strong> R$ ${(res.descontos + res.inss).toFixed(2)}</div>
+                <div><strong>Despesas/Descontos/INSS:</strong> R$ ${(res.despesas - res.descontos - res.inss).toFixed(2)}</div>
                 ${res.valMulta467 > 0 ? `<div><strong>Multa Art. 467 CLT:</strong> R$ ${res.valMulta467.toFixed(2)}</div>` : ''}
                 ${res.valMulta477 > 0 ? `<div><strong>Multa Art. 477 CLT:</strong> R$ ${res.valMulta477.toFixed(2)}</div>` : ''}
-                <div class="pt-2 border-t font-black text-brand-red text-sm">TOTAL LÍQUIDO DA RECLAMAÇÃO TRABALHISTA: R$ ${res.totalLiquidoRescisao.toFixed(2)}</div>
+                <div class="pt-2 border-t font-black text-brand-red text-sm">TOTAL LÍQUIDO DO CÁLCULO: R$ ${res.totalLiquidoRescisao.toFixed(2)}</div>
             `;
-            window.rescisaoAtualAtiva = res;
+            container.scrollIntoView({ behavior: 'smooth' });
         }
 
         function gerarMinutaPeticaoPDF() {
             const r = window.rescisaoAtualAtiva;
-            if(!r) return alert("Nenhum cálculo selecionado.");
+            if(!r) return alert("Nenhum cálculo efetuado.");
             const peticao = `EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) DO TRABALHO DA VARA DO TRABALHO\n\n` +
                 `RECLAMANTE: ${r.cliente}\n` +
-                `MODALIDADE DE RESCISÃO: ${r.motivo.toUpperCase()}\n` +
-                `PERÍODO CONTRATUAL: ${r.admissaoStr} a ${r.demissaoStr}\n\n` +
-                `I - DOS FATOS E DO CONTRATO DE TRABALHO\n` +
-                `O(A) Reclamante manteve vínculo empregatício com a Reclamada no período supracitado, exercendo suas funções com total zelo e subordinação. Ocorre que por ocasião da rescisão contratual (${r.motivo}), a empresa deixou de adimplir corretamente as verbas devidas, ensejando a presente demanda.\n\n` +
-                `II - DOS PEDIDOS E VERBAS RESCISÓRIAS\n` +
-                `Diante do exposto, requer a condenação da Reclamada ao pagamento das seguintes verbas, calculadas com base no salário efetivo de R$ ${r.salario.toFixed(2)}:\n` +
-                `1. Aviso Prévio Proporcional (${r.diasAviso} dias): R$ ${r.valorAviso.toFixed(2)}\n` +
-                `2. 13º Salário Proporcional: R$ ${r.valor13.toFixed(2)}\n` +
-                `3. Férias Proporcionais acrescidas do terço constitucional (1/3): R$ ${r.valorFeriasProp.toFixed(2)}\n` +
-                `4. FGTS Acumulado e Multa Rescisória: R$ ${(r.totalFgtsDepositado + r.multaFgts).toFixed(2)}\n` +
-                `5. Horas Extras pleiteadas: R$ ${r.horasExtras.toFixed(2)}\n` +
-                `6. Indenizações de Vale Transporte e Vale Alimentação: R$ ${(r.vt + r.va).toFixed(2)}\n` +
-                `7. Ressarcimento de Despesas Operacionais: R$ ${r.despesas.toFixed(2)}\n` +
-                `${r.valMulta467 > 0 ? `8. Multa do Art. 467 da CLT: R$ ${r.valMulta467.toFixed(2)}\n` : ''}` +
-                `${r.valMulta477 > 0 ? `9. Multa do Art. 477 da CLT: R$ ${r.valMulta477.toFixed(2)}\n` : ''}` +
-                `Deduções legais aplicadas (Descontos e INSS): R$ ${(r.descontos + r.inss).toFixed(2)}\n\n` +
-                `III - DOS REQUERIMENTOS FINAIS\n` +
-                `Diante de todo o exposto, postula-se a procedência integral da presente Reclamação Trabalhista para condenar a Reclamada ao pagamento do valor líquido total de R$ ${r.totalLiquidoRescisao.toFixed(2)}, acrescido de juros e correção monetária.\n\n` +
-                `Termos em que,\nPede e espera deferimento.\n\n` +
-                `Local e Data: ${new Date().toLocaleDateString('pt-BR')}\n` +
-                `_____________________________________\n` +
-                `Advogado / Reclamante`;
+                `MODALIDADE: ${r.motivo.toUpperCase()}\n` +
+                `PERÍODO: ${r.admissaoStr} a ${r.demissaoStr}\n\n` +
+                `TOTAL LÍQUIDO DA RECLAMAÇÃO: R$ ${r.totalLiquidoRescisao.toFixed(2)}\n\n` +
+                `Termos em que,\nPede deferimento.`;
 
             const blob = new Blob([peticao], { type: 'text/plain;charset=utf-8' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `Minuta_Peticao_${r.cliente.replace(/\s+/g, '_')}.txt`;
+            a.download = `Minuta_${r.cliente.replace(/\s+/g, '_')}.txt`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            alert("Minuta de Petição Inicial gerada e baixada com sucesso!");
+            alert("Minuta gerada e baixada com sucesso!");
+        }
+
+        function gerarResumoCalculo() {
+            const r = window.rescisaoAtualAtiva;
+            if(!r) return alert("Nenhum cálculo efetuado.");
+            const resumo = `--- RESUMO DE CÁLCULO TRABALHISTA ---\nReclamante: ${r.cliente}\nModalidade: ${r.motivo}\nSalário: R$ ${r.salario.toFixed(2)}\nAviso Prévio: R$ ${r.valorAviso.toFixed(2)}\n13º: R$ ${r.valor13.toFixed(2)}\nFérias: R$ ${r.valorFeriasProp.toFixed(2)}\nTotal Líquido: R$ ${r.totalLiquidoRescisao.toFixed(2)}`;
+
+            const blob = new Blob([resumo], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `Resumo_${r.cliente.replace(/\s+/g, '_')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            alert("Resumo gerado e baixado com sucesso!");
         }
 
         function compartilharMinutaWhats() {
             const r = window.rescisaoAtualAtiva;
-            if(!r) return alert("Nenhum cálculo selecionado.");
-            const txt = `*DILIGENCE.BR - MINUTA DE PETIÇÃO TRABALHISTA*\n\nReclamante: ${r.cliente}\nTotal Líquido: R$ ${r.totalLiquidoRescisao.toFixed(2)}`;
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
+            if(!r) return alert("Nenhum cálculo efetuado.");
+            const txt = `*DILIGENCE.BR - RESUMO DE CÁLCULO*\n\nReclamante: ${r.cliente}\nTotal Líquido: R$ ${r.totalLiquidoRescisao.toFixed(2)}`;
+            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(txt)}`);
         }
 
         function renderRescisoes() {
@@ -1862,7 +1962,7 @@
             if(el) {
                 el.innerHTML = '';
                 const rescisoesFiltradas = db.rescisoes.filter(r => !termoPesquisaGlobal || r.cliente.toLowerCase().includes(termoPesquisaGlobal));
-                if(!rescisoesFiltradas.length) { el.innerHTML = '<p class="text-xs text-gray-400">Nenhum cálculo cadastrado ou correspondente.</p>'; return; }
+                if(!rescisoesFiltradas.length) { el.innerHTML = '<p class="text-xs text-gray-400">Nenhum cálculo salvo.</p>'; return; }
                 rescisoesFiltradas.forEach(r => {
                     const checkedStr = r.selecionadoGlobal ? 'checked' : '';
                     el.innerHTML += `
@@ -1892,7 +1992,7 @@
 
         function carregarRescisao(id) {
             const r = db.rescisoes.find(x => x.id === id);
-            if(r) exibirResultadoRescisao(r);
+            if(r) { window.rescisaoAtualAtiva = r; exibirResultadoRescisao(r); }
         }
 
         function editarRescisao(id) {
