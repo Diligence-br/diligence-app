@@ -226,8 +226,41 @@
                 </div>
             </section>
 
-            <!-- ABA 2: PAUTA DE DILIGÊNCIAS -->
+            <!-- ABA 2: PAUTA DE DILIGÊNCIAS (COM DESTAQUE DE ÚLTIMO BACKUP E LEMBRETES 13:00 / 18:00) -->
             <section id="tab-atos" class="tab-content space-y-4 hidden">
+                
+                <!-- DESTAQUE EM VERMELHO COM AMARELO DO ÚLTIMO BACKUP -->
+                <div id="banner-ultimo-backup" class="p-3.5 bg-red-700 border-2 border-amber-400 rounded-xl text-white shadow-md flex justify-between items-center text-xs">
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-solid fa-database text-amber-300 text-lg"></i>
+                        <div>
+                            <span class="font-extrabold text-amber-300 uppercase tracking-wide block">Último Backup / Exportação Realizada:</span>
+                            <span id="txt-data-ultimo-backup" class="font-mono font-bold text-red-100">Nenhum backup realizado nesta sessão ainda.</span>
+                        </div>
+                    </div>
+                    <button onclick="fazerBackupJSON()" class="bg-amber-400 hover:bg-amber-500 text-gray-900 font-black px-2.5 py-1.5 rounded-lg text-[11px] shadow">
+                        <i class="fa-solid fa-download mr-1"></i> Fazer Backup Agora
+                    </button>
+                </div>
+
+                <!-- DISPARO DE LEMBRETES 13:00 E 18:00 -->
+                <div class="p-3 bg-amber-50 dark:bg-gray-700/50 rounded-xl border border-amber-300 text-xs space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-amber-800 dark:text-amber-400 flex items-center gap-1">
+                            <i class="fa-solid fa-bell"></i> Central de Lembretes Diários (13:00 e 18:00)
+                        </span>
+                        <span id="status-alerta-horario" class="font-mono font-bold text-gray-500 text-[10px]">Verificação ativa</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="dispararLembreteManual('13:00')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg shadow flex items-center justify-center gap-1">
+                            <i class="fa-brands fa-whatsapp"></i> Disparar Lembrete 13:00 (Almoço/Pauta)
+                        </button>
+                        <button onclick="dispararLembreteManual('18:00')" class="bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 rounded-lg shadow flex items-center justify-center gap-1">
+                            <i class="fa-brands fa-whatsapp"></i> Disparar Lembrete 18:00 (Fechamento)
+                        </button>
+                    </div>
+                </div>
+
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 text-xs flex justify-between items-center">
                     <div>
                         <h3 class="font-bold text-brand-red"><i class="fa-solid fa-calendar-check mr-1"></i> Cadastro e Pauta de Diligências</h3>
@@ -439,6 +472,7 @@
                 <form id="form-caixa" onsubmit="saveCaixa(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
                     <input type="hidden" id="caixa-id">
                     <h2 id="caixa-form-titulo" class="font-bold text-sm text-gray-700 dark:text-gray-200 border-b pb-1">Novo Lançamento no Caixa</h2>
+                    
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="text-xs font-semibold">Tipo</label>
@@ -452,10 +486,21 @@
                             <input type="number" step="0.01" id="caixa-valor" required placeholder="0.00" class="w-full p-2 border rounded-lg dark:bg-gray-700 font-bold text-sm">
                         </div>
                     </div>
-                    <div>
-                        <label class="text-xs font-semibold">Descrição da Despesa/Entrada</label>
-                        <input type="text" id="caixa-descricao" required placeholder="Ex: Uber Fórum, Cópias..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
+
+                    <!-- OPÇÕES DE DESCRIÇÃO PRÉ-DEFINIDAS + OUTROS -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold">Descrição / Categoria da Despesa/Entrada</label>
+                        <select id="caixa-select-opcao" onchange="mudarOpcaoCaixa(this.value)" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-bold">
+                            <option value="Uber / Transporte Fórum">🚗 Uber / Transporte Fórum</option>
+                            <option value="Cópias / Autenticações / Cartório">📄 Cópias / Autenticações / Cartório</option>
+                            <option value="Correios / Sedex / Cartas">📦 Correios / Sedex / Cartas</option>
+                            <option value="Taxas Judiciais / Custas">🏛️ Taxas Judiciais / Custas</option>
+                            <option value="Alimentação / Estacionamento">☕ Alimentação / Estacionamento</option>
+                            <option value="Outros">✏️ Outros (Escrever descrição...)</option>
+                        </select>
+                        <input type="text" id="caixa-descricao" placeholder="Digite a descrição personalizada..." class="hidden w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
                     </div>
+
                     <div class="flex gap-2">
                         <button type="submit" id="caixa-btn-salvar" class="flex-1 bg-brand-red text-white py-2 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
                             <i class="fa-solid fa-floppy-disk"></i> SALVAR LANÇAMENTO NO CAIXA
@@ -596,7 +641,7 @@
                 </div>
             </section>
 
-            <!-- ABA 7: CÁLCULOS JUDICIAIS / RESCISÃO TRABALHISTA AVANÇADA COM BUSCADOR & MINUTA -->
+            <!-- ABA 7: CÁLCULOS JUDICIAIS / RESCISÃO TRABALHISTA AVANÇADA COM DIAS TRABALHADOS & LEI DO AVISO PRÉVIO -->
             <section id="tab-rescisoria" class="tab-content space-y-4 hidden">
                 
                 <!-- BARRA DE BUSCA E GERENCIAMENTO DE CÁLCULOS SALVOS -->
@@ -605,7 +650,7 @@
                         <h3 class="font-bold text-xs text-brand-red uppercase"><i class="fa-solid fa-magnifying-glass mr-1"></i> Localizar e Selecionar Cálculo Salvo</h3>
                         <button onclick="novoCalculoRescisaoForm()" class="bg-brand-red text-white px-2.5 py-1 rounded text-[10px] font-bold shadow">Novo Cálculo</button>
                     </div>
-                    <input type="text" id="busca-rescisao-input" oninput="renderRescisoes()" placeholder="🔍 Digite o nome do cliente ou processo..." class="w-full p-2 border rounded-lg text-xs dark:bg-gray-700">
+                    <input type="text" id="busca-rescisao-input" oninput="renderRescisoes()" placeholder="🔍 Digite o nome do cliente ou processo..." class="w-full p-2 border rounded-lg text-xs dark:bg-gray-700 font-semibold">
                 </div>
 
                 <form id="form-rescisao" onsubmit="saveRescisao(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
@@ -643,6 +688,33 @@
                         </div>
                     </div>
 
+                    <!-- QUADRADO DE TEMPO TRABALHADO: MESES OU DIAS + LEI DO AVISO PRÉVIO PROPORCIONAL -->
+                    <div class="p-3 bg-amber-50 dark:bg-gray-700/50 rounded-xl border border-amber-200 space-y-2 text-xs">
+                        <span class="font-bold text-amber-800 dark:text-amber-400 block"><i class="fa-solid fa-clock"></i> Tempo Trabalhado & Lei do Aviso Prévio Proporcional (Lei 12.506/11):</span>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="font-semibold block mb-1">Modo de Entrada:</label>
+                                <select id="res-modo-tempo" onchange="mudarModoTempoTrab(this.value)" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold">
+                                    <option value="meses">Por Meses / Anos</option>
+                                    <option value="dias">Por Dias exatos</option>
+                                </select>
+                            </div>
+                            <div id="div-campo-meses">
+                                <label class="font-semibold block mb-1">Meses Trab. no Ano:</label>
+                                <input type="number" id="res-meses" value="12" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold">
+                            </div>
+                            <div id="div-campo-dias" class="hidden">
+                                <label class="font-semibold block mb-1">Total Dias Trabalhados:</label>
+                                <input type="number" id="res-dias-trab" value="365" placeholder="Ex: 365" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold">
+                            </div>
+                            <div>
+                                <label class="font-semibold block mb-1">Anos Completos (Aviso 3d/ano):</label>
+                                <input type="number" id="res-anos-completos" value="1" placeholder="Ex: 2" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold">
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-gray-500 dark:text-gray-400 italic">💡 Nota: O aviso prévio proporcional acrescenta 3 dias por ano completo de serviço prestado à mesma empresa (Lei nº 12.506/2011), além dos 30 dias constitucionais.</p>
+                    </div>
+
                     <!-- MULTAS CLT ART 467 E 477 -->
                     <div class="p-3 bg-red-50 dark:bg-gray-700/50 rounded-xl border border-red-200 space-y-2 text-xs">
                         <span class="font-bold text-brand-red block"><i class="fa-solid fa-gavel"></i> Multas Rescisórias Judiciais (CLT):</span>
@@ -656,23 +728,30 @@
                         </div>
                     </div>
 
-                    <!-- FGTS E HOMOLOGAÇÃO -->
+                    <!-- FGTS, MULTA SEPARADA (20% OU 40%) E HOMOLOGAÇÃO -->
                     <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl border space-y-2 text-xs">
-                        <span class="font-bold text-gray-700 dark:text-gray-200 block"><i class="fa-solid fa-piggy-bank"></i> FGTS, Multa e Homologação:</span>
-                        <div class="grid grid-cols-3 gap-2 font-bold">
+                        <span class="font-bold text-gray-700 dark:text-gray-200 block"><i class="fa-solid fa-piggy-bank"></i> FGTS e Multa Rescisória:</span>
+                        <div class="grid grid-cols-2 gap-2 font-bold">
                             <label class="flex items-center gap-1.5 cursor-pointer bg-white dark:bg-gray-800 p-2 rounded border">
-                                <input type="checkbox" id="res-fgts" checked class="h-4 w-4 text-brand-red rounded"> Incluir FGTS (8%)
+                                <input type="checkbox" id="res-fgts" checked class="h-4 w-4 text-brand-red rounded"> Incluir Depósitos FGTS (8%)
                             </label>
-                            <label class="flex items-center gap-1.5 cursor-pointer bg-white dark:bg-gray-800 p-2 rounded border">
-                                <input type="checkbox" id="res-multa-fgts" checked class="h-4 w-4 text-brand-red rounded"> Multa FGTS (20% ou 40%)
-                            </label>
-                            <label class="flex items-center gap-1.5 cursor-pointer bg-white dark:bg-gray-800 p-2 rounded border">
-                                <input type="checkbox" id="res-homologar" class="h-4 w-4 text-brand-red rounded"> Homologação (Taxa 20%)
+                            <div>
+                                <label class="font-semibold block mb-1">Multa do FGTS:</label>
+                                <select id="res-multa-fgts-pct" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold">
+                                    <option value="40">Multa de 40% (Dispensa Sem Justa Causa)</option>
+                                    <option value="20">Multa de 20% (Acordo Art. 484-A)</option>
+                                    <option value="0">Nenhuma Multa de FGTS (0%)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="pt-1">
+                            <label class="flex items-center gap-1.5 cursor-pointer bg-white dark:bg-gray-800 p-2 rounded border font-bold">
+                                <input type="checkbox" id="res-homologar" class="h-4 w-4 text-brand-red rounded"> Incluir Homologação (Taxa 20%)
                             </label>
                         </div>
                     </div>
 
-                    <!-- ADICIONAIS E FUNÇÃO (COM OPÇÃO DE ALTERAR VALOR OU PORCENTAGEM) -->
+                    <!-- ADICIONAIS E FUNÇÃO -->
                     <div class="grid grid-cols-2 gap-2 text-xs bg-amber-50 dark:bg-gray-700/50 p-3 rounded-xl border border-amber-200">
                         <div>
                             <label class="font-semibold block mb-1">Adicional Insalubridade (%):</label>
@@ -696,11 +775,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-2 text-xs">
-                        <div>
-                            <label class="font-semibold">Meses Trab. no Ano</label>
-                            <input type="number" id="res-meses" value="12" class="w-full p-2 border rounded dark:bg-gray-700">
-                        </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
                         <div>
                             <label class="font-semibold">Alíquota INSS (%)</label>
                             <input type="number" step="0.01" id="res-inss-pct" value="7.5" class="w-full p-2 border rounded dark:bg-gray-700">
@@ -727,13 +802,13 @@
                 </div>
             </section>
 
-            <!-- ABA 8: RELATÓRIOS -->
+            <!-- ABA 8: RELATÓRIOS COM CHECK VERDE E HISTÓRICO DE EXPORTAÇÃO -->
             <section id="tab-relatorios" class="tab-content space-y-4 hidden">
                 <div class="bg-gray-900 text-white p-4 rounded-xl text-xs space-y-3 shadow-lg">
                     <div class="flex justify-between items-center border-b border-gray-700 pb-1">
                         <span class="font-bold text-amber-400">TOTALIZADORES CONSOLIDADOS</span>
-                        <button onclick="avisoEditarRelatorio()" class="bg-amber-500 hover:bg-amber-600 text-gray-900 font-extrabold px-2.5 py-1 rounded text-[10px] shadow">
-                            <i class="fa-solid fa-pen-to-square mr-1"></i> Editar Relatório
+                        <button onclick="exportarExcelMultiAbasComLog()" class="bg-amber-500 hover:bg-amber-600 text-gray-900 font-extrabold px-2.5 py-1 rounded text-[10px] shadow">
+                            <i class="fa-solid fa-file-excel mr-1"></i> Editar / Exportar Planilha
                         </button>
                     </div>
                     
@@ -757,16 +832,26 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
-                    <button onclick="exportarExcelMultiAbas()" class="bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs shadow flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-file-excel text-base"></i> EXCEL (.XLSX)
+                    <button onclick="exportarExcelMultiAbasComLog()" class="bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs shadow flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-excel text-base"></i> <span id="btn-txt-excel">✓ EXCEL (.XLSX)</span>
                     </button>
-                    <button onclick="gerarPDFRelatorioConsolidado()" class="bg-red-700 text-white py-2.5 rounded-xl font-extrabold text-xs shadow flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-file-pdf text-base"></i> RELATÓRIO PDF
+                    <button onclick="gerarPDFRelatorioConsolidadoComLog()" class="bg-red-700 text-white py-2.5 rounded-xl font-extrabold text-xs shadow flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-pdf text-base"></i> <span id="btn-txt-pdf">✓ RELATÓRIO PDF</span>
                     </button>
+                </div>
+
+                <!-- MINI HISTÓRICO DE EXPORTAÇÕES COM CHECK VERDE -->
+                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border shadow-sm space-y-2 text-xs">
+                    <h4 class="font-bold text-brand-red flex items-center gap-1">
+                        <i class="fa-solid fa-clock-rotate-left"></i> Mini Histórico de Exportações
+                    </h4>
+                    <div id="lista-mini-historico-export" class="max-h-36 overflow-y-auto space-y-1.5 font-mono text-[11px]">
+                        <p class="text-gray-400 italic">Nenhuma exportação realizada nesta sessão.</p>
+                    </div>
                 </div>
             </section>
 
-            <!-- ABA 9: CENTRAL DE MANUAIS (REESTRUTURADA COM ÍCONES, PASSO A PASSO & COMPARTILHAMENTO WHATS) -->
+            <!-- ABA 9: CENTRAL DE MANUAIS -->
             <section id="tab-manuais" class="tab-content space-y-4 hidden">
                 <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border space-y-2 shadow-sm">
                     <label class="font-extrabold text-xs text-brand-red"><i class="fa-solid fa-magnifying-glass"></i> PESQUISAR NO MANUAL:</label>
@@ -898,7 +983,7 @@
                 Para editar relatórios consolidados em profundidade, exporte para planilha (Excel/CSV) e abra no <strong>Google Drive / Sheets</strong> vinculado ao seu Gmail.
             </p>
             <div class="space-y-2 pt-2 border-t">
-                <button onclick="exportarExcelMultiAbas(); fecharAvisoRelatorio();" class="w-full bg-green-700 text-white py-2 rounded-xl font-bold text-xs shadow flex items-center justify-center gap-1">
+                <button onclick="exportarExcelMultiAbasComLog(); fecharAvisoRelatorio();" class="w-full bg-green-700 text-white py-2 rounded-xl font-bold text-xs shadow flex items-center justify-center gap-1">
                     <i class="fa-solid fa-file-excel"></i> Exportar Planilha para Sheets/Drive
                 </button>
                 <button onclick="fecharAvisoRelatorio()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">
@@ -984,7 +1069,7 @@
                 <button onclick="fecharModalBackup()" class="text-gray-400 font-bold">&times;</button>
             </div>
             <button onclick="fazerBackupJSON()" class="w-full bg-brand-red text-white py-2.5 rounded-xl font-bold text-xs shadow">1. Salvar Backup (.JSON)</button>
-            <button onclick="exportarExcelMultiAbas()" class="w-full bg-green-700 text-white py-2.5 rounded-xl font-bold text-xs shadow">2. Exportar Excel (.XLSX)</button>
+            <button onclick="exportarExcelMultiAbasComLog()" class="w-full bg-green-700 text-white py-2.5 rounded-xl font-bold text-xs shadow">2. Exportar Excel (.XLSX)</button>
             <button onclick="acionarRestauracao()" class="w-full bg-gray-800 text-white py-2.5 rounded-xl font-bold text-xs shadow">3. Restaurar Backup (.JSON)</button>
             <button onclick="confirmarZerarTudoGeral()" class="w-full bg-red-100 text-red-700 font-extrabold py-2 rounded-xl text-xs border border-red-300">ZERAR TUDO (APP NOVO)</button>
         </div>
@@ -997,7 +1082,7 @@
         const WHATS_ADM = "5511978386574";
         const EMAIL_CONTRATANTE = "ec.cortez@uol.com.br";
 
-        let db = { perfis: [], perfil: {}, atos: [], caixa: [], contatos: [], recibos: [], rescisoes: [], notas: '' };
+        let db = { perfis: [], perfil: {}, atos: [], caixa: [], contatos: [], recibos: [], rescisoes: [], exportLog: [], notas: '', ultimoBackupData: null };
         let tempAtaBase64Pauta = null;
         let tempAtaDataHoraStr = null;
         let bobinaHistorico = [];
@@ -1007,9 +1092,36 @@
             const now = new Date();
             document.getElementById('clock-time').innerText = now.toLocaleTimeString('pt-BR');
             document.getElementById('clock-date').innerText = now.toLocaleDateString('pt-BR');
+
+            // Verificação automática de lembretes (13:00 e 18:00)
+            const horaStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            if (horaStr === '13:00' && window.lembrete13Disparado !== now.toDateString()) {
+                window.lembrete13Disparado = now.toDateString();
+                dispararLembreteAutomatico('13:00');
+            }
+            if (horaStr === '18:00' && window.lembrete18Disparado !== now.toDateString()) {
+                window.lembrete18Disparado = now.toDateString();
+                dispararLembreteAutomatico('18:00');
+            }
         }
         setInterval(updateClock, 1000);
         updateClock();
+
+        function dispararLembreteManual(horario) {
+            const nomeCorresp = db.perfil.nome || 'Correspondente';
+            const totalAtos = db.atos.length;
+            let txt = '';
+            if(horario === '13:00') {
+                txt = `🔔 DILIGENCE.BR - LEMBRETE 13:00 (ALMOÇO / PAUTA)\n--------------------------------\nCorrespondente: ${nomeCorresp}\nTotal de diligências cadastradas: ${totalAtos}\nStatus: Verificação de pautas da tarde em andamento. Bom trabalho!`;
+            } else {
+                txt = `🔔 DILIGENCE.BR - LEMBRETE 18:00 (FECHAMENTO DIÁRIO)\n--------------------------------\nCorrespondente: ${nomeCorresp}\nTotal de diligências: ${totalAtos}\nStatus: Fechamento de pautas e baixa de honorários do dia.`;
+            }
+            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(txt)}`);
+        }
+
+        function dispararLembreteAutomatico(horario) {
+            dispararLembreteManual(horario);
+        }
 
         function abrirModalRecuperacao(tipo) {
             document.getElementById('rec-modal-titulo').innerText = tipo === 'usuario' ? 'RECUPERAR USUÁRIO' : 'RECUPERAR SENHA';
@@ -1085,11 +1197,11 @@
             const btn = document.getElementById('btn-' + tabId);
             if(btn) btn.classList.replace('text-gray-500', 'text-brand-red');
 
-            if(tabId === 'tab-relatorios') renderRelatorios();
+            if(tabId === 'tab-relatorios') { renderRelatorios(); renderMiniHistoricoExport(); }
             if(tabId === 'tab-financeiro') renderFinanceiro();
             if(tabId === 'tab-caixa') renderCaixa();
             if(tabId === 'tab-contatos') renderContatos();
-            if(tabId === 'tab-atos') renderAtos();
+            if(tabId === 'tab-atos') { renderAtos(); atualizarBannerUltimoBackup(); }
             if(tabId === 'tab-rescisoria') renderRescisoes();
             if(tabId === 'tab-perfil') renderPerfis();
             if(tabId === 'tab-recibo') { renderCheckboxesAtosRecibo(); renderRecibos(); }
@@ -1112,6 +1224,7 @@
             if(!db.recibos) db.recibos = [];
             if(!db.rescisoes) db.rescisoes = [];
             if(!db.perfis) db.perfis = [];
+            if(!db.exportLog) db.exportLog = [];
             if(!db.perfil) db.perfil = {};
 
             if(db.perfil.nome && !db.perfis.length) {
@@ -1139,6 +1252,20 @@
             renderRelatorios();
             renderCheckboxesAtosRecibo();
             renderRecibos();
+            renderMiniHistoricoExport();
+            atualizarBannerUltimoBackup();
+        }
+
+        function atualizarBannerUltimoBackup() {
+            const span = document.getElementById('txt-data-ultimo-backup');
+            if(!span) return;
+            if(db.ultimoBackupData) {
+                span.innerText = db.ultimoBackupData;
+            } else if(db.exportLog && db.exportLog.length) {
+                span.innerText = db.exportLog[0].dataHora + ` (${db.exportLog[0].tipo})`;
+            } else {
+                span.innerText = "Nenhum backup ou exportação efetuada ainda.";
+            }
         }
 
         function previewECompressImagemAta(evt) {
@@ -1275,7 +1402,7 @@
             });
         }
 
-        /* LÓGICA DA PAUTA */
+        /* LÓGICA DA PAUTA E SINCRONIZAÇÃO COM CAIXA / FINANCEIRO */
         function saveAto(e) {
             e.preventDefault();
             const id = document.getElementById('ato-id').value;
@@ -1306,6 +1433,18 @@
                     a.link = link;
                     a.valor = valor;
                     a.status = status;
+
+                    let caixaItem = db.caixa.find(c => c.atoRefId === a.id);
+                    if (status === 'pago') {
+                        if (caixaItem) {
+                            caixaItem.valor = valor;
+                            caixaItem.descricao = `Baixa Proc: ${proc}`;
+                        } else {
+                            db.caixa.push({ id: Date.now(), atoRefId: a.id, tipo: 'entrada', valor: valor, descricao: `Baixa Proc: ${proc}`, dataIso: new Date().toISOString().split('T')[0], dataHora: agoraStr });
+                        }
+                    } else {
+                        db.caixa = db.caixa.filter(c => c.atoRefId !== a.id);
+                    }
                 }
             } else {
                 if (db.atos.find(a => a.processo.toLowerCase() === proc.toLowerCase())) {
@@ -1331,7 +1470,7 @@
                 };
                 db.atos.push(novoAto);
                 if(status === 'pago') {
-                    db.caixa.push({ id: Date.now()+1, atoRefId: novoAto.id, tipo: 'entrada', valor: valor, descricao: `Pauta: ${proc}`, dataIso: new Date().toISOString().split('T')[0], dataHora: agoraStr });
+                    db.caixa.push({ id: Date.now()+1, atoRefId: novoAto.id, tipo: 'entrada', valor: valor, descricao: `Baixa Proc: ${proc}`, dataIso: new Date().toISOString().split('T')[0], dataHora: agoraStr });
                 }
             }
 
@@ -1342,7 +1481,7 @@
             renderCaixa();
             renderRelatorios();
             renderCheckboxesAtosRecibo();
-            alert("✅ Diligência salva com sucesso na pauta!");
+            alert("✅ Diligência salva e sincronizada com sucesso!");
         }
 
         function editarAto(id) {
@@ -1501,7 +1640,7 @@
             }
         }
 
-        /* LÓGICA DO FINANCEIRO COM SELETOR EXPLÍCITO (PENDENTE, PAGO, VENCIDO) */
+        /* LÓGICA DO FINANCEIRO COM SELETOR EXPLÍCITO (PENDENTE, PAGO, VENCIDO) E SINCRONIZAÇÃO CAIXA */
         function renderFinanceiro() {
             let pago = 0, pendente = 0, vencido = 0;
             const container = document.getElementById('fin-gerenciador-baixas');
@@ -1548,14 +1687,13 @@
                 return;
             }
 
+            a.status = novoStatus;
             if(novoStatus === 'pago') {
-                a.status = 'pago';
                 a.dataBaixa = new Date().toLocaleString('pt-BR');
                 if(!db.caixa.some(c => c.atoRefId === a.id)) {
                     db.caixa.push({ id: Date.now(), atoRefId: a.id, tipo: 'entrada', valor: a.valor, descricao: `Baixa Proc: ${a.processo}`, dataIso: new Date().toISOString().split('T')[0], dataHora: new Date().toLocaleString('pt-BR') });
                 }
             } else {
-                a.status = novoStatus;
                 db.caixa = db.caixa.filter(c => c.atoRefId !== a.id);
             }
 
@@ -1638,13 +1776,33 @@
             html2pdf().set({ margin: 10, filename: `Comprovante_${proc}.pdf`, html2canvas: { scale: 2 } }).from(element).save();
         }
 
-        /* LÓGICA DO LIVRO CAIXA */
+        /* LÓGICA DO LIVRO CAIXA (COM SELECT + OUTROS + COMPARTILHAMENTO INDIVIDUAL WHATS) */
+        function mudarOpcaoCaixa(val) {
+            const inputDesc = document.getElementById('caixa-descricao');
+            if (val === 'Outros') {
+                inputDesc.classList.remove('hidden');
+                inputDesc.value = '';
+                inputDesc.focus();
+            } else {
+                inputDesc.classList.add('hidden');
+                inputDesc.value = val;
+            }
+        }
+
         function saveCaixa(e) {
             e.preventDefault();
             const id = document.getElementById('caixa-id').value;
             const tipo = document.getElementById('caixa-tipo').value;
             const valor = parseFloat(document.getElementById('caixa-valor').value);
-            const descricao = document.getElementById('caixa-descricao').value.trim();
+            
+            const selectVal = document.getElementById('caixa-select-opcao').value;
+            let descricao = '';
+            if (selectVal === 'Outros') {
+                descricao = document.getElementById('caixa-descricao').value.trim();
+                if(!descricao) return alert('Por favor, digite a descrição da despesa ou entrada!');
+            } else {
+                descricao = selectVal;
+            }
 
             if (id) {
                 const c = db.caixa.find(item => item.id == id);
@@ -1662,7 +1820,25 @@
             document.getElementById('caixa-id').value = c.id;
             document.getElementById('caixa-tipo').value = c.tipo;
             document.getElementById('caixa-valor').value = c.valor;
-            document.getElementById('caixa-descricao').value = c.descricao;
+
+            const selectOp = document.getElementById('caixa-select-opcao');
+            let encontrado = false;
+            for(let opt of selectOp.options) {
+                if(opt.value === c.descricao) {
+                    selectOp.value = c.descricao;
+                    document.getElementById('caixa-descricao').classList.add('hidden');
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if(!encontrado) {
+                selectOp.value = 'Outros';
+                const inputDesc = document.getElementById('caixa-descricao');
+                inputDesc.classList.remove('hidden');
+                inputDesc.value = c.descricao;
+            }
+
             document.getElementById('caixa-form-titulo').innerText = "Editar Lançamento no Caixa";
             document.getElementById('caixa-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR ALTERAÇÕES';
             document.getElementById('caixa-btn-cancelar').classList.remove('hidden');
@@ -1672,6 +1848,8 @@
         function limparFormCaixa() {
             document.getElementById('form-caixa').reset();
             document.getElementById('caixa-id').value = '';
+            document.getElementById('caixa-select-opcao').value = 'Uber / Transporte Fórum';
+            document.getElementById('caixa-descricao').classList.add('hidden');
             document.getElementById('caixa-form-titulo').innerText = "Novo Lançamento no Caixa";
             document.getElementById('caixa-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR LANÇAMENTO NO CAIXA';
             document.getElementById('caixa-btn-cancelar').classList.add('hidden');
@@ -1682,6 +1860,13 @@
                 db.caixa = db.caixa.filter(c => c.id !== id);
                 saveData(); renderCaixa();
             }
+        }
+
+        function compartilharCaixaIndividual(id) {
+            const c = db.caixa.find(item => item.id == id);
+            if(!c) return;
+            const txt = `DILIGENCE.BR - LANÇAMENTO EM CAIXA\n--------------------------------\nTipo: ${c.tipo.toUpperCase()}\nDescrição: ${c.descricao}\nValor: R$ ${c.valor.toFixed(2)}\nData/Hora: ${c.dataHora || c.dataIso}\n--------------------------------\nEnviado via DILIGENCE.BR`;
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
         }
 
         function filtrarCaixaPorDatas() {
@@ -1710,10 +1895,11 @@
                                 <strong>${c.descricao}</strong><br>
                                 <span class="text-gray-400 text-[10px]">${c.dataHora || c.dataIso || ''}</span>
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-1.5">
                                 <strong class="${c.tipo === 'entrada' ? 'text-green-600' : 'text-red-600'}">R$ ${c.valor.toFixed(2)}</strong>
-                                <button onclick="editarCaixa(${c.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="deletarCaixa(${c.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-trash-can"></i></button>
+                                <button onclick="compartilharCaixaIndividual(${c.id})" class="bg-green-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Compartilhar Whats"><i class="fa-brands fa-whatsapp"></i></button>
+                                <button onclick="editarCaixa(${c.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="deletarCaixa(${c.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Excluir"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
                         </div>
                     `;
@@ -1756,6 +1942,66 @@
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(lista), "Caixa_Filtrado");
                 XLSX.writeFile(wb, `Extrato_Caixa.xlsx`);
+            }
+        }
+
+        /* LÓGICA DA CALCULADORA COMUM E FITA BOBINA */
+        function calcComumAdd(val) {
+            if (calcVisorVal === '0' && val !== '.') {
+                calcVisorVal = val;
+            } else {
+                calcVisorVal += val;
+            }
+            document.getElementById('calc-comum-visor').innerText = calcVisorVal;
+        }
+
+        function calcComumLimpar() {
+            calcVisorVal = '0';
+            document.getElementById('calc-comum-visor').innerText = calcVisorVal;
+        }
+
+        function calcComumCalcular() {
+            try {
+                let expressao = calcVisorVal.replace(/×/g, '*').replace(/÷/g, '/');
+                let resultado = Function('"use strict";return (' + expressao + ')')();
+                
+                bobinaHistorico.push(`${calcVisorVal} = ${resultado}`);
+                renderFitaBobina();
+
+                calcVisorVal = String(resultado);
+                document.getElementById('calc-comum-visor').innerText = calcVisorVal;
+            } catch (err) {
+                alert("Expressão matemática inválida.");
+                calcComumLimpar();
+            }
+        }
+
+        function renderFitaBobina() {
+            const container = document.getElementById('bobina-linhas');
+            if(!container) return;
+            container.innerHTML = '';
+            bobinaHistorico.forEach((linha, idx) => {
+                container.innerHTML += `<div class="text-[11px] border-b border-amber-200 dark:border-gray-700 py-0.5">${idx+1}. ${linha}</div>`;
+            });
+            const bobinaBox = document.getElementById('calc-bobina-fita');
+            bobinaBox.scrollTop = bobinaBox.scrollHeight;
+        }
+
+        function limparFitaBobina() {
+            bobinaHistorico = [];
+            renderFitaBobina();
+        }
+
+        function compartilharBobina(tipo) {
+            if(!bobinaHistorico.length) return alert("A fita bobina está vazia!");
+            let txt = `DILIGENCE.BR - FITA DA CALCULADORA\n--------------------------------\n` + bobinaHistorico.join('\n');
+            if(tipo === 'whats') {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
+            } else if(tipo === 'email') {
+                window.open(`mailto:${EMAIL_CONTRATANTE}?subject=FitaCalculadora&body=${encodeURIComponent(txt)}`);
+            } else if(tipo === 'csv') {
+                const blob = new Blob([txt], { type: 'text/csv' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'fita_calculadora.csv'; a.click();
             }
         }
 
@@ -1829,7 +2075,17 @@
             }
         }
 
-        /* LÓGICA DA ABA CÁLCULOS JUDICIAIS / RESCISÓRIOS AVANÇADA COM BUSCA & GERAÇÃO DE MINUTA MODULAR */
+        /* LÓGICA DA ABA CÁLCULOS JUDICIAIS / RESCISÓRIOS COM DIAS TRABALHADOS E LEI DO AVISO PRÉVIO */
+        function mudarModoTempoTrab(val) {
+            if(val === 'dias') {
+                document.getElementById('div-campo-meses').classList.add('hidden');
+                document.getElementById('div-campo-dias').classList.remove('hidden');
+            } else {
+                document.getElementById('div-campo-meses').classList.remove('hidden');
+                document.getElementById('div-campo-dias').classList.add('hidden');
+            }
+        }
+
         function saveRescisao(e) {
             e.preventDefault();
             const id = document.getElementById('res-id').value;
@@ -1837,23 +2093,45 @@
             const vinculo = document.getElementById('res-vinculo').value;
             const motivo = document.getElementById('res-motivo').value;
             const salario = parseFloat(document.getElementById('res-salario').value) || 0;
+            
+            const modoTempo = document.getElementById('res-modo-tempo').value;
             const meses = parseFloat(document.getElementById('res-meses').value) || 12;
+            const diasTrab = parseFloat(document.getElementById('res-dias-trab').value) || 365;
+            const anosCompletos = parseInt(document.getElementById('res-anos-completos').value) || 0;
+
             const inssPct = parseFloat(document.getElementById('res-inss-pct').value) || 7.5;
             const adicionais = parseFloat(document.getElementById('res-adicionais').value) || 0;
 
             const usaMulta467 = document.getElementById('res-multa-467').checked;
             const usaMulta477 = document.getElementById('res-multa-477').checked;
             const usaFgts = document.getElementById('res-fgts').checked;
-            const usaMultaFgts = document.getElementById('res-multa-fgts').checked;
+            const multaFgtsPct = parseFloat(document.getElementById('res-multa-fgts-pct').value) || 0;
             const usaHomologar = document.getElementById('res-homologar').checked;
+
             const insalubridadePct = parseFloat(document.getElementById('res-insalubridade').value) || 0;
             const periculosidadePct = parseFloat(document.getElementById('res-periculosidade').value) || 0;
             const funcaoVal = parseFloat(document.getElementById('res-funcao-valor').value) || 0;
 
-            const saldoSalario = salario / 30 * 15;
-            const avisoPrevio = motivo === 'Dispensa sem justa causa' ? salario : 0;
-            const decimoTerceiro = (salario / 12) * meses;
-            const feriasProp = (salario / 12) * meses;
+            let saldoSalario = 0;
+            if(modoTempo === 'dias') {
+                saldoSalario = (salario / 30) * Math.min(diasTrab, 30);
+            } else {
+                saldoSalario = (salario / 30) * 15;
+            }
+
+            // LEI DO AVISO PRÉVIO PROPORCIONAL (Lei 12.506/2011)
+            let diasAvisoPrevio = 30;
+            if(motivo === 'Dispensa sem justa causa' || motivo === 'Rescisão indireta') {
+                let diasExtras = anosCompletos * 3;
+                if(diasExtras > 60) diasExtras = 60;
+                diasAvisoPrevio = 30 + diasExtras;
+            } else {
+                diasAvisoPrevio = 0;
+            }
+            const avisoPrevioVal = (salario / 30) * diasAvisoPrevio;
+
+            const decimoTerceiro = (salario / 12) * (modoTempo === 'dias' ? (diasTrab / 30) : meses);
+            const feriasProp = (salario / 12) * (modoTempo === 'dias' ? (diasTrab / 30) : meses);
             const feriasTerco = feriasProp / 3;
 
             const insalubridadeVal = insalubridadePct > 0 ? (1412 * (insalubridadePct / 100)) : 0;
@@ -1861,15 +2139,15 @@
 
             const inssVal = ((decimoTerceiro + feriasProp) * inssPct) / 100;
             
-            const verbasIncontroversasBase = saldoSalario + avisoPrevio + decimoTerceiro + feriasProp;
+            const verbasIncontroversasBase = saldoSalario + avisoPrevioVal + decimoTerceiro + feriasProp;
             const multa467Val = usaMulta467 ? (verbasIncontroversasBase * 0.50) : 0;
             const multa477Val = usaMulta477 ? salario : 0;
 
-            const baseFgtsTotal = (salario * meses) + decimoTerceiro;
+            const baseFgtsTotal = (salario * (modoTempo === 'dias' ? (diasTrab/30) : meses)) + decimoTerceiro;
             const fgtsVal = usaFgts ? (baseFgtsTotal * 0.08) : 0;
-            const multaFgtsVal = usaMultaFgts ? (fgtsVal * (motivo === 'Acordo art. 484-A' ? 0.20 : 0.40)) : 0;
+            const multaFgtsVal = fgtsVal * (multaFgtsPct / 100);
 
-            const subtotalGeral = saldoSalario + avisoPrevio + decimoTerceiro + feriasProp + feriasTerco + insalubridadeVal + periculosidadeVal + funcaoVal + adicionais + multa467Val + multa477Val + fgtsVal + multaFgtsVal - inssVal;
+            const subtotalGeral = saldoSalario + avisoPrevioVal + decimoTerceiro + feriasProp + feriasTerco + insalubridadeVal + periculosidadeVal + funcaoVal + adicionais + multa467Val + multa477Val + fgtsVal + multaFgtsVal - inssVal;
             const homologacaoVal = usaHomologar ? (subtotalGeral * 0.20) : 0;
             const totalLiquido = subtotalGeral + homologacaoVal;
 
@@ -1879,10 +2157,14 @@
                 vinculo: vinculo,
                 motivo: motivo,
                 salario: salario,
+                modoTempo: modoTempo,
                 meses: meses,
+                diasTrab: diasTrab,
+                anosCompletos: anosCompletos,
+                diasAvisoPrevio: diasAvisoPrevio,
                 inssPct: inssPct,
                 saldoSalario: saldoSalario,
-                avisoPrevio: avisoPrevio,
+                avisoPrevio: avisoPrevioVal,
                 decimoTerceiro: decimoTerceiro,
                 feriasProp: feriasProp,
                 feriasTerco: feriasTerco,
@@ -1894,6 +2176,7 @@
                 multa467Val: multa467Val,
                 multa477Val: multa477Val,
                 fgtsVal: fgtsVal,
+                multaFgtsPct: multaFgtsPct,
                 multaFgtsVal: multaFgtsVal,
                 homologacaoVal: homologacaoVal,
                 totalLiquido: totalLiquido,
@@ -1904,7 +2187,7 @@
                 const index = db.rescisoes.findIndex(item => item.id == id);
                 if (index !== -1) db.rescisoes[index] = objetoRescisao;
             } else {
-                db.rescisoes.push(objetoRescisao);
+                db.rescisoes.unshift(objetoRescisao);
             }
 
             saveData(); limparFormRescisao(); renderRescisoes(); alert("✅ Cálculo judicial salvo com sucesso!");
@@ -1923,12 +2206,18 @@
             document.getElementById('res-vinculo').value = r.vinculo;
             document.getElementById('res-motivo').value = r.motivo;
             document.getElementById('res-salario').value = r.salario;
-            document.getElementById('res-meses').value = r.meses;
+            
+            document.getElementById('res-modo-tempo').value = r.modoTempo || 'meses';
+            mudarModoTempoTrab(r.modoTempo || 'meses');
+            document.getElementById('res-meses').value = r.meses || 12;
+            document.getElementById('res-dias-trab').value = r.diasTrab || 365;
+            document.getElementById('res-anos-completos').value = r.anosCompletos || 1;
+
             document.getElementById('res-inss-pct').value = r.inssPct || 7.5;
             document.getElementById('res-multa-467').checked = (r.multa467Val || 0) > 0;
             document.getElementById('res-multa-477').checked = (r.multa477Val || 0) > 0;
             document.getElementById('res-fgts').checked = (r.fgtsVal || 0) > 0;
-            document.getElementById('res-multa-fgts').checked = (r.multaFgtsVal || 0) > 0;
+            document.getElementById('res-multa-fgts-pct').value = r.multaFgtsPct !== undefined ? r.multaFgtsPct : 40;
             document.getElementById('res-homologar').checked = (r.homologacaoVal || 0) > 0;
             document.getElementById('res-insalubridade').value = r.insalubridadePct || 0;
             document.getElementById('res-periculosidade').value = r.periculosidadePct || 0;
@@ -1943,6 +2232,7 @@
         function limparFormRescisao() {
             document.getElementById('form-rescisao').reset();
             document.getElementById('res-id').value = '';
+            mudarModoTempoTrab('meses');
             document.getElementById('res-form-titulo').innerHTML = '<i class="fa-solid fa-scale-balanced mr-1"></i> Calculadora de Cálculos Judiciais e Rescisão';
             document.getElementById('res-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> CALCULAR & SALVAR CÁLCULO JUDICIAL';
             document.getElementById('res-btn-cancelar').classList.add('hidden');
@@ -1958,46 +2248,58 @@
         function renderRescisoes() {
             const container = document.getElementById('lista-rescisioes');
             if(!container) return; container.innerHTML = '';
-            const busca = document.getElementById('busca-rescisao-input')?.value.toLowerCase() || '';
+            const busca = document.getElementById('busca-rescisao-input')?.value.toLowerCase().trim() || '';
 
-            const listaFiltrada = db.rescisoes.filter(r => r.cliente.toLowerCase().includes(busca));
+            let listaOrdenada = [...db.rescisoes].sort((a,b) => b.id - a.id);
+            let listaFiltrada = listaOrdenada.filter(r => r.cliente.toLowerCase().includes(busca));
 
             if(!listaFiltrada.length) {
                 container.innerHTML = '<p class="text-xs text-gray-400 italic">Nenhum cálculo judicial encontrado.</p>';
                 return;
             }
 
-            listaFiltrada.forEach(r => {
+            listaFiltrada.forEach((r, idx) => {
+                const isUltimo = (idx === 0 && !busca);
+                
                 container.innerHTML += `
                     <div class="p-3 border rounded-xl text-xs bg-white dark:bg-gray-800 shadow-sm space-y-2 border-l-4 border-brand-red">
                         <div class="flex justify-between items-center border-b pb-1">
                             <div>
-                                <strong class="text-sm text-brand-red">${r.cliente}</strong><br>
-                                <span class="text-gray-400">Vínculo: ${r.vinculo} | Motivo: ${r.motivo}</span>
+                                <strong class="text-sm text-brand-red">${r.cliente}</strong> ${isUltimo ? '<span class="bg-red-100 text-brand-red px-1.5 py-0.5 rounded font-bold text-[9px]">MAIS RECENTE</span>' : ''}<br>
+                                <span class="text-gray-400">Vínculo: ${r.vinculo} | Motivo: ${r.motivo} (${r.dataRegistro})</span>
                             </div>
                             <div class="flex gap-1">
-                                <button onclick="abrirAuditoriaMinuta(${r.id})" class="bg-red-700 text-white px-2 py-1 rounded font-bold text-[10px]" title="Gerar Minuta / Petição"><i class="fa-solid fa-file-contract"></i> Minuta</button>
-                                <button onclick="compartilharRescisaoItem('whats', ${r.id})" class="bg-green-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Compartilhar Whats"><i class="fa-brands fa-whatsapp"></i></button>
+                                <button onclick="abrirAuditoriaMinuta(${r.id})" class="bg-red-700 text-white px-2 py-1 rounded font-bold text-[10px]" title="Minuta"><i class="fa-solid fa-file-contract"></i> Minuta</button>
+                                <button onclick="compartilharRescisaoItem('whats', ${r.id})" class="bg-green-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Whats"><i class="fa-brands fa-whatsapp"></i></button>
                                 <button onclick="editarRescisao(${r.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
                                 <button onclick="deletarRescisao(${r.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Excluir"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-1 text-[11px] bg-gray-50 dark:bg-gray-700/50 p-2 rounded">
-                            <div>Salário Base: <strong>R$ ${(r.salario||0).toFixed(2)}</strong></div>
-                            <div>Saldo Salário: <strong>R$ ${(r.saldoSalario||0).toFixed(2)}</strong></div>
-                            <div>Aviso Prévio: <strong>R$ ${(r.avisoPrevio||0).toFixed(2)}</strong></div>
-                            <div>13º Prop: <strong>R$ ${(r.decimoTerceiro||0).toFixed(2)}</strong></div>
-                            <div>Férias + 1/3: <strong>R$ ${((r.feriasProp||0)+(r.feriasTerco||0)).toFixed(2)}</strong></div>
-                            <div>Multa Art. 467: <strong>R$ ${(r.multa467Val||0).toFixed(2)}</strong></div>
-                            <div>Multa Art. 477: <strong>R$ ${(r.multa477Val||0).toFixed(2)}</strong></div>
-                            <div>FGTS + Multa: <strong>R$ ${((r.fgtsVal||0)+(r.multaFgtsVal||0)).toFixed(2)}</strong></div>
-                            <div>Adicionais / Ajustes: <strong>R$ ${((r.insalubridadeVal||0)+(r.periculosidadeVal||0)+(r.funcaoVal||0)).toFixed(2)}</strong></div>
-                            <div>Homologação (Taxa): <strong>R$ ${(r.homologacaoVal||0).toFixed(2)}</strong></div>
+
+                        <div id="detalhes-res-${r.id}" class="${(isUltimo || busca) ? '' : 'hidden'} space-y-2">
+                            <div class="grid grid-cols-2 gap-1 text-[11px] bg-gray-50 dark:bg-gray-700/50 p-2 rounded">
+                                <div>Salário Base: <strong>R$ ${(r.salario||0).toFixed(2)}</strong></div>
+                                <div>Aviso Prévio (${r.diasAvisoPrevio || 30} dias): <strong>R$ ${(r.avisoPrevio||0).toFixed(2)}</strong></div>
+                                <div>Saldo Salário: <strong>R$ ${(r.saldoSalario||0).toFixed(2)}</strong></div>
+                                <div>13º Prop: <strong>R$ ${(r.decimoTerceiro||0).toFixed(2)}</strong></div>
+                                <div>Férias + 1/3: <strong>R$ ${((r.feriasProp||0)+(r.feriasTerco||0)).toFixed(2)}</strong></div>
+                                <div>Multa Art. 467: <strong>R$ ${(r.multa467Val||0).toFixed(2)}</strong></div>
+                                <div>Multa Art. 477: <strong>R$ ${(r.multa477Val||0).toFixed(2)}</strong></div>
+                                <div>FGTS + Multa (${r.multaFgtsPct || 0}%): <strong>R$ ${((r.fgtsVal||0)+(r.multaFgtsVal||0)).toFixed(2)}</strong></div>
+                                <div>Adicionais / Ajustes: <strong>R$ ${((r.insalubridadeVal||0)+(r.periculosidadeVal||0)+(r.funcaoVal||0)).toFixed(2)}</strong></div>
+                                <div>Homologação (Taxa): <strong>R$ ${(r.homologacaoVal||0).toFixed(2)}</strong></div>
+                            </div>
+                            <div class="flex justify-between items-center pt-1 font-bold text-sm">
+                                <span class="text-gray-600 dark:text-gray-300">TOTAL LÍQUIDO JUDICIAL:</span>
+                                <span class="text-green-600 text-base">R$ ${(r.totalLiquido||0).toFixed(2)}</span>
+                            </div>
                         </div>
-                        <div class="flex justify-between items-center pt-1 font-bold text-sm">
-                            <span class="text-gray-600 dark:text-gray-300">TOTAL LÍQUIDO JUDICIAL:</span>
-                            <span class="text-green-600 text-base">R$ ${(r.totalLiquido||0).toFixed(2)}</span>
-                        </div>
+
+                        ${(!isUltimo && !busca) ? `
+                            <button onclick="document.getElementById('detalhes-res-${r.id}').classList.toggle('hidden');" class="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-1 rounded text-[10px] font-bold text-center">
+                                ▼ Exibir demonstrativo oculto
+                            </button>
+                        ` : ''}
                     </div>
                 `;
             });
@@ -2006,7 +2308,7 @@
         function compartilharRescisaoItem(tipo, id) {
             const r = db.rescisoes.find(item => item.id == id);
             if(!r) return;
-            const txt = `DILIGENCE.BR - DEMONSTRATIVO DE CÁLCULO JUDICIAL\n--------------------------------\nCliente/Proc: ${r.cliente}\nVínculo: ${r.vinculo}\nMotivo: ${r.motivo}\nSalário Base: R$ ${r.salario.toFixed(2)}\nSaldo de Salário: R$ ${r.saldoSalario.toFixed(2)}\nAviso Prévio: R$ ${r.avisoPrevio.toFixed(2)}\n13º Prop: R$ ${r.decimoTerceiro.toFixed(2)}\nFérias+1/3: R$ ${((r.feriasProp||0)+(r.feriasTerco||0)).toFixed(2)}\nMulta Art. 467: R$ ${(r.multa467Val||0).toFixed(2)}\nMulta Art. 477: R$ ${(r.multa477Val||0).toFixed(2)}\nFGTS + Multa: R$ ${((r.fgtsVal||0)+(r.multaFgtsVal||0)).toFixed(2)}\nAdicionais/Ajustes: R$ ${((r.insalubridadeVal||0)+(r.periculosidadeVal||0)+(r.funcaoVal||0)).toFixed(2)}\nHomologação: R$ ${(r.homologacaoVal||0).toFixed(2)}\nTOTAL LÍQUIDO JUDICIAL: R$ ${r.totalLiquido.toFixed(2)}\nData: ${r.dataRegistro}`;
+            const txt = `DILIGENCE.BR - DEMONSTRATIVO DE CÁLCULO JUDICIAL\n--------------------------------\nCliente/Proc: ${r.cliente}\nVínculo: ${r.vinculo}\nMotivo: ${r.motivo}\nSalário Base: R$ ${r.salario.toFixed(2)}\nAviso Prévio (${r.diasAvisoPrevio} dias): R$ ${r.avisoPrevio.toFixed(2)}\nSaldo de Salário: R$ ${r.saldoSalario.toFixed(2)}\n13º Prop: R$ ${r.decimoTerceiro.toFixed(2)}\nFérias+1/3: R$ ${((r.feriasProp||0)+(r.feriasTerco||0)).toFixed(2)}\nMulta Art. 467: R$ ${(r.multa467Val||0).toFixed(2)}\nMulta Art. 477: R$ ${(r.multa477Val||0).toFixed(2)}\nFGTS + Multa (${r.multaFgtsPct}%): R$ ${((r.fgtsVal||0)+(r.multaFgtsVal||0)).toFixed(2)}\nAdicionais/Ajustes: R$ ${((r.insalubridadeVal||0)+(r.periculosidadeVal||0)+(r.funcaoVal||0)).toFixed(2)}\nHomologação: R$ ${r.homologacaoVal.toFixed(2)}\nTOTAL LÍQUIDO JUDICIAL: R$ ${r.totalLiquido.toFixed(2)}\nData: ${r.dataRegistro}`;
 
             if(tipo === 'whats') {
                 window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
@@ -2044,11 +2346,10 @@ RECLAMAÇÃO TRABALHISTA
 em face de RECLAMADA / EMPREGADORA, pelos fatos e fundamentos a seguir expostos.
 
 I — DADOS CONTRATUAIS
-Admissão: 01/01/2023
-Desligamento/data final: 31/12/2023
 Função: Operador(a) / Prestador(a)
 Última remuneração: R$ ${r.salario.toFixed(2)}
 Modalidade de desligamento: ${r.motivo}
+Aviso Prévio Proporcional (Lei 12.506/11): ${r.diasAvisoPrevio || 30} dias
 Registro em CTPS: ${comRegistro ? 'SIM' : 'NÃO'}
 
 II — DO CONTRATO DE TRABALHO
@@ -2067,15 +2368,15 @@ ${temPericulosidade ? `IX — DO ADICIONAL DE PERICULOSIDADE
 O Reclamante exercia atividades em condições perigosas. Postula-se o adicional de 30% sobre o salário base.` : ''}
 
 XIII — DAS VERBAS RESCISÓRIAS
-Considerando a modalidade de desligamento cadastrada como ${r.motivo}, apuraram-se as parcelas correspondentes na memória de cálculo.
+Considerando a modalidade de desligamento cadastrada como ${r.motivo} e o aviso prévio proporcional de ${r.diasAvisoPrevio || 30} dias, apuraram-se as parcelas correspondentes na memória de cálculo.
 
-XIV — DO FGTS
-Apuração realizada por competência, considerando as bases remuneratórias e depósitos. Diferença de FGTS e multa rescisória devidas conforme enquadramento.
+XIV — DO FGTS E MULTA (${r.multaFgtsPct}%)
+Apuração realizada por competência, considerando as bases remuneratórias e depósitos, com multa rescisória de ${r.multaFgtsPct}%.
 
 XVII — DOS PEDIDOS
 Diante das premissas fáticas e jurídicas selecionadas, requer-se:
 a) saldo salarial — R$ ${(r.saldoSalario||0).toFixed(2)};
-b) aviso-prévio — R$ ${(r.avisoPrevio||0).toFixed(2)};
+b) aviso-prévio proporcional (${r.diasAvisoPrevio || 30} dias) — R$ ${(r.avisoPrevio||0).toFixed(2)};
 c) 13º salário proporcional — R$ ${(r.decimoTerceiro||0).toFixed(2)};
 d) férias + 1/3 constitucional — R$ ${((r.feriasProp||0)+(r.feriasTerco||0)).toFixed(2)};
 ${(r.multa467Val||0) > 0 ? `e) multa do art. 467 da CLT — R$ ${r.multa467Val.toFixed(2)};\n` : ''}` +
@@ -2158,7 +2459,7 @@ Status da auditoria: APROVADO`;
             });
         }
 
-        /* LÓGICA DE RELATÓRIOS E AVISO DE EDIÇÃO */
+        /* LÓGICA DE RELATÓRIOS, LOG DE EXPORTAÇÃO E CHECK VERDE */
         function renderRelatorios() {
             let pago = 0, pendente = 0;
             db.atos.forEach(a => { if(a.status === 'pago') pago += a.valor; else pendente += a.valor; });
@@ -2168,6 +2469,67 @@ Status da auditoria: APROVADO`;
             document.getElementById('rel-total-caixa').innerText = db.caixa.length;
             document.getElementById('rel-total-contatos').innerText = db.contatos.length;
             document.getElementById('rel-total-rescisao').innerText = db.rescisoes.length;
+        }
+
+        function registrarLogExport(tipo) {
+            const agora = new Date().toLocaleString('pt-BR');
+            if(!db.exportLog) db.exportLog = [];
+            db.exportLog.unshift({ tipo: tipo, dataHora: agora });
+            db.ultimoBackupData = agora;
+            saveData();
+            renderMiniHistoricoExport();
+            atualizarBannerUltimoBackup();
+        }
+
+        function renderMiniHistoricoExport() {
+            const container = document.getElementById('lista-mini-historico-export');
+            if(!container) return;
+            container.innerHTML = '';
+
+            if(!db.exportLog || !db.exportLog.length) {
+                container.innerHTML = '<p class="text-gray-400 italic">Nenhuma exportação realizada ainda.</p>';
+                return;
+            }
+
+            db.exportLog.forEach((log, idx) => {
+                container.innerHTML += `
+                    <div class="flex items-center justify-between p-1.5 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-700/40 rounded">
+                        <span class="font-bold text-green-600 flex items-center gap-1">✓ ${log.tipo}</span>
+                        <span class="text-gray-500 dark:text-gray-400 text-[10px]">${log.dataHora}</span>
+                    </div>
+                `;
+            });
+        }
+
+        function exportarExcelMultiAbasComLog() {
+            if (typeof XLSX === 'undefined') return alert("Aguarde carregar a biblioteca...");
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.atos.length ? db.atos : [{"Aviso": "Pauta Vazia"}]), "Pauta");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.caixa.length ? db.caixa : [{"Aviso": "Caixa Vazio"}]), "Caixa");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.contatos.length ? db.contatos : [{"Aviso": "Agenda Vazia"}]), "Agenda");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.recibos.length ? db.recibos : [{"Aviso": "Recibos Vazio"}]), "Recibos");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.rescisoes.length ? db.rescisoes : [{"Aviso": "Rescisoes Vazio"}]), "Rescisoes");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.perfis.length ? db.perfis : [{"Aviso": "Perfis Vazio"}]), "Perfis");
+            XLSX.writeFile(wb, `Relatorio_DILIGENCE.xlsx`);
+            
+            registrarLogExport("Planilha Excel (.XLSX) Exportada");
+            fecharAvisoRelatorio();
+            fecharModalBackup();
+        }
+
+        function gerarPDFRelatorioConsolidadoComLog() {
+            const element = document.createElement('div');
+            element.className = "p-6 font-sans bg-white text-black space-y-4 text-xs";
+            element.innerHTML = `
+                <h2 style="color:#dc2626; font-size:18px; font-weight:bold; border-bottom:2px solid #dc2626; padding-bottom:5px;">RELATÓRIO FINANCEIRO CONSOLIDADO - DILIGENCE.BR</h2>
+                <p><strong>Total Recebido (Pago):</strong> ${document.getElementById('relatorio-valor-pago').innerText}</p>
+                <p><strong>Total A Receber (Pendente):</strong> ${document.getElementById('relatorio-valor-pendente').innerText}</p>
+                <p><strong>Total de Atos Registrados:</strong> ${db.atos.length}</p>
+                <p><strong>Data/Hora Emissão:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+            `;
+            html2pdf().set({ margin: 10, filename: `Relatorio_Financeiro.pdf` }).from(element).save();
+            
+            registrarLogExport("Relatório PDF Consolidado Gerado");
         }
 
         function avisoEditarRelatorio() {
@@ -2190,18 +2552,6 @@ Status da auditoria: APROVADO`;
             html2pdf().set({ margin: 10, filename: `Pauta_Diligencias.pdf` }).from(element).save();
         }
 
-        function gerarPDFRelatorioConsolidado() {
-            const element = document.createElement('div');
-            element.className = "p-6 font-sans bg-white text-black space-y-4";
-            element.innerHTML = `
-                <h2 style="color:#dc2626; font-size:18px; font-weight:bold; border-bottom:2px solid #dc2626; padding-bottom:5px;">RELATÓRIO FINANCEIRO CONSOLIDADO - DILIGENCE.BR</h2>
-                <p><strong>Total Recebido (Pago):</strong> ${document.getElementById('relatorio-valor-pago').innerText}</p>
-                <p><strong>Total A Receber (Pendente):</strong> ${document.getElementById('relatorio-valor-pendente').innerText}</p>
-                <p><strong>Total de Atos Registrados:</strong> ${db.atos.length}</p>
-            `;
-            html2pdf().set({ margin: 10, filename: `Relatorio_Financeiro.pdf` }).from(element).save();
-        }
-
         function iniciarDitadoVoz(id) {
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return alert("Ditado não suportado.");
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -2218,7 +2568,12 @@ Status da auditoria: APROVADO`;
         function fazerBackupJSON() {
             const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Backup_DILIGENCE.json`; a.click();
+            
+            db.ultimoBackupData = new Date().toLocaleString('pt-BR');
+            saveData();
+            atualizarBannerUltimoBackup();
             fecharModalBackup();
+            alert("✅ Backup JSON realizado com sucesso!");
         }
 
         function acionarRestauracao() { fecharModalBackup(); document.getElementById('input-restaurar-file').click(); }
@@ -2243,19 +2598,6 @@ Status da auditoria: APROVADO`;
                 localStorage.removeItem('diligence_db'); localStorage.removeItem('diligence_logged');
                 location.reload();
             }
-        }
-
-        function exportarExcelMultiAbas() {
-            if (typeof XLSX === 'undefined') return alert("Aguarde carregar a biblioteca...");
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.atos.length ? db.atos : [{"Aviso": "Pauta Vazia"}]), "Pauta");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.caixa.length ? db.caixa : [{"Aviso": "Caixa Vazio"}]), "Caixa");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.contatos.length ? db.contatos : [{"Aviso": "Agenda Vazia"}]), "Agenda");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.recibos.length ? db.recibos : [{"Aviso": "Recibos Vazio"}]), "Recibos");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.rescisoes.length ? db.rescisoes : [{"Aviso": "Rescisoes Vazio"}]), "Rescisoes");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.perfis.length ? db.perfis : [{"Aviso": "Perfis Vazio"}]), "Perfis");
-            XLSX.writeFile(wb, `Relatorio_DILIGENCE.xlsx`);
-            fecharModalBackup();
         }
 
         loadData();
