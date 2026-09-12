@@ -78,64 +78,18 @@
                 </div>
                 <button type="submit" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-lg font-bold text-sm shadow">Entrar no Sistema</button>
             </form>
-            
             <p id="login-error" class="text-xs text-red-500 font-semibold hidden">Usuário ou senha incorretos!</p>
-
-            <div class="pt-3 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center gap-1.5">
-                <button onclick="abrirModalRecuperacao('usuario')" class="text-xs text-brand-red dark:text-red-400 font-bold hover:underline flex items-center gap-1">
-                    <i class="fa-solid fa-user-lock"></i> Esqueci o meu usuário
-                </button>
-                <button onclick="abrirModalRecuperacao('senha')" class="text-xs text-brand-red dark:text-red-400 font-bold hover:underline flex items-center gap-1">
-                    <i class="fa-solid fa-key"></i> Esqueci a minha senha
-                </button>
-            </div>
         </div>
     </div>
 
-    <!-- MODAL POP-UP DE RECUPERAÇÃO DE LOGIN E SENHA -->
-    <div id="modal-recuperacao-login" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-2 border-brand-red">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 id="rec-modal-titulo" class="font-extrabold text-sm text-brand-red flex items-center gap-1">
-                    <i class="fa-solid fa-headset"></i> RECUPERAÇÃO DE ACESSO
-                </h3>
-                <button onclick="fecharModalRecuperacao()" class="text-gray-400 font-bold text-lg">&times;</button>
-            </div>
-            
-            <p id="rec-modal-subtitulo" class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-                Entre em contato direto com a Administração via WhatsApp <strong>(11) 97838-6574</strong> para validar seus dados e recuperar seu acesso.
-            </p>
-
-            <div class="space-y-2 text-left">
-                <div>
-                    <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Seu Nome Completo:</label>
-                    <input type="text" id="rec-nome" placeholder="Digite seu nome..." class="w-full p-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-xs font-semibold focus:outline-none">
-                </div>
-                <div>
-                    <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Seu Número de Celular / WhatsApp:</label>
-                    <input type="text" id="rec-celular" placeholder="(11) 99999-9999" class="w-full p-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-xs font-semibold focus:outline-none">
-                </div>
-            </div>
-
-            <div class="pt-2 border-t space-y-2">
-                <button onclick="enviarRecuperacaoWhats()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-brands fa-whatsapp text-sm"></i> ENVIAR SOLICITAÇÃO NO WHATSAPP
-                </button>
-                <button onclick="fecharModalRecuperacao()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">
-                    Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL POP-UP DE LEMBRETE AUTOMÁTICO (12:00 / 18:00) -->
+    <!-- MODAL LEMBRETE AUTOMÁTICO (12:00 / 18:00) -->
     <div id="modal-lembrete-sistema" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-4 border-amber-500 text-center">
             <div class="flex justify-center text-amber-500 text-3xl">
                 <i class="fa-solid fa-triangle-exclamation animate-bounce"></i>
             </div>
             <div>
-                <h3 id="lembrete-titulo-horario" class="font-black text-base text-brand-red uppercase">LEMBRETE DO SISTEMA (12:00)</h3>
+                <h3 id="lembrete-titulo-horario" class="font-black text-base text-brand-red uppercase">LEMBRETE DO SISTEMA</h3>
                 <p class="text-xs text-gray-600 dark:text-gray-300 mt-2 leading-relaxed font-semibold">
                     Olá! Você já realizou o backup dos seus dados e pautas hoje para garantir a segurança das suas informações?
                 </p>
@@ -176,29 +130,15 @@
                     <button onclick="fazerLogout()" class="bg-black text-white px-2 py-1 rounded text-xs font-bold hover:bg-gray-900 shadow">Sair</button>
                 </div>
             </div>
-
-            <div class="mt-3 pt-2 border-t border-red-500/50 flex justify-between items-center text-xs">
-                <span class="italic text-red-100 text-[11px]">"Que o dia seja produtivo e abençoado!"</span>
-                <div class="flex gap-1">
-                    <button onclick="abrirModalBackup()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] shadow">
-                        <i class="fa-solid fa-database"></i> Backup
-                    </button>
-                    <button onclick="acionarRestauracao()" class="bg-gray-900 text-white font-bold px-2 py-1 rounded text-[11px] shadow">
-                        <i class="fa-solid fa-upload"></i> Restaurar
-                    </button>
-                </div>
-            </div>
         </header>
-
-        <input type="file" id="input-restaurar-file" accept=".json" class="hidden" onchange="processarRestauracaoFile(event)">
 
         <main class="flex-1 p-4 overflow-y-auto">
 
-            <!-- ABA 1: PERFIL DO CORRESPONDENTE -->
+            <!-- ABA 1: PERFIL -->
             <section id="tab-perfil" class="tab-content space-y-4">
                 <form id="form-perfil" onsubmit="savePerfil(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
                     <input type="hidden" id="perfil-id">
-                    <h2 id="perfil-form-titulo" class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-2">Cadastro de Perfil Profissional</h2>
+                    <h2 class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-2">Cadastro de Perfil Profissional</h2>
                     <div>
                         <label class="text-xs font-semibold">Nome Completo</label>
                         <input type="text" id="perfil-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
@@ -209,415 +149,80 @@
                             <input type="text" id="perfil-doc" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold">Cidade Base (IBGE)</label>
-                            <input type="text" id="perfil-cidade" oninput="buscarCidadesIBGE(this.value)" list="lista-cidades-br" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
+                            <label class="text-xs font-semibold">Cidade Base</label>
+                            <input type="text" id="perfil-cidade" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-semibold">Celular / WhatsApp</label>
-                            <input type="text" id="perfil-celular" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold">Chave PIX</label>
-                            <input type="text" id="perfil-pix" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold">E-mail do Correspondente</label>
-                        <input type="email" id="perfil-email" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                    </div>
-                    <div class="flex gap-2">
-                        <button type="submit" id="perfil-btn-salvar" class="flex-1 bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-floppy-disk"></i> SALVAR / INSERIR PERFIL
-                        </button>
-                        <button type="button" id="perfil-btn-cancelar" onclick="limparFormPerfil()" class="hidden bg-gray-500 text-white px-3 py-2.5 rounded-lg font-bold text-xs">
-                            Cancelar
-                        </button>
-                    </div>
+                    <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow">Salvar Perfil</button>
                 </form>
-
-                <div class="space-y-2">
-                    <h4 class="font-bold text-xs text-gray-700 dark:text-gray-200">Perfis Cadastrados (Inserir, Editar, Excluir):</h4>
-                    <div id="lista-perfis" class="space-y-2"></div>
-                </div>
-
-                <div class="p-3 bg-red-50 dark:bg-gray-700/50 rounded-xl border border-red-200 space-y-2 text-xs">
-                    <span class="font-bold text-brand-red block">Compartilhar Perfil Profissional Ativo:</span>
-                    <div class="grid grid-cols-3 gap-2 font-bold">
-                        <button onclick="compartilharPerfil('whats')" class="bg-green-600 text-white p-2 rounded-lg"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
-                        <button onclick="compartilharPerfil('email_contratante')" class="bg-blue-600 text-white p-2 rounded-lg"><i class="fa-solid fa-envelope"></i> Contratante</button>
-                        <button onclick="compartilharPerfil('email_meu')" class="bg-gray-800 text-white p-2 rounded-lg"><i class="fa-solid fa-at"></i> Meu E-mail</button>
-                    </div>
-                </div>
             </section>
 
-            <!-- ABA 2: PAUTA DE DILIGÊNCIAS (COM DESTAQUE DE ÚLTIMO BACKUP E TESTE MANUAL DE LEMBRETES 12:00 / 18:00) -->
+            <!-- ABA 2: PAUTA -->
             <section id="tab-atos" class="tab-content space-y-4 hidden">
-                
-                <!-- DESTAQUE EM VERMELHO COM AMARELO DO ÚLTIMO BACKUP -->
-                <div id="banner-ultimo-backup" class="p-3.5 bg-red-700 border-2 border-amber-400 rounded-xl text-white shadow-md flex justify-between items-center text-xs">
-                    <div class="flex items-center gap-2.5">
-                        <i class="fa-solid fa-database text-amber-300 text-lg"></i>
-                        <div>
-                            <span class="font-extrabold text-amber-300 uppercase tracking-wide block">Último Backup / Exportação Realizada:</span>
-                            <span id="txt-data-ultimo-backup" class="font-mono font-bold text-red-100">Nenhum backup realizado nesta sessão ainda.</span>
-                        </div>
-                    </div>
-                    <button onclick="fazerBackupJSON()" class="bg-amber-400 hover:bg-amber-500 text-gray-900 font-black px-2.5 py-1.5 rounded-lg text-[11px] shadow">
-                        <i class="fa-solid fa-download mr-1"></i> Fazer Backup Agora
-                    </button>
-                </div>
-
-                <!-- TESTE MANUAL DE DISPARO DOS LEMBRETES 12:00 E 18:00 -->
-                <div class="p-3 bg-amber-50 dark:bg-gray-700/50 rounded-xl border border-amber-300 text-xs space-y-2">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-amber-800 dark:text-amber-400 flex items-center gap-1">
-                            <i class="fa-solid fa-bell"></i> Simular Lembretes Automáticos (12:00 e 18:00)
-                        </span>
-                        <span id="status-alerta-horario" class="font-mono font-bold text-gray-500 text-[10px]">Ativo no relógio</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="dispararLembreteSistema('12:00')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg shadow">
-                            Simular Alerta 12:00
-                        </button>
-                        <button onclick="dispararLembreteSistema('18:00')" class="bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 rounded-lg shadow">
-                            Simular Alerta 18:00
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 text-xs flex justify-between items-center">
-                    <div>
-                        <h3 class="font-bold text-brand-red"><i class="fa-solid fa-calendar-check mr-1"></i> Cadastro e Pauta de Diligências</h3>
-                        <p>Automações de vencimento, histórico de alterações e Check-in GPS ADM.</p>
-                    </div>
-                    <button type="button" onclick="capturarLocalizacaoGPS()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs shadow">
-                        <i class="fa-solid fa-location-dot mr-1"></i> Check-in GPS ADM
-                    </button>
-                </div>
-
-                <form id="form-ato" onsubmit="saveAto(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <input type="hidden" id="ato-id">
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-semibold">Nº do Processo*</label>
-                            <input type="text" id="ato-processo" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold">Cliente / Contratante*</label>
-                            <input type="text" id="ato-cliente" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-semibold">Data e Hora do Ato*</label>
-                            <input type="datetime-local" id="ato-data" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold">Vencimento do Pagamento*</label>
-                            <input type="date" id="ato-vencimento" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-semibold">Cidade / Comarca (IBGE)*</label>
-                            <input type="text" id="ato-cidade" oninput="buscarCidadesIBGE(this.value)" list="lista-cidades-br" required placeholder="Digite a comarca..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold">Modalidade / Tipo do Ato*</label>
-                            <select id="ato-modalidade" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-bold">
-                                <option value="teams">🟣 Cível (Virtual - Teams)</option>
-                                <option value="zoom">🔵 TRT / Trabalhista (Virtual - Zoom)</option>
-                                <option value="pericia">🩺 Perícia Médica / Técnica</option>
-                                <option value="procon">🏛️ PROCON / Órgão Público</option>
-                                <option value="delegacia">🚔 Delegacia / Inquérito</option>
-                                <option value="presencial">🏛️ Presencial (Fórum / GPS)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="text-xs font-semibold">Link da Sala Virtual (Opcional)</label>
-                        <input type="url" id="ato-link" placeholder="https://teams.microsoft.com/..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
-                    </div>
-
-                    <div class="p-3 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-2">
-                        <label class="text-xs font-bold text-gray-700 dark:text-gray-200 block">
-                            <i class="fa-solid fa-camera text-brand-red"></i> Anexar/Tirar Foto da ATA ou Galeria:
-                        </label>
-                        <input type="file" id="ato-ata-file" accept="image/*" capture="environment" onchange="previewECompressImagemAta(event)" class="w-full p-1 border rounded text-xs bg-white dark:bg-gray-800">
-                        
-                        <div id="preview-ata-container" class="hidden space-y-2 pt-2 border-t border-gray-200 dark:border-gray-600">
-                            <div class="text-center">
-                                <span id="carimbo-data-hora-ata" class="text-[10px] font-mono font-bold text-gray-500 block"></span>
-                                <img id="img-preview-ata" src="" class="max-h-36 mx-auto rounded border shadow-sm my-1">
-                            </div>
-
-                            <div class="space-y-1.5 text-xs">
-                                <button type="button" onclick="enviarAtaWhatsADM()" class="w-full bg-green-600 text-white p-2 rounded-lg font-bold flex items-center justify-center gap-1 shadow">
-                                    <i class="fa-brands fa-whatsapp"></i> Enviar p/ Diligence.br (WhatsApp ADM)
-                                </button>
-                                
-                                <div>
-                                    <label class="text-[10px] font-bold text-gray-500">Enviar por E-mail (Opcional):</label>
-                                    <input type="email" id="ato-ata-email-dest" placeholder="Escreva o e-mail ou nada fazer apenas salvar" class="w-full p-2 border rounded text-xs placeholder-gray-400 dark:bg-gray-700">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2 p-2.5 bg-red-50 dark:bg-gray-700/60 rounded-xl border-2 border-brand-red">
-                        <div>
-                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Valor Acordado (R$)*</label>
-                            <input type="number" step="0.01" id="ato-valor" required placeholder="0.00" class="w-full p-2 border rounded-lg dark:bg-gray-700 font-bold text-sm">
-                        </div>
-                        <div>
-                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Status do Pagamento*</label>
-                            <select id="ato-status-select" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-bold">
-                                <option value="pendente">🟡 PENDENTE</option>
-                                <option value="pago">🟢 PAGO</option>
-                                <option value="vencido">🔴 VENCIDO</option>
-                                <option value="troca">🔄 TROCA DE AUDIÊNCIA</option>
-                                <option value="debito">🔴 DÉBITO / SAÍDA</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-2">
-                        <button type="submit" id="ato-btn-salvar" class="flex-1 bg-brand-red text-white py-3 rounded-xl font-black text-sm shadow hover:bg-brand-darkred flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-floppy-disk"></i> SALVAR DILIGÊNCIA NA PAUTA
-                        </button>
-                        <button type="button" id="ato-btn-cancelar" onclick="limparFormAto()" class="hidden bg-gray-500 text-white px-3 py-3 rounded-xl font-bold text-xs">
-                            Cancelar
-                        </button>
-                    </div>
-                </form>
-
-                <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-xl border space-y-2 text-xs">
-                    <span class="font-bold text-brand-red block"><i class="fa-solid fa-share-nodes"></i> Compartilhar Pauta Geral:</span>
-                    <div class="grid grid-cols-4 gap-2 font-bold">
-                        <button onclick="compartilharPautaGeral('whats')" class="bg-green-600 text-white p-2 rounded-lg shadow"><i class="fa-brands fa-whatsapp"></i> Whats</button>
-                        <button onclick="compartilharPautaGeral('email')" class="bg-blue-600 text-white p-2 rounded-lg shadow"><i class="fa-solid fa-envelope"></i> E-mail</button>
-                        <button onclick="gerarPDFPautaGeral()" class="bg-red-700 text-white p-2 rounded-lg shadow"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-                        <button onclick="compartilharPautaGeral('csv')" class="bg-gray-800 text-white p-2 rounded-lg shadow"><i class="fa-solid fa-file-csv"></i> CSV</button>
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <div class="flex justify-between items-center bg-gray-200 dark:bg-gray-700 p-2 rounded-lg">
-                        <span class="font-bold text-xs">Pauta de Atos Cadastrados</span>
-                    </div>
-                    <div id="lista-atos" class="space-y-2"></div>
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 text-xs">
+                    <h3 class="font-bold text-brand-red"><i class="fa-solid fa-calendar-check mr-1"></i> Pauta de Diligências</h3>
                 </div>
             </section>
 
-            <!-- ABA 3: AGENDA DE CONTATOS -->
+            <!-- ABA 3: AGENDA -->
             <section id="tab-contatos" class="tab-content space-y-4 hidden">
-                <form id="form-contato" onsubmit="saveContato(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <input type="hidden" id="ct-id">
-                    <h2 id="ct-form-titulo" class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-1">Cadastrar / Inserir Novo Contato</h2>
-                    <div>
-                        <label class="text-xs font-semibold">Nome Completo / Escritório*</label>
-                        <input type="text" id="ct-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-semibold">Celular / WhatsApp*</label>
-                            <input type="text" id="ct-celular" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold">OAB / Documento</label>
-                            <input type="text" id="ct-oab" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold">Anotações / Observações</label>
-                        <textarea id="ct-obs" rows="2" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs"></textarea>
-                    </div>
-                    <div class="flex gap-2">
-                        <button type="submit" id="ct-btn-salvar" class="flex-1 bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-floppy-disk"></i> SALVAR / INSERIR CONTATO
-                        </button>
-                        <button type="button" id="ct-btn-cancelar" onclick="limparFormContato()" class="hidden bg-gray-500 text-white px-3 py-2.5 rounded-lg font-bold text-xs">
-                            Cancelar
-                        </button>
-                    </div>
-                </form>
-
-                <div class="space-y-2">
-                    <input type="text" id="busca-contato" oninput="renderContatos()" placeholder="🔍 Localizar contato rápido por nome..." class="w-full p-2 border rounded-lg text-xs dark:bg-gray-700">
-                    <div id="lista-contatos" class="space-y-2"></div>
-                </div>
+                <div class="text-xs font-bold">Agenda de Contatos</div>
             </section>
 
-            <!-- ABA 4: FINANCEIRO & BAIXAS -->
+            <!-- ABA 4: FINANCEIRO -->
             <section id="tab-financeiro" class="tab-content space-y-4 hidden">
-                <div class="grid grid-cols-3 gap-2 text-center text-white">
-                    <div class="bg-green-600 p-2.5 rounded-xl shadow">
-                        <span class="text-[9px] uppercase font-bold block">🟢 Recebido</span>
-                        <span id="fin-entradas" class="font-black text-sm">R$ 0,00</span>
-                    </div>
-                    <div class="bg-amber-500 p-2.5 rounded-xl shadow text-gray-900">
-                        <span class="text-[9px] uppercase font-bold block">🟡 A Receber</span>
-                        <span id="fin-pendentes" class="font-black text-sm">R$ 0,00</span>
-                    </div>
-                    <div class="bg-red-600 p-2.5 rounded-xl shadow">
-                        <span class="text-[9px] uppercase font-bold block">🔴 Vencidos</span>
-                        <span id="fin-vencidos" class="font-black text-sm">R$ 0,00</span>
-                    </div>
-                </div>
-
-                <div class="p-3 bg-red-50 dark:bg-gray-700/50 rounded-xl border border-red-200 text-xs">
-                    <span class="font-extrabold text-brand-red block mb-1">ℹ️ GERENCIAMENTO FINANCEIRO:</span>
-                    <p>Selecione explicitamente o status financeiro desejado (Pendente, Pago ou Vencido) no menu de seleção de cada diligência para atualizar o caixa com segurança.</p>
-                </div>
-
-                <div id="fin-gerenciador-baixas" class="space-y-2"></div>
+                <div class="text-xs font-bold">Financeiro</div>
             </section>
 
-            <!-- ABA 5: LIVRO CAIXA -->
+            <!-- ABA 5: CAIXA -->
             <section id="tab-caixa" class="tab-content space-y-4 hidden">
-                <div class="grid grid-cols-3 gap-2 text-center text-white">
-                    <div class="bg-green-600 p-2.5 rounded-xl shadow">
-                        <span class="text-[9px] uppercase font-bold block">Entradas</span>
-                        <span id="caixa-total-entradas" class="font-black text-sm">R$ 0,00</span>
-                    </div>
-                    <div class="bg-red-600 p-2.5 rounded-xl shadow">
-                        <span class="text-[9px] uppercase font-bold block">Saídas</span>
-                        <span id="caixa-total-saidas" class="font-black text-sm">R$ 0,00</span>
-                    </div>
-                    <div class="bg-blue-800 p-2.5 rounded-xl shadow">
-                        <span class="text-[9px] uppercase font-bold block">Saldo em Caixa</span>
-                        <span id="caixa-saldo-liquido" class="font-black text-sm">R$ 0,00</span>
-                    </div>
-                </div>
-
-                <form id="form-caixa" onsubmit="saveCaixa(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <input type="hidden" id="caixa-id">
-                    <h2 id="caixa-form-titulo" class="font-bold text-sm text-gray-700 dark:text-gray-200 border-b pb-1">Novo Lançamento no Caixa</h2>
-                    
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-semibold">Tipo</label>
-                            <select id="caixa-tipo" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-bold">
-                                <option value="saida">🔴 DESPESA / SAÍDA (-)</option>
-                                <option value="entrada">🟢 ENTRADA (+)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold">Valor (R$)</label>
-                            <input type="number" step="0.01" id="caixa-valor" required placeholder="0.00" class="w-full p-2 border rounded-lg dark:bg-gray-700 font-bold text-sm">
-                        </div>
-                    </div>
-
-                    <!-- OPÇÕES DE DESCRIÇÃO PRÉ-DEFINIDAS + OUTROS -->
-                    <div class="space-y-2">
-                        <label class="text-xs font-semibold">Descrição / Categoria da Despesa/Entrada</label>
-                        <select id="caixa-select-opcao" onchange="mudarOpcaoCaixa(this.value)" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-bold">
-                            <option value="Uber / Transporte Fórum">🚗 Uber / Transporte Fórum</option>
-                            <option value="Cópias / Autenticações / Cartório">📄 Cópias / Autenticações / Cartório</option>
-                            <option value="Correios / Sedex / Cartas">📦 Correios / Sedex / Cartas</option>
-                            <option value="Taxas Judiciais / Custas">🏛️ Taxas Judiciais / Custas</option>
-                            <option value="Alimentação / Estacionamento">☕ Alimentação / Estacionamento</option>
-                            <option value="Outros">✏️ Outros (Escrever descrição...)</option>
-                        </select>
-                        <input type="text" id="caixa-descricao" placeholder="Digite a descrição personalizada..." class="hidden w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
-                    </div>
-
-                    <div class="flex gap-2">
-                        <button type="submit" id="caixa-btn-salvar" class="flex-1 bg-brand-red text-white py-2 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-floppy-disk"></i> SALVAR LANÇAMENTO NO CAIXA
-                        </button>
-                        <button type="button" id="caixa-btn-cancelar" onclick="limparFormCaixa()" class="hidden bg-gray-500 text-white px-3 py-2 rounded-lg font-bold text-xs">
-                            Cancelar
-                        </button>
-                    </div>
-                </form>
-
-                <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-xl border space-y-2 text-xs">
-                    <span class="font-bold text-brand-red block"><i class="fa-solid fa-filter"></i> Filtrar e Compartilhar Extrato por Período:</span>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="font-semibold text-[10px]">Data Inicial:</label>
-                            <input type="date" id="caixa-filtro-ini" onchange="renderCaixa()" class="w-full p-1.5 border rounded dark:bg-gray-700">
-                        </div>
-                        <div>
-                            <label class="font-semibold text-[10px]">Data Final:</label>
-                            <input type="date" id="caixa-filtro-fim" onchange="renderCaixa()" class="w-full p-1.5 border rounded dark:bg-gray-700">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-4 gap-1.5 pt-1 font-bold">
-                        <button onclick="compartilharExtratoCaixa('whats')" class="bg-green-600 text-white py-2 rounded-lg shadow"><i class="fa-brands fa-whatsapp"></i> Whats</button>
-                        <button onclick="compartilharExtratoCaixa('email')" class="bg-blue-600 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-envelope"></i> E-mail</button>
-                        <button onclick="compartilharExtratoCaixa('pdf')" class="bg-red-700 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-                        <button onclick="compartilharExtratoCaixa('excel')" class="bg-green-800 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-file-excel"></i> Excel</button>
-                    </div>
-                </div>
-
-                <div id="lista-caixa" class="space-y-2"></div>
+                <div class="text-xs font-bold">Livro Caixa</div>
             </section>
 
-            <!-- ABA DEDICADA: EMISSÃO DE RECIBOS (MÚLTIPLA SELEÇÃO & LOTE) -->
+            <!-- ABA 6: RECIBO -->
             <section id="tab-recibo" class="tab-content space-y-4 hidden">
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border space-y-3 shadow-sm">
-                    <div class="flex justify-between items-center border-b pb-2">
-                        <h3 class="font-bold text-sm text-brand-red"><i class="fa-solid fa-receipt mr-1"></i> Emissão de Recibo / Múltiplos Processos</h3>
-                        <div class="flex gap-1">
-                            <button onclick="selecionarTodosAtosRecibo(true)" class="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded text-[10px] font-bold">Marcar Todos</button>
-                            <button onclick="selecionarTodosAtosRecibo(false)" class="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded text-[10px] font-bold">Desmarcar</button>
-                        </div>
-                    </div>
-
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Selecione um ou vários processos abaixo para consolidar em um único recibo discriminado:</p>
-
-                    <div id="recibo-lista-checkboxes" class="max-h-44 overflow-y-auto space-y-1.5 border p-2 rounded-xl bg-gray-50 dark:bg-gray-700/50 text-xs">
-                        <!-- Gerado dinamicamente -->
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2 text-xs pt-1">
-                        <div>
-                            <label class="font-semibold">Cliente / Contratante Geral:</label>
-                            <input type="text" id="recibo-cliente" placeholder="Múltiplos Clientes" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
-                        </div>
-                        <div>
-                            <label class="font-semibold">Forma de Pagamento:</label>
-                            <input type="text" id="recibo-forma" value="PIX / Transferência" class="w-full p-2 border rounded dark:bg-gray-700">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="font-semibold text-xs">Observações / Descrição do Serviço:</label>
-                        <input type="text" id="recibo-obs" value="Referente à realização de atos processuais / diligências discriminadas." class="w-full p-2 border rounded dark:bg-gray-700 text-xs">
-                    </div>
-
-                    <div class="grid grid-cols-4 gap-2 pt-2 text-xs font-bold">
-                        <button onclick="gerarReciboPDF()" class="bg-red-700 text-white p-2.5 rounded-lg flex items-center justify-center gap-1 shadow"><i class="fa-solid fa-file-pdf"></i> Gerar PDF</button>
-                        <button onclick="enviarReciboWhats()" class="bg-green-600 text-white p-2.5 rounded-lg flex items-center justify-center gap-1 shadow"><i class="fa-brands fa-whatsapp"></i> Whats</button>
-                        <button onclick="enviarReciboEmail()" class="bg-blue-600 text-white p-2.5 rounded-lg flex items-center justify-center gap-1 shadow"><i class="fa-solid fa-envelope"></i> E-mail</button>
-                        <button onclick="salvarReciboHistorico()" class="bg-brand-red text-white p-2.5 rounded-lg flex items-center justify-center gap-1 shadow"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <h4 class="font-bold text-xs text-gray-700 dark:text-gray-200">Histórico de Recibos Emitidos:</h4>
-                    <div id="lista-recibos" class="space-y-2"></div>
-                </div>
+                <div class="text-xs font-bold">Recibos</div>
             </section>
 
-            <!-- ABA 6: CALCULADORA COMUM BOBINA & BLOCO DE NOTAS -->
-            <section id="tab-trabalhista" class="tab-content space-y-4 hidden">
+            <!-- ABA 7: CALCULADORA COMUM BOBINA, PORCENTAGEM E CÁLCULO DE PRAZOS -->
+            <section id="tab-trabalhista" class="tab-content space-y-4">
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border space-y-3 shadow-sm">
                     <div class="flex justify-between items-center border-b pb-2">
-                        <h3 class="font-bold text-sm text-brand-red"><i class="fa-solid fa-calculator mr-1"></i> Calculadora Comum com Fita Bobina</h3>
+                        <h3 class="font-bold text-sm text-brand-red"><i class="fa-solid fa-calculator mr-1"></i> Calculadora com Fita, % & Prazos</h3>
                         <button onclick="limparFitaBobina()" class="bg-red-100 text-red-700 font-bold px-2 py-1 rounded text-[10px] border border-red-300">
                             <i class="fa-solid fa-trash-can mr-1"></i> Limpar Fita
                         </button>
                     </div>
 
-                    <div id="calc-bobina-fita" class="bobina-paper p-3 rounded-lg border font-mono text-xs max-h-36 overflow-y-auto space-y-1 shadow-inner text-gray-800 dark:text-gray-100">
+                    <!-- CAIXA DE CÁLCULO DE PRAZOS (DIAS ÚTEIS / CORRIDOS) -->
+                    <div class="p-3 bg-amber-50 dark:bg-gray-700/60 rounded-xl border border-amber-300 space-y-2 text-xs">
+                        <span class="font-bold text-amber-800 dark:text-amber-400 block"><i class="fa-solid fa-calendar-days mr-1"></i> Calculadora de Prazos de Vencimento:</span>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="font-semibold block mb-1">Data Inicial:</label>
+                                <input type="date" id="calc-prazo-inicio" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold text-xs">
+                            </div>
+                            <div>
+                                <label class="font-semibold block mb-1">Nº de Dias:</label>
+                                <input type="number" id="calc-prazo-dias" value="15" min="1" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold text-xs">
+                            </div>
+                            <div>
+                                <label class="font-semibold block mb-1">Tipo de Contagem:</label>
+                                <select id="calc-prazo-tipo" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold text-xs">
+                                    <option value="corridos">Dias Corridos</option>
+                                    <option value="uteis">Dias Úteis (Seg à Sex)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-amber-200">
+                            <button onclick="calcularDataPrazo()" class="bg-amber-600 hover:bg-amber-700 text-white font-black px-3 py-1.5 rounded-lg text-xs shadow">
+                                <i class="fa-solid fa-calculator mr-1"></i> Calcular Vencimento
+                            </button>
+                            <span id="calc-prazo-resultado" class="font-black text-sm text-brand-red font-mono">Vencimento: --/--/----</span>
+                        </div>
+                    </div>
+
+                    <div id="calc-bobina-fita" class="bobina-paper p-3 rounded-lg border font-mono text-xs max-h-32 overflow-y-auto space-y-1 shadow-inner text-gray-800 dark:text-gray-100">
                         <div class="text-center font-bold text-[10px] border-b pb-1 text-amber-700">--- FITA DE PAPEL DIGITADA ---</div>
                         <div id="bobina-linhas" class="space-y-0.5"></div>
                     </div>
@@ -626,1367 +231,86 @@
                     
                     <div class="grid grid-cols-4 gap-2 text-base font-bold">
                         <button onclick="calcComumLimpar()" class="bg-red-600 text-white p-3 rounded-lg">C</button>
+                        <button onclick="calcComumPorcentagem()" class="bg-amber-600 text-white p-3 rounded-lg">%</button>
                         <button onclick="calcComumAdd('/')" class="bg-gray-700 text-white p-3 rounded-lg">÷</button>
                         <button onclick="calcComumAdd('*')" class="bg-gray-700 text-white p-3 rounded-lg">×</button>
-                        <button onclick="calcComumAdd('-')" class="bg-gray-700 text-white p-3 rounded-lg">-</button>
                         <button onclick="calcComumAdd('7')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">7</button>
                         <button onclick="calcComumAdd('8')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">8</button>
                         <button onclick="calcComumAdd('9')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">9</button>
-                        <button onclick="calcComumAdd('+')" class="bg-gray-700 text-white p-3 rounded-lg">+</button>
+                        <button onclick="calcComumAdd('-')" class="bg-gray-700 text-white p-3 rounded-lg">-</button>
                         <button onclick="calcComumAdd('4')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">4</button>
                         <button onclick="calcComumAdd('5')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">5</button>
                         <button onclick="calcComumAdd('6')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">6</button>
-                        <button onclick="calcComumCalcular()" class="bg-brand-red text-white p-3 rounded-lg row-span-2 flex items-center justify-center text-xl">=</button>
+                        <button onclick="calcComumAdd('+')" class="bg-gray-700 text-white p-3 rounded-lg">+</button>
                         <button onclick="calcComumAdd('1')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">1</button>
                         <button onclick="calcComumAdd('2')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">2</button>
                         <button onclick="calcComumAdd('3')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">3</button>
+                        <button onclick="calcComumCalcular()" class="bg-brand-red text-white p-3 rounded-lg row-span-2 flex items-center justify-center text-xl">=</button>
                         <button onclick="calcComumAdd('0')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg col-span-2">0</button>
                         <button onclick="calcComumAdd('.')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">,</button>
                     </div>
-
-                    <div class="grid grid-cols-3 gap-2 text-xs font-bold pt-2">
-                        <button onclick="compartilharBobina('whats')" class="bg-green-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-brands fa-whatsapp"></i> Whats</button>
-                        <button onclick="compartilharBobina('email')" class="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-envelope"></i> E-mail</button>
-                        <button onclick="compartilharBobina('csv')" class="bg-gray-800 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-file-csv"></i> CSV</button>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border space-y-3">
-                    <div class="flex justify-between items-center border-b pb-1">
-                        <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200">Bloco de Notas por Voz</h3>
-                        <div class="flex gap-1">
-                            <button type="button" onclick="iniciarDitadoVoz('bloco-notas')" class="bg-brand-red text-white px-2 py-1 rounded text-xs font-bold shadow">
-                                <i class="fa-solid fa-microphone"></i> Ditar
-                            </button>
-                            <button type="button" onclick="saveNotas()" class="bg-green-600 text-white px-2 py-1 rounded text-xs font-bold shadow">
-                                <i class="fa-solid fa-floppy-disk"></i> Salvar
-                            </button>
-                        </div>
-                    </div>
-                    <textarea id="bloco-notas" rows="3" placeholder="Anote orientações..." class="w-full p-2 border rounded dark:bg-gray-700 text-xs" oninput="saveNotas()"></textarea>
                 </div>
             </section>
 
-            <!-- ABA 7: CÁLCULOS JUDICIAIS / RESCISÃO TRABALHISTA AVANÇADA COM DIAS TRABALHADOS & LEI DO AVISO PRÉVIO -->
+            <!-- ABA 8: CÁLCULOS JUDICIAIS -->
             <section id="tab-rescisoria" class="tab-content space-y-4 hidden">
-                
-                <!-- BARRA DE BUSCA E GERENCIAMENTO DE CÁLCULOS SALVOS -->
-                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border shadow-sm space-y-2">
-                    <div class="flex justify-between items-center border-b pb-2">
-                        <h3 class="font-bold text-xs text-brand-red uppercase"><i class="fa-solid fa-magnifying-glass mr-1"></i> Localizar e Selecionar Cálculo Salvo</h3>
-                        <button onclick="novoCalculoRescisaoForm()" class="bg-brand-red text-white px-2.5 py-1 rounded text-[10px] font-bold shadow">Novo Cálculo</button>
-                    </div>
-                    <input type="text" id="busca-rescisao-input" oninput="renderRescisoes()" placeholder="🔍 Digite o nome do cliente ou processo..." class="w-full p-2 border rounded-lg text-xs dark:bg-gray-700 font-semibold">
-                </div>
-
-                <form id="form-rescisao" onsubmit="saveRescisao(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <input type="hidden" id="res-id">
-                    <h2 id="res-form-titulo" class="font-bold text-sm text-brand-red border-b pb-2"><i class="fa-solid fa-scale-balanced mr-1"></i> Calculadora de Cálculos Judiciais e Rescisão</h2>
-                    
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div>
-                            <label class="font-semibold">Cliente / Processo:*</label>
-                            <input type="text" id="res-cliente" required placeholder="Ex: João da Silva / Proc 123" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
-                        </div>
-                        <div>
-                            <label class="font-semibold">Tipo de Vínculo:*</label>
-                            <select id="res-vinculo" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
-                                <option value="CLT registrado">Com Registro em Carteira (CLT registrado)</option>
-                                <option value="Sem registro - vínculo a reconhecer">Sem Registro (Vínculo a Reconhecer)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div>
-                            <label class="font-semibold">Modalidade de Desligamento:*</label>
-                            <select id="res-motivo" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
-                                <option value="Dispensa sem justa causa">Dispensa sem justa causa</option>
-                                <option value="Pedido de demissão">Pedido de demissão</option>
-                                <option value="Justa causa">Justa causa</option>
-                                <option value="Rescisão indireta">Rescisão indireta</option>
-                                <option value="Acordo art. 484-A">Acordo art. 484-A</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="font-semibold">Último Salário Bruto (R$)*</label>
-                            <input type="number" step="0.01" id="res-salario" required placeholder="2500.00" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
-                        </div>
-                    </div>
-
-                    <!-- QUADRADO DE TEMPO TRABALHADO: MESES OU DIAS + LEI DO AVISO PRÉVIO PROPORCIONAL -->
-                    <div class="p-3 bg-amber-50 dark:bg-gray-700/50 rounded-xl border border-amber-200 space-y-2 text-xs">
-                        <span class="font-bold text-amber-800 dark:text-amber-400 block"><i class="fa-solid fa-clock"></i> Tempo Trabalhado & Lei do Aviso Prévio Proporcional (Lei 12.506/11):</span>
-                        <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="font-semibold block mb-1">Modo de Entrada:</label>
-                                <select id="res-modo-tempo" onchange="mudarModoTempoTrab(this.value)" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold">
-                                    <option value="meses">Por Meses / Anos</option>
-                                    <option value="dias">Por Dias exatos</option>
-                                </select>
-                            </div>
-                            <div id="div-campo-meses">
-                                <label class="font-semibold block mb-1">Meses Trab. no Ano:</label>
-                                <input type="number" id="res-meses" value="12" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold">
-                            </div>
-                            <div id="div-campo-dias" class="hidden">
-                                <label class="font-semibold block mb-1">Total Dias Trabalhados:</label>
-                                <input type="number" id="res-dias-trab" value="365" placeholder="Ex: 365" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold">
-                            </div>
-                            <div>
-                                <label class="font-semibold block mb-1">Anos Completos (Aviso 3d/ano):</label>
-                                <input type="number" id="res-anos-completos" value="1" placeholder="Ex: 2" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold">
-                            </div>
-                        </div>
-                        <p class="text-[10px] text-gray-500 dark:text-gray-400 italic">💡 Nota: O aviso prévio proporcional acrescenta 3 dias por ano completo de serviço prestado à mesma empresa (Lei nº 12.506/2011), além dos 30 dias constitucionais.</p>
-                    </div>
-
-                    <!-- MULTAS CLT ART 467 E 477 -->
-                    <div class="p-3 bg-red-50 dark:bg-gray-700/50 rounded-xl border border-red-200 space-y-2 text-xs">
-                        <span class="font-bold text-brand-red block"><i class="fa-solid fa-gavel"></i> Multas Rescisórias Judiciais (CLT):</span>
-                        <div class="grid grid-cols-2 gap-2 font-bold">
-                            <label class="flex items-center gap-2 cursor-pointer bg-white dark:bg-gray-800 p-2 rounded border">
-                                <input type="checkbox" id="res-multa-467" class="h-4 w-4 text-brand-red rounded"> Multa Art. 467 CLT (50% Incontroversas)
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer bg-white dark:bg-gray-800 p-2 rounded border">
-                                <input type="checkbox" id="res-multa-477" class="h-4 w-4 text-brand-red rounded"> Multa Art. 477 CLT (Atraso - 1 Salário)
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- FGTS, MULTA SEPARADA (20% OU 40%) E HOMOLOGAÇÃO -->
-                    <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl border space-y-2 text-xs">
-                        <span class="font-bold text-gray-700 dark:text-gray-200 block"><i class="fa-solid fa-piggy-bank"></i> FGTS e Multa Rescisória:</span>
-                        <div class="grid grid-cols-2 gap-2 font-bold">
-                            <label class="flex items-center gap-1.5 cursor-pointer bg-white dark:bg-gray-800 p-2 rounded border">
-                                <input type="checkbox" id="res-fgts" checked class="h-4 w-4 text-brand-red rounded"> Incluir Depósitos FGTS (8%)
-                            </label>
-                            <div>
-                                <label class="font-semibold block mb-1">Multa do FGTS:</label>
-                                <select id="res-multa-fgts-pct" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold">
-                                    <option value="40">Multa de 40% (Dispensa Sem Justa Causa)</option>
-                                    <option value="20">Multa de 20% (Acordo Art. 484-A)</option>
-                                    <option value="0">Nenhuma Multa de FGTS (0%)</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="pt-1">
-                            <label class="flex items-center gap-1.5 cursor-pointer bg-white dark:bg-gray-800 p-2 rounded border font-bold">
-                                <input type="checkbox" id="res-homologar" class="h-4 w-4 text-brand-red rounded"> Incluir Homologação (Taxa 20%)
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- ADICIONAIS E FUNÇÃO -->
-                    <div class="grid grid-cols-2 gap-2 text-xs bg-amber-50 dark:bg-gray-700/50 p-3 rounded-xl border border-amber-200">
-                        <div>
-                            <label class="font-semibold block mb-1">Adicional Insalubridade (%):</label>
-                            <select id="res-insalubridade" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold">
-                                <option value="0">Nenhum (0%)</option>
-                                <option value="10">Grau Mínimo (10%)</option>
-                                <option value="20">Grau Médio (20%)</option>
-                                <option value="40">Grau Máximo (40%)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="font-semibold block mb-1">Adicional Periculosidade (%):</label>
-                            <select id="res-periculosidade" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold">
-                                <option value="0">Nenhum (0%)</option>
-                                <option value="30">Sim (30% sobre Salário Base)</option>
-                            </select>
-                        </div>
-                        <div class="col-span-2 pt-1">
-                            <label class="font-semibold block mb-1">Acúmulo/Desvio de Função ou Ajuste Manual de Verbas (R$):</label>
-                            <input type="number" step="0.01" id="res-funcao-valor" value="0" placeholder="0.00" class="w-full p-1.5 border rounded dark:bg-gray-700 font-bold">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div>
-                            <label class="font-semibold">Alíquota INSS (%)</label>
-                            <input type="number" step="0.01" id="res-inss-pct" value="7.5" class="w-full p-2 border rounded dark:bg-gray-700">
-                        </div>
-                        <div>
-                            <label class="font-semibold">Adicionais / HE (R$)</label>
-                            <input type="number" step="0.01" id="res-adicionais" value="0" class="w-full p-2 border rounded dark:bg-gray-700">
-                        </div>
-                    </div>
-
-                    <div class="flex gap-2 pt-1">
-                        <button type="submit" id="res-btn-salvar" class="flex-1 bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-floppy-disk"></i> CALCULAR & SALVAR CÁLCULO JUDICIAL
-                        </button>
-                        <button type="button" id="res-btn-cancelar" onclick="limparFormRescisao()" class="hidden bg-gray-500 text-white px-3 py-2.5 rounded-lg font-bold text-xs">
-                            Cancelar
-                        </button>
-                    </div>
-                </form>
-
-                <div class="space-y-2">
-                    <h4 class="font-bold text-xs text-gray-700 dark:text-gray-200">Demonstrativos de Cálculos Judiciais Cadastrados:</h4>
-                    <div id="lista-rescisioes" class="space-y-3"></div>
-                </div>
+                <div class="text-xs font-bold">Cálculos Judiciais</div>
             </section>
 
-            <!-- ABA 8: RELATÓRIOS COM CHECK VERDE E HISTÓRICO DE EXPORTAÇÃO -->
+            <!-- ABA 9: RELATÓRIOS -->
             <section id="tab-relatorios" class="tab-content space-y-4 hidden">
-                <div class="bg-gray-900 text-white p-4 rounded-xl text-xs space-y-3 shadow-lg">
-                    <div class="flex justify-between items-center border-b border-gray-700 pb-1">
-                        <span class="font-bold text-amber-400">TOTALIZADORES CONSOLIDADOS</span>
-                        <button onclick="exportarExcelMultiAbasComLog()" class="bg-amber-500 hover:bg-amber-600 text-gray-900 font-extrabold px-2.5 py-1 rounded text-[10px] shadow">
-                            <i class="fa-solid fa-file-excel mr-1"></i> Editar / Exportar Planilha
-                        </button>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-2 text-center pt-1">
-                        <div class="bg-gray-800 p-2.5 rounded-lg border border-green-800">
-                            <span class="text-[9px] text-green-400 block font-bold uppercase">VALOR PAGO</span>
-                            <span id="relatorio-valor-pago" class="font-black text-green-400 text-base">R$ 0,00</span>
-                        </div>
-                        <div class="bg-gray-800 p-2.5 rounded-lg border border-amber-800">
-                            <span class="text-[9px] text-amber-400 block font-bold uppercase">VALOR PENDENTE</span>
-                            <span id="relatorio-valor-pendente" class="font-black text-amber-400 text-base">R$ 0,00</span>
-                        </div>
-                    </div>
-
-                    <div class="p-2.5 bg-gray-800/80 rounded-lg border border-gray-700 space-y-1 text-[11px]">
-                        <div><strong>Total de Atos na Pauta:</strong> <span id="rel-total-atos">0</span></div>
-                        <div><strong>Total de Lançamentos em Caixa:</strong> <span id="rel-total-caixa">0</span></div>
-                        <div><strong>Total de Contatos na Agenda:</strong> <span id="rel-total-contatos">0</span></div>
-                        <div><strong>Total de Cálculos Judiciais:</strong> <span id="rel-total-rescisao">0</span></div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="exportarExcelMultiAbasComLog()" class="bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs shadow flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-file-excel text-base"></i> <span id="btn-txt-excel">✓ EXCEL (.XLSX)</span>
-                    </button>
-                    <button onclick="gerarPDFRelatorioConsolidadoComLog()" class="bg-red-700 text-white py-2.5 rounded-xl font-extrabold text-xs shadow flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-file-pdf text-base"></i> <span id="btn-txt-pdf">✓ RELATÓRIO PDF</span>
-                    </button>
-                </div>
-
-                <!-- MINI HISTÓRICO DE EXPORTAÇÕES COM CHECK VERDE -->
-                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border shadow-sm space-y-2 text-xs">
-                    <h4 class="font-bold text-brand-red flex items-center gap-1">
-                        <i class="fa-solid fa-clock-rotate-left"></i> Mini Histórico de Exportações
-                    </h4>
-                    <div id="lista-mini-historico-export" class="max-h-36 overflow-y-auto space-y-1.5 font-mono text-[11px]">
-                        <p class="text-gray-400 italic">Nenhuma exportação realizada nesta sessão.</p>
-                    </div>
-                </div>
+                <div class="text-xs font-bold">Relatórios</div>
             </section>
 
-            <!-- ABA 9: CENTRAL DE MANUAIS -->
+            <!-- ABA 10: MANUAIS -->
             <section id="tab-manuais" class="tab-content space-y-4 hidden">
-                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border space-y-2 shadow-sm">
-                    <label class="font-extrabold text-xs text-brand-red"><i class="fa-solid fa-magnifying-glass"></i> PESQUISAR NO MANUAL:</label>
-                    <input type="text" id="input-busca-manual" oninput="filtrarManual()" placeholder="Digite uma palavra chave (ex: recibo, pauta, minuta)..." class="w-full p-2 border rounded-xl text-xs dark:bg-gray-700 font-semibold">
-                </div>
-
-                <div id="container-manuais-sanfona" class="space-y-3 text-xs">
-                    
-                    <!-- MANUAL 1 -->
-                    <div class="manual-card border rounded-xl bg-white dark:bg-gray-800 p-4 space-y-2 shadow-sm border-l-4 border-brand-red">
-                        <div class="flex justify-between items-center border-b pb-2">
-                            <h4 class="font-extrabold text-sm text-brand-red flex items-center gap-2">
-                                <i class="fa-solid fa-receipt text-base"></i> 1. Emissão de Recibo em Lote (Múltiplos Processos)
-                            </h4>
-                            <button onclick="compartilharManualWhats(1)" class="bg-green-600 hover:bg-green-700 text-white px-2.5 py-1 rounded-lg font-bold text-[10px] flex items-center gap-1 shadow">
-                                <i class="fa-brands fa-whatsapp"></i> Whats
-                            </button>
-                        </div>
-                        <p class="text-gray-600 dark:text-gray-300">Consolide vários processos em um único recibo discriminado com verificação automática de status.</p>
-                        <ol class="list-decimal pl-4 space-y-1 font-semibold text-gray-700 dark:text-gray-200">
-                            <li>Vá até a aba <strong>Recibo</strong> na navegação inferior.</li>
-                            <li>Selecione os processos desejados marcando as caixas de seleção (checkboxes) ou clique em "Marcar Todos".</li>
-                            <li>Confira o cliente e o valor total calculado de forma consolidada.</li>
-                            <li>Clique em <strong>Gerar PDF</strong>, <strong>Whats</strong> ou <strong>Salvar</strong> no histórico.</li>
-                        </ol>
-                    </div>
-
-                    <!-- MANUAL 2 -->
-                    <div class="manual-card border rounded-xl bg-white dark:bg-gray-800 p-4 space-y-2 shadow-sm border-l-4 border-amber-600">
-                        <div class="flex justify-between items-center border-b pb-2">
-                            <h4 class="font-extrabold text-sm text-amber-600 flex items-center gap-2">
-                                <i class="fa-solid fa-scale-balanced text-base"></i> 2. Cálculos Judiciais e Geração de Minuta / Petição
-                            </h4>
-                            <button onclick="compartilharManualWhats(2)" class="bg-green-600 hover:bg-green-700 text-white px-2.5 py-1 rounded-lg font-bold text-[10px] flex items-center gap-1 shadow">
-                                <i class="fa-brands fa-whatsapp"></i> Whats
-                            </button>
-                        </div>
-                        <p class="text-gray-600 dark:text-gray-300">Realize cálculos trabalhistas, ajuste valores/porcentagens e gere minutas modulares com auditoria.</p>
-                        <ol class="list-decimal pl-4 space-y-1 font-semibold text-gray-700 dark:text-gray-200">
-                            <li>Acesse a aba <strong>Judicial</strong> e preencha os dados do contrato, salário e adicionais.</li>
-                            <li>Utilize os campos flexíveis para alterar porcentagens de insalubridade, periculosidade ou ajustes manuais.</li>
-                            <li>Clique em <strong>Calcular & Salvar</strong>. O cálculo ficará disponível na lista abaixo com ferramenta de busca rápida.</li>
-                            <li>Clique no botão vermelho <strong>Minuta</strong> para visualizar o painel de auditoria e a prévia dos capítulos modulares gerados.</li>
-                            <li>Baixe em DOCX/PDF ou copie para o seu editor de petições.</li>
-                        </ol>
-                    </div>
-
-                    <!-- MANUAL 3 -->
-                    <div class="manual-card border rounded-xl bg-white dark:bg-gray-800 p-4 space-y-2 shadow-sm border-l-4 border-blue-600">
-                        <div class="flex justify-between items-center border-b pb-2">
-                            <h4 class="font-extrabold text-sm text-blue-600 flex items-center gap-2">
-                                <i class="fa-solid fa-wallet text-base"></i> 3. Pauta de Diligências e Baixas Financeiras
-                            </h4>
-                            <button onclick="compartilharManualWhats(3)" class="bg-green-600 hover:bg-green-700 text-white px-2.5 py-1 rounded-lg font-bold text-[10px] flex items-center gap-1 shadow">
-                                <i class="fa-brands fa-whatsapp"></i> Whats
-                            </button>
-                        </div>
-                        <p class="text-gray-600 dark:text-gray-300">Controle pautas, faça check-in GPS e atualize o caixa automaticamente ao receber honorários.</p>
-                        <ol class="list-decimal pl-4 space-y-1 font-semibold text-gray-700 dark:text-gray-200">
-                            <li>Cadastre audiências e diligências na aba <strong>Pauta</strong>, anexando comprovantes ou fotos de atas se desejar.</li>
-                            <li>Utilize o botão de <strong>Check-in GPS ADM</strong> para enviar sua localização atual formatada para o WhatsApp da administração.</li>
-                            <li>Na aba <strong>Financeiro</strong>, altere o status de cada ato entre Pendente, Pago ou Vencido para alimentar o Livro Caixa com segurança.</li>
-                        </ol>
-                    </div>
-
-                </div>
+                <div class="text-xs font-bold">Manuais</div>
             </section>
 
         </main>
 
-        <!-- NAVEGAÇÃO INFERIOR DEDICADA -->
+        <!-- NAVEGAÇÃO INFERIOR -->
         <nav class="bg-white dark:bg-gray-900 border-t sticky bottom-0 z-30 flex justify-around p-2 text-center text-[8px] font-bold">
             <button onclick="switchTab('tab-perfil')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-perfil"><i class="fa-solid fa-user-gear text-base"></i><span>Perfil</span></button>
-            <button onclick="switchTab('tab-atos')" class="tab-btn p-1 text-brand-red flex flex-col items-center" id="btn-tab-atos"><i class="fa-solid fa-calendar-check text-base"></i><span>Pauta</span></button>
+            <button onclick="switchTab('tab-atos')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-atos"><i class="fa-solid fa-calendar-check text-base"></i><span>Pauta</span></button>
             <button onclick="switchTab('tab-contatos')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-contatos"><i class="fa-solid fa-address-book text-base"></i><span>Agenda</span></button>
             <button onclick="switchTab('tab-financeiro')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-financeiro"><i class="fa-solid fa-wallet text-base"></i><span>Financeiro</span></button>
             <button onclick="switchTab('tab-caixa')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-caixa"><i class="fa-solid fa-cash-register text-base"></i><span>Caixa</span></button>
             <button onclick="switchTab('tab-recibo')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-recibo"><i class="fa-solid fa-receipt text-base"></i><span>Recibo</span></button>
-            <button onclick="switchTab('tab-trabalhista')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-trabalhista"><i class="fa-solid fa-calculator text-base"></i><span>Calc.</span></button>
+            <button onclick="switchTab('tab-trabalhista')" class="tab-btn p-1 text-brand-red flex flex-col items-center" id="btn-tab-trabalhista"><i class="fa-solid fa-calculator text-base"></i><span>Calc.</span></button>
             <button onclick="switchTab('tab-rescisoria')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-rescisoria"><i class="fa-solid fa-scale-balanced text-base"></i><span>Judicial</span></button>
             <button onclick="switchTab('tab-relatorios')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-relatorios"><i class="fa-solid fa-file-invoice text-base"></i><span>Relatórios</span></button>
             <button onclick="switchTab('tab-manuais')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-manuais"><i class="fa-solid fa-book-open text-base"></i><span>Manuais</span></button>
         </nav>
     </div>
 
-    <!-- MODAL DE PRÉVIA, AUDIOLOGIA E GERAÇÃO DA MINUTA -->
-    <div id="modal-minuta-auditoria" class="fixed inset-0 z-50 bg-black/85 modal-blur hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl max-w-2xl w-full space-y-4 shadow-2xl border-2 border-brand-red my-6 text-xs">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-extrabold text-sm text-brand-red flex items-center gap-1.5">
-                    <i class="fa-solid fa-file-shield text-base"></i> AUDITORIA E PRÉVIA DA PETIÇÃO / MINUTA
-                </h3>
-                <button onclick="fecharModalMinuta()" class="text-gray-400 font-bold text-lg">&times;</button>
-            </div>
-
-            <div id="minuta-painel-auditoria" class="p-3 bg-green-50 dark:bg-gray-700/60 rounded-xl border border-green-300 space-y-1 font-mono text-[11px]">
-                <!-- Status de auditoria preenchido dinamicamente -->
-            </div>
-
-            <div>
-                <label class="font-extrabold text-gray-700 dark:text-gray-200 block mb-1">Prévia dos Capítulos Modulares da Minuta:</label>
-                <div id="minuta-texto-preview" class="max-h-72 overflow-y-auto p-3 bg-gray-50 dark:bg-gray-900 border rounded-xl font-mono text-[11px] whitespace-pre-wrap leading-relaxed select-all">
-                    <!-- Texto da Minuta -->
-                </div>
-            </div>
-
-            <div class="grid grid-cols-3 gap-2 pt-2 font-bold">
-                <button onclick="copiarMinutaClipboard()" class="bg-gray-800 text-white py-2.5 rounded-xl shadow flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-copy"></i> Copiar Texto
-                </button>
-                <button onclick="baixarMinutaDOCX()" class="bg-blue-600 text-white py-2.5 rounded-xl shadow flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-file-word"></i> Baixar DOCX
-                </button>
-                <button onclick="baixarMinutaPDF()" class="bg-red-700 text-white py-2.5 rounded-xl shadow flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-file-pdf"></i> Baixar PDF
-                </button>
-            </div>
-            <button onclick="fecharModalMinuta()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold">
-                Fechar Prévia
-            </button>
-        </div>
-    </div>
-
-    <!-- MODAL AVISO EDITAR RELATÓRIO -->
-    <div id="modal-aviso-relatorio" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-2 border-brand-red text-center">
-            <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-triangle-exclamation"></i> AVISO DE EDIÇÃO DE RELATÓRIO</h3>
-            <p class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-                Para editar relatórios consolidados em profundidade, exporte para planilha (Excel/CSV) e abra no <strong>Google Drive / Sheets</strong> vinculado ao seu Gmail.
-            </p>
-            <div class="space-y-2 pt-2 border-t">
-                <button onclick="exportarExcelMultiAbasComLog(); fecharAvisoRelatorio();" class="w-full bg-green-700 text-white py-2 rounded-xl font-bold text-xs shadow flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-file-excel"></i> Exportar Planilha para Sheets/Drive
-                </button>
-                <button onclick="fecharAvisoRelatorio()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">
-                    Entendido
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL HISTÓRICO DE COMPARTILHAMENTO DO ATO -->
-    <div id="modal-historico-compartilhamento" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-md w-full space-y-3 shadow-2xl border-2 border-brand-red">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-clock-rotate-left mr-1"></i> HISTÓRICO DE COMPARTILHAMENTO</h3>
-                <button onclick="fecharModalHistoricoCompartilhamento()" class="text-gray-400 font-bold text-lg">&times;</button>
-            </div>
-            <div id="conteudo-historico-compartilhamento" class="max-h-60 overflow-y-auto space-y-2 text-xs font-mono"></div>
-            <button onclick="fecharModalHistoricoCompartilhamento()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">Fechar</button>
-        </div>
-    </div>
-
-    <!-- MODAL HISTÓRICO DE ALTERAÇÕES DA PAUTA -->
-    <div id="modal-historico-ato" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-md w-full space-y-3 shadow-2xl border-2 border-brand-red">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-clock-rotate-left mr-1"></i> HISTÓRICO DE ALTERAÇÕES</h3>
-                <button onclick="fecharModalHistoricoAto()" class="text-gray-400 font-bold text-lg">&times;</button>
-            </div>
-            <div id="conteudo-historico-ato" class="max-h-60 overflow-y-auto space-y-2 text-xs font-mono"></div>
-            <button onclick="fecharModalHistoricoAto()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">Fechar</button>
-        </div>
-    </div>
-
-    <!-- MODAL TRAVA DE ALTERAÇÃO DE STATUS PAGO -->
-    <div id="modal-alterar-pago" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-3 shadow-2xl border-2 border-brand-red">
-            <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-shield-halved mr-1"></i> TRAVA DE SEGURANÇA - ESTORNO</h3>
-            <p class="text-xs text-gray-600 dark:text-gray-300">Este ato consta como 🟢 PAGO. Escolha o motivo do estorno para alterar o status:</p>
-            <input type="hidden" id="estorno-ato-id">
-            <input type="hidden" id="estorno-novo-status" value="pendente">
-            <select id="estorno-motivo-select" class="w-full p-2 border rounded-lg text-xs font-bold dark:bg-gray-700">
-                <option value="Estorno Solicitado pelo Cliente">⚠️ Estorno Solicitado pelo Cliente</option>
-                <option value="Comprovante / PIX Não Compensado">❌ Comprovante / PIX Não Compensado</option>
-                <option value="Lançamento Indevido / Erro de Digitação">✏️ Lançamento Indevido / Erro de Digitação</option>
-            </select>
-            <div class="flex gap-2 font-bold pt-2">
-                <button onclick="confirmarEstornoPagoWhatsApp()" class="flex-1 bg-green-600 text-white py-2 rounded-xl text-xs"><i class="fa-brands fa-whatsapp"></i> Confirmar & Whats</button>
-                <button onclick="fecharModalEstorno()" class="bg-gray-500 text-white px-3 py-2 rounded-xl text-xs">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL CHECKLIST PÓS AUDIÊNCIA -->
-    <div id="modal-checklist" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-lg w-full space-y-4 shadow-2xl border-2 border-brand-red my-8">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-list-check"></i> CHECKLIST PÓS-AUDIÊNCIA</h3>
-                <button onclick="fecharModalChecklist()" class="text-gray-400 font-bold me-2">&times;</button>
-            </div>
-            <form id="form-checklist" class="space-y-3 text-xs">
-                <input type="hidden" id="chk-ato-id">
-                <div class="grid grid-cols-2 gap-2 bg-gray-50 dark:bg-gray-700/50 p-2 rounded-xl border">
-                    <div><label class="font-bold">Processo:</label><input type="text" id="chk-processo" readonly class="w-full p-1 border rounded bg-gray-200 dark:bg-gray-600 font-bold"></div>
-                    <div><label class="font-bold">Cliente:</label><input type="text" id="chk-cliente" readonly class="w-full p-1 border rounded bg-gray-200 dark:bg-gray-600 font-bold"></div>
-                </div>
-                <div>
-                    <label class="font-extrabold text-brand-red">Feedback da Audiência (Obrigatório):*</label>
-                    <textarea id="chk-obs" rows="3" required placeholder="Como foi o ato..." class="w-full p-2 border rounded-lg dark:bg-gray-700 font-semibold"></textarea>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <button type="button" onclick="enviarChecklistWhatsApp()" class="bg-green-600 text-white py-2.5 rounded-xl font-bold shadow"><i class="fa-brands fa-whatsapp"></i> Whats ADM</button>
-                    <button type="button" onclick="gerarTicketComprovantePDF()" class="bg-red-700 text-white py-2.5 rounded-xl font-bold shadow"><i class="fa-solid fa-file-pdf"></i> Ticket PDF</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL BACKUP -->
-    <div id="modal-backup" class="fixed inset-0 z-50 bg-black/60 modal-blur hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-3 shadow-2xl">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-database"></i> Central de Backup</h3>
-                <button onclick="fecharModalBackup()" class="text-gray-400 font-bold">&times;</button>
-            </div>
-            <button onclick="fazerBackupJSON()" class="w-full bg-brand-red text-white py-2.5 rounded-xl font-bold text-xs shadow">1. Salvar Backup (.JSON)</button>
-            <button onclick="exportarExcelMultiAbasComLog()" class="w-full bg-green-700 text-white py-2.5 rounded-xl font-bold text-xs shadow">2. Exportar Excel (.XLSX)</button>
-            <button onclick="acionarRestauracao()" class="w-full bg-gray-800 text-white py-2.5 rounded-xl font-bold text-xs shadow">3. Restaurar Backup (.JSON)</button>
-            <button onclick="confirmarZerarTudoGeral()" class="w-full bg-red-100 text-red-700 font-extrabold py-2 rounded-xl text-xs border border-red-300">ZERAR TUDO (APP NOVO)</button>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT CONSOLIDADO -->
+    <!-- JAVASCRIPT DA CALCULADORA ATUALIZADA -->
     <script>
-        const AUTH_USER = "diligence.br*";
-        const AUTH_PASS = "320427";
-        const WHATS_ADM = "5511978386574";
-        const EMAIL_CONTRATANTE = "ec.cortez@uol.com.br";
-
-        let db = { perfis: [], perfil: {}, atos: [], caixa: [], contatos: [], recibos: [], rescisoes: [], exportLog: [], notas: '', ultimoBackupData: null };
-        let tempAtaBase64Pauta = null;
-        let tempAtaDataHoraStr = null;
         let bobinaHistorico = [];
         let calcVisorVal = '0';
-        let lembreteAdiadoMinutos = 0;
 
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock-time').innerText = now.toLocaleTimeString('pt-BR');
-            document.getElementById('clock-date').innerText = now.toLocaleDateString('pt-BR');
-
-            // Verificação automática de horário (12:00 e 18:00) com suporte a adiamento
-            const horaStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-            
-            if (window.adiamentoAtivoTimestamp && now.getTime() >= window.adiamentoAtivoTimestamp) {
-                window.adiamentoAtivoTimestamp = null; // expira o adiamento
-                dispararLembreteSistema('Adiado (60 min)');
-            }
-
-            if (horaStr === '12:00' && window.lembrete12Disparado !== now.toDateString()) {
-                window.lembrete12Disparado = now.toDateString();
-                dispararLembreteSistema('12:00');
-            }
-            if (horaStr === '18:00' && window.lembrete18Disparado !== now.toDateString()) {
-                window.lembrete18Disparado = now.toDateString();
-                dispararLembreteSistema('18:00');
-            }
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        function dispararLembreteSistema(horarioTexto) {
-            document.getElementById('lembrete-titulo-horario').innerText = `LEMBRETE DO SISTEMA (${horarioTexto})`;
-            document.getElementById('modal-lembrete-sistema').classList.remove('hidden');
-        }
-
-        function fecharModalLembrete() {
-            document.getElementById('modal-lembrete-sistema').classList.add('hidden');
-        }
-
-        function lembreteOpcaoSim() {
-            fecharModalLembrete();
-            fazerBackupJSON();
-        }
-
-        function lembreteOpcaoAdiar() {
-            fecharModalLembrete();
-            window.adiamentoAtivoTimestamp = new Date().getTime() + (60 * 60 * 1000); // 60 minutos
-            alert("⏰ Lembrete adiado por 60 minutos com sucesso!");
-        }
-
-        function lembreteOpcaoCancelar() {
-            fecharModalLembrete();
-        }
-
-        function abrirModalRecuperacao(tipo) {
-            document.getElementById('rec-modal-titulo').innerText = tipo === 'usuario' ? 'RECUPERAR USUÁRIO' : 'RECUPERAR SENHA';
-            document.getElementById('modal-recuperacao-login').classList.remove('hidden');
-        }
-
-        function fecharModalRecuperacao() {
-            document.getElementById('modal-recuperacao-login').classList.add('hidden');
-        }
-
-        function enviarRecuperacaoWhats() {
-            const nome = document.getElementById('rec-nome').value.trim();
-            const cel = document.getElementById('rec-celular').value.trim();
-
-            if (!nome || !cel) {
-                alert("Por favor, preencha seu Nome Completo e Celular para validar a solicitação!");
-                return;
-            }
-
-            const txt = `DILIGENCE.BR - SOLICITAÇÃO DE RECUPERAÇÃO DE ACESSO\n--------------------------------\nNome: ${nome}\nCelular: ${cel}\nSolicitação: Validação e envio das credenciais de acesso ao app.`;
-            fecharModalRecuperacao();
-            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(txt)}`);
-        }
-
-        async function buscarCidadesIBGE(termo) {
-            if (!termo || termo.length < 2) return;
-            try {
-                const res = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/municipios`);
-                const municipios = await res.json();
-                const list = document.getElementById('lista-cidades-br');
-                list.innerHTML = '';
-                municipios.filter(m => m.nome.toLowerCase().includes(termo.toLowerCase())).slice(0, 30).forEach(m => {
-                    const opt = document.createElement('option');
-                    opt.value = `${m.nome} / ${m.microrregiao.mesorregiao.UF.sigla}`;
-                    list.appendChild(opt);
-                });
-            } catch (err) {}
-        }
-
-        function capturarLocalizacaoGPS() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    const lat = pos.coords.latitude;
-                    const lng = pos.coords.longitude;
-                    const txt = `📍 DILIGENCE.BR - CHECK-IN GPS FÓRUM\nCorrespondente: ${db.perfil.nome || 'N/A'}\nData: ${new Date().toLocaleString('pt-BR')}\nLocalização: https://maps.google.com/?q=${lat},${lng}`;
-                    window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(txt)}`);
-                }, () => alert("Ative a permissão de GPS do dispositivo."));
-            }
-        }
-
-        function handleLogin(e) {
-            e.preventDefault();
-            if (document.getElementById('login-user').value === AUTH_USER && document.getElementById('login-pass').value === AUTH_PASS) {
-                localStorage.setItem('diligence_logged', 'true');
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('app-content').classList.remove('hidden');
-                loadData();
-            } else {
-                document.getElementById('login-error').classList.remove('hidden');
-            }
-        }
-
-        function fazerLogout() {
-            localStorage.removeItem('diligence_logged');
-            location.reload();
-        }
+        // Inicializa data padrão do prazo com hoje
+        document.addEventListener("DOMContentLoaded", () => {
+            const hojeIso = new Date().toISOString().split('T')[0];
+            const campoInicio = document.getElementById('calc-prazo-inicio');
+            if(campoInicio) campoInicio.value = hojeIso;
+        });
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.replace('text-brand-red', 'text-gray-500'));
-            
             document.getElementById(tabId).classList.remove('hidden');
             const btn = document.getElementById('btn-' + tabId);
             if(btn) btn.classList.replace('text-gray-500', 'text-brand-red');
-
-            if(tabId === 'tab-relatorios') { renderRelatorios(); renderMiniHistoricoExport(); }
-            if(tabId === 'tab-financeiro') renderFinanceiro();
-            if(tabId === 'tab-caixa') renderCaixa();
-            if(tabId === 'tab-contatos') renderContatos();
-            if(tabId === 'tab-atos') { renderAtos(); atualizarBannerUltimoBackup(); }
-            if(tabId === 'tab-rescisoria') renderRescisoes();
-            if(tabId === 'tab-perfil') renderPerfis();
-            if(tabId === 'tab-recibo') { renderCheckboxesAtosRecibo(); renderRecibos(); }
         }
 
-        function saveData() { localStorage.setItem('diligence_db', JSON.stringify(db)); }
-
-        function loadData() {
-            const saved = localStorage.getItem('diligence_db');
-            if (saved) db = JSON.parse(saved);
-            
-            if (localStorage.getItem('diligence_logged') === 'true') {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('app-content').classList.remove('hidden');
-            }
-
-            if(!db.atos) db.atos = [];
-            if(!db.caixa) db.caixa = [];
-            if(!db.contatos) db.contatos = [];
-            if(!db.recibos) db.recibos = [];
-            if(!db.rescisoes) db.rescisoes = [];
-            if(!db.perfis) db.perfis = [];
-            if(!db.exportLog) db.exportLog = [];
-            if(!db.perfil) db.perfil = {};
-
-            if(db.perfil.nome && !db.perfis.length) {
-                db.perfis.push({ id: Date.now(), ...db.perfil });
-            }
-            if(db.perfis.length && (!db.perfil.nome)) {
-                db.perfil = db.perfis[0];
-            }
-
-            const hoje = new Date().toISOString().split('T')[0];
-            db.atos.forEach(a => {
-                if(a.status === 'pendente' && a.vencimento < hoje) {
-                    a.status = 'vencido';
-                }
-            });
-
-            document.getElementById('bloco-notas').value = db.notas || '';
-
-            renderPerfis();
-            renderAtos();
-            renderFinanceiro();
-            renderCaixa();
-            renderContatos();
-            renderRescisoes();
-            renderRelatorios();
-            renderCheckboxesAtosRecibo();
-            renderRecibos();
-            renderMiniHistoricoExport();
-            atualizarBannerUltimoBackup();
-        }
-
-        function atualizarBannerUltimoBackup() {
-            const span = document.getElementById('txt-data-ultimo-backup');
-            if(!span) return;
-            if(db.ultimoBackupData) {
-                span.innerText = db.ultimoBackupData;
-            } else if(db.exportLog && db.exportLog.length) {
-                span.innerText = db.exportLog[0].dataHora + ` (${db.exportLog[0].tipo})`;
-            } else {
-                span.innerText = "Nenhum backup ou exportação efetuada ainda.";
-            }
-        }
-
-        function previewECompressImagemAta(evt) {
-            const file = evt.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    const max_dim = 1000;
-
-                    if (width > height && width > max_dim) {
-                        height = Math.round((height * max_dim) / width);
-                        width = max_dim;
-                    } else if (height > max_dim) {
-                        width = Math.round((width * max_dim) / height);
-                        height = max_dim;
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    tempAtaBase64Pauta = canvas.toDataURL('image/jpeg', 0.7);
-                    tempAtaDataHoraStr = new Date().toLocaleString('pt-BR');
-
-                    document.getElementById('img-preview-ata').src = tempAtaBase64Pauta;
-                    document.getElementById('carimbo-data-hora-ata').innerText = `✓ Foto Capturada em: ${tempAtaDataHoraStr}`;
-                    document.getElementById('preview-ata-container').classList.remove('hidden');
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function enviarAtaWhatsADM() {
-            const proc = document.getElementById('ato-processo').value || 'Não informado';
-            const cli = document.getElementById('ato-cliente').value || 'Não informado';
-            const txt = `📄 DILIGENCE.BR - ENVIO DE ATA/DOCUMENTO\n--------------------------------\nProcesso: ${proc}\nCliente: ${cli}\nData/Hora Registro: ${tempAtaDataHoraStr || new Date().toLocaleString('pt-BR')}\n--------------------------------\nDocumento fotografado e anexado com sucesso na Pauta!`;
-            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(txt)}`);
-        }
-
-        /* LÓGICA DO PERFIL */
-        function savePerfil(e) {
+        function handleLogin(e) {
             e.preventDefault();
-            const id = document.getElementById('perfil-id').value;
-            const novoPerfil = {
-                id: id ? parseInt(id) : Date.now(),
-                nome: document.getElementById('perfil-nome').value.trim(),
-                doc: document.getElementById('perfil-doc').value.trim(),
-                cidade: document.getElementById('perfil-cidade').value.trim(),
-                celular: document.getElementById('perfil-celular').value.trim(),
-                pix: document.getElementById('perfil-pix').value.trim(),
-                email: document.getElementById('perfil-email').value.trim()
-            };
-
-            if (id) {
-                const idx = db.perfis.findIndex(p => p.id == id);
-                if (idx !== -1) db.perfis[idx] = novoPerfil;
-            } else {
-                db.perfis.push(novoPerfil);
-            }
-
-            db.perfil = novoPerfil;
-            saveData();
-            limparFormPerfil();
-            renderPerfis();
-            alert("✅ Perfil profissional salvo/inserido com sucesso!");
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-content').classList.remove('hidden');
         }
 
-        function editarPerfil(id) {
-            const p = db.perfis.find(item => item.id == id);
-            if (!p) return;
-
-            document.getElementById('perfil-id').value = p.id;
-            document.getElementById('perfil-nome').value = p.nome;
-            document.getElementById('perfil-doc').value = p.doc;
-            document.getElementById('perfil-cidade').value = p.cidade;
-            document.getElementById('perfil-celular').value = p.celular;
-            document.getElementById('perfil-pix').value = p.pix;
-            document.getElementById('perfil-email').value = p.email;
-
-            document.getElementById('perfil-form-titulo').innerText = "Editar Perfil Profissional";
-            document.getElementById('perfil-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR ALTERAÇÕES';
-            document.getElementById('perfil-btn-cancelar').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function limparFormPerfil() {
-            document.getElementById('form-perfil').reset();
-            document.getElementById('perfil-id').value = '';
-            document.getElementById('perfil-form-titulo').innerText = "Cadastro de Perfil Profissional";
-            document.getElementById('perfil-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR / INSERIR PERFIL';
-            document.getElementById('perfil-btn-cancelar').classList.add('hidden');
-        }
-
-        function deletarPerfil(id) {
-            if(confirm('Tem certeza que deseja EXCLUIR este perfil?')) {
-                db.perfis = db.perfis.filter(p => p.id !== id);
-                if(db.perfis.length) db.perfil = db.perfis[0];
-                else db.perfil = {};
-                saveData();
-                renderPerfis();
-            }
-        }
-
-        function renderPerfis() {
-            const container = document.getElementById('lista-perfis');
-            if(!container) return;
-            container.innerHTML = '';
-            if(!db.perfis.length) {
-                container.innerHTML = '<p class="text-xs text-gray-400 italic">Nenhum perfil cadastrado.</p>';
-                return;
-            }
-            db.perfis.forEach(p => {
-                const ativo = db.perfil && db.perfil.id === p.id;
-                container.innerHTML += `
-                    <div class="p-2.5 border rounded-xl text-xs flex justify-between items-center bg-white dark:bg-gray-800 shadow-sm ${ativo ? 'border-2 border-brand-red' : ''}">
-                        <div>
-                            <strong>${p.nome}</strong> ${ativo ? '<span class="bg-red-100 text-brand-red px-1.5 py-0.5 rounded font-bold text-[9px]">ATIVO</span>' : ''}<br>
-                            <span class="text-gray-400">Doc: ${p.doc} | Base: ${p.cidade} | PIX: ${p.pix}</span>
-                        </div>
-                        <div class="flex gap-1">
-                            <button onclick="editarPerfil(${p.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="deletarPerfil(${p.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-trash-can"></i></button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        /* LÓGICA DA PAUTA E SINCRONIZAÇÃO COM CAIXA / FINANCEIRO */
-        function saveAto(e) {
-            e.preventDefault();
-            const id = document.getElementById('ato-id').value;
-            const proc = document.getElementById('ato-processo').value.trim();
-            const cliente = document.getElementById('ato-cliente').value.trim();
-            const dataAto = document.getElementById('ato-data').value;
-            const vencimento = document.getElementById('ato-vencimento').value;
-            const cidade = document.getElementById('ato-cidade').value.trim();
-            const modalidade = document.getElementById('ato-modalidade').value;
-            const link = document.getElementById('ato-link').value.trim();
-            const valor = parseFloat(document.getElementById('ato-valor').value);
-            const status = document.getElementById('ato-status-select').value;
-            const agoraStr = new Date().toLocaleString('pt-BR');
-
-            if (id) {
-                const a = db.atos.find(item => item.id == id);
-                if (a) {
-                    const mudancaStr = `Editado em ${agoraStr} -> Proc: ${a.processo} para ${proc} | Val: R$ ${a.valor.toFixed(2)} para R$ ${valor.toFixed(2)} | Status: ${a.status} para ${status}`;
-                    if(!a.historicoAlteracoes) a.historicoAlteracoes = [];
-                    a.historicoAlteracoes.push(mudancaStr);
-
-                    a.processo = proc;
-                    a.cliente = cliente;
-                    a.data = dataAto;
-                    a.vencimento = vencimento;
-                    a.cidade = cidade;
-                    a.modalidade = modalidade;
-                    a.link = link;
-                    a.valor = valor;
-                    a.status = status;
-
-                    let caixaItem = db.caixa.find(c => c.atoRefId === a.id);
-                    if (status === 'pago') {
-                        if (caixaItem) {
-                            caixaItem.valor = valor;
-                            caixaItem.descricao = `Baixa Proc: ${proc}`;
-                        } else {
-                            db.caixa.push({ id: Date.now(), atoRefId: a.id, tipo: 'entrada', valor: valor, descricao: `Baixa Proc: ${proc}`, dataIso: new Date().toISOString().split('T')[0], dataHora: agoraStr });
-                        }
-                    } else {
-                        db.caixa = db.caixa.filter(c => c.atoRefId !== a.id);
-                    }
-                }
-            } else {
-                if (db.atos.find(a => a.processo.toLowerCase() === proc.toLowerCase())) {
-                    alert(`⚠️ O Processo "${proc}" JÁ EXISTE na Pauta!`);
-                    return;
-                }
-                const novoAto = {
-                    id: Date.now(),
-                    processo: proc,
-                    cliente: cliente,
-                    data: dataAto,
-                    vencimento: vencimento,
-                    cidade: cidade,
-                    modalidade: modalidade,
-                    link: link,
-                    valor: valor,
-                    status: status,
-                    ataImg: tempAtaBase64Pauta || null,
-                    ataDataHora: tempAtaDataHoraStr || agoraStr,
-                    historicoAlteracoes: [`Criado em ${agoraStr}`],
-                    historicoCompartilhamentos: [],
-                    dataBaixa: status === 'pago' ? agoraStr : null
-                };
-                db.atos.push(novoAto);
-                if(status === 'pago') {
-                    db.caixa.push({ id: Date.now()+1, atoRefId: novoAto.id, tipo: 'entrada', valor: valor, descricao: `Baixa Proc: ${proc}`, dataIso: new Date().toISOString().split('T')[0], dataHora: agoraStr });
-                }
-            }
-
-            saveData();
-            limparFormAto();
-            renderAtos();
-            renderFinanceiro();
-            renderCaixa();
-            renderRelatorios();
-            renderCheckboxesAtosRecibo();
-            alert("✅ Diligência salva e sincronizada com sucesso!");
-        }
-
-        function editarAto(id) {
-            const a = db.atos.find(item => item.id == id);
-            if (!a) return;
-
-            document.getElementById('ato-id').value = a.id;
-            document.getElementById('ato-processo').value = a.processo;
-            document.getElementById('ato-cliente').value = a.cliente;
-            document.getElementById('ato-data').value = a.data || '';
-            document.getElementById('ato-vencimento').value = a.vencimento || '';
-            document.getElementById('ato-cidade').value = a.cidade || '';
-            document.getElementById('ato-modalidade').value = a.modalidade || 'teams';
-            document.getElementById('ato-link').value = a.link || '';
-            document.getElementById('ato-valor').value = a.valor || 0;
-            document.getElementById('ato-status-select').value = a.status || 'pendente';
-
-            document.getElementById('ato-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR ALTERAÇÕES NA PAUTA';
-            document.getElementById('ato-btn-cancelar').classList.remove('hidden');
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function limparFormAto() {
-            document.getElementById('form-ato').reset();
-            document.getElementById('ato-id').value = '';
-            document.getElementById('ato-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR DILIGÊNCIA NA PAUTA';
-            document.getElementById('ato-btn-cancelar').classList.add('hidden');
-            document.getElementById('preview-ata-container').classList.add('hidden');
-            tempAtaBase64Pauta = null;
-            tempAtaDataHoraStr = null;
-        }
-
-        function abrirHistoricoAto(id) {
-            const a = db.atos.find(item => item.id == id);
-            if(!a) return;
-            const container = document.getElementById('conteudo-historico-ato');
-            container.innerHTML = '';
-            
-            let html = `<div class="font-bold text-brand-red mb-1">--- HISTÓRICO DE ALTERAÇÕES ---</div>`;
-            if(a.historicoAlteracoes && a.historicoAlteracoes.length) {
-                a.historicoAlteracoes.forEach(hist => {
-                    html += `<div class="p-1.5 border-b dark:border-gray-700">📌 ${hist}</div>`;
-                });
-            } else {
-                html += `<div class="text-gray-400 italic">Nenhuma alteração registrada.</div>`;
-            }
-
-            html += `<div class="font-bold text-brand-red mt-3 mb-1">--- HISTÓRICO DE COMPARTILHAMENTOS ---</div>`;
-            if(a.historicoCompartilhamentos && a.historicoCompartilhamentos.length) {
-                a.historicoCompartilhamentos.forEach((comp, idx) => {
-                    html += `<div class="p-1.5 border-b dark:border-gray-700">📤 #${idx+1} Compartilhado em: ${comp}</div>`;
-                });
-            } else {
-                html += `<div class="text-gray-400 italic">Nenhum compartilhamento individual realizado ainda.</div>`;
-            }
-
-            container.innerHTML = html;
-            document.getElementById('modal-historico-ato').classList.remove('hidden');
-        }
-
-        function fecharModalHistoricoAto() {
-            document.getElementById('modal-historico-ato').classList.add('hidden');
-        }
-
-        function compartilharAtoIndividual(id) {
-            const a = db.atos.find(item => item.id == id);
-            if(!a) return;
-
-            const perfilNome = db.perfil.nome || 'Correspondente Não Cadastrado';
-            const agora = new Date().toLocaleString('pt-BR');
-
-            if(!a.historicoCompartilhamentos) a.historicoCompartilhamentos = [];
-            a.historicoCompartilhamentos.push(agora);
-            saveData();
-            renderAtos();
-
-            const txt = `DILIGENCE.BR - DETALHES DO PROCESSO\n--------------------------------\n` +
-                        `👤 Perfil Profissional: ${perfilNome}\n` +
-                        `⚖️ Processo: ${a.processo}\n` +
-                        `🏢 Cliente/Contratante: ${a.cliente}\n` +
-                        `📍 Comarca/Cidade: ${a.cidade}\n` +
-                        `📅 Data e Hora do Ato: ${a.data ? new Date(a.data).toLocaleString('pt-BR') : 'N/A'}\n` +
-                        `💰 Valor Acordado: R$ ${a.valor.toFixed(2)}\n` +
-                        `📌 Status: ${a.status.toUpperCase()}\n` +
-                        `⏰ Vencimento do Pagamento: ${a.vencimento}\n` +
-                        `--------------------------------\nCompartilhado via DILIGENCE.BR em ${agora} (Total de compartilhamentos: ${a.historicoCompartilhamentos.length}x)`;
-
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
-        }
-
-        function renderAtos() {
-            const container = document.getElementById('lista-atos');
-            if (!container) return;
-            container.innerHTML = '';
-
-            db.atos.forEach(a => {
-                const qtdComp = a.historicoCompartilhamentos ? a.historicoCompartilhamentos.length : 0;
-                const card = document.createElement('div');
-                card.className = "border dark:border-gray-700 bg-white dark:bg-gray-800 p-3 rounded-xl text-xs space-y-2 shadow-sm";
-                card.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <strong class="text-sm">Proc: ${a.processo}</strong> - ${a.cliente} ${qtdComp > 0 ? `<span class="bg-green-100 text-green-800 px-1.5 py-0.5 rounded font-bold text-[9px]">✓ Compartilhado (${qtdComp}x)</span>` : ''}<br>
-                            <span class="text-gray-400">📍 ${a.cidade} | Venc: ${a.vencimento}</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <button onclick="abrirHistoricoAto(${a.id})" title="Ver Histórico (Alterações e Compartilhamentos)" class="bg-amber-100 dark:bg-gray-700 text-amber-700 dark:text-amber-400 px-2 py-1 rounded font-bold"><i class="fa-solid fa-pencil"></i></button>
-                            <span class="font-bold ${a.status === 'pago' ? 'text-green-600' : (a.status === 'vencido' ? 'text-red-600' : 'text-amber-500')}">
-                                R$ ${a.valor.toFixed(2)}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center pt-2 border-t dark:border-gray-700">
-                        <span class="font-bold text-[10px] uppercase ${a.status === 'pago' ? 'bg-green-100 text-green-800 p-1 rounded' : (a.status === 'vencido' ? 'bg-red-100 text-red-800 p-1 rounded' : 'bg-amber-100 text-amber-800 p-1 rounded')}">
-                            ${a.status}
-                        </span>
-                        <div class="flex gap-1">
-                            <button onclick="compartilharAtoIndividual(${a.id})" class="bg-green-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-brands fa-whatsapp"></i> Whats</button>
-                            <button onclick="abrirModalChecklist(${a.id})" class="bg-brand-red text-white px-2 py-1 rounded font-bold text-[10px]">📋 Checklist</button>
-                            <button onclick="editarAto(${a.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]">✏️ Editar</button>
-                            <button onclick="deletarAto(${a.id})" class="bg-red-600 hover:bg-red-700 text-white font-bold px-2 py-1 rounded text-[10px]"><i class="fa-solid fa-trash-can"></i></button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function deletarAto(id) {
-            if(confirm('Tem certeza que deseja EXCLUIR esta diligência da pauta?')) {
-                db.atos = db.atos.filter(a => a.id !== id);
-                db.caixa = db.caixa.filter(c => c.atoRefId !== id);
-                saveData(); renderAtos(); renderFinanceiro(); renderCaixa(); renderRelatorios(); renderCheckboxesAtosRecibo();
-            }
-        }
-
-        function gerarTextoPautaGeral() {
-            let txt = `DILIGENCE.BR - PAUTA DE DILIGÊNCIAS\n--------------------------------\n`;
-            db.atos.forEach(a => {
-                txt += `Proc: ${a.processo} | Cliente: ${a.cliente} | Comarca: ${a.cidade} | Venc: ${a.vencimento} | Valor: R$ ${a.valor.toFixed(2)} [${a.status.toUpperCase()}]\n`;
-            });
-            return txt;
-        }
-
-        function compartilharPautaGeral(tipo) {
-            if(!db.atos.length) return alert("Pauta vazia!");
-            const txt = gerarTextoPautaGeral();
-            if(tipo === 'whats') {
-                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
-            } else if(tipo === 'email') {
-                window.open(`mailto:${EMAIL_CONTRATANTE}?subject=PautaDiligencias&body=${encodeURIComponent(txt)}`);
-            } else if(tipo === 'csv') {
-                const blob = new Blob([txt], { type: 'text/csv' });
-                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'pauta.csv'; a.click();
-            }
-        }
-
-        /* LÓGICA DO FINANCEIRO COM SELETOR EXPLÍCITO (PENDENTE, PAGO, VENCIDO) E SINCRONIZAÇÃO CAIXA */
-        function renderFinanceiro() {
-            let pago = 0, pendente = 0, vencido = 0;
-            const container = document.getElementById('fin-gerenciador-baixas');
-            if(container) container.innerHTML = '';
-
-            db.atos.forEach(a => {
-                if(a.status === 'pago') pago += a.valor;
-                else if(a.status === 'vencido') vencido += a.valor;
-                else pendente += a.valor;
-
-                if(container) {
-                    container.innerHTML += `
-                        <div class="p-2.5 border rounded-xl text-xs flex justify-between items-center bg-white dark:bg-gray-800 shadow-sm">
-                            <div>
-                                <strong>${a.processo}</strong> (${a.cliente})<br>
-                                <span class="text-gray-400">Venc: ${a.vencimento} - R$ ${a.valor.toFixed(2)}</span>
-                            </div>
-                            <div class="flex items-center gap-1.5">
-                                <select onchange="alterarStatusFinanceiroSelect(${a.id}, this.value)" class="p-1.5 rounded-lg font-extrabold text-[11px] shadow border dark:bg-gray-700 ${a.status === 'pago' ? 'bg-green-100 text-green-800' : (a.status === 'vencido' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800')}">
-                                    <option value="pendente" ${a.status === 'pendente' ? 'selected' : ''}>🟡 PENDENTE</option>
-                                    <option value="pago" ${a.status === 'pago' ? 'selected' : ''}>🟢 PAGO</option>
-                                    <option value="vencido" ${a.status === 'vencido' ? 'selected' : ''}>🔴 VENCIDO</option>
-                                </select>
-                            </div>
-                        </div>
-                    `;
-                }
-            });
-
-            document.getElementById('fin-entradas').innerText = `R$ ${pago.toFixed(2)}`;
-            document.getElementById('fin-pendentes').innerText = `R$ ${pendente.toFixed(2)}`;
-            document.getElementById('fin-vencidos').innerText = `R$ ${vencido.toFixed(2)}`;
-        }
-
-        function alterarStatusFinanceiroSelect(id, novoStatus) {
-            const a = db.atos.find(x => x.id === id);
-            if(!a) return;
-
-            if(a.status === 'pago' && novoStatus !== 'pago') {
-                document.getElementById('estorno-ato-id').value = a.id;
-                document.getElementById('estorno-novo-status').value = novoStatus;
-                document.getElementById('modal-alterar-pago').classList.remove('hidden');
-                renderFinanceiro();
-                return;
-            }
-
-            a.status = novoStatus;
-            if(novoStatus === 'pago') {
-                a.dataBaixa = new Date().toLocaleString('pt-BR');
-                if(!db.caixa.some(c => c.atoRefId === a.id)) {
-                    db.caixa.push({ id: Date.now(), atoRefId: a.id, tipo: 'entrada', valor: a.valor, descricao: `Baixa Proc: ${a.processo}`, dataIso: new Date().toISOString().split('T')[0], dataHora: new Date().toLocaleString('pt-BR') });
-                }
-            } else {
-                db.caixa = db.caixa.filter(c => c.atoRefId !== a.id);
-            }
-
-            saveData();
-            renderAtos();
-            renderFinanceiro();
-            renderCaixa();
-            renderRelatorios();
-        }
-
-        function fecharModalEstorno() { 
-            document.getElementById('modal-alterar-pago').classList.add('hidden');
-            renderFinanceiro();
-        }
-
-        function confirmarEstornoPagoWhatsApp() {
-            const id = parseInt(document.getElementById('estorno-ato-id').value);
-            const novoStatus = document.getElementById('estorno-novo-status').value;
-            const motivo = document.getElementById('estorno-motivo-select').value;
-            const a = db.atos.find(x => x.id === id);
-
-            if(a) {
-                a.status = novoStatus;
-                db.caixa = db.caixa.filter(c => c.atoRefId !== a.id);
-                saveData();
-
-                const txt = `⚠️ DILIGENCE.BR - NOTIFICAÇÃO DE ESTORNO DE HONORÁRIOS\n--------------------------------\nProcesso: ${a.processo}\nCliente: ${a.cliente}\nNovo Status: ${novoStatus.toUpperCase()}\nMotivo do Estorno: ${motivo}\nData: ${new Date().toLocaleString('pt-BR')}`;
-                window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(txt)}`);
-            }
-            fecharModalEstorno(); renderAtos(); renderFinanceiro(); renderCaixa(); renderRelatorios();
-        }
-
-        function abrirModalChecklist(id) {
-            const a = db.atos.find(x => x.id === id);
-            if(!a) return;
-            document.getElementById('chk-ato-id').value = a.id;
-            document.getElementById('chk-processo').value = a.processo;
-            document.getElementById('chk-cliente').value = a.cliente;
-            document.getElementById('chk-obs').value = a.checklistObs || '';
-            document.getElementById('modal-checklist').classList.remove('hidden');
-        }
-        function fecharModalChecklist() { document.getElementById('modal-checklist').classList.add('hidden'); }
-
-        function enviarChecklistWhatsApp() {
-            const id = parseInt(document.getElementById('chk-ato-id').value);
-            const obs = document.getElementById('chk-obs').value.trim();
-            if(!obs) return alert('Descreva o feedback da audiência!');
-
-            const a = db.atos.find(x => x.id === id);
-            if(a) { a.checklistObs = obs; saveData(); }
-
-            const txt = `📋 DILIGENCE.BR - CHECKLIST PÓS-AUDIÊNCIA\n--------------------------------\nCorrespondente: ${db.perfil.nome || 'N/A'} (${db.perfil.doc || 'N/A'})\nProcesso: ${document.getElementById('chk-processo').value}\nCliente: ${document.getElementById('chk-cliente').value}\n--------------------------------\nFeedback da Audiência:\n${obs}`;
-            fecharModalChecklist();
-            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(txt)}`);
-        }
-
-        function gerarTicketComprovantePDF() {
-            const proc = document.getElementById('chk-processo').value;
-            const cli = document.getElementById('chk-cliente').value;
-            const obs = document.getElementById('chk-obs').value;
-
-            const element = document.createElement('div');
-            element.className = "p-6 font-sans border-2 border-red-600 rounded-2xl bg-white text-black space-y-4";
-            element.innerHTML = `
-                <div style="text-align: center; border-bottom: 2px solid #dc2626; padding-bottom: 10px;">
-                    <h1 style="color: #dc2626; font-size: 20px; font-weight: bold;">DILIGENCE.BR</h1>
-                    <p style="font-size: 12px; font-weight: bold;">TICKET DE COMPROVAÇÃO DE DILIGÊNCIA</p>
-                    <p style="font-size: 10px; color: #555;">Data/Hora: ${new Date().toLocaleString('pt-BR')}</p>
-                </div>
-                <div style="font-size: 12px; line-height: 1.6;">
-                    <p><strong>Correspondente:</strong> ${db.perfil.nome || 'N/A'} (${db.perfil.doc || 'N/A'})</p>
-                    <p><strong>Nº do Processo:</strong> ${proc}</p>
-                    <p><strong>Cliente:</strong> ${cli}</p>
-                    <hr style="margin: 10px 0;">
-                    <p><strong>Feedback / Relatório da Audiência:</strong></p>
-                    <p style="background: #f3f4f6; padding: 10px; border-radius: 8px;">${obs || 'Sem observações.'}</p>
-                </div>
-            `;
-
-            html2pdf().set({ margin: 10, filename: `Comprovante_${proc}.pdf`, html2canvas: { scale: 2 } }).from(element).save();
-        }
-
-        /* LÓGICA DO LIVRO CAIXA (COM SELECT + OUTROS + COMPARTILHAMENTO INDIVIDUAL WHATS) */
-        function mudarOpcaoCaixa(val) {
-            const inputDesc = document.getElementById('caixa-descricao');
-            if (val === 'Outros') {
-                inputDesc.classList.remove('hidden');
-                inputDesc.value = '';
-                inputDesc.focus();
-            } else {
-                inputDesc.classList.add('hidden');
-                inputDesc.value = val;
-            }
-        }
-
-        function saveCaixa(e) {
-            e.preventDefault();
-            const id = document.getElementById('caixa-id').value;
-            const tipo = document.getElementById('caixa-tipo').value;
-            const valor = parseFloat(document.getElementById('caixa-valor').value);
-            
-            const selectVal = document.getElementById('caixa-select-opcao').value;
-            let descricao = '';
-            if (selectVal === 'Outros') {
-                descricao = document.getElementById('caixa-descricao').value.trim();
-                if(!descricao) return alert('Por favor, digite a descrição da despesa ou entrada!');
-            } else {
-                descricao = selectVal;
-            }
-
-            if (id) {
-                const c = db.caixa.find(item => item.id == id);
-                if (c) { c.tipo = tipo; c.valor = valor; c.descricao = descricao; }
-            } else {
-                db.caixa.push({ id: Date.now(), tipo: tipo, valor: valor, descricao: descricao, dataIso: new Date().toISOString().split('T')[0], dataHora: new Date().toLocaleString('pt-BR') });
-            }
-
-            saveData(); limparFormCaixa(); renderCaixa(); alert("✅ Lançamento de caixa salvo com sucesso!");
-        }
-
-        function editarCaixa(id) {
-            const c = db.caixa.find(item => item.id == id);
-            if (!c) return;
-            document.getElementById('caixa-id').value = c.id;
-            document.getElementById('caixa-tipo').value = c.tipo;
-            document.getElementById('caixa-valor').value = c.valor;
-
-            const selectOp = document.getElementById('caixa-select-opcao');
-            let encontrado = false;
-            for(let opt of selectOp.options) {
-                if(opt.value === c.descricao) {
-                    selectOp.value = c.descricao;
-                    document.getElementById('caixa-descricao').classList.add('hidden');
-                    encontrado = true;
-                    break;
-                }
-            }
-
-            if(!encontrado) {
-                selectOp.value = 'Outros';
-                const inputDesc = document.getElementById('caixa-descricao');
-                inputDesc.classList.remove('hidden');
-                inputDesc.value = c.descricao;
-            }
-
-            document.getElementById('caixa-form-titulo').innerText = "Editar Lançamento no Caixa";
-            document.getElementById('caixa-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR ALTERAÇÕES';
-            document.getElementById('caixa-btn-cancelar').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function limparFormCaixa() {
-            document.getElementById('form-caixa').reset();
-            document.getElementById('caixa-id').value = '';
-            document.getElementById('caixa-select-opcao').value = 'Uber / Transporte Fórum';
-            document.getElementById('caixa-descricao').classList.add('hidden');
-            document.getElementById('caixa-form-titulo').innerText = "Novo Lançamento no Caixa";
-            document.getElementById('caixa-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR LANÇAMENTO NO CAIXA';
-            document.getElementById('caixa-btn-cancelar').classList.add('hidden');
-        }
-
-        function deletarCaixa(id) {
-            if(confirm('Excluir este lançamento do caixa?')) {
-                db.caixa = db.caixa.filter(c => c.id !== id);
-                saveData(); renderCaixa();
-            }
-        }
-
-        function compartilharCaixaIndividual(id) {
-            const c = db.caixa.find(item => item.id == id);
-            if(!c) return;
-            const txt = `DILIGENCE.BR - LANÇAMENTO EM CAIXA\n--------------------------------\nTipo: ${c.tipo.toUpperCase()}\nDescrição: ${c.descricao}\nValor: R$ ${c.valor.toFixed(2)}\nData/Hora: ${c.dataHora || c.dataIso}\n--------------------------------\nEnviado via DILIGENCE.BR`;
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
-        }
-
-        function filtrarCaixaPorDatas() {
-            const ini = document.getElementById('caixa-filtro-ini').value;
-            const fim = document.getElementById('caixa-filtro-fim').value;
-            return db.caixa.filter(c => {
-                const dataItem = c.dataIso || new Date().toISOString().split('T')[0];
-                if (ini && dataItem < ini) return false;
-                if (fim && dataItem > fim) return false;
-                return true;
-            });
-        }
-
-        function renderCaixa() {
-            let ent = 0, sai = 0;
-            const container = document.getElementById('lista-caixa');
-            if(container) container.innerHTML = '';
-            const listaFiltrada = filtrarCaixaPorDatas();
-
-            listaFiltrada.forEach(c => {
-                if(c.tipo === 'entrada') ent += c.valor; else sai += c.valor;
-                if(container) {
-                    container.innerHTML += `
-                        <div class="p-2.5 border rounded-xl text-xs flex justify-between items-center bg-white dark:bg-gray-800 shadow-sm">
-                            <div>
-                                <strong>${c.descricao}</strong><br>
-                                <span class="text-gray-400 text-[10px]">${c.dataHora || c.dataIso || ''}</span>
-                            </div>
-                            <div class="flex items-center gap-1.5">
-                                <strong class="${c.tipo === 'entrada' ? 'text-green-600' : 'text-red-600'}">R$ ${c.valor.toFixed(2)}</strong>
-                                <button onclick="compartilharCaixaIndividual(${c.id})" class="bg-green-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Compartilhar Whats"><i class="fa-brands fa-whatsapp"></i></button>
-                                <button onclick="editarCaixa(${c.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="deletarCaixa(${c.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Excluir"><i class="fa-solid fa-trash-can"></i></button>
-                            </div>
-                        </div>
-                    `;
-                }
-            });
-
-            let totalEntAll = 0, totalSaiAll = 0;
-            db.caixa.forEach(c => { if(c.tipo === 'entrada') totalEntAll += c.valor; else totalSaiAll += c.valor; });
-            document.getElementById('caixa-total-entradas').innerText = `R$ ${totalEntAll.toFixed(2)}`;
-            document.getElementById('caixa-total-saidas').innerText = `R$ ${totalSaiAll.toFixed(2)}`;
-            document.getElementById('caixa-saldo-liquido').innerText = `R$ ${(totalEntAll - totalSaiAll).toFixed(2)}`;
-        }
-
-        function gerarTextoExtratoCaixa() {
-            const lista = filtrarCaixaPorDatas();
-            let txt = `DILIGENCE.BR - EXTRATO DE LIVRO CAIXA\n--------------------------------\n`;
-            let tEnt = 0, tSai = 0;
-            lista.forEach(c => {
-                if(c.tipo === 'entrada') tEnt += c.valor; else tSai += c.valor;
-                txt += `[${c.tipo.toUpperCase()}] ${c.descricao} - R$ ${c.valor.toFixed(2)} (${c.dataHora || c.dataIso})\n`;
-            });
-            txt += `--------------------------------\nTotal Entradas: R$ ${tEnt.toFixed(2)}\nTotal Saídas: R$ ${tSai.toFixed(2)}\nSaldo do Período: R$ ${(tEnt - tSai).toFixed(2)}`;
-            return txt;
-        }
-
-        function compartilharExtratoCaixa(tipo) {
-            const lista = filtrarCaixaPorDatas();
-            if(!lista.length) return alert("Nenhum lançamento no período selecionado!");
-
-            if(tipo === 'whats') {
-                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(gerarTextoExtratoCaixa())}`);
-            } else if(tipo === 'email') {
-                window.open(`mailto:${EMAIL_CONTRATANTE}?subject=ExtratoLivroCaixa_Diligence&body=${encodeURIComponent(gerarTextoExtratoCaixa())}`);
-            } else if(tipo === 'pdf') {
-                const element = document.createElement('div');
-                element.className = "p-6 font-sans bg-white text-black space-y-4";
-                element.innerHTML = `<h2 style="color:#dc2626; font-size:18px; font-weight:bold; border-bottom:2px solid #dc2626; padding-bottom:5px;">EXTRATO DE LIVRO CAIXA - DILIGENCE.BR</h2><pre style="font-family:monospace; font-size:11px; white-space:pre-wrap;">${gerarTextoExtratoCaixa()}</pre>`;
-                html2pdf().set({ margin: 10, filename: `Extrato_Caixa.pdf` }).from(element).save();
-            } else if(tipo === 'excel') {
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(lista), "Caixa_Filtrado");
-                XLSX.writeFile(wb, `Extrato_Caixa.xlsx`);
-            }
-        }
-
-        /* LÓGICA DA CALCULADORA COMUM E FITA BOBINA */
+        // Lógica da Calculadora Comum com Porcentagem
         function calcComumAdd(val) {
             if (calcVisorVal === '0' && val !== '.') {
                 calcVisorVal = val;
@@ -2001,14 +325,24 @@
             document.getElementById('calc-comum-visor').innerText = calcVisorVal;
         }
 
+        function calcComumPorcentagem() {
+            try {
+                let resultado = Function('"use strict";return (' + calcVisorVal.replace(/×/g, '*').replace(/÷/g, '/') + ') / 100')();
+                bobinaHistorico.push(`${calcVisorVal}% = ${resultado}`);
+                renderFitaBobina();
+                calcVisorVal = String(resultado);
+                document.getElementById('calc-comum-visor').innerText = calcVisorVal;
+            } catch (err) {
+                alert("Erro ao calcular porcentagem.");
+            }
+        }
+
         function calcComumCalcular() {
             try {
                 let expressao = calcVisorVal.replace(/×/g, '*').replace(/÷/g, '/');
                 let resultado = Function('"use strict";return (' + expressao + ')')();
-                
                 bobinaHistorico.push(`${calcVisorVal} = ${resultado}`);
                 renderFitaBobina();
-
                 calcVisorVal = String(resultado);
                 document.getElementById('calc-comum-visor').innerText = calcVisorVal;
             } catch (err) {
@@ -2033,615 +367,36 @@
             renderFitaBobina();
         }
 
-        function compartilharBobina(tipo) {
-            if(!bobinaHistorico.length) return alert("A fita bobina está vazia!");
-            let txt = `DILIGENCE.BR - FITA DA CALCULADORA\n--------------------------------\n` + bobinaHistorico.join('\n');
-            if(tipo === 'whats') {
-                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
-            } else if(tipo === 'email') {
-                window.open(`mailto:${EMAIL_CONTRATANTE}?subject=FitaCalculadora&body=${encodeURIComponent(txt)}`);
-            } else if(tipo === 'csv') {
-                const blob = new Blob([txt], { type: 'text/csv' });
-                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'fita_calculadora.csv'; a.click();
-            }
-        }
+        // Lógica de Cálculo de Prazos (Dias Úteis ou Corridos)
+        function calcularDataPrazo() {
+            const dataInicioStr = document.getElementById('calc-prazo-inicio').value;
+            const qtdDias = parseInt(document.getElementById('calc-prazo-dias').value) || 0;
+            const tipoContagem = document.getElementById('calc-prazo-tipo').value;
 
-        /* LÓGICA DA AGENDA DE CONTATOS */
-        function saveContato(e) {
-            e.preventDefault();
-            const id = document.getElementById('ct-id').value;
-            const nome = document.getElementById('ct-nome').value.trim();
-            const celular = document.getElementById('ct-celular').value.trim();
-            const oab = document.getElementById('ct-oab').value.trim();
-            const obs = document.getElementById('ct-obs').value.trim();
-
-            if (id) {
-                const c = db.contatos.find(item => item.id == id);
-                if (c) { c.nome = nome; c.celular = celular; c.oab = oab; c.obs = obs; }
-            } else {
-                db.contatos.push({ id: Date.now(), nome: nome, celular: celular, oab: oab, obs: obs });
-            }
-
-            saveData(); limparFormContato(); renderContatos(); alert("✅ Contato inserido/salvo na agenda com sucesso!");
-        }
-
-        function editarContato(id) {
-            const c = db.contatos.find(item => item.id == id);
-            if (!c) return;
-            document.getElementById('ct-id').value = c.id;
-            document.getElementById('ct-nome').value = c.nome;
-            document.getElementById('ct-celular').value = c.celular;
-            document.getElementById('ct-oab').value = c.oab || '';
-            document.getElementById('ct-obs').value = c.obs || '';
-            document.getElementById('ct-form-titulo').innerText = "Editar Contato";
-            document.getElementById('ct-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR ALTERAÇÕES';
-            document.getElementById('ct-btn-cancelar').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function limparFormContato() {
-            document.getElementById('form-contato').reset();
-            document.getElementById('ct-id').value = '';
-            document.getElementById('ct-form-titulo').innerText = "Cadastrar / Inserir Novo Contato";
-            document.getElementById('ct-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR / INSERIR CONTATO';
-            document.getElementById('ct-btn-cancelar').classList.add('hidden');
-        }
-
-        function renderContatos() {
-            const container = document.getElementById('lista-contatos');
-            if(!container) return; container.innerHTML = '';
-            const busca = document.getElementById('busca-contato')?.value.toLowerCase() || '';
-
-            db.contatos.filter(c => c.nome.toLowerCase().includes(busca)).forEach(c => {
-                container.innerHTML += `
-                    <div class="p-2.5 border rounded-xl text-xs flex justify-between items-center bg-white dark:bg-gray-800 shadow-sm">
-                        <div>
-                            <strong>${c.nome}</strong> (${c.oab || 'Sem OAB'})<br>
-                            <span class="text-gray-400">📱 ${c.celular}</span>
-                            ${c.obs ? `<br><span class="text-[10px] italic text-gray-500">${c.obs}</span>` : ''}
-                        </div>
-                        <div class="flex gap-1">
-                            <button onclick="editarContato(${c.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="deletarContato(${c.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-trash-can"></i></button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function deletarContato(id) {
-            if(confirm('Excluir este contato da agenda?')) {
-                db.contatos = db.contatos.filter(c => c.id !== id);
-                saveData(); renderContatos();
-            }
-        }
-
-        /* LÓGICA DA ABA CÁLCULOS JUDICIAIS / RESCISÓRIOS COM DIAS TRABALHADOS E LEI DO AVISO PRÉVIO */
-        function mudarModoTempoTrab(val) {
-            if(val === 'dias') {
-                document.getElementById('div-campo-meses').classList.add('hidden');
-                document.getElementById('div-campo-dias').classList.remove('hidden');
-            } else {
-                document.getElementById('div-campo-meses').classList.remove('hidden');
-                document.getElementById('div-campo-dias').classList.add('hidden');
-            }
-        }
-
-        function saveRescisao(e) {
-            e.preventDefault();
-            const id = document.getElementById('res-id').value;
-            const cliente = document.getElementById('res-cliente').value.trim();
-            const vinculo = document.getElementById('res-vinculo').value;
-            const motivo = document.getElementById('res-motivo').value;
-            const salario = parseFloat(document.getElementById('res-salario').value) || 0;
-            
-            const modoTempo = document.getElementById('res-modo-tempo').value;
-            const meses = parseFloat(document.getElementById('res-meses').value) || 12;
-            const diasTrab = parseFloat(document.getElementById('res-dias-trab').value) || 365;
-            const anosCompletos = parseInt(document.getElementById('res-anos-completos').value) || 0;
-
-            const inssPct = parseFloat(document.getElementById('res-inss-pct').value) || 7.5;
-            const adicionais = parseFloat(document.getElementById('res-adicionais').value) || 0;
-
-            const usaMulta467 = document.getElementById('res-multa-467').checked;
-            const usaMulta477 = document.getElementById('res-multa-477').checked;
-            const usaFgts = document.getElementById('res-fgts').checked;
-            const multaFgtsPct = parseFloat(document.getElementById('res-multa-fgts-pct').value) || 0;
-            const usaHomologar = document.getElementById('res-homologar').checked;
-
-            const insalubridadePct = parseFloat(document.getElementById('res-insalubridade').value) || 0;
-            const periculosidadePct = parseFloat(document.getElementById('res-periculosidade').value) || 0;
-            const funcaoVal = parseFloat(document.getElementById('res-funcao-valor').value) || 0;
-
-            let saldoSalario = 0;
-            if(modoTempo === 'dias') {
-                saldoSalario = (salario / 30) * Math.min(diasTrab, 30);
-            } else {
-                saldoSalario = (salario / 30) * 15;
-            }
-
-            // LEI DO AVISO PRÉVIO PROPORCIONAL (Lei 12.506/2011)
-            let diasAvisoPrevio = 30;
-            if(motivo === 'Dispensa sem justa causa' || motivo === 'Rescisão indireta') {
-                let diasExtras = anosCompletos * 3;
-                if(diasExtras > 60) diasExtras = 60;
-                diasAvisoPrevio = 30 + diasExtras;
-            } else {
-                diasAvisoPrevio = 0;
-            }
-            const avisoPrevioVal = (salario / 30) * diasAvisoPrevio;
-
-            const decimoTerceiro = (salario / 12) * (modoTempo === 'dias' ? (diasTrab / 30) : meses);
-            const feriasProp = (salario / 12) * (modoTempo === 'dias' ? (diasTrab / 30) : meses);
-            const feriasTerco = feriasProp / 3;
-
-            const insalubridadeVal = insalubridadePct > 0 ? (1412 * (insalubridadePct / 100)) : 0;
-            const periculosidadeVal = periculosidadePct > 0 ? (salario * 0.30) : 0;
-
-            const inssVal = ((decimoTerceiro + feriasProp) * inssPct) / 100;
-            
-            const verbasIncontroversasBase = saldoSalario + avisoPrevioVal + decimoTerceiro + feriasProp;
-            const multa467Val = usaMulta467 ? (verbasIncontroversasBase * 0.50) : 0;
-            const multa477Val = usaMulta477 ? salario : 0;
-
-            const baseFgtsTotal = (salario * (modoTempo === 'dias' ? (diasTrab/30) : meses)) + decimoTerceiro;
-            const fgtsVal = usaFgts ? (baseFgtsTotal * 0.08) : 0;
-            const multaFgtsVal = fgtsVal * (multaFgtsPct / 100);
-
-            const subtotalGeral = saldoSalario + avisoPrevioVal + decimoTerceiro + feriasProp + feriasTerco + insalubridadeVal + periculosidadeVal + funcaoVal + adicionais + multa467Val + multa477Val + fgtsVal + multaFgtsVal - inssVal;
-            const homologacaoVal = usaHomologar ? (subtotalGeral * 0.20) : 0;
-            const totalLiquido = subtotalGeral + homologacaoVal;
-
-            const objetoRescisao = {
-                id: id ? parseInt(id) : Date.now(),
-                cliente: cliente,
-                vinculo: vinculo,
-                motivo: motivo,
-                salario: salario,
-                modoTempo: modoTempo,
-                meses: meses,
-                diasTrab: diasTrab,
-                anosCompletos: anosCompletos,
-                diasAvisoPrevio: diasAvisoPrevio,
-                inssPct: inssPct,
-                saldoSalario: saldoSalario,
-                avisoPrevio: avisoPrevioVal,
-                decimoTerceiro: decimoTerceiro,
-                feriasProp: feriasProp,
-                feriasTerco: feriasTerco,
-                insalubridadePct: insalubridadePct,
-                insalubridadeVal: insalubridadeVal,
-                periculosidadePct: periculosidadePct,
-                periculosidadeVal: periculosidadeVal,
-                funcaoVal: funcaoVal,
-                multa467Val: multa467Val,
-                multa477Val: multa477Val,
-                fgtsVal: fgtsVal,
-                multaFgtsPct: multaFgtsPct,
-                multaFgtsVal: multaFgtsVal,
-                homologacaoVal: homologacaoVal,
-                totalLiquido: totalLiquido,
-                dataRegistro: new Date().toLocaleString('pt-BR')
-            };
-
-            if (id) {
-                const index = db.rescisoes.findIndex(item => item.id == id);
-                if (index !== -1) db.rescisoes[index] = objetoRescisao;
-            } else {
-                db.rescisoes.unshift(objetoRescisao);
-            }
-
-            saveData(); limparFormRescisao(); renderRescisoes(); alert("✅ Cálculo judicial salvo com sucesso!");
-        }
-
-        function novoCalculoRescisaoForm() {
-            limparFormRescisao();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function editarRescisao(id) {
-            const r = db.rescisoes.find(item => item.id == id);
-            if (!r) return;
-            document.getElementById('res-id').value = r.id;
-            document.getElementById('res-cliente').value = r.cliente;
-            document.getElementById('res-vinculo').value = r.vinculo;
-            document.getElementById('res-motivo').value = r.motivo;
-            document.getElementById('res-salario').value = r.salario;
-            
-            document.getElementById('res-modo-tempo').value = r.modoTempo || 'meses';
-            mudarModoTempoTrab(r.modoTempo || 'meses');
-            document.getElementById('res-meses').value = r.meses || 12;
-            document.getElementById('res-dias-trab').value = r.diasTrab || 365;
-            document.getElementById('res-anos-completos').value = r.anosCompletos || 1;
-
-            document.getElementById('res-inss-pct').value = r.inssPct || 7.5;
-            document.getElementById('res-multa-467').checked = (r.multa467Val || 0) > 0;
-            document.getElementById('res-multa-477').checked = (r.multa477Val || 0) > 0;
-            document.getElementById('res-fgts').checked = (r.fgtsVal || 0) > 0;
-            document.getElementById('res-multa-fgts-pct').value = r.multaFgtsPct !== undefined ? r.multaFgtsPct : 40;
-            document.getElementById('res-homologar').checked = (r.homologacaoVal || 0) > 0;
-            document.getElementById('res-insalubridade').value = r.insalubridadePct || 0;
-            document.getElementById('res-periculosidade').value = r.periculosidadePct || 0;
-            document.getElementById('res-funcao-valor').value = r.funcaoVal || 0;
-
-            document.getElementById('res-form-titulo').innerHTML = '<i class="fa-solid fa-scale-balanced mr-1"></i> Editar Cálculo Judicial e Rescisório';
-            document.getElementById('res-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR ALTERAÇÕES';
-            document.getElementById('res-btn-cancelar').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function limparFormRescisao() {
-            document.getElementById('form-rescisao').reset();
-            document.getElementById('res-id').value = '';
-            mudarModoTempoTrab('meses');
-            document.getElementById('res-form-titulo').innerHTML = '<i class="fa-solid fa-scale-balanced mr-1"></i> Calculadora de Cálculos Judiciais e Rescisão';
-            document.getElementById('res-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> CALCULAR & SALVAR CÁLCULO JUDICIAL';
-            document.getElementById('res-btn-cancelar').classList.add('hidden');
-        }
-
-        function deletarRescisao(id) {
-            if(confirm('Excluir este cálculo judicial?')) {
-                db.rescisoes = db.rescisoes.filter(r => r.id !== id);
-                saveData(); renderRescisoes();
-            }
-        }
-
-        function renderRescisoes() {
-            const container = document.getElementById('lista-rescisioes');
-            if(!container) return; container.innerHTML = '';
-            const busca = document.getElementById('busca-rescisao-input')?.value.toLowerCase().trim() || '';
-
-            let listaOrdenada = [...db.rescisoes].sort((a,b) => b.id - a.id);
-            let listaFiltrada = listaOrdenada.filter(r => r.cliente.toLowerCase().includes(busca));
-
-            if(!listaFiltrada.length) {
-                container.innerHTML = '<p class="text-xs text-gray-400 italic">Nenhum cálculo judicial encontrado.</p>';
+            if(!dataInicioStr) {
+                alert("Selecione a data inicial do prazo!");
                 return;
             }
 
-            listaFiltrada.forEach((r, idx) => {
-                const isUltimo = (idx === 0 && !busca);
-                
-                container.innerHTML += `
-                    <div class="p-3 border rounded-xl text-xs bg-white dark:bg-gray-800 shadow-sm space-y-2 border-l-4 border-brand-red">
-                        <div class="flex justify-between items-center border-b pb-1">
-                            <div>
-                                <strong class="text-sm text-brand-red">${r.cliente}</strong> ${isUltimo ? '<span class="bg-red-100 text-brand-red px-1.5 py-0.5 rounded font-bold text-[9px]">MAIS RECENTE</span>' : ''}<br>
-                                <span class="text-gray-400">Vínculo: ${r.vinculo} | Motivo: ${r.motivo} (${r.dataRegistro})</span>
-                            </div>
-                            <div class="flex gap-1">
-                                <button onclick="abrirAuditoriaMinuta(${r.id})" class="bg-red-700 text-white px-2 py-1 rounded font-bold text-[10px]" title="Minuta"><i class="fa-solid fa-file-contract"></i> Minuta</button>
-                                <button onclick="compartilharRescisaoItem('whats', ${r.id})" class="bg-green-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Whats"><i class="fa-brands fa-whatsapp"></i></button>
-                                <button onclick="editarRescisao(${r.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="deletarRescisao(${r.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Excluir"><i class="fa-solid fa-trash-can"></i></button>
-                            </div>
-                        </div>
+            let dataAtual = new Date(dataInicioStr + 'T00:00:00');
 
-                        <div id="detalhes-res-${r.id}" class="${(isUltimo || busca) ? '' : 'hidden'} space-y-2">
-                            <div class="grid grid-cols-2 gap-1 text-[11px] bg-gray-50 dark:bg-gray-700/50 p-2 rounded">
-                                <div>Salário Base: <strong>R$ ${(r.salario||0).toFixed(2)}</strong></div>
-                                <div>Aviso Prévio (${r.diasAvisoPrevio || 30} dias): <strong>R$ ${(r.avisoPrevio||0).toFixed(2)}</strong></div>
-                                <div>Saldo Salário: <strong>R$ ${(r.saldoSalario||0).toFixed(2)}</strong></div>
-                                <div>13º Prop: <strong>R$ ${(r.decimoTerceiro||0).toFixed(2)}</strong></div>
-                                <div>Férias + 1/3: <strong>R$ ${((r.feriasProp||0)+(r.feriasTerco||0)).toFixed(2)}</strong></div>
-                                <div>Multa Art. 467: <strong>R$ ${(r.multa467Val||0).toFixed(2)}</strong></div>
-                                <div>Multa Art. 477: <strong>R$ ${(r.multa477Val||0).toFixed(2)}</strong></div>
-                                <div>FGTS + Multa (${r.multaFgtsPct || 0}%): <strong>R$ ${((r.fgtsVal||0)+(r.multaFgtsVal||0)).toFixed(2)}</strong></div>
-                                <div>Adicionais / Ajustes: <strong>R$ ${((r.insalubridadeVal||0)+(r.periculosidadeVal||0)+(r.funcaoVal||0)).toFixed(2)}</strong></div>
-                                <div>Homologação (Taxa): <strong>R$ ${(r.homologacaoVal||0).toFixed(2)}</strong></div>
-                            </div>
-                            <div class="flex justify-between items-center pt-1 font-bold text-sm">
-                                <span class="text-gray-600 dark:text-gray-300">TOTAL LÍQUIDO JUDICIAL:</span>
-                                <span class="text-green-600 text-base">R$ ${(r.totalLiquido||0).toFixed(2)}</span>
-                            </div>
-                        </div>
-
-                        ${(!isUltimo && !busca) ? `
-                            <button onclick="document.getElementById('detalhes-res-${r.id}').classList.toggle('hidden');" class="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-1 rounded text-[10px] font-bold text-center">
-                                ▼ Exibir demonstrativo oculto
-                            </button>
-                        ` : ''}
-                    </div>
-                `;
-            });
-        }
-
-        function compartilharRescisaoItem(tipo, id) {
-            const r = db.rescisoes.find(item => item.id == id);
-            if(!r) return;
-            const txt = `DILIGENCE.BR - DEMONSTRATIVO DE CÁLCULO JUDICIAL\n--------------------------------\nCliente/Proc: ${r.cliente}\nVínculo: ${r.vinculo}\nMotivo: ${r.motivo}\nSalário Base: R$ ${r.salario.toFixed(2)}\nAviso Prévio (${r.diasAvisoPrevio} dias): R$ ${r.avisoPrevio.toFixed(2)}\nSaldo de Salário: R$ ${r.saldoSalario.toFixed(2)}\n13º Prop: R$ ${r.decimoTerceiro.toFixed(2)}\nFérias+1/3: R$ ${((r.feriasProp||0)+(r.feriasTerco||0)).toFixed(2)}\nMulta Art. 467: R$ ${(r.multa467Val||0).toFixed(2)}\nMulta Art. 477: R$ ${(r.multa477Val||0).toFixed(2)}\nFGTS + Multa (${r.multaFgtsPct}%): R$ ${((r.fgtsVal||0)+(r.multaFgtsVal||0)).toFixed(2)}\nAdicionais/Ajustes: R$ ${((r.insalubridadeVal||0)+(r.periculosidadeVal||0)+(r.funcaoVal||0)).toFixed(2)}\nHomologação: R$ ${r.homologacaoVal.toFixed(2)}\nTOTAL LÍQUIDO JUDICIAL: R$ ${r.totalLiquido.toFixed(2)}\nData: ${r.dataRegistro}`;
-
-            if(tipo === 'whats') {
-                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
-            }
-        }
-
-        /* GERADOR DA MINUTA E AUDITORIA MODULAR */
-        let minutaGeradaCache = "";
-
-        function abrirAuditoriaMinuta(id) {
-            const r = db.rescisoes.find(item => item.id == id);
-            if(!r) return;
-
-            const comRegistro = r.vinculo.toLowerCase().includes('clt');
-            const temInsalubridade = (r.insalubridadeVal || 0) > 0;
-            const temPericulosidade = (r.periculosidadeVal || 0) > 0;
-
-            let auditHtml = `
-                <div class="font-extrabold text-green-700 dark:text-green-400">✓ AUDITORIA APROVADA (ID: ${r.id})</div>
-                <div>Status da Auditoria: <strong>APROVADO</strong> | Motor de Cálculo: <strong>v2.6 DILIGENCE</strong></div>
-                <div>Ressalvas: Nenhuma pendência obstativa encontrada. Valores reconciliados.</div>
-            `;
-            document.getElementById('minuta-painel-auditoria').innerHTML = auditHtml;
-
-            const cidadeEstado = db.perfil.cidade || 'São Paulo/SP';
-            const advogadoNome = db.perfil.nome || 'Advogado Responsável';
-            const advogadoOAB = db.perfil.doc || 'OAB/SP 000.000';
-            const hojeStr = new Date().toLocaleDateString('pt-BR');
-
-            let minutaTexto = `EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) DA ___ VARA DO TRABALHO DE ${cidadeEstado.toUpperCase()}
-
-${r.cliente.toUpperCase()}, brasileiro(a), portador(a) do CPF cadastrado, residente e domiciliado(a) em ${cidadeEstado}, por intermédio de seu advogado, conforme instrumento de mandato, vem, respeitosamente, à presença de Vossa Excelência propor a presente
-
-RECLAMAÇÃO TRABALHISTA
-em face de RECLAMADA / EMPREGADORA, pelos fatos e fundamentos a seguir expostos.
-
-I — DADOS CONTRATUAIS
-Função: Operador(a) / Prestador(a)
-Última remuneração: R$ ${r.salario.toFixed(2)}
-Modalidade de desligamento: ${r.motivo}
-Aviso Prévio Proporcional (Lei 12.506/11): ${r.diasAvisoPrevio || 30} dias
-Registro em CTPS: ${comRegistro ? 'SIM' : 'NÃO'}
-
-II — DO CONTRATO DE TRABALHO
-Durante o período contratual, o Reclamante prestou serviços nas condições cadastradas no sistema e descritas nesta peça, observando-se, exclusivamente os fatos, documentos e premissas informados.
-
-${!comRegistro ? `III — DO RECONHECIMENTO DO VÍNCULO DE EMPREGO
-O Reclamante afirma ter prestado serviços à Reclamada sem o correspondente registro em CTPS, preenchendo os requisitos legais de pessoalidade, onerosidade, não eventualidade e subordinação. Requer-se o reconhecimento do vínculo.` : ''}
-
-IV — DA REMUNERAÇÃO
-A remuneração considerada para os cálculos corresponde ao último salário de R$ ${r.salario.toFixed(2)}, observando-se os parâmetros cadastrados.
-
-${temInsalubridade ? `VIII — DO ADICIONAL DE INSALUBRIDADE
-O Reclamante exerceu atividades em condições insalubres. Postula-se o adicional no grau ${r.insalubridadePct}%, utilizando-se a base parametrizada.` : ''}
-
-${temPericulosidade ? `IX — DO ADICIONAL DE PERICULOSIDADE
-O Reclamante exercia atividades em condições perigosas. Postula-se o adicional de 30% sobre o salário base.` : ''}
-
-XIII — DAS VERBAS RESCISÓRIAS
-Considerando a modalidade de desligamento cadastrada como ${r.motivo} e o aviso prévio proporcional de ${r.diasAvisoPrevio || 30} dias, apuraram-se as parcelas correspondentes na memória de cálculo.
-
-XIV — DO FGTS E MULTA (${r.multaFgtsPct}%)
-Apuração realizada por competência, considerando as bases remuneratórias e depósitos, com multa rescisória de ${r.multaFgtsPct}%.
-
-XVII — DOS PEDIDOS
-Diante das premissas fáticas e jurídicas selecionadas, requer-se:
-a) saldo salarial — R$ ${(r.saldoSalario||0).toFixed(2)};
-b) aviso-prévio proporcional (${r.diasAvisoPrevio || 30} dias) — R$ ${(r.avisoPrevio||0).toFixed(2)};
-c) 13º salário proporcional — R$ ${(r.decimoTerceiro||0).toFixed(2)};
-d) férias + 1/3 constitucional — R$ ${((r.feriasProp||0)+(r.feriasTerco||0)).toFixed(2)};
-${(r.multa467Val||0) > 0 ? `e) multa do art. 467 da CLT — R$ ${r.multa467Val.toFixed(2)};\n` : ''}` +
-`${(r.multa477Val||0) > 0 ? `f) multa do art. 477 da CLT — R$ ${r.multa477Val.toFixed(2)};\n` : ''}` +
-`${temInsalubridade ? `g) adicional de insalubridade — R$ ${r.insalubridadeVal.toFixed(2)};\n` : ''}` +
-`${temPericulosidade ? `h) adicional de periculosidade — R$ ${r.periculosidadeVal.toFixed(2)};\n` : ''}` +
-`Valor total estimado dos pedidos: R$ ${r.totalLiquido.toFixed(2)}
-
-XVIII — DOS REQUERIMENTOS FINAIS
-Dá-se à causa o valor de R$ ${r.totalLiquido.toFixed(2)}, conforme critérios parametrizados.
-
-Termos em que,
-Pede deferimento.
-
-${cidadeEstado}, ${hojeStr}.
-
-${advogadoNome}
-${advogadoOAB}
-
-ANEXO AUTOMÁTICO — RESUMO DA MEMÓRIA DE CÁLCULO
-ID do caso: ${r.id}
-Total bruto/líquido estimado: R$ ${r.totalLiquido.toFixed(2)}
-Status da auditoria: APROVADO`;
-
-            minutaGeradaCache = minutaTexto;
-            document.getElementById('minuta-texto-preview').innerText = minutaTexto;
-            document.getElementById('modal-minuta-auditoria').classList.remove('hidden');
-        }
-
-        function fecharModalMinuta() {
-            document.getElementById('modal-minuta-auditoria').classList.add('hidden');
-        }
-
-        function copiarMinutaClipboard() {
-            navigator.clipboard.writeText(minutaGeradaCache);
-            alert("✅ Texto da minuta copiado para a área de transferência!");
-        }
-
-        function baixarMinutaDOCX() {
-            const blob = new Blob([minutaGeradaCache], { type: 'application/msword' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `Peticao_Minuta_Trabalhista.doc`;
-            a.click();
-        }
-
-        function baixarMinutaPDF() {
-            const element = document.createElement('div');
-            element.className = "p-6 font-sans bg-white text-black space-y-4 text-xs";
-            element.innerHTML = `<h2 style="color:#dc2626; font-size:16px; font-weight:bold; border-bottom:2px solid #dc2626; padding-bottom:5px;">PETIÇÃO / MINUTA TRABALHISTA - DILIGENCE.BR</h2><pre style="font-family:monospace; font-size:10px; white-space:pre-wrap; line-height:1.5;">${minutaGeradaCache}</pre>`;
-            html2pdf().set({ margin: 10, filename: `Peticao_Minuta.pdf` }).from(element).save();
-        }
-
-        /* LÓGICA DE COMPARTILHAMENTO DE MANUAIS VIA WHATSAPP */
-        function compartilharManualWhats(num) {
-            let titulo = "", texto = "";
-            if(num === 1) {
-                titulo = "MANUAL 1: EMISSÃO DE RECIBOS EM LOTE";
-                texto = "*DILIGENCE.BR - MANUAL DE USO*\n\n*1. Emissão de Recibo em Lote (Múltiplos Processos)*\nConsolide vários processos em um único recibo discriminado com verificação automática de status.\n\n*Passo a Passo:*\n1. Vá até a aba *Recibo* na navegação inferior.\n2. Selecione os processos desejados marcando as caixas de seleção (checkboxes).\n3. Confira o cliente e o valor total calculado de forma consolidada.\n4. Clique em *Gerar PDF*, *Whats* ou *Salvar* no histórico.";
-            } else if(num === 2) {
-                titulo = "MANUAL 2: CÁLCULOS E MINUTAS";
-                texto = "*DILIGENCE.BR - MANUAL DE USO*\n\n*2. Cálculos Judiciais e Geração de Minuta / Petição*\nRealize cálculos trabalhistas, ajuste valores/porcentagens e gere minutas modulares com auditoria.\n\n*Passo a Passo:*\n1. Acesse a aba *Judicial* e preencha os dados do contrato, salário e adicionais.\n2. Utilize os campos flexíveis para alterar porcentagens de insalubridade, periculosidade ou ajustes manuais.\n3. Clique em *Calcular & Salvar*.\n4. Clique no botão vermelho *Minuta* para visualizar o painel de auditoria e a prévia dos capítulos modulares gerados.";
-            } else if(num === 3) {
-                titulo = "MANUAL 3: PAUTA E FINANÇAS";
-                texto = "*DILIGENCE.BR - MANUAL DE USO*\n\n*3. Pauta de Diligências e Baixas Financeiras*\nControle pautas, faça check-in GPS e atualize o caixa automaticamente ao receber honorários.\n\n*Passo a Passo:*\n1. Cadastre audiências e diligências na aba *Pauta*, anexando comprovantes ou fotos de atas se desejar.\n2. Utilize o botão de *Check-in GPS ADM* para enviar sua localização atual formatada para o WhatsApp da administração.\n3. Na aba *Financeiro*, altere o status de cada ato entre Pendente, Pago ou Vencido para alimentar o Livro Caixa com segurança.";
-            }
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`);
-        }
-
-        function filtrarManual() {
-            const termo = document.getElementById('input-busca-manual').value.toLowerCase();
-            const cards = document.querySelectorAll('.manual-card');
-            cards.forEach(card => {
-                const textoCard = card.innerText.toLowerCase();
-                if(textoCard.includes(termo)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
+            if(tipoContagem === 'corridos') {
+                dataAtual.setDate(dataAtual.getDate() + qtdDias);
+            } else {
+                // Dias Úteis (pula sábados e domingos)
+                let diasUteisAdicionados = 0;
+                while(diasUteisAdicionados < qtdDias) {
+                    dataAtual.setDate(dataAtual.getDate() + 1);
+                    const diaSemana = dataAtual.getDay();
+                    if(diaSemana !== 0 && diaSemana !== 6) { // 0 = Domingo, 6 = Sábado
+                        diasUteisAdicionados++;
+                    }
                 }
-            });
-        }
-
-        /* LÓGICA DE RELATÓRIOS, LOG DE EXPORTAÇÃO E CHECK VERDE */
-        function renderRelatorios() {
-            let pago = 0, pendente = 0;
-            db.atos.forEach(a => { if(a.status === 'pago') pago += a.valor; else pendente += a.valor; });
-            document.getElementById('relatorio-valor-pago').innerText = `R$ ${pago.toFixed(2)}`;
-            document.getElementById('relatorio-valor-pendente').innerText = `R$ ${pendente.toFixed(2)}`;
-            document.getElementById('rel-total-atos').innerText = db.atos.length;
-            document.getElementById('rel-total-caixa').innerText = db.caixa.length;
-            document.getElementById('rel-total-contatos').innerText = db.contatos.length;
-            document.getElementById('rel-total-rescisao').innerText = db.rescisoes.length;
-        }
-
-        function registrarLogExport(tipo) {
-            const agora = new Date().toLocaleString('pt-BR');
-            if(!db.exportLog) db.exportLog = [];
-            db.exportLog.unshift({ tipo: tipo, dataHora: agora });
-            db.ultimoBackupData = agora;
-            saveData();
-            renderMiniHistoricoExport();
-            atualizarBannerUltimoBackup();
-        }
-
-        function renderMiniHistoricoExport() {
-            const container = document.getElementById('lista-mini-historico-export');
-            if(!container) return;
-            container.innerHTML = '';
-
-            if(!db.exportLog || !db.exportLog.length) {
-                container.innerHTML = '<p class="text-gray-400 italic">Nenhuma exportação realizada ainda.</p>';
-                return;
             }
 
-            db.exportLog.forEach((log, idx) => {
-                container.innerHTML += `
-                    <div class="flex items-center justify-between p-1.5 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-700/40 rounded">
-                        <span class="font-bold text-green-600 flex items-center gap-1">✓ ${log.tipo}</span>
-                        <span class="text-gray-500 dark:text-gray-400 text-[10px]">${log.dataHora}</span>
-                    </div>
-                `;
-            });
+            const dataFormatada = dataAtual.toLocaleDateString('pt-BR');
+            document.getElementById('calc-prazo-resultado').innerText = `Vencimento: ${dataFormatada}`;
         }
-
-        function exportarExcelMultiAbasComLog() {
-            if (typeof XLSX === 'undefined') return alert("Aguarde carregar a biblioteca...");
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.atos.length ? db.atos : [{"Aviso": "Pauta Vazia"}]), "Pauta");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.caixa.length ? db.caixa : [{"Aviso": "Caixa Vazio"}]), "Caixa");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.contatos.length ? db.contatos : [{"Aviso": "Agenda Vazia"}]), "Agenda");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.recibos.length ? db.recibos : [{"Aviso": "Recibos Vazio"}]), "Recibos");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.rescisoes.length ? db.rescisoes : [{"Aviso": "Rescisoes Vazio"}]), "Rescisoes");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.perfis.length ? db.perfis : [{"Aviso": "Perfis Vazio"}]), "Perfis");
-            XLSX.writeFile(wb, `Relatorio_DILIGENCE.xlsx`);
-            
-            registrarLogExport("Planilha Excel (.XLSX) Exportada");
-            fecharAvisoRelatorio();
-            fecharModalBackup();
-        }
-
-        function gerarPDFRelatorioConsolidadoComLog() {
-            const element = document.createElement('div');
-            element.className = "p-6 font-sans bg-white text-black space-y-4 text-xs";
-            element.innerHTML = `
-                <h2 style="color:#dc2626; font-size:18px; font-weight:bold; border-bottom:2px solid #dc2626; padding-bottom:5px;">RELATÓRIO FINANCEIRO CONSOLIDADO - DILIGENCE.BR</h2>
-                <p><strong>Total Recebido (Pago):</strong> ${document.getElementById('relatorio-valor-pago').innerText}</p>
-                <p><strong>Total A Receber (Pendente):</strong> ${document.getElementById('relatorio-valor-pendente').innerText}</p>
-                <p><strong>Total de Atos Registrados:</strong> ${db.atos.length}</p>
-                <p><strong>Data/Hora Emissão:</strong> ${new Date().toLocaleString('pt-BR')}</p>
-            `;
-            html2pdf().set({ margin: 10, filename: `Relatorio_Financeiro.pdf` }).from(element).save();
-            
-            registrarLogExport("Relatório PDF Consolidado Gerado");
-        }
-
-        function avisoEditarRelatorio() {
-            document.getElementById('modal-aviso-relatorio').classList.remove('hidden');
-        }
-
-        function fecharAvisoRelatorio() {
-            document.getElementById('modal-aviso-relatorio').classList.add('hidden');
-        }
-
-        function gerarPDFPautaGeral() {
-            if (!db.atos || !db.atos.length) return alert("Pauta vazia!");
-            const element = document.createElement('div');
-            element.className = "p-4 font-sans space-y-2 text-black bg-white";
-            let html = `<h2 style="color:#dc2626; font-size:18px; font-weight:bold; border-bottom:2px solid #dc2626; padding-bottom:5px;">PAUTA DE DILIGÊNCIAS - DILIGENCE.BR</h2>`;
-            db.atos.forEach(a => {
-                html += `<div style="border-bottom:1px solid #ccc; padding:8px 0; font-size:12px;"><strong>Proc:</strong> ${a.processo} - ${a.cliente}<br><strong>Data/Hora:</strong> ${a.data} | <strong>Status:</strong> ${a.status.toUpperCase()} | <strong>Valor:</strong> R$ ${a.valor.toFixed(2)}</div>`;
-            });
-            element.innerHTML = html;
-            html2pdf().set({ margin: 10, filename: `Pauta_Diligencias.pdf` }).from(element).save();
-        }
-
-        function iniciarDitadoVoz(id) {
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return alert("Ditado não suportado.");
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const rec = new SpeechRecognition();
-            rec.lang = 'pt-BR'; rec.start();
-            rec.onresult = (e) => { document.getElementById(id).value += ' ' + e.results[0][0].transcript; saveNotas(); };
-        }
-
-        function saveNotas() { db.notas = document.getElementById('bloco-notas').value; saveData(); }
-
-        function abrirModalBackup() { document.getElementById('modal-backup').classList.remove('hidden'); }
-        function fecharModalBackup() { document.getElementById('modal-backup').classList.add('hidden'); }
-
-        function fazerBackupJSON() {
-            const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Backup_DILIGENCE.json`; a.click();
-            
-            db.ultimoBackupData = new Date().toLocaleString('pt-BR');
-            saveData();
-            atualizarBannerUltimoBackup();
-            fecharModalBackup();
-            alert("✅ Backup JSON realizado com sucesso!");
-        }
-
-        function acionarRestauracao() { fecharModalBackup(); document.getElementById('input-restaurar-file').click(); }
-
-        function processarRestauracaoFile(e) {
-            const file = e.target.files[0];
-            if(file) {
-                const reader = new FileReader();
-                reader.onload = (evt) => {
-                    try {
-                        db = JSON.parse(evt.target.result);
-                        saveData(); loadData();
-                        alert("✅ RESTAURAÇÃO CONCLUÍDA!");
-                    } catch(err) { alert("Arquivo inválido."); }
-                };
-                reader.readAsText(file);
-            }
-        }
-
-        function confirmarZerarTudoGeral() {
-            if(confirm("⚠️ ZERAR TODOS OS DADOS DO APP?")) {
-                localStorage.removeItem('diligence_db'); localStorage.removeItem('diligence_logged');
-                location.reload();
-            }
-        }
-
-        loadData();
     </script>
 </body>
 </html>
