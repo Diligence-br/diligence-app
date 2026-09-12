@@ -128,6 +128,32 @@
         </div>
     </div>
 
+    <!-- MODAL POP-UP DE LEMBRETE AUTOMÁTICO (12:00 / 18:00) -->
+    <div id="modal-lembrete-sistema" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-4 border-amber-500 text-center">
+            <div class="flex justify-center text-amber-500 text-3xl">
+                <i class="fa-solid fa-triangle-exclamation animate-bounce"></i>
+            </div>
+            <div>
+                <h3 id="lembrete-titulo-horario" class="font-black text-base text-brand-red uppercase">LEMBRETE DO SISTEMA (12:00)</h3>
+                <p class="text-xs text-gray-600 dark:text-gray-300 mt-2 leading-relaxed font-semibold">
+                    Olá! Você já realizou o backup dos seus dados e pautas hoje para garantir a segurança das suas informações?
+                </p>
+            </div>
+            <div class="space-y-2 pt-2 border-t">
+                <button onclick="lembreteOpcaoSim()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs shadow flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-check"></i> JÁ FIZ O BACKUP
+                </button>
+                <button onclick="lembreteOpcaoAdiar()" class="w-full bg-amber-500 hover:bg-amber-600 text-gray-900 py-2.5 rounded-xl font-extrabold text-xs shadow flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-clock"></i> ADIAR PARA 60 MINUTOS
+                </button>
+                <button onclick="lembreteOpcaoCancelar()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">
+                    Cancelar Lembrete
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- ESTRUTURA PRINCIPAL DO APP -->
     <div id="app-content" class="hidden flex-1 flex flex-col max-w-4xl w-full mx-auto bg-white dark:bg-gray-800 shadow-xl min-h-screen">
         
@@ -226,7 +252,7 @@
                 </div>
             </section>
 
-            <!-- ABA 2: PAUTA DE DILIGÊNCIAS (COM DESTAQUE DE ÚLTIMO BACKUP E LEMBRETES 13:00 / 18:00) -->
+            <!-- ABA 2: PAUTA DE DILIGÊNCIAS (COM DESTAQUE DE ÚLTIMO BACKUP E TESTE MANUAL DE LEMBRETES 12:00 / 18:00) -->
             <section id="tab-atos" class="tab-content space-y-4 hidden">
                 
                 <!-- DESTAQUE EM VERMELHO COM AMARELO DO ÚLTIMO BACKUP -->
@@ -243,20 +269,20 @@
                     </button>
                 </div>
 
-                <!-- DISPARO DE LEMBRETES 13:00 E 18:00 -->
+                <!-- TESTE MANUAL DE DISPARO DOS LEMBRETES 12:00 E 18:00 -->
                 <div class="p-3 bg-amber-50 dark:bg-gray-700/50 rounded-xl border border-amber-300 text-xs space-y-2">
                     <div class="flex justify-between items-center">
                         <span class="font-bold text-amber-800 dark:text-amber-400 flex items-center gap-1">
-                            <i class="fa-solid fa-bell"></i> Central de Lembretes Diários (13:00 e 18:00)
+                            <i class="fa-solid fa-bell"></i> Simular Lembretes Automáticos (12:00 e 18:00)
                         </span>
-                        <span id="status-alerta-horario" class="font-mono font-bold text-gray-500 text-[10px]">Verificação ativa</span>
+                        <span id="status-alerta-horario" class="font-mono font-bold text-gray-500 text-[10px]">Ativo no relógio</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <button onclick="dispararLembreteManual('13:00')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg shadow flex items-center justify-center gap-1">
-                            <i class="fa-brands fa-whatsapp"></i> Disparar Lembrete 13:00 (Almoço/Pauta)
+                        <button onclick="dispararLembreteSistema('12:00')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg shadow">
+                            Simular Alerta 12:00
                         </button>
-                        <button onclick="dispararLembreteManual('18:00')" class="bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 rounded-lg shadow flex items-center justify-center gap-1">
-                            <i class="fa-brands fa-whatsapp"></i> Disparar Lembrete 18:00 (Fechamento)
+                        <button onclick="dispararLembreteSistema('18:00')" class="bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 rounded-lg shadow">
+                            Simular Alerta 18:00
                         </button>
                     </div>
                 </div>
@@ -1087,40 +1113,55 @@
         let tempAtaDataHoraStr = null;
         let bobinaHistorico = [];
         let calcVisorVal = '0';
+        let lembreteAdiadoMinutos = 0;
 
         function updateClock() {
             const now = new Date();
             document.getElementById('clock-time').innerText = now.toLocaleTimeString('pt-BR');
             document.getElementById('clock-date').innerText = now.toLocaleDateString('pt-BR');
 
-            // Verificação automática de lembretes (13:00 e 18:00)
+            // Verificação automática de horário (12:00 e 18:00) com suporte a adiamento
             const horaStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-            if (horaStr === '13:00' && window.lembrete13Disparado !== now.toDateString()) {
-                window.lembrete13Disparado = now.toDateString();
-                dispararLembreteAutomatico('13:00');
+            
+            if (window.adiamentoAtivoTimestamp && now.getTime() >= window.adiamentoAtivoTimestamp) {
+                window.adiamentoAtivoTimestamp = null; // expira o adiamento
+                dispararLembreteSistema('Adiado (60 min)');
+            }
+
+            if (horaStr === '12:00' && window.lembrete12Disparado !== now.toDateString()) {
+                window.lembrete12Disparado = now.toDateString();
+                dispararLembreteSistema('12:00');
             }
             if (horaStr === '18:00' && window.lembrete18Disparado !== now.toDateString()) {
                 window.lembrete18Disparado = now.toDateString();
-                dispararLembreteAutomatico('18:00');
+                dispararLembreteSistema('18:00');
             }
         }
         setInterval(updateClock, 1000);
         updateClock();
 
-        function dispararLembreteManual(horario) {
-            const nomeCorresp = db.perfil.nome || 'Correspondente';
-            const totalAtos = db.atos.length;
-            let txt = '';
-            if(horario === '13:00') {
-                txt = `🔔 DILIGENCE.BR - LEMBRETE 13:00 (ALMOÇO / PAUTA)\n--------------------------------\nCorrespondente: ${nomeCorresp}\nTotal de diligências cadastradas: ${totalAtos}\nStatus: Verificação de pautas da tarde em andamento. Bom trabalho!`;
-            } else {
-                txt = `🔔 DILIGENCE.BR - LEMBRETE 18:00 (FECHAMENTO DIÁRIO)\n--------------------------------\nCorrespondente: ${nomeCorresp}\nTotal de diligências: ${totalAtos}\nStatus: Fechamento de pautas e baixa de honorários do dia.`;
-            }
-            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(txt)}`);
+        function dispararLembreteSistema(horarioTexto) {
+            document.getElementById('lembrete-titulo-horario').innerText = `LEMBRETE DO SISTEMA (${horarioTexto})`;
+            document.getElementById('modal-lembrete-sistema').classList.remove('hidden');
         }
 
-        function dispararLembreteAutomatico(horario) {
-            dispararLembreteManual(horario);
+        function fecharModalLembrete() {
+            document.getElementById('modal-lembrete-sistema').classList.add('hidden');
+        }
+
+        function lembreteOpcaoSim() {
+            fecharModalLembrete();
+            fazerBackupJSON();
+        }
+
+        function lembreteOpcaoAdiar() {
+            fecharModalLembrete();
+            window.adiamentoAtivoTimestamp = new Date().getTime() + (60 * 60 * 1000); // 60 minutos
+            alert("⏰ Lembrete adiado por 60 minutos com sucesso!");
+        }
+
+        function lembreteOpcaoCancelar() {
+            fecharModalLembrete();
         }
 
         function abrirModalRecuperacao(tipo) {
