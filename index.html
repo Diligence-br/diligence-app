@@ -171,7 +171,8 @@
             <!-- ABA 1: PERFIL DO CORRESPONDENTE -->
             <section id="tab-perfil" class="tab-content space-y-4">
                 <form id="form-perfil" onsubmit="savePerfil(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <h2 class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-2">Perfil Profissional</h2>
+                    <input type="hidden" id="perfil-id">
+                    <h2 id="perfil-form-titulo" class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-2">Cadastro de Perfil Profissional</h2>
                     <div>
                         <label class="text-xs font-semibold">Nome Completo</label>
                         <input type="text" id="perfil-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
@@ -200,13 +201,23 @@
                         <label class="text-xs font-semibold">E-mail do Correspondente</label>
                         <input type="email" id="perfil-email" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                     </div>
-                    <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-floppy-disk"></i> SALVAR DADOS DO PERFIL
-                    </button>
+                    <div class="flex gap-2">
+                        <button type="submit" id="perfil-btn-salvar" class="flex-1 bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-floppy-disk"></i> SALVAR / INSERIR PERFIL
+                        </button>
+                        <button type="button" id="perfil-btn-cancelar" onclick="limparFormPerfil()" class="hidden bg-gray-500 text-white px-3 py-2.5 rounded-lg font-bold text-xs">
+                            Cancelar
+                        </button>
+                    </div>
                 </form>
 
+                <div class="space-y-2">
+                    <h4 class="font-bold text-xs text-gray-700 dark:text-gray-200">Perfis Cadastrados (Inserir, Editar, Excluir):</h4>
+                    <div id="lista-perfis" class="space-y-2"></div>
+                </div>
+
                 <div class="p-3 bg-red-50 dark:bg-gray-700/50 rounded-xl border border-red-200 space-y-2 text-xs">
-                    <span class="font-bold text-brand-red block">Compartilhar Perfil Profissional:</span>
+                    <span class="font-bold text-brand-red block">Compartilhar Perfil Profissional Ativo:</span>
                     <div class="grid grid-cols-3 gap-2 font-bold">
                         <button onclick="compartilharPerfil('whats')" class="bg-green-600 text-white p-2 rounded-lg"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
                         <button onclick="compartilharPerfil('email_contratante')" class="bg-blue-600 text-white p-2 rounded-lg"><i class="fa-solid fa-envelope"></i> Contratante</button>
@@ -215,7 +226,7 @@
                 </div>
             </section>
 
-            <!-- ABA 2: PAUTA DE DILIGÊNCIAS (COM EDIÇÃO, HISTÓRICO E COMPARTILHAMENTO MÚLTIPLO) -->
+            <!-- ABA 2: PAUTA DE DILIGÊNCIAS -->
             <section id="tab-atos" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 text-xs flex justify-between items-center">
                     <div>
@@ -274,7 +285,6 @@
                         <input type="url" id="ato-link" placeholder="https://teams.microsoft.com/..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
                     </div>
 
-                    <!-- FOTO COM COMPRESSÃO ANTI-CRASH E OPÇÕES DE COMPARTILHAMENTO -->
                     <div class="p-3 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-2">
                         <label class="text-xs font-bold text-gray-700 dark:text-gray-200 block">
                             <i class="fa-solid fa-camera text-brand-red"></i> Anexar/Tirar Foto da ATA ou Galeria:
@@ -327,7 +337,6 @@
                     </div>
                 </form>
 
-                <!-- OPÇÕES DE COMPARTILHAMENTO DA PAUTA GERAL -->
                 <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-xl border space-y-2 text-xs">
                     <span class="font-bold text-brand-red block"><i class="fa-solid fa-share-nodes"></i> Compartilhar Pauta Geral:</span>
                     <div class="grid grid-cols-4 gap-2 font-bold">
@@ -350,7 +359,7 @@
             <section id="tab-contatos" class="tab-content space-y-4 hidden">
                 <form id="form-contato" onsubmit="saveContato(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
                     <input type="hidden" id="ct-id">
-                    <h2 id="ct-form-titulo" class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-1">Cadastrar Novo Contato</h2>
+                    <h2 id="ct-form-titulo" class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-1">Cadastrar / Inserir Novo Contato</h2>
                     <div>
                         <label class="text-xs font-semibold">Nome Completo / Escritório*</label>
                         <input type="text" id="ct-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
@@ -371,7 +380,7 @@
                     </div>
                     <div class="flex gap-2">
                         <button type="submit" id="ct-btn-salvar" class="flex-1 bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-floppy-disk"></i> SALVAR CONTATO
+                            <i class="fa-solid fa-floppy-disk"></i> SALVAR / INSERIR CONTATO
                         </button>
                         <button type="button" id="ct-btn-cancelar" onclick="limparFormContato()" class="hidden bg-gray-500 text-white px-3 py-2.5 rounded-lg font-bold text-xs">
                             Cancelar
@@ -400,6 +409,11 @@
                         <span class="text-[9px] uppercase font-bold block">🔴 Vencidos</span>
                         <span id="fin-vencidos" class="font-black text-sm">R$ 0,00</span>
                     </div>
+                </div>
+
+                <div class="p-3 bg-red-50 dark:bg-gray-700/50 rounded-xl border border-red-200 text-xs">
+                    <span class="font-extrabold text-brand-red block mb-1">ℹ️ GERENCIAMENTO FINANCEIRO:</span>
+                    <p>Clique no botão de status de cada diligência para alternar instantaneamente para 🟢 PAGO (gerando entrada no caixa) ou gerenciar o estorno de segurança caso já conste como pago.</p>
                 </div>
 
                 <div id="fin-gerenciador-baixas" class="space-y-2"></div>
@@ -452,7 +466,6 @@
                     </div>
                 </form>
 
-                <!-- FILTROS DE DATAS PARA COMPARTILHAMENTO EM LOTE -->
                 <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-xl border space-y-2 text-xs">
                     <span class="font-bold text-brand-red block"><i class="fa-solid fa-filter"></i> Filtrar e Compartilhar Extrato por Período:</span>
                     <div class="grid grid-cols-2 gap-2">
@@ -589,7 +602,7 @@
                 </div>
             </section>
 
-            <!-- ABA 7: RESCISÃO TRABALHISTA (COM INSERIR, EDITAR, EXCLUIR E COMPARTILHAMENTO) -->
+            <!-- ABA 7: RESCISÃO TRABALHISTA (COM EXIBIÇÃO DETALHADA NA TELA) -->
             <section id="tab-rescisoria" class="tab-content space-y-4 hidden">
                 <form id="form-rescisao" onsubmit="saveRescisao(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
                     <input type="hidden" id="res-id">
@@ -643,7 +656,7 @@
 
                     <div class="flex gap-2 pt-1">
                         <button type="submit" id="res-btn-salvar" class="flex-1 bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-floppy-disk"></i> SALVAR CÁLCULO RESCISÓRIO
+                            <i class="fa-solid fa-floppy-disk"></i> CALCULAR & SALVAR RESCISÃO
                         </button>
                         <button type="button" id="res-btn-cancelar" onclick="limparFormRescisao()" class="hidden bg-gray-500 text-white px-3 py-2.5 rounded-lg font-bold text-xs">
                             Cancelar
@@ -652,15 +665,21 @@
                 </form>
 
                 <div class="space-y-2">
-                    <h4 class="font-bold text-xs text-gray-700 dark:text-gray-200">Histórico de Cálculos Rescisórios Salvos:</h4>
-                    <div id="lista-rescisioes" class="space-y-2"></div>
+                    <h4 class="font-bold text-xs text-gray-700 dark:text-gray-200">Demonstrativos Rescisórios Detalhados na Tela:</h4>
+                    <div id="lista-rescisioes" class="space-y-3"></div>
                 </div>
             </section>
 
-            <!-- ABA 8: RELATÓRIOS -->
+            <!-- ABA 8: RELATÓRIOS (COM AVISO DE EDIÇÃO NO GOOGLE DRIVE/SHEETS) -->
             <section id="tab-relatorios" class="tab-content space-y-4 hidden">
-                <div class="bg-gray-900 text-white p-4 rounded-xl text-xs space-y-2 shadow-lg">
-                    <div class="font-bold text-amber-400 border-b border-gray-700 pb-1">TOTALIZADORES CONSOLIDADOS</div>
+                <div class="bg-gray-900 text-white p-4 rounded-xl text-xs space-y-3 shadow-lg">
+                    <div class="flex justify-between items-center border-b border-gray-700 pb-1">
+                        <span class="font-bold text-amber-400">TOTALIZADORES CONSOLIDADOS</span>
+                        <button onclick="avisoEditarRelatorio()" class="bg-amber-500 hover:bg-amber-600 text-gray-900 font-extrabold px-2.5 py-1 rounded text-[10px] shadow">
+                            <i class="fa-solid fa-pen-to-square mr-1"></i> Editar Relatório
+                        </button>
+                    </div>
+                    
                     <div class="grid grid-cols-2 gap-2 text-center pt-1">
                         <div class="bg-gray-800 p-2.5 rounded-lg border border-green-800">
                             <span class="text-[9px] text-green-400 block font-bold uppercase">VALOR PAGO</span>
@@ -670,6 +689,13 @@
                             <span class="text-[9px] text-amber-400 block font-bold uppercase">VALOR PENDENTE</span>
                             <span id="relatorio-valor-pendente" class="font-black text-amber-400 text-base">R$ 0,00</span>
                         </div>
+                    </div>
+
+                    <div class="p-2.5 bg-gray-800/80 rounded-lg border border-gray-700 space-y-1 text-[11px]">
+                        <div><strong>Total de Atos na Pauta:</strong> <span id="rel-total-atos">0</span></div>
+                        <div><strong>Total de Lançamentos em Caixa:</strong> <span id="rel-total-caixa">0</span></div>
+                        <div><strong>Total de Contatos na Agenda:</strong> <span id="rel-total-contatos">0</span></div>
+                        <div><strong>Total de Cálculos Rescisórios:</strong> <span id="rel-total-rescisao">0</span></div>
                     </div>
                 </div>
 
@@ -692,8 +718,8 @@
 
                 <div id="container-manuais-sanfona" class="space-y-2 text-xs">
                     <div class="manual-item border rounded-xl bg-white dark:bg-gray-800 p-3 space-y-1">
-                        <strong class="text-brand-red block">1. Regra de Troca de Status PAGO no Financeiro:</strong>
-                        <p>Para alterar o status de um ato marcado como 🟢 PAGO de volta para PENDENTE, o sistema exige selecionar a justificativa de estorno e compartilhar por WhatsApp/E-mail.</p>
+                        <strong class="text-brand-red block">1. Regra de Edição de Relatórios:</strong>
+                        <p>Para editar relatórios consolidados em profundidade, exporte para planilha Excel (.xlsx) / CSV e edite no Google Drive/Sheets.</p>
                     </div>
                 </div>
             </section>
@@ -713,6 +739,24 @@
             <button onclick="switchTab('tab-relatorios')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-relatorios"><i class="fa-solid fa-file-invoice text-base"></i><span>Relatórios</span></button>
             <button onclick="switchTab('tab-manuais')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-manuais"><i class="fa-solid fa-book-open text-base"></i><span>Manuais</span></button>
         </nav>
+    </div>
+
+    <!-- MODAL AVISO EDITAR RELATÓRIO -->
+    <div id="modal-aviso-relatorio" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-2 border-brand-red text-center">
+            <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-triangle-exclamation"></i> AVISO DE EDIÇÃO DE RELATÓRIO</h3>
+            <p class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+                Para editar relatórios consolidados em profundidade, exporte para planilha (Excel/CSV) e abra no <strong>Google Drive / Sheets</strong> vinculado ao seu Gmail.
+            </p>
+            <div class="space-y-2 pt-2 border-t">
+                <button onclick="exportarExcelMultiAbas(); fecharAvisoRelatorio();" class="w-full bg-green-700 text-white py-2 rounded-xl font-bold text-xs shadow flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-file-excel"></i> Exportar Planilha para Sheets/Drive
+                </button>
+                <button onclick="fecharAvisoRelatorio()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">
+                    Entendido
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- MODAL HISTÓRICO DE ALTERAÇÕES DA PAUTA -->
@@ -791,7 +835,7 @@
         const WHATS_ADM = "5511978386574";
         const EMAIL_CONTRATANTE = "ec.cortez@uol.com.br";
 
-        let db = { perfil: {}, atos: [], caixa: [], contatos: [], recibos: [], rescisoes: [], notas: '' };
+        let db = { perfis: [], perfil: {}, atos: [], caixa: [], contatos: [], recibos: [], rescisoes: [], notas: '' };
         let tempAtaBase64Pauta = null;
         let tempAtaDataHoraStr = null;
         let bobinaHistorico = [];
@@ -885,6 +929,7 @@
             if(tabId === 'tab-contatos') renderContatos();
             if(tabId === 'tab-atos') renderAtos();
             if(tabId === 'tab-rescisoria') renderRescisoes();
+            if(tabId === 'tab-perfil') renderPerfis();
             if(tabId === 'tab-recibo') { popularSelectAtosRecibo(); renderRecibos(); }
         }
 
@@ -904,7 +949,15 @@
             if(!db.contatos) db.contatos = [];
             if(!db.recibos) db.recibos = [];
             if(!db.rescisoes) db.rescisoes = [];
+            if(!db.perfis) db.perfis = [];
             if(!db.perfil) db.perfil = {};
+
+            if(db.perfil.nome && !db.perfis.length) {
+                db.perfis.push({ id: Date.now(), ...db.perfil });
+            }
+            if(db.perfis.length && (!db.perfil.nome)) {
+                db.perfil = db.perfis[0];
+            }
 
             const hoje = new Date().toISOString().split('T')[0];
             db.atos.forEach(a => {
@@ -913,14 +966,9 @@
                 }
             });
 
-            document.getElementById('perfil-nome').value = db.perfil.nome || '';
-            document.getElementById('perfil-doc').value = db.perfil.doc || '';
-            document.getElementById('perfil-cidade').value = db.perfil.cidade || '';
-            document.getElementById('perfil-celular').value = db.perfil.celular || '';
-            document.getElementById('perfil-pix').value = db.perfil.pix || '';
-            document.getElementById('perfil-email').value = db.perfil.email || '';
             document.getElementById('bloco-notas').value = db.notas || '';
 
+            renderPerfis();
             renderAtos();
             renderFinanceiro();
             renderCaixa();
@@ -976,7 +1024,96 @@
             window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(txt)}`);
         }
 
-        /* LÓGICA DA PAUTA (INSERIR, EDITAR, HISTÓRICO DE MUDANÇAS E COMPARTILHAMENTO) */
+        /* LÓGICA DO PERFIL */
+        function savePerfil(e) {
+            e.preventDefault();
+            const id = document.getElementById('perfil-id').value;
+            const novoPerfil = {
+                id: id ? parseInt(id) : Date.now(),
+                nome: document.getElementById('perfil-nome').value.trim(),
+                doc: document.getElementById('perfil-doc').value.trim(),
+                cidade: document.getElementById('perfil-cidade').value.trim(),
+                celular: document.getElementById('perfil-celular').value.trim(),
+                pix: document.getElementById('perfil-pix').value.trim(),
+                email: document.getElementById('perfil-email').value.trim()
+            };
+
+            if (id) {
+                const idx = db.perfis.findIndex(p => p.id == id);
+                if (idx !== -1) db.perfis[idx] = novoPerfil;
+            } else {
+                db.perfis.push(novoPerfil);
+            }
+
+            db.perfil = novoPerfil;
+            saveData();
+            limparFormPerfil();
+            renderPerfis();
+            alert("✅ Perfil profissional salvo/inserido com sucesso!");
+        }
+
+        function editarPerfil(id) {
+            const p = db.perfis.find(item => item.id == id);
+            if (!p) return;
+
+            document.getElementById('perfil-id').value = p.id;
+            document.getElementById('perfil-nome').value = p.nome;
+            document.getElementById('perfil-doc').value = p.doc;
+            document.getElementById('perfil-cidade').value = p.cidade;
+            document.getElementById('perfil-celular').value = p.celular;
+            document.getElementById('perfil-pix').value = p.pix;
+            document.getElementById('perfil-email').value = p.email;
+
+            document.getElementById('perfil-form-titulo').innerText = "Editar Perfil Profissional";
+            document.getElementById('perfil-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR ALTERAÇÕES';
+            document.getElementById('perfil-btn-cancelar').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function limparFormPerfil() {
+            document.getElementById('form-perfil').reset();
+            document.getElementById('perfil-id').value = '';
+            document.getElementById('perfil-form-titulo').innerText = "Cadastro de Perfil Profissional";
+            document.getElementById('perfil-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR / INSERIR PERFIL';
+            document.getElementById('perfil-btn-cancelar').classList.add('hidden');
+        }
+
+        function deletarPerfil(id) {
+            if(confirm('Tem certeza que deseja EXCLUIR este perfil?')) {
+                db.perfis = db.perfis.filter(p => p.id !== id);
+                if(db.perfis.length) db.perfil = db.perfis[0];
+                else db.perfil = {};
+                saveData();
+                renderPerfis();
+            }
+        }
+
+        function renderPerfis() {
+            const container = document.getElementById('lista-perfis');
+            if(!container) return;
+            container.innerHTML = '';
+            if(!db.perfis.length) {
+                container.innerHTML = '<p class="text-xs text-gray-400 italic">Nenhum perfil cadastrado.</p>';
+                return;
+            }
+            db.perfis.forEach(p => {
+                const ativo = db.perfil && db.perfil.id === p.id;
+                container.innerHTML += `
+                    <div class="p-2.5 border rounded-xl text-xs flex justify-between items-center bg-white dark:bg-gray-800 shadow-sm ${ativo ? 'border-2 border-brand-red' : ''}">
+                        <div>
+                            <strong>${p.nome}</strong> ${ativo ? '<span class="bg-red-100 text-brand-red px-1.5 py-0.5 rounded font-bold text-[9px]">ATIVO</span>' : ''}<br>
+                            <span class="text-gray-400">Doc: ${p.doc} | Base: ${p.cidade} | PIX: ${p.pix}</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="editarPerfil(${p.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deletarPerfil(${p.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        /* LÓGICA DA PAUTA */
         function saveAto(e) {
             e.preventDefault();
             const id = document.getElementById('ato-id').value;
@@ -1160,6 +1297,7 @@
             }
         }
 
+        /* LÓGICA DO FINANCEIRO */
         function renderFinanceiro() {
             let pago = 0, pendente = 0, vencido = 0;
             const container = document.getElementById('fin-gerenciador-baixas');
@@ -1177,8 +1315,8 @@
                                 <strong>${a.processo}</strong> (${a.cliente})<br>
                                 <span class="text-gray-400">Venc: ${a.vencimento} - R$ ${a.valor.toFixed(2)}</span>
                             </div>
-                            <button onclick="solicitarTrocaStatusFinanceiro(${a.id})" class="px-2.5 py-1 rounded-lg font-bold text-[10px] ${a.status === 'pago' ? 'bg-green-100 text-green-700' : (a.status === 'vencido' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700')}">
-                                ${a.status.toUpperCase()}
+                            <button onclick="clicarStatusFinanceiro(${a.id})" class="px-3 py-1.5 rounded-lg font-extrabold text-[11px] shadow ${a.status === 'pago' ? 'bg-green-600 text-white' : (a.status === 'vencido' ? 'bg-red-600 text-white' : 'bg-amber-500 text-gray-900')}">
+                                ${a.status.toUpperCase()} (Mudar)
                             </button>
                         </div>
                     `;
@@ -1190,7 +1328,7 @@
             document.getElementById('fin-vencidos').innerText = `R$ ${vencido.toFixed(2)}`;
         }
 
-        function solicitarTrocaStatusFinanceiro(id) {
+        function clicarStatusFinanceiro(id) {
             const a = db.atos.find(x => x.id === id);
             if(!a) return;
 
@@ -1201,7 +1339,12 @@
                 a.status = 'pago';
                 a.dataBaixa = new Date().toLocaleString('pt-BR');
                 db.caixa.push({ id: Date.now(), atoRefId: a.id, tipo: 'entrada', valor: a.valor, descricao: `Baixa Proc: ${a.processo}`, dataIso: new Date().toISOString().split('T')[0], dataHora: new Date().toLocaleString('pt-BR') });
-                saveData(); renderAtos(); renderFinanceiro(); renderCaixa();
+                saveData(); 
+                renderAtos(); 
+                renderFinanceiro(); 
+                renderCaixa();
+                renderRelatorios();
+                alert(`✅ Ato ${a.processo} marcado como 🟢 PAGO e inserido no Livro Caixa!`);
             }
         }
 
@@ -1220,7 +1363,7 @@
                 const txt = `⚠️ DILIGENCE.BR - NOTIFICAÇÃO DE ESTORNO DE HONORÁRIOS\n--------------------------------\nProcesso: ${a.processo}\nCliente: ${a.cliente}\nMotivo do Estorno: ${motivo}\nData: ${new Date().toLocaleString('pt-BR')}`;
                 window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(txt)}`);
             }
-            fecharModalEstorno(); renderAtos(); renderFinanceiro(); renderCaixa();
+            fecharModalEstorno(); renderAtos(); renderFinanceiro(); renderCaixa(); renderRelatorios();
         }
 
         function abrirModalChecklist(id) {
@@ -1394,7 +1537,77 @@
             }
         }
 
-        /* LÓGICA DA ABA RESCISÃO TRABALHISTA */
+        /* LÓGICA DA AGENDA DE CONTATOS */
+        function saveContato(e) {
+            e.preventDefault();
+            const id = document.getElementById('ct-id').value;
+            const nome = document.getElementById('ct-nome').value.trim();
+            const celular = document.getElementById('ct-celular').value.trim();
+            const oab = document.getElementById('ct-oab').value.trim();
+            const obs = document.getElementById('ct-obs').value.trim();
+
+            if (id) {
+                const c = db.contatos.find(item => item.id == id);
+                if (c) { c.nome = nome; c.celular = celular; c.oab = oab; c.obs = obs; }
+            } else {
+                db.contatos.push({ id: Date.now(), nome: nome, celular: celular, oab: oab, obs: obs });
+            }
+
+            saveData(); limparFormContato(); renderContatos(); alert("✅ Contato inserido/salvo na agenda com sucesso!");
+        }
+
+        function editarContato(id) {
+            const c = db.contatos.find(item => item.id == id);
+            if (!c) return;
+            document.getElementById('ct-id').value = c.id;
+            document.getElementById('ct-nome').value = c.nome;
+            document.getElementById('ct-celular').value = c.celular;
+            document.getElementById('ct-oab').value = c.oab || '';
+            document.getElementById('ct-obs').value = c.obs || '';
+            document.getElementById('ct-form-titulo').innerText = "Editar Contato";
+            document.getElementById('ct-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR ALTERAÇÕES';
+            document.getElementById('ct-btn-cancelar').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function limparFormContato() {
+            document.getElementById('form-contato').reset();
+            document.getElementById('ct-id').value = '';
+            document.getElementById('ct-form-titulo').innerText = "Cadastrar / Inserir Novo Contato";
+            document.getElementById('ct-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR / INSERIR CONTATO';
+            document.getElementById('ct-btn-cancelar').classList.add('hidden');
+        }
+
+        function renderContatos() {
+            const container = document.getElementById('lista-contatos');
+            if(!container) return; container.innerHTML = '';
+            const busca = document.getElementById('busca-contato')?.value.toLowerCase() || '';
+
+            db.contatos.filter(c => c.nome.toLowerCase().includes(busca)).forEach(c => {
+                container.innerHTML += `
+                    <div class="p-2.5 border rounded-xl text-xs flex justify-between items-center bg-white dark:bg-gray-800 shadow-sm">
+                        <div>
+                            <strong>${c.nome}</strong> (${c.oab || 'Sem OAB'})<br>
+                            <span class="text-gray-400">📱 ${c.celular}</span>
+                            ${c.obs ? `<br><span class="text-[10px] italic text-gray-500">${c.obs}</span>` : ''}
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="editarContato(${c.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deletarContato(${c.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function deletarContato(id) {
+            if(confirm('Excluir este contato da agenda?')) {
+                db.contatos = db.contatos.filter(c => c.id !== id);
+                saveData(); renderContatos();
+            }
+        }
+
+        /* LÓGICA DA ABA RESCISÃO TRABALHISTA (COM EXIBIÇÃO DETALHADA NA TELA) */
         function saveRescisao(e) {
             e.preventDefault();
             const id = document.getElementById('res-id').value;
@@ -1406,13 +1619,17 @@
             const inssPct = parseFloat(document.getElementById('res-inss-pct').value) || 7.5;
             const adicionais = parseFloat(document.getElementById('res-adicionais').value) || 0;
 
-            const prop = (salario / 12) * meses;
-            const inssVal = (prop * inssPct) / 100;
+            const saldoSalario = salario / 30 * 15; // Exemplo proporcional
+            const avisoPrevio = motivo === 'Dispensa sem justa causa' ? salario : 0;
+            const decimoTerceiro = (salario / 12) * meses;
+            const feriasProp = (salario / 12) * meses;
+            const feriasTerco = feriasProp / 3;
+            const inssVal = ((decimoTerceiro + feriasProp) * inssPct) / 100;
             let multaRescisoria = 0;
             if(motivo === 'Dispensa sem justa causa' || motivo === 'Rescisão indireta') {
-                multaRescisoria = prop * 0.40;
+                multaRescisoria = (avisoPrevio + decimoTerceiro + feriasProp) * 0.40;
             }
-            const totalLiquido = prop + adicionais + multaRescisoria - inssVal;
+            const totalLiquido = saldoSalario + avisoPrevio + decimoTerceiro + feriasProp + feriasTerco + adicionais + multaRescisoria - inssVal;
 
             const objetoRescisao = {
                 id: id ? parseInt(id) : Date.now(),
@@ -1421,6 +1638,14 @@
                 motivo: motivo,
                 salario: salario,
                 meses: meses,
+                saldoSalario: saldoSalario,
+                avisoPrevio: avisoPrevio,
+                decimoTerceiro: decimoTerceiro,
+                feriasProp: feriasProp,
+                feriasTerco: feriasTerco,
+                multaRescisoria: multaRescisoria,
+                inssVal: inssVal,
+                adicionais: adicionais,
                 totalLiquido: totalLiquido,
                 dataRegistro: new Date().toLocaleString('pt-BR')
             };
@@ -1432,10 +1657,7 @@
                 db.rescisoes.push(objetoRescisao);
             }
 
-            saveData();
-            limparFormRescisao();
-            renderRescisoes();
-            alert("✅ Cálculo rescisório salvo com sucesso!");
+            saveData(); limparFormRescisao(); renderRescisoes(); alert("✅ Cálculo rescisório detalhado e salvo com sucesso!");
         }
 
         function editarRescisao(id) {
@@ -1458,7 +1680,7 @@
             document.getElementById('form-rescisao').reset();
             document.getElementById('res-id').value = '';
             document.getElementById('res-form-titulo').innerHTML = '<i class="fa-solid fa-scale-balanced mr-1"></i> Cadastro de Cálculo Rescisório Trabalhista';
-            document.getElementById('res-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR CÁLCULO RESCISÓRIO';
+            document.getElementById('res-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> CALCULAR & SALVAR RESCISÃO';
             document.getElementById('res-btn-cancelar').classList.add('hidden');
         }
 
@@ -1473,22 +1695,34 @@
             const container = document.getElementById('lista-rescisioes');
             if(!container) return; container.innerHTML = '';
             if(!db.rescisoes.length) {
-                container.innerHTML = '<p class="text-xs text-gray-400 italic">Nenhum cálculo rescisório salvo.</p>';
+                container.innerHTML = '<p class="text-xs text-gray-400 italic">Nenhum cálculo rescisório cadastrado.</p>';
                 return;
             }
             db.rescisoes.forEach(r => {
                 container.innerHTML += `
-                    <div class="p-2.5 border rounded-xl text-xs flex justify-between items-center bg-white dark:bg-gray-800 shadow-sm">
-                        <div>
-                            <strong>${r.cliente}</strong> (${r.vinculo})<br>
-                            <span class="text-gray-500">Motivo: ${r.motivo} | Salário: R$ ${r.salario.toFixed(2)}</span><br>
-                            <span class="font-bold text-brand-red">Total Líquido: R$ ${r.totalLiquido.toFixed(2)}</span>
+                    <div class="p-3 border rounded-xl text-xs bg-white dark:bg-gray-800 shadow-sm space-y-2 border-l-4 border-brand-red">
+                        <div class="flex justify-between items-center border-b pb-1">
+                            <div>
+                                <strong class="text-sm text-brand-red">${r.cliente}</strong><br>
+                                <span class="text-gray-400">Vínculo: ${r.vinculo} | Motivo: ${r.motivo}</span>
+                            </div>
+                            <div class="flex gap-1">
+                                <button onclick="compartilharRescisaoItem('whats', ${r.id})" class="bg-green-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Compartilhar Whats"><i class="fa-brands fa-whatsapp"></i></button>
+                                <button onclick="editarRescisao(${r.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="deletarRescisao(${r.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Excluir"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
                         </div>
-                        <div class="flex gap-1">
-                            <button onclick="compartilharRescisaoItem('whats', ${r.id})" class="bg-green-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-brands fa-whatsapp"></i></button>
-                            <button onclick="compartilharRescisaoItem('email', ${r.id})" class="bg-blue-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-envelope"></i></button>
-                            <button onclick="editarRescisao(${r.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="deletarRescisao(${r.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-trash-can"></i></button>
+                        <div class="grid grid-cols-2 gap-1 text-[11px] bg-gray-50 dark:bg-gray-700/50 p-2 rounded">
+                            <div>Salário Base: <strong>R$ ${(r.salario||0).toFixed(2)}</strong></div>
+                            <div>Saldo de Salário: <strong>R$ ${(r.saldoSalario||0).toFixed(2)}</strong></div>
+                            <div>Aviso Prévio: <strong>R$ ${(r.avisoPrevio||0).toFixed(2)}</strong></div>
+                            <div>13º Proporcional: <strong>R$ ${(r.decimoTerceiro||0).toFixed(2)}</strong></div>
+                            <div>Férias + 1/3: <strong>R$ ${((r.feriasProp||0)+(r.feriasTerco||0)).toFixed(2)}</strong></div>
+                            <div>Multa 40% FGTS: <strong>R$ ${(r.multaRescisoria||0).toFixed(2)}</strong></div>
+                        </div>
+                        <div class="flex justify-between items-center pt-1 font-bold text-sm">
+                            <span class="text-gray-600 dark:text-gray-300">TOTAL LÍQUIDO RESCISÓRIO:</span>
+                            <span class="text-green-600 text-base">R$ ${(r.totalLiquido||0).toFixed(2)}</span>
                         </div>
                     </div>
                 `;
@@ -1498,7 +1732,7 @@
         function compartilharRescisaoItem(tipo, id) {
             const r = db.rescisoes.find(item => item.id == id);
             if(!r) return;
-            const txt = `DILIGENCE.BR - DEMONSTRATIVO RESCISÓRIO\n--------------------------------\nCliente/Proc: ${r.cliente}\nVínculo: ${r.vinculo}\nModalidade: ${r.motivo}\nSalário Base: R$ ${r.salario.toFixed(2)}\nTotal Líquido Calculado: R$ ${r.totalLiquido.toFixed(2)}\nData: ${r.dataRegistro}`;
+            const txt = `DILIGENCE.BR - DEMONSTRATIVO RESCISÓRIO DETALHADO\n--------------------------------\nCliente/Proc: ${r.cliente}\nVínculo: ${r.vinculo}\nMotivo: ${r.motivo}\nSalário Base: R$ ${r.salario.toFixed(2)}\nSaldo de Salário: R$ ${r.saldoSalario.toFixed(2)}\nAviso Prévio: R$ ${r.avisoPrevio.toFixed(2)}\n13º Prop: R$ ${r.decimoTerceiro.toFixed(2)}\nFérias+1/3: R$ ${((r.feriasProp||0)+(r.feriasTerco||0)).toFixed(2)}\nMulta 40%: R$ ${r.multaRescisoria.toFixed(2)}\nTOTAL LÍQUIDO: R$ ${r.totalLiquido.toFixed(2)}\nData: ${r.dataRegistro}`;
 
             if(tipo === 'whats') {
                 window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
@@ -1660,88 +1894,6 @@
             }
         }
 
-        function saveContato(e) {
-            e.preventDefault();
-            const id = document.getElementById('ct-id').value;
-            const nome = document.getElementById('ct-nome').value.trim();
-            const celular = document.getElementById('ct-celular').value.trim();
-            const oab = document.getElementById('ct-oab').value.trim();
-            const obs = document.getElementById('ct-obs').value.trim();
-
-            if (id) {
-                const c = db.contatos.find(item => item.id == id);
-                if (c) { c.nome = nome; c.celular = celular; c.oab = oab; c.obs = obs; }
-            } else {
-                db.contatos.push({ id: Date.now(), nome: nome, celular: celular, oab: oab, obs: obs });
-            }
-
-            saveData(); limparFormContato(); renderContatos(); alert("✅ Contato salvo na agenda!");
-        }
-
-        function editarContato(id) {
-            const c = db.contatos.find(item => item.id == id);
-            if (!c) return;
-            document.getElementById('ct-id').value = c.id;
-            document.getElementById('ct-nome').value = c.nome;
-            document.getElementById('ct-celular').value = c.celular;
-            document.getElementById('ct-oab').value = c.oab || '';
-            document.getElementById('ct-obs').value = c.obs || '';
-            document.getElementById('ct-form-titulo').innerText = "Editar Contato";
-            document.getElementById('ct-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR ALTERAÇÕES';
-            document.getElementById('ct-btn-cancelar').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function limparFormContato() {
-            document.getElementById('form-contato').reset();
-            document.getElementById('ct-id').value = '';
-            document.getElementById('ct-form-titulo').innerText = "Cadastrar Novo Contato";
-            document.getElementById('ct-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR CONTATO';
-            document.getElementById('ct-btn-cancelar').classList.add('hidden');
-        }
-
-        function renderContatos() {
-            const container = document.getElementById('lista-contatos');
-            if(!container) return; container.innerHTML = '';
-            const busca = document.getElementById('busca-contato')?.value.toLowerCase() || '';
-
-            db.contatos.filter(c => c.nome.toLowerCase().includes(busca)).forEach(c => {
-                container.innerHTML += `
-                    <div class="p-2.5 border rounded-xl text-xs flex justify-between items-center bg-white dark:bg-gray-800 shadow-sm">
-                        <div>
-                            <strong>${c.nome}</strong> (${c.oab || 'Sem OAB'})<br>
-                            <span class="text-gray-400">📱 ${c.celular}</span>
-                            ${c.obs ? `<br><span class="text-[10px] italic text-gray-500">${c.obs}</span>` : ''}
-                        </div>
-                        <div class="flex gap-1">
-                            <button onclick="editarContato(${c.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="deletarContato(${c.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-trash-can"></i></button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function deletarContato(id) {
-            if(confirm('Excluir este contato da agenda?')) {
-                db.contatos = db.contatos.filter(c => c.id !== id);
-                saveData(); renderContatos();
-            }
-        }
-
-        function savePerfil(e) {
-            e.preventDefault();
-            db.perfil = {
-                nome: document.getElementById('perfil-nome').value,
-                doc: document.getElementById('perfil-doc').value,
-                cidade: document.getElementById('perfil-cidade').value,
-                celular: document.getElementById('perfil-celular').value,
-                pix: document.getElementById('perfil-pix').value,
-                email: document.getElementById('perfil-email').value
-            };
-            saveData(); alert("✅ Dados do Perfil salvos!");
-        }
-
         function compartilharPerfil(tipo) {
             const txt = `📋 DILIGENCE.BR - DADOS DO CORRESPONDENTE\nNome: ${db.perfil.nome || 'N/A'}\nDoc: ${db.perfil.doc || 'N/A'}\nCidade Base: ${db.perfil.cidade || 'N/A'}\nCelular: ${db.perfil.celular || 'N/A'}\nPIX: ${db.perfil.pix || 'N/A'}\nE-mail: ${db.perfil.email || 'N/A'}`;
             if(tipo === 'whats') window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
@@ -1749,11 +1901,24 @@
             if(tipo === 'email_meu') window.open(`mailto:${db.perfil.email}?subject=DadosCorrespondente&body=${encodeURIComponent(txt)}`);
         }
 
+        /* LÓGICA DE RELATÓRIOS E AVISO DE EDIÇÃO */
         function renderRelatorios() {
             let pago = 0, pendente = 0;
             db.atos.forEach(a => { if(a.status === 'pago') pago += a.valor; else pendente += a.valor; });
             document.getElementById('relatorio-valor-pago').innerText = `R$ ${pago.toFixed(2)}`;
             document.getElementById('relatorio-valor-pendente').innerText = `R$ ${pendente.toFixed(2)}`;
+            document.getElementById('rel-total-atos').innerText = db.atos.length;
+            document.getElementById('rel-total-caixa').innerText = db.caixa.length;
+            document.getElementById('rel-total-contatos').innerText = db.contatos.length;
+            document.getElementById('rel-total-rescisao').innerText = db.rescisoes.length;
+        }
+
+        function avisoEditarRelatorio() {
+            document.getElementById('modal-aviso-relatorio').classList.remove('hidden');
+        }
+
+        function fecharAvisoRelatorio() {
+            document.getElementById('modal-aviso-relatorio').classList.add('hidden');
         }
 
         function gerarPDFPautaGeral() {
@@ -1831,6 +1996,7 @@
             XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.contatos.length ? db.contatos : [{"Aviso": "Agenda Vazia"}]), "Agenda");
             XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.recibos.length ? db.recibos : [{"Aviso": "Recibos Vazio"}]), "Recibos");
             XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.rescisoes.length ? db.rescisoes : [{"Aviso": "Rescisões Vazio"}]), "Rescisoes");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.perfis.length ? db.perfis : [{"Aviso": "Perfis Vazio"}]), "Perfis");
             XLSX.writeFile(wb, `Relatorio_DILIGENCE.xlsx`);
             fecharModalBackup();
         }
