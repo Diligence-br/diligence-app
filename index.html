@@ -46,9 +46,6 @@
 </head>
 <body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
 
-    <!-- DATALIST GLOBAL PARA AUTOCOMPLETAR COMARCAS / CIDADES -->
-    <datalist id="lista-cidades-comarcas"></datalist>
-
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 z-50 bg-brand-red flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center space-y-4">
@@ -92,84 +89,18 @@
                         <div id="clock-time" class="font-bold leading-none">00:00:00</div>
                         <div id="clock-date" class="text-[10px] text-red-200">Brasília (UTC-3)</div>
                     </div>
-                    <button onclick="toggleDarkMode()" class="p-2 bg-brand-darkred rounded-lg text-sm hover:bg-red-900 transition">
-                        <i class="fa-solid font-bold fa-moon dark:hidden"></i>
-                        <i class="fa-solid font-bold fa-sun hidden dark:inline"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="mt-3 pt-3 border-t border-red-500/50 flex flex-col gap-2">
-                <div class="flex justify-between items-center text-xs bg-red-800/40 p-2 rounded-lg gap-2">
-                    <span id="daily-message" class="italic text-red-100 text-[11px] font-medium leading-tight">
-                        <i class="fa-solid fa-quote-left mr-1"></i> "Que o dia seja produtivo e abençoado!"
-                    </span>
-                    <div class="flex gap-1 items-center">
-                        <button onclick="abrirModalBackup()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] hover:bg-red-50 transition shadow"><i class="fa-solid fa-database mr-1"></i>Backup</button>
-                        <button onclick="acionarRestauracao()" class="bg-gray-900 text-white font-bold px-2 py-1 rounded text-[11px] hover:bg-black transition shadow"><i class="fa-solid fa-upload mr-1"></i>Restaurar</button>
-                    </div>
                 </div>
             </div>
         </header>
 
-        <input type="file" id="input-restaurar-file" accept=".json" class="hidden" onchange="processarRestauracaoFile(event)">
-
-        <!-- CONTEÚDO PRINCIPAL -->
         <main class="flex-1 p-4 overflow-y-auto">
 
-            <!-- ABA 1: PERFIL DO CORRESPONDENTE -->
-            <section id="tab-perfil" class="tab-content space-y-4">
-                <form id="form-perfil" onsubmit="savePerfil(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <div class="flex justify-between items-center border-b pb-2">
-                        <h2 class="font-bold text-base text-gray-700 dark:text-gray-200">Dados Profissionais do Correspondente</h2>
-                        <button type="button" onclick="limparPerfil()" class="text-red-600 text-xs font-bold bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
-                            <i class="fa-solid fa-trash-can"></i> Limpar Perfil
-                        </button>
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold">Nome Completo</label>
-                        <input type="text" id="perfil-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-semibold">OAB / RG / CPF</label>
-                            <input type="text" id="perfil-doc" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold">Cidade / UF Base (Autocompletar)</label>
-                            <input type="text" id="perfil-cidade" list="lista-cidades-comarcas" required placeholder="Digite para buscar..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-semibold">Celular / WhatsApp (DDD)</label>
-                            <input type="text" id="perfil-celular" placeholder="(11) 99999-9999" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold">Chave PIX Oficial</label>
-                            <input type="text" id="perfil-pix" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold">E-mail do Correspondente</label>
-                        <input type="email" id="perfil-email" placeholder="seuemail@email.com" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                    </div>
-                    
-                    <button type="submit" class="w-full bg-brand-red text-white py-2 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Perfil</button>
-                </form>
-            </section>
-
             <!-- ABA 2: PAUTA & CADASTRO DE DILIGÊNCIAS -->
-            <section id="tab-atos" class="tab-content space-y-4 hidden">
+            <section id="tab-atos" class="tab-content space-y-4">
                 <form id="form-ato" onsubmit="saveAto(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <div class="flex justify-between items-center border-b pb-2">
-                        <h2 class="font-bold text-base text-gray-700 dark:text-gray-200 flex items-center gap-2">
-                            <i class="fa-solid fa-plus-circle text-brand-red"></i> Cadastrar Novo Ato na Pauta
-                        </h2>
-                        <button type="button" onclick="limparAbaAtos()" class="text-red-600 text-xs font-bold bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
-                            <i class="fa-solid fa-trash-can"></i> Limpar Pauta
-                        </button>
-                    </div>
+                    <h2 class="font-bold text-base text-gray-700 dark:text-gray-200 flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle text-brand-red"></i> Cadastrar Novo Ato na Pauta
+                    </h2>
                     
                     <div class="grid grid-cols-2 gap-3">
                         <div>
@@ -193,14 +124,12 @@
                         </div>
                     </div>
 
-                    <!-- CIDADE COM AUTOCOMPLETAR ATIVADO -->
                     <div>
-                        <label class="text-xs font-semibold flex items-center justify-between">
-                            <span>Cidade do Ato / Comarca* <span class="text-[10px] text-brand-red font-bold">(Autocompletar Ativo)</span></span>
-                        </label>
-                        <input type="text" id="ato-cidade" list="lista-cidades-comarcas" required placeholder="Digite o nome da cidade..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-semibold focus:ring-2 focus:ring-brand-red outline-none">
+                        <label class="text-xs font-semibold">Cidade / Comarca</label>
+                        <input type="text" id="ato-cidade" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-semibold">
                     </div>
 
+                    <!-- FOTO OU ANEXO DA ATA NA PAUTA -->
                     <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-2">
                         <label class="text-xs font-bold text-gray-700 dark:text-gray-200 flex items-center gap-1">
                             <i class="fa-solid fa-camera text-brand-red"></i> Fotografar ATA ou Selecionar Documento:
@@ -208,22 +137,21 @@
                         <input type="file" id="ato-ata-file" accept="image/*" capture="environment" onchange="previewImagemAta(event)" class="w-full p-1.5 border rounded-lg text-xs bg-white dark:bg-gray-800">
                         
                         <div id="preview-ata-container" class="hidden pt-1 text-center space-y-1">
-                            <span class="text-[10px] font-bold text-green-600 block">✓ Documento Anexado na Pauta:</span>
+                            <span class="text-[10px] font-bold text-green-600 block">✓ Pré-visualização do Documento Fotografado:</span>
                             <img id="img-preview-ata" src="" class="max-h-36 mx-auto rounded border shadow-sm object-contain">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-2 p-2.5 bg-red-50 dark:bg-gray-700/60 rounded-xl border-2 border-brand-red">
                         <div>
-                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Valor Acordado (R$)*</label>
+                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Valor (R$)*</label>
                             <input type="number" step="0.01" id="ato-valor" required placeholder="0.00" class="w-full p-2 border rounded-lg dark:bg-gray-700 font-bold text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Status do Pagamento*</label>
-                            <select id="ato-status-select" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-bold bg-white dark:text-white">
-                                <option value="" disabled selected>-- SELECIONE --</option>
-                                <option value="pago">🟢 PAGO (Recebido)</option>
-                                <option value="pendente">🟡 PENDENTE (A Receber)</option>
+                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Status*</label>
+                            <select id="ato-status-select" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-bold">
+                                <option value="pendente">🟡 PENDENTE</option>
+                                <option value="pago">🟢 PAGO</option>
                             </select>
                         </div>
                     </div>
@@ -239,230 +167,10 @@
                 </div>
             </section>
 
-            <!-- ABA 3: AGENDA DE CONTATOS -->
-            <section id="tab-contatos" class="tab-content space-y-4 hidden">
-                <form id="form-contato" onsubmit="saveContato(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <div class="flex justify-between items-center border-b pb-2">
-                        <h2 class="font-bold text-base text-gray-700 dark:text-gray-200">Cadastrar Novo Contato</h2>
-                        <button type="button" onclick="limparContatos()" class="text-red-600 text-xs font-bold bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
-                            <i class="fa-solid fa-trash-can"></i> Limpar Agenda
-                        </button>
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold">Nome Completo / Razão Social*</label>
-                        <input type="text" id="ct-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-semibold">OAB / Inscrição</label>
-                            <input type="text" id="ct-oab" placeholder="Ex: SP123456" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold">Celular / WhatsApp*</label>
-                            <input type="text" id="ct-celular" required placeholder="(11) 99999-9999" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                    </div>
-                    <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Contato na Agenda</button>
-                </form>
-
-                <div id="lista-contatos" class="space-y-2"></div>
-            </section>
-
-            <!-- ABA 4: FINANCEIRO -->
-            <section id="tab-financeiro" class="tab-content space-y-4 hidden">
-                <div class="grid grid-cols-2 gap-2 text-center text-white">
-                    <div class="bg-green-600 p-3 rounded-xl shadow">
-                        <span class="text-xs uppercase font-bold block">Entradas (Pago)</span>
-                        <span id="fin-entradas" class="font-black text-base">R$ 0,00</span>
-                    </div>
-                    <div class="bg-amber-500 p-3 rounded-xl shadow text-gray-900">
-                        <span class="text-xs uppercase font-bold block">A Receber</span>
-                        <span id="fin-pendentes" class="font-black text-base">R$ 0,00</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ABA 5: LIVRO CAIXA -->
-            <section id="tab-caixa" class="tab-content space-y-4 hidden">
-                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
-                    <h3 class="font-bold text-brand-red dark:text-red-400"><i class="fa-solid fa-cash-register mr-1"></i> Livro Caixa & Despesas</h3>
-                    <button type="button" onclick="limparCaixa()" class="text-red-600 text-xs font-bold bg-white dark:bg-gray-800 px-2 py-1 rounded border border-red-200 shadow-sm">
-                        <i class="fa-solid fa-trash-can"></i> Limpar Caixa
-                    </button>
-                </div>
-
-                <form id="form-caixa" onsubmit="saveLancamentoCaixa(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-semibold">Data</label>
-                            <input type="date" id="caixa-data" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-bold">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold">Tipo</label>
-                            <select id="caixa-tipo" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-bold">
-                                <option value="saida">🔴 SAÍDA / DESPESA (-)</option>
-                                <option value="entrada">🟢 ENTRADA / RECEBIMENTO (+)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold">Descrição</label>
-                        <input type="text" id="caixa-descricao" required placeholder="Ex: Uber, Alimentação, Cópias..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-brand-red dark:text-red-400">Valor (R$)*</label>
-                        <input type="number" step="0.01" id="caixa-valor" required placeholder="0.00" class="w-full p-2 border rounded-lg dark:bg-gray-700 font-bold text-sm">
-                    </div>
-                    <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Registrar no Caixa</button>
-                </form>
-
-                <div id="lista-caixa" class="space-y-2"></div>
-            </section>
-
-            <!-- ABA 6: CALCULADORAS & BLOCO DE NOTAS -->
-            <section id="tab-trabalhista" class="tab-content space-y-4 hidden">
-                
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
-                    <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200 border-b pb-2"><i class="fa-solid fa-calculator mr-1"></i> 1. Calculadora Comum</h3>
-                    <div class="bg-gray-900 text-green-400 p-3 rounded-lg text-right font-mono text-xl font-bold border" id="calc-comum-visor">0</div>
-                    <div class="grid grid-cols-4 gap-2 text-sm font-bold">
-                        <button onclick="calcComumLimpar()" class="bg-red-600 text-white p-3 rounded-lg">C</button>
-                        <button onclick="calcComumAdd('/')" class="bg-gray-700 text-white p-3 rounded-lg">÷</button>
-                        <button onclick="calcComumAdd('*')" class="bg-gray-700 text-white p-3 rounded-lg">×</button>
-                        <button onclick="calcComumAdd('-')" class="bg-gray-700 text-white p-3 rounded-lg">-</button>
-                        <button onclick="calcComumAdd('7')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">7</button>
-                        <button onclick="calcComumAdd('8')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">8</button>
-                        <button onclick="calcComumAdd('9')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">9</button>
-                        <button onclick="calcComumAdd('+')" class="bg-gray-700 text-white p-3 rounded-lg">+</button>
-                        <button onclick="calcComumAdd('4')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">4</button>
-                        <button onclick="calcComumAdd('5')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">5</button>
-                        <button onclick="calcComumAdd('6')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">6</button>
-                        <button onclick="calcComumCalcular()" class="bg-brand-red text-white p-3 rounded-lg row-span-2 flex items-center justify-center text-xl">=</button>
-                        <button onclick="calcComumAdd('1')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">1</button>
-                        <button onclick="calcComumAdd('2')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">2</button>
-                        <button onclick="calcComumAdd('3')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">3</button>
-                        <button onclick="calcComumAdd('0')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg col-span-2">0</button>
-                        <button onclick="calcComumAdd('.')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">,</button>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
-                    <h3 class="font-bold text-sm text-brand-red border-b pb-2 flex items-center gap-1">
-                        <i class="fa-solid fa-scale-balanced"></i> 2. Calculadora Rescisória Trabalhista
-                    </h3>
-                    
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div>
-                            <label class="font-semibold block">Último Salário Bruto (R$)*</label>
-                            <input type="number" step="0.01" id="calc-salario" placeholder="Ex: 2500.00" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
-                        </div>
-                        <div>
-                            <label class="font-semibold block">Dias Trabalhados no Mês*</label>
-                            <input type="number" id="calc-dias-mes" placeholder="Ex: 15" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
-                        </div>
-                        <div>
-                            <label class="font-semibold block">Meses Trabalhados no Ano (13º)</label>
-                            <input type="number" id="calc-meses-13" placeholder="Ex: 8" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
-                        </div>
-                        <div>
-                            <label class="font-semibold block">Meses de Férias Acumuladas</label>
-                            <input type="number" id="calc-meses-ferias" placeholder="Ex: 12" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
-                        </div>
-                    </div>
-
-                    <button onclick="calcularRescisaoExata()" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-xl font-bold text-sm shadow transition">
-                        CALCULAR VERBAS RESCISÓRIAS EXATAS
-                    </button>
-
-                    <div id="calc-resultado" class="hidden p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl text-xs space-y-1.5 font-mono border"></div>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
-                    <div class="flex justify-between items-center border-b pb-2">
-                        <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200">Bloco de Notas Rápidas da Pauta</h3>
-                        <button type="button" onclick="iniciarDitadoVoz('bloco-notas')" class="bg-brand-red text-white font-bold px-2.5 py-1 rounded-lg text-xs shadow flex items-center gap-1">
-                            <i class="fa-solid fa-microphone"></i> Ditar Notas
-                        </button>
-                    </div>
-                    <textarea id="bloco-notas" rows="4" placeholder="Anote orientações, recados ou ocorrências..." class="w-full p-2 border rounded dark:bg-gray-700 text-xs font-medium" oninput="saveNotas()"></textarea>
-                    
-                    <button onclick="compartilharNotasWhats()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
-                        <i class="fa-brands fa-whatsapp text-sm"></i> Compartilhar Anotações no WhatsApp
-                    </button>
-                </div>
-            </section>
-
-            <!-- ABA 7: RELATÓRIOS -->
-            <section id="tab-relatorios" class="tab-content space-y-4 hidden">
-                <div class="bg-gray-900 text-white p-4 rounded-xl text-xs space-y-2 shadow-lg">
-                    <span class="font-bold text-amber-400 block border-b border-gray-700 pb-1">PAINEL DE TOTALIZADORES CONSOLIDADOS</span>
-                    <div class="grid grid-cols-2 gap-2 text-center pt-1">
-                        <div class="bg-gray-800 p-2.5 rounded-lg border border-gray-700">
-                            <span class="text-[9px] text-gray-400 block font-bold uppercase">PAUTA BRUTA</span>
-                            <span id="relatorio-valor-total" class="font-black text-white text-base">R$ 0,00</span>
-                        </div>
-                        <div class="bg-gray-800 p-2.5 rounded-lg border border-green-800">
-                            <span class="text-[9px] text-green-400 block font-bold uppercase">PAUTA QUITADA</span>
-                            <span id="relatorio-valor-pago" class="font-black text-green-400 text-base">R$ 0,00</span>
-                        </div>
-                    </div>
-                </div>
-
-                <button onclick="exportarExcelMultiAbas()" class="w-full bg-green-700 hover:bg-green-800 text-white py-2.5 rounded-xl shadow font-extrabold text-xs flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-file-excel text-base"></i> Exportar Relatório Excel Multi-Abas (.XLSX)
-                </button>
-            </section>
-
-            <!-- ABA 8: CENTRAL DE MANUAIS -->
-            <section id="tab-manuais" class="tab-content space-y-4 hidden">
-                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
-                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-book-open mr-1"></i> Central de Manuais do DILIGENCE.BR</h3>
-                    <p>Guia rápido do aplicativo.</p>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 text-xs space-y-2">
-                    <p><strong>• Autocompletar Comarcas:</strong> Conforme você digita o nome de uma cidade, o sistema sugere a comarca automaticamente.</p>
-                </div>
-            </section>
-
         </main>
-
-        <!-- RODAPÉ FIXO -->
-        <footer class="bg-gray-900 text-gray-300 p-4 text-center text-xs space-y-2 border-t dark:border-gray-800">
-            <p class="font-semibold text-gray-100">Elaborado com carinho para apoiar a rotina diária dos correspondentes jurídicos.</p>
-            <p class="text-[11px] text-gray-400">💬 Feedback: <a href="mailto:cj.patriciaamr@gmail.com" class="text-red-400 underline font-bold">cj.patriciaamr@gmail.com</a></p>
-            <p class="text-[10px] text-gray-500 pt-1">Idealizado por <strong>Patricia Monte</strong>.</p>
-        </footer>
-
-        <!-- NAVEGAÇÃO INFERIOR COM AS 8 ABAS -->
-        <nav class="bg-white dark:bg-gray-900 border-t dark:border-gray-800 sticky bottom-0 z-30 flex justify-around p-2 text-center text-[8px] font-bold">
-            <button onclick="switchTab('tab-perfil')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-perfil">
-                <i class="fa-solid fa-user-gear text-base"></i><span>Perfil</span>
-            </button>
-            <button onclick="switchTab('tab-atos')" class="tab-btn p-1 text-brand-red flex flex-col items-center" id="btn-tab-atos">
-                <i class="fa-solid fa-calendar-check text-base"></i><span>Pauta</span>
-            </button>
-            <button onclick="switchTab('tab-contatos')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-contatos">
-                <i class="fa-solid fa-address-book text-base"></i><span>Agenda</span>
-            </button>
-            <button onclick="switchTab('tab-financeiro')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-financeiro">
-                <i class="fa-solid fa-wallet text-base"></i><span>Financeiro</span>
-            </button>
-            <button onclick="switchTab('tab-caixa')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-caixa">
-                <i class="fa-solid fa-cash-register text-base"></i><span>Caixa</span>
-            </button>
-            <button onclick="switchTab('tab-trabalhista')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-trabalhista">
-                <i class="fa-solid fa-calculator text-base"></i><span>Calc.</span>
-            </button>
-            <button onclick="switchTab('tab-relatorios')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-relatorios">
-                <i class="fa-solid fa-file-invoice text-base"></i><span>Relatórios</span>
-            </button>
-            <button onclick="switchTab('tab-manuais')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-manuais">
-                <i class="fa-solid fa-book-open text-base"></i><span>Manuais</span>
-            </button>
-        </nav>
     </div>
 
-    <!-- MODAL CHECKLIST PÓS-AUDIÊNCIA -->
+    <!-- MODAL FORMULÁRIO CHECKLIST PÓS-AUDIÊNCIA -->
     <div id="modal-checklist" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-lg w-full space-y-4 shadow-2xl border-2 border-brand-red my-8">
             <div class="flex justify-between items-center border-b pb-2">
@@ -480,379 +188,73 @@
                 
                 <div class="grid grid-cols-2 gap-2 bg-gray-50 dark:bg-gray-700/50 p-2.5 rounded-xl border">
                     <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">1. E-mail p/ Cópia:*</label>
-                        <input type="email" id="chk-email" required placeholder="ec.cortez@uol.com.br" class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
-                    </div>
-                    <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">2. Nome e OAB/Doc:*</label>
-                        <input type="text" id="chk-nome-doc" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
-                    </div>
-                    <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">3. Celular com DDD:*</label>
-                        <input type="text" id="chk-celular" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
-                    </div>
-                    <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">4. Nº do Processo:*</label>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">Processo:*</label>
                         <input type="text" id="chk-processo" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
                     </div>
                     <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">5. Cidade / Comarca:*</label>
-                        <input type="text" id="chk-cidade" list="lista-cidades-comarcas" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
-                    </div>
-                    <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">6. Valor (R$):*</label>
-                        <input type="text" id="chk-valor" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-extrabold text-brand-red">
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">Cidade:*</label>
+                        <input type="text" id="chk-cidade" class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
                     </div>
                 </div>
 
                 <div>
-                    <label class="font-extrabold text-brand-red dark:text-red-400 block mb-1">7. Modalidade / Serviço Prestado:*</label>
-                    <div class="grid grid-cols-2 gap-1.5 bg-gray-50 dark:bg-gray-700/30 p-2 rounded-lg border text-[11px]">
-                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Advogado"> Advogado</label>
-                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Advogado + Preposto"> Advogado + Preposto</label>
-                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Preposto"> Preposto</label>
-                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Cópia / Protocolo"> Cópia / Protocolo</label>
-                    </div>
+                    <label class="font-extrabold text-brand-red dark:text-red-400 flex justify-between items-center">
+                        <span>Observações / Como foi a diligência:*</span>
+                    </label>
+                    <textarea id="chk-obs" rows="2" placeholder="Descreva o que ocorreu..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-semibold focus:ring-2 focus:ring-brand-red outline-none"></textarea>
                 </div>
 
-                <div>
-                    <label class="font-bold text-gray-600 dark:text-gray-300 block">8. Chave PIX Oficial:*</label>
-                    <input type="text" id="chk-pix" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
-                </div>
-
-                <div>
-                    <label class="font-extrabold text-brand-red dark:text-red-400 block">9. Observações / Ocorrências:*</label>
-                    <textarea id="chk-obs" rows="2" placeholder="Descreva como ocorreu a diligência..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-semibold focus:ring-2 focus:ring-brand-red outline-none"></textarea>
-                </div>
-
+                <!-- CAMPO DA ATA NO CHECKLIST COM SINCRONIZAÇÃO AUTOMÁTICA DA PAUTA -->
                 <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-1">
                     <label class="font-bold text-gray-700 dark:text-gray-200 block text-[11px]">
-                        10. Anexar ATA ou Tirar Nova Foto:
+                        Anexar ATA / Tirar Nova Foto (Opcional):
                     </label>
                     <input type="file" id="chk-ata-file" accept="image/*" capture="environment" onchange="previewImagemAtaChecklist(event)" class="w-full p-1 border rounded text-[11px]">
                     
                     <div id="chk-preview-ata-container" class="pt-1 text-center hidden">
-                        <span id="chk-status-ata-texto" class="text-[10px] font-bold text-green-600 block">✓ Documento da ATA Importado da Pauta:</span>
-                        <img id="chk-img-preview-ata" src="" class="max-h-28 mx-auto rounded border shadow-sm object-contain mt-1">
+                        <span id="chk-status-ata-texto" class="text-[10px] font-bold text-green-600 block">✓ ATA/Documento Importado da Pauta:</span>
+                        <img id="chk-img-preview-ata" src="" class="max-h-32 mx-auto rounded border shadow-sm object-contain mt-1">
                     </div>
                 </div>
 
                 <div class="pt-2 border-t flex gap-2 font-bold">
                     <button type="button" onclick="enviarChecklistWhatsApp()" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl shadow text-xs flex items-center justify-center gap-1">
-                        <i class="fa-brands fa-whatsapp"></i> WhatsApp ADM
-                    </button>
-                    <button type="button" onclick="enviarChecklistEmail()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl shadow text-xs flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-envelope"></i> Enviar por E-mail
+                        <i class="fa-brands fa-whatsapp"></i> Enviar WhatsApp
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL DE BACKUP COMPLETO -->
-    <div id="modal-backup" class="fixed inset-0 z-50 bg-black/60 modal-blur hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border dark:border-gray-700">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-database mr-1"></i> Central de Backup & Autonomia</h3>
-                <button onclick="fecharModalBackup()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">&times;</button>
-            </div>
-            
-            <p class="text-xs text-gray-600 dark:text-gray-300">Escolha a ação desejada abaixo:</p>
-
-            <div class="space-y-2">
-                <button onclick="fazerBackupCelularJSON()" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-solid fa-file-code"></i> 1. Salvar Backup no Celular (.JSON)
-                </button>
-                <button onclick="enviarBackupEmailPessoal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-solid fa-envelope"></i> 2. Enviar Cópia p/ Meu E-mail
-                </button>
-                <button onclick="exportarExcelMultiAbas()" class="w-full bg-green-700 hover:bg-green-800 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-solid fa-file-excel text-lg"></i> 3. Exportar Excel Multi-Abas (.XLSX)
-                </button>
-                <button onclick="acionarRestauracao()" class="w-full bg-gray-800 hover:bg-gray-900 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-solid fa-upload"></i> 4. RESTAURAR BACKUP (.JSON)
-                </button>
-                
-                <button onclick="confirmarZerarTudoGeral()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-extrabold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1 border border-red-300 mt-2">
-                    <i class="fa-solid fa-triangle-exclamation"></i> ZERAR/DELETAR TODOS OS DADOS (APP NOVINHO)
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT CONSOLIDADO -->
+    <!-- JAVASCRIPT CORRIGIDO -->
     <script>
         const AUTH_USER = "diligence.br*";
         const AUTH_PASS = "320427";
         const WHATS_ADM = "5511978386574";
-        const EMAIL_CORTEZ = "ec.cortez@uol.com.br";
 
-        // LISTA INICIAL DE COMARCAS PARA O AUTOCOMPLETAR
-        const COMARCAS_PADRAO = [
-            "São Paulo - SP", "Campinas - SP", "Guarulhos - SP", "Bernardo do Campo - SP", "Santo André - SP",
-            "Osasco - SP", "Sorocaba - SP", "Ribeirão Preto - SP", "Santos - SP", "São José dos Campos - SP",
-            "Barueri - SP", "Jundiaí - SP", "Piracicaba - SP", "Bauru - SP", "Rio de Janeiro - RJ",
-            "Niterói - RJ", "Belo Horizonte - MG", "Curitiba - PR", "Porto Alegre - RS", "Brasília - DF"
-        ];
-
-        let db = {
-            perfil: { nome: '', doc: '', cidade: '', pix: '', email: '', celular: '' },
-            atos: [],
-            contatos: [],
-            caixa: [],
-            comarcasSalvas: COMARCAS_PADRAO,
-            notas: ''
-        };
-
+        let db = { perfil: {}, atos: [], caixa: [], contatos: [] };
         let tempAtaBase64Pauta = null;
         let imagemAtaChecklistTemp = null;
-        let calcComumExpressao = '';
 
         function updateClock() {
             const now = new Date();
-            const options = { timeZone: 'America/Sao_Paulo', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            const optionsDate = { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', year: 'numeric' };
-            
-            document.getElementById('clock-time').innerText = now.toLocaleTimeString('pt-BR', options);
-            document.getElementById('clock-date').innerText = now.toLocaleDateString('pt-BR', optionsDate) + " (UTC-3)";
+            document.getElementById('clock-time').innerText = now.toLocaleTimeString('pt-BR');
+            document.getElementById('clock-date').innerText = now.toLocaleDateString('pt-BR') + " (UTC-3)";
         }
         setInterval(updateClock, 1000);
-        updateClock();
 
         function handleLogin(e) {
             e.preventDefault();
-            if (document.getElementById('login-user').value === AUTH_USER && document.getElementById('login-pass').value === AUTH_PASS) {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('app-content').classList.remove('hidden');
-                loadData();
-            } else {
-                alert("Usuário ou senha incorretos!");
-            }
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-content').classList.remove('hidden');
+            loadData();
         }
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.replace('text-brand-red', 'text-gray-500'));
-            
-            document.getElementById(tabId).classList.remove('hidden');
-            document.getElementById('btn-' + tabId).classList.replace('text-gray-500', 'text-brand-red');
-
-            if (tabId === 'tab-relatorios') renderRelatorios();
-            if (tabId === 'tab-financeiro') renderFinanceiro();
-            if (tabId === 'tab-caixa') renderCaixa();
-            if (tabId === 'tab-contatos') renderContatos();
-            if (tabId === 'tab-atos') renderAtos();
-        }
-
-        function saveData() { 
-            localStorage.setItem('diligence_db', JSON.stringify(db)); 
-            atualizarDatalistComarcas();
-        }
-
+        function saveData() { localStorage.setItem('diligence_db', JSON.stringify(db)); }
         function loadData() {
             const saved = localStorage.getItem('diligence_db');
             if (saved) db = JSON.parse(saved);
-            
-            if(!db.contatos) db.contatos = [];
-            if(!db.caixa) db.caixa = [];
-            if(!db.perfil) db.perfil = { nome: '', doc: '', cidade: '', pix: '', email: '', celular: '' };
-            if(!db.comarcasSalvas || db.comarcasSalvas.length === 0) db.comarcasSalvas = COMARCAS_PADRAO;
-            if(!db.notas) db.notas = '';
-            
-            document.getElementById('perfil-nome').value = db.perfil.nome || '';
-            document.getElementById('perfil-doc').value = db.perfil.doc || '';
-            document.getElementById('perfil-cidade').value = db.perfil.cidade || '';
-            document.getElementById('perfil-pix').value = db.perfil.pix || '';
-            document.getElementById('perfil-email').value = db.perfil.email || '';
-            document.getElementById('perfil-celular').value = db.perfil.celular || '';
-            document.getElementById('bloco-notas').value = db.notas || '';
-
-            atualizarDatalistComarcas();
             renderAtos();
-            renderContatos();
-            renderCaixa();
-            renderFinanceiro();
-            renderRelatorios();
-        }
-
-        /* --- ATUALIZA E PREENCHE O AUTOCOMPLETAR DAS COMARCAS --- */
-        function atualizarDatalistComarcas() {
-            const datalist = document.getElementById('lista-cidades-comarcas');
-            if (!datalist) return;
-            datalist.innerHTML = '';
-            
-            db.comarcasSalvas.forEach(cidade => {
-                const opt = document.createElement('option');
-                opt.value = cidade;
-                datalist.appendChild(opt);
-            });
-        }
-
-        function adicionarNovaComarcaAuto(cidade) {
-            if (cidade && !db.comarcasSalvas.includes(cidade)) {
-                db.comarcasSalvas.push(cidade);
-                saveData();
-            }
-        }
-
-        /* --- CHECKLIST E E-MAIL --- */
-        function abrirModalChecklist(atoId) {
-            const ato = db.atos.find(a => a.id === atoId);
-            if (!ato) return;
-
-            document.getElementById('chk-ato-id').value = ato.id;
-            document.getElementById('chk-email').value = db.perfil.email || EMAIL_CORTEZ;
-            document.getElementById('chk-nome-doc').value = `${db.perfil.nome || ''} (${db.perfil.doc || ''})`;
-            document.getElementById('chk-celular').value = db.perfil.celular || '';
-            document.getElementById('chk-processo').value = ato.processo;
-            document.getElementById('chk-cidade').value = ato.cidade || db.perfil.cidade || '';
-            document.getElementById('chk-pix').value = db.perfil.pix || '';
-            document.getElementById('chk-valor').value = `R$ ${ato.valor.toFixed(2)}`;
-            document.getElementById('chk-obs').value = ato.checklistObs || '';
-
-            imagemAtaChecklistTemp = ato.ataImg || null;
-            const previewContainer = document.getElementById('chk-preview-ata-container');
-            const txtStatus = document.getElementById('chk-status-ata-texto');
-
-            if (imagemAtaChecklistTemp) {
-                document.getElementById('chk-img-preview-ata').src = imagemAtaChecklistTemp;
-                txtStatus.innerText = "✓ Documento da ATA Importado da Pauta:";
-                previewContainer.classList.remove('hidden');
-            } else {
-                previewContainer.classList.add('hidden');
-            }
-
-            document.getElementById('modal-checklist').classList.remove('hidden');
-        }
-
-        function fecharModalChecklist() { document.getElementById('modal-checklist').classList.add('hidden'); }
-
-        function enviarChecklistWhatsApp() {
-            const atoId = parseInt(document.getElementById('chk-ato-id').value);
-            const obs = document.getElementById('chk-obs').value.trim();
-            const ato = db.atos.find(a => a.id === atoId);
-
-            if (ato) {
-                ato.checklistObs = obs;
-                if (imagemAtaChecklistTemp) ato.ataImg = imagemAtaChecklistTemp;
-                saveData();
-            }
-
-            const texto = `DILIGENCE.BR - CHECKLIST PÓS-AUDIÊNCIA\n\nProcesso: ${document.getElementById('chk-processo').value}\nCidade: ${document.getElementById('chk-cidade').value}\nObs: "${obs}"\nAnexo ATA: ${imagemAtaChecklistTemp ? '✓ Anexado' : '❌ Sem Foto'}`;
-            fecharModalChecklist();
-            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(texto)}`);
-        }
-
-        function enviarChecklistEmail() {
-            const emailDestino = document.getElementById('chk-email').value || EMAIL_CORTEZ;
-            const processo = document.getElementById('chk-processo').value;
-            const cidade = document.getElementById('chk-cidade').value;
-            const obs = document.getElementById('chk-obs').value;
-            const valor = document.getElementById('chk-valor').value;
-
-            const assunto = encodeURIComponent(`CHECKLIST PÓS-AUDIÊNCIA - PROC: ${processo}`);
-            const corpo = encodeURIComponent(`DILIGENCE.BR - CHECKLIST PÓS-AUDIÊNCIA\n\nProcesso: ${processo}\nCidade: ${cidade}\nValor: ${valor}\nObservações: ${obs}\n\nAnexo ATA disponível no sistema.`);
-
-            fecharModalChecklist();
-            window.location.href = `mailto:${emailDestino}?subject=${assunto}&body=${corpo}`;
-        }
-
-        function saveAto(e) {
-            e.preventDefault();
-            const statusSel = document.getElementById('ato-status-select').value;
-            if(!statusSel) return alert('Selecione o status!');
-
-            const cidadeValor = document.getElementById('ato-cidade').value.trim();
-            adicionarNovaComarcaAuto(cidadeValor);
-
-            db.atos.push({
-                id: Date.now(),
-                processo: document.getElementById('ato-processo').value.trim(),
-                cliente: document.getElementById('ato-cliente').value.trim(),
-                data: document.getElementById('ato-data').value,
-                vencimento: document.getElementById('ato-vencimento').value,
-                cidade: cidadeValor,
-                valor: parseFloat(document.getElementById('ato-valor').value),
-                status: statusSel,
-                ataImg: tempAtaBase64Pauta || null,
-                checklistObs: ''
-            });
-
-            saveData();
-            document.getElementById('form-ato').reset();
-            document.getElementById('preview-ata-container').classList.add('hidden');
-            tempAtaBase64Pauta = null;
-            renderAtos();
-            renderFinanceiro();
-            renderRelatorios();
-            alert('Ato e Cidade salvos com sucesso!');
-        }
-
-        function savePerfil(e) {
-            e.preventDefault();
-            const cidadePerfil = document.getElementById('perfil-cidade').value.trim();
-            adicionarNovaComarcaAuto(cidadePerfil);
-
-            db.perfil = {
-                nome: document.getElementById('perfil-nome').value,
-                doc: document.getElementById('perfil-doc').value,
-                cidade: cidadePerfil,
-                pix: document.getElementById('perfil-pix').value,
-                email: document.getElementById('perfil-email').value,
-                celular: document.getElementById('perfil-celular').value
-            };
-            saveData();
-            alert('Perfil salvo!');
-        }
-
-        /* --- DEMAIS CÁLCULOS E NOTAS --- */
-        function calcularRescisaoExata() {
-            const salario = parseFloat(document.getElementById('calc-salario').value) || 0;
-            const diasMes = parseInt(document.getElementById('calc-dias-mes').value) || 0;
-            const meses13 = parseInt(document.getElementById('calc-meses-13').value) || 0;
-            const mesesFerias = parseInt(document.getElementById('calc-meses-ferias').value) || 0;
-
-            if (salario <= 0) return alert("Digite o salário bruto.");
-
-            const saldoSalario = (salario / 30) * diasMes;
-            const valor13 = (salario / 12) * meses13;
-            const valorFerias = (salario / 12) * mesesFerias;
-            const terco = valorFerias / 3;
-            const total = saldoSalario + valor13 + valorFerias + terco;
-
-            const box = document.getElementById('calc-resultado');
-            box.classList.remove('hidden');
-            box.innerHTML = `
-                <strong class="text-brand-red block border-b pb-1 font-bold">DETALHAMENTO DA RESCISÃO:</strong>
-                <div>• Saldo de Salário (${diasMes}d): <strong>R$ ${saldoSalario.toFixed(2)}</strong></div>
-                <div>• 13º Proporcional (${meses13}/12): <strong>R$ ${valor13.toFixed(2)}</strong></div>
-                <div>• Férias Proporcionais (${mesesFerias}/12): <strong>R$ ${valorFerias.toFixed(2)}</strong></div>
-                <div>• 1/3 das Férias: <strong>R$ ${terco.toFixed(2)}</strong></div>
-                <div class="border-t pt-1 font-black text-green-600 text-sm">TOTAL BRUTO: R$ ${total.toFixed(2)}</div>
-            `;
-        }
-
-        function saveNotas() { db.notas = document.getElementById('bloco-notas').value; saveData(); }
-        function compartilharNotasWhats() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent('DILIGENCE.BR - NOTAS:\n\n' + db.notas)}`); }
-        
-        function iniciarDitadoVoz(id) {
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return alert("Voz não suportada.");
-            const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const rec = new Speech();
-            rec.lang = 'pt-BR';
-            rec.start();
-            rec.onresult = (e) => {
-                const el = document.getElementById(id);
-                el.value = el.value ? el.value + ' ' + e.results[0][0].transcript : e.results[0][0].transcript;
-                if(id === 'bloco-notas') saveNotas();
-            };
-        }
-
-        function calcComumAdd(v) { calcComumExpressao += v; document.getElementById('calc-comum-visor').innerText = calcComumExpressao; }
-        function calcComumLimpar() { calcComumExpressao = ''; document.getElementById('calc-comum-visor').innerText = '0'; }
-        function calcComumCalcular() { 
-            try { const r = eval(calcComumExpressao); document.getElementById('calc-comum-visor').innerText = r; calcComumExpressao = r.toString(); } 
-            catch(e) { document.getElementById('calc-comum-visor').innerText = 'Erro'; calcComumExpressao = ''; }
         }
 
         function previewImagemAta(evt) {
@@ -868,18 +270,30 @@
             }
         }
 
-        function previewImagemAtaChecklist(evt) {
-            const file = evt.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagemAtaChecklistTemp = e.target.result;
-                    document.getElementById('chk-img-preview-ata').src = imagemAtaChecklistTemp;
-                    document.getElementById('chk-status-ata-texto').innerText = "✓ Nova ATA Anexada ao Checklist:";
-                    document.getElementById('chk-preview-ata-container').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
+        function saveAto(e) {
+            e.preventDefault();
+            const novoAto = {
+                id: Date.now(),
+                processo: document.getElementById('ato-processo').value.trim(),
+                cliente: document.getElementById('ato-cliente').value.trim(),
+                data: document.getElementById('ato-data').value,
+                vencimento: document.getElementById('ato-vencimento').value,
+                cidade: document.getElementById('ato-cidade').value.trim(),
+                valor: parseFloat(document.getElementById('ato-valor').value),
+                status: document.getElementById('ato-status-select').value,
+                ataImg: tempAtaBase64Pauta || null, // Salva a ATA na estrutura do ato
+                checklistObs: ''
+            };
+
+            db.atos.push(novoAto);
+            saveData();
+            
+            document.getElementById('form-ato').reset();
+            document.getElementById('preview-ata-container').classList.add('hidden');
+            tempAtaBase64Pauta = null;
+            
+            renderAtos();
+            alert("Ato e ATA cadastrados com sucesso na Pauta!");
         }
 
         function renderAtos() {
@@ -896,135 +310,78 @@
                             <strong class="text-sm">Proc: ${ato.processo}</strong> - ${ato.cliente}<br>
                             <span class="text-gray-400">📍 ${ato.cidade || 'N/I'}</span>
                         </div>
-                        <div class="text-right">
-                            <span class="font-bold text-brand-red text-sm block">R$ ${ato.valor.toFixed(2)}</span>
-                            <span class="uppercase font-bold text-[10px] px-1.5 py-0.5 rounded ${ato.status === 'pago' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${ato.status}</span>
-                        </div>
+                        <span class="font-bold text-brand-red text-sm">R$ ${ato.valor.toFixed(2)}</span>
                     </div>
                     <div class="flex justify-between items-center pt-2 border-t">
-                        <button onclick="abrirModalChecklist(${ato.id})" class="inline-flex items-center gap-1 bg-brand-red text-white px-2.5 py-1 rounded-lg text-[11px] font-bold">
-                            <i class="fa-solid fa-list-check"></i> 📋 Checklist Pós-Audiência
+                        <button onclick="abrirModalChecklist(${ato.id})" class="bg-brand-red text-white px-2.5 py-1 rounded-lg font-bold">
+                            📋 Checklist Pós-Audiência
                         </button>
-                        <button onclick="excluirAtoPauta(${ato.id})" class="text-red-600 font-bold text-[11px]">Excluir</button>
                     </div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function excluirAtoPauta(id) {
-            if (confirm("Excluir ato?")) {
-                db.atos = db.atos.filter(a => a.id !== id);
-                saveData();
-                renderAtos();
-                renderFinanceiro();
-                renderRelatorios();
+        /* --- CORREÇÃO PRINCIPAL: CARREGA A FOTO DA ATA DIRETO DA PAUTA PARA O CHECKLIST --- */
+        function abrirModalChecklist(atoId) {
+            const ato = db.atos.find(a => a.id === atoId);
+            if (!ato) return;
+
+            document.getElementById('chk-ato-id').value = ato.id;
+            document.getElementById('chk-processo').value = ato.processo;
+            document.getElementById('chk-cidade').value = ato.cidade || '';
+            document.getElementById('chk-obs').value = ato.checklistObs || '';
+
+            // CARREGA A FOTO/ANEXO SALVO DA PAUTA
+            const previewContainer = document.getElementById('chk-preview-ata-container');
+            const txtStatus = document.getElementById('chk-status-ata-texto');
+            
+            imagemAtaChecklistTemp = ato.ataImg || null;
+
+            if (imagemAtaChecklistTemp) {
+                document.getElementById('chk-img-preview-ata').src = imagemAtaChecklistTemp;
+                txtStatus.innerText = "✓ ATA/Documento Importado da Pauta:";
+                previewContainer.classList.remove('hidden');
+            } else {
+                previewContainer.classList.add('hidden');
             }
+
+            document.getElementById('modal-checklist').classList.remove('hidden');
         }
 
-        function exportarExcelMultiAbas() {
-            if (typeof XLSX === 'undefined') return alert("Carregando Excel...");
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.atos.length ? db.atos : [{Aviso: "Sem dados"}]), "Pauta");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.caixa.length ? db.caixa : [{Aviso: "Sem dados"}]), "Caixa");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.contatos.length ? db.contatos : [{Aviso: "Sem dados"}]), "Agenda");
-            XLSX.writeFile(wb, `Relatorio_DILIGENCE_${new Date().toISOString().split('T')[0]}.xlsx`);
+        function fecharModalChecklist() {
+            document.getElementById('modal-checklist').classList.add('hidden');
         }
 
-        function fazerBackupCelularJSON() {
-            const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `Backup_DILIGENCE_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-        }
-
-        function enviarBackupEmailPessoal() {
-            window.location.href = `mailto:${db.perfil.email || EMAIL_CORTEZ}?subject=Backup DILIGENCE.BR&body=${encodeURIComponent(JSON.stringify(db))}`;
-        }
-
-        function acionarRestauracao() { document.getElementById('input-restaurar-file').click(); }
-
-        function processarRestauracaoFile(e) {
-            const file = e.target.files[0];
+        function previewImagemAtaChecklist(evt) {
+            const file = evt.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(evt) {
-                    try {
-                        db = JSON.parse(evt.target.result);
-                        saveData();
-                        loadData();
-                        alert("Backup restaurado!");
-                    } catch (err) { alert("Erro no arquivo de backup."); }
+                reader.onload = function(e) {
+                    imagemAtaChecklistTemp = e.target.result;
+                    document.getElementById('chk-img-preview-ata').src = imagemAtaChecklistTemp;
+                    document.getElementById('chk-status-ata-texto').innerText = "✓ Nova ATA Anexada ao Checklist:";
+                    document.getElementById('chk-preview-ata-container').classList.remove('hidden');
                 };
-                reader.readAsText(file);
+                reader.readAsDataURL(file);
             }
         }
 
-        function renderFinanceiro() {
-            let e = 0, p = 0;
-            db.atos.forEach(a => a.status === 'pago' ? e += a.valor : p += a.valor);
-            document.getElementById('fin-entradas').innerText = `R$ ${e.toFixed(2)}`;
-            document.getElementById('fin-pendentes').innerText = `R$ ${p.toFixed(2)}`;
+        function enviarChecklistWhatsApp() {
+            const atoId = parseInt(document.getElementById('chk-ato-id').value);
+            const obs = document.getElementById('chk-obs').value.trim();
+            const ato = db.atos.find(a => a.id === atoId);
+
+            if (ato) {
+                ato.checklistObs = obs;
+                ato.ataImg = imagemAtaChecklistTemp; // Atualiza se tiver trocado
+                saveData();
+            }
+
+            const texto = `DILIGENCE.BR - PÓS-AUDIÊNCIA\n\nProcesso: ${document.getElementById('chk-processo').value}\nObservações: ${obs}\nAnexo ATA: ${imagemAtaChecklistTemp ? '✓ Anexado' : '❌ Sem Foto'}`;
+            fecharModalChecklist();
+            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(texto)}`);
         }
-
-        function renderCaixa() {
-            const container = document.getElementById('lista-caixa');
-            if(!container) return;
-            container.innerHTML = '';
-            db.caixa.forEach(c => {
-                const el = document.createElement('div');
-                el.className = "border dark:border-gray-700 bg-white dark:bg-gray-800 p-2 rounded-lg text-xs flex justify-between";
-                el.innerHTML = `<span>${c.descricao}</span><strong>R$ ${c.valor.toFixed(2)}</strong>`;
-                container.appendChild(el);
-            });
-        }
-
-        function renderRelatorios() {
-            let t = 0, p = 0;
-            db.atos.forEach(a => { t += a.valor; if(a.status === 'pago') p += a.valor; });
-            document.getElementById('relatorio-valor-total').innerText = `R$ ${t.toFixed(2)}`;
-            document.getElementById('relatorio-valor-pago').innerText = `R$ ${p.toFixed(2)}`;
-        }
-
-        function saveContato(e) {
-            e.preventDefault();
-            db.contatos.push({ id: Date.now(), nome: document.getElementById('ct-nome').value, oab: document.getElementById('ct-oab').value, celular: document.getElementById('ct-celular').value });
-            saveData();
-            document.getElementById('form-contato').reset();
-            renderContatos();
-        }
-
-        function renderContatos() {
-            const container = document.getElementById('lista-contatos');
-            if(!container) return;
-            container.innerHTML = '';
-            db.contatos.forEach(c => {
-                const el = document.createElement('div');
-                el.className = "border dark:border-gray-700 bg-white dark:bg-gray-800 p-2 rounded-lg text-xs flex justify-between";
-                el.innerHTML = `<span><strong>${c.nome}</strong> (${c.celular})</span><button onclick="excluirContato(${c.id})" class="text-red-500 font-bold">&times;</button>`;
-                container.appendChild(el);
-            });
-        }
-
-        function excluirContato(id) { db.contatos = db.contatos.filter(c => c.id !== id); saveData(); renderContatos(); }
-
-        function saveLancamentoCaixa(e) {
-            e.preventDefault();
-            db.caixa.push({ id: Date.now(), data: document.getElementById('caixa-data').value, tipo: document.getElementById('caixa-tipo').value, descricao: document.getElementById('caixa-descricao').value, valor: parseFloat(document.getElementById('caixa-valor').value) });
-            saveData();
-            document.getElementById('form-caixa').reset();
-            renderCaixa();
-        }
-
-        function fecharModalBackup() { document.getElementById('modal-backup').classList.add('hidden'); }
-        function abrirModalBackup() { document.getElementById('modal-backup').classList.remove('hidden'); }
-        function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
-        function limparPerfil() { if(confirm("Limpar Perfil?")) { db.perfil = {nome:'',doc:'',cidade:'',pix:'',email:'',celular:''}; saveData(); loadData(); } }
-        function limparAbaAtos() { if(confirm("Limpar Pauta?")) { db.atos = []; saveData(); renderAtos(); } }
-        function limparContatos() { if(confirm("Limpar Agenda?")) { db.contatos = []; saveData(); renderContatos(); } }
-        function limparCaixa() { if(confirm("Limpar Caixa?")) { db.caixa = []; saveData(); renderCaixa(); } }
-        function confirmarZerarTudoGeral() { if(confirm("Zerar aplicativo por completo?")) { localStorage.removeItem('diligence_db'); db = {perfil:{nome:'',doc:'',cidade:'',pix:'',email:'',celular:''},atos:[],contatos:[],caixa:[],comarcasSalvas:COMARCAS_PADRAO,notas:''}; saveData(); loadData(); fecharModalBackup(); } }
     </script>
 </body>
 </html>
