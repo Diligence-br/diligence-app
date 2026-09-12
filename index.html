@@ -42,15 +42,12 @@
         .modal-blur { backdrop-filter: blur(4px); }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        @keyframes pulse-ring {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
-        }
-        .backup-pulse { animation: pulse-ring 2s infinite; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+    <!-- DATALIST GLOBAL PARA AUTOCOMPLETAR COMARCAS / CIDADES -->
+    <datalist id="lista-cidades-comarcas"></datalist>
 
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 z-50 bg-brand-red flex items-center justify-center p-4">
@@ -73,50 +70,6 @@
                 </div>
                 <button type="submit" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-lg font-bold text-sm shadow-md transition">Entrar no Sistema</button>
             </form>
-            
-            <div class="pt-2 border-t flex flex-col items-center gap-1.5">
-                <button onclick="abrirModalRecuperacao('usuario')" class="text-xs text-brand-red dark:text-red-400 font-bold hover:underline">
-                    <i class="fa-solid fa-user-lock mr-1"></i> Esqueci o meu usuário
-                </button>
-                <button onclick="abrirModalRecuperacao('senha')" class="text-xs text-brand-red dark:text-red-400 font-bold hover:underline">
-                    <i class="fa-solid fa-key mr-1"></i> Esqueci a minha senha
-                </button>
-                <p id="login-error" class="text-xs text-red-500 font-semibold hidden mt-1">Usuário ou senha incorretos!</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL ESQUECI O USUÁRIO / SENHA -->
-    <div id="modal-recuperacao-login" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-2 border-brand-red">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 id="rec-modal-titulo" class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-headset mr-1"></i> RECUPERAÇÃO DE ACESSO</h3>
-                <button onclick="fecharModalRecuperacao()" class="text-gray-400 font-bold">&times;</button>
-            </div>
-            
-            <p id="rec-modal-subtitulo" class="text-xs text-gray-600 dark:text-gray-300">
-                Entre em contato direto com a administração via WhatsApp <strong>(11) 97838-6574</strong> para solicitar ajuda.
-            </p>
-
-            <div class="space-y-2 text-left">
-                <div>
-                    <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Seu Nome Completo:</label>
-                    <input type="text" id="rec-nome" placeholder="Digite seu nome..." class="w-full p-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-xs font-semibold focus:outline-none">
-                </div>
-                <div>
-                    <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Seu Número de Celular / WhatsApp:</label>
-                    <input type="text" id="rec-celular" placeholder="(11) 99999-9999" class="w-full p-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-xs font-semibold focus:outline-none">
-                </div>
-            </div>
-
-            <div class="pt-2 border-t space-y-2">
-                <button onclick="enviarRecuperacaoWhats()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-brands fa-whatsapp text-sm"></i> ENVIAR SOLICITAÇÃO NO WHATSAPP
-                </button>
-                <button onclick="fecharModalRecuperacao()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">
-                    Cancelar
-                </button>
-            </div>
         </div>
     </div>
 
@@ -148,13 +101,11 @@
 
             <div class="mt-3 pt-3 border-t border-red-500/50 flex flex-col gap-2">
                 <div class="flex justify-between items-center text-xs bg-red-800/40 p-2 rounded-lg gap-2">
-                    <div class="flex flex-col flex-1">
-                        <span id="daily-message" class="italic text-red-100 text-[11px] font-medium leading-tight">
-                            <i class="fa-solid fa-quote-left mr-1"></i> <span id="txt-mensagem-rotativa">"Que o dia seja produtivo e abençoado!"</span>
-                        </span>
-                    </div>
+                    <span id="daily-message" class="italic text-red-100 text-[11px] font-medium leading-tight">
+                        <i class="fa-solid fa-quote-left mr-1"></i> "Que o dia seja produtivo e abençoado!"
+                    </span>
                     <div class="flex gap-1 items-center">
-                        <button id="btn-backup-header" onclick="abrirModalBackup()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] hover:bg-red-50 transition shadow"><i class="fa-solid fa-database mr-1"></i>Backup</button>
+                        <button onclick="abrirModalBackup()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] hover:bg-red-50 transition shadow"><i class="fa-solid fa-database mr-1"></i>Backup</button>
                         <button onclick="acionarRestauracao()" class="bg-gray-900 text-white font-bold px-2 py-1 rounded text-[11px] hover:bg-black transition shadow"><i class="fa-solid fa-upload mr-1"></i>Restaurar</button>
                     </div>
                 </div>
@@ -168,45 +119,40 @@
 
             <!-- ABA 1: PERFIL DO CORRESPONDENTE -->
             <section id="tab-perfil" class="tab-content space-y-4">
-                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
-                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Perfil do Correspondente</h3>
-                    <p>Preencha seus dados para habilitar recibos digitais, checklists e compartilhamentos.</p>
-                </div>
-
                 <form id="form-perfil" onsubmit="savePerfil(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
                     <div class="flex justify-between items-center border-b pb-2">
-                        <h2 class="font-bold text-base text-gray-700 dark:text-gray-200">Dados Profissionais</h2>
-                        <button type="button" onclick="limparPerfil()" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
+                        <h2 class="font-bold text-base text-gray-700 dark:text-gray-200">Dados Profissionais do Correspondente</h2>
+                        <button type="button" onclick="limparPerfil()" class="text-red-600 text-xs font-bold bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
                             <i class="fa-solid fa-trash-can"></i> Limpar Perfil
                         </button>
                     </div>
                     <div>
                         <label class="text-xs font-semibold">Nome Completo</label>
-                        <input type="text" id="perfil-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        <input type="text" id="perfil-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="text-xs font-semibold">OAB / RG / CPF</label>
-                            <input type="text" id="perfil-doc" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                            <input type="text" id="perfil-doc" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold">Cidade / UF Base</label>
-                            <input type="text" id="perfil-cidade" required placeholder="Digite a cidade..." class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                            <label class="text-xs font-semibold">Cidade / UF Base (Autocompletar)</label>
+                            <input type="text" id="perfil-cidade" list="lista-cidades-comarcas" required placeholder="Digite para buscar..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="text-xs font-semibold">Celular / WhatsApp (DDD)</label>
-                            <input type="text" id="perfil-celular" placeholder="(11) 99999-9999" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                            <input type="text" id="perfil-celular" placeholder="(11) 99999-9999" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                         <div>
                             <label class="text-xs font-semibold">Chave PIX Oficial</label>
-                            <input type="text" id="perfil-pix" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                            <input type="text" id="perfil-pix" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                     </div>
                     <div>
                         <label class="text-xs font-semibold">E-mail do Correspondente</label>
-                        <input type="email" id="perfil-email" placeholder="seuemail@email.com" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        <input type="email" id="perfil-email" placeholder="seuemail@email.com" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                     </div>
                     
                     <button type="submit" class="w-full bg-brand-red text-white py-2 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Perfil</button>
@@ -215,20 +161,13 @@
 
             <!-- ABA 2: PAUTA & CADASTRO DE DILIGÊNCIAS -->
             <section id="tab-atos" class="tab-content space-y-4 hidden">
-                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
-                    <div>
-                        <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-calendar-check mr-1"></i> Cadastro e Pauta de Diligências</h3>
-                        <p>Atos cadastrados refletem automaticamente no Financeiro, Caixa e Relatórios.</p>
-                    </div>
-                </div>
-
                 <form id="form-ato" onsubmit="saveAto(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
                     <div class="flex justify-between items-center border-b pb-2">
                         <h2 class="font-bold text-base text-gray-700 dark:text-gray-200 flex items-center gap-2">
                             <i class="fa-solid fa-plus-circle text-brand-red"></i> Cadastrar Novo Ato na Pauta
                         </h2>
-                        <button type="button" onclick="limparAbaAtos()" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
-                            <i class="fa-solid fa-trash-can"></i> Limpar Toda a Pauta
+                        <button type="button" onclick="limparAbaAtos()" class="text-red-600 text-xs font-bold bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
+                            <i class="fa-solid fa-trash-can"></i> Limpar Pauta
                         </button>
                     </div>
                     
@@ -254,9 +193,12 @@
                         </div>
                     </div>
 
+                    <!-- CIDADE COM AUTOCOMPLETAR ATIVADO -->
                     <div>
-                        <label class="text-xs font-semibold">Cidade do Ato / Comarca*</label>
-                        <input type="text" id="ato-cidade" required placeholder="Digite a comarca..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-semibold">
+                        <label class="text-xs font-semibold flex items-center justify-between">
+                            <span>Cidade do Ato / Comarca* <span class="text-[10px] text-brand-red font-bold">(Autocompletar Ativo)</span></span>
+                        </label>
+                        <input type="text" id="ato-cidade" list="lista-cidades-comarcas" required placeholder="Digite o nome da cidade..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-semibold focus:ring-2 focus:ring-brand-red outline-none">
                     </div>
 
                     <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-2">
@@ -266,12 +208,12 @@
                         <input type="file" id="ato-ata-file" accept="image/*" capture="environment" onchange="previewImagemAta(event)" class="w-full p-1.5 border rounded-lg text-xs bg-white dark:bg-gray-800">
                         
                         <div id="preview-ata-container" class="hidden pt-1 text-center space-y-1">
-                            <span class="text-[10px] font-bold text-green-600 block">✓ Pré-visualização do Documento Fotografado:</span>
+                            <span class="text-[10px] font-bold text-green-600 block">✓ Documento Anexado na Pauta:</span>
                             <img id="img-preview-ata" src="" class="max-h-36 mx-auto rounded border shadow-sm object-contain">
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 p-2.5 bg-red-50 dark:bg-gray-700/60 rounded-xl border-2 border-brand-red">
+                    <div class="grid grid-cols-2 gap-2 p-2.5 bg-red-50 dark:bg-gray-700/60 rounded-xl border-2 border-brand-red">
                         <div>
                             <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Valor Acordado (R$)*</label>
                             <input type="number" step="0.01" id="ato-valor" required placeholder="0.00" class="w-full p-2 border rounded-lg dark:bg-gray-700 font-bold text-sm">
@@ -286,8 +228,8 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-brand-red text-white py-3 rounded-xl font-black text-sm shadow-lg hover:bg-brand-darkred flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-plus-circle text-base"></i> SALVAR / ADICIONAR NOVO ATO NA PAUTA
+                    <button type="submit" class="w-full bg-brand-red text-white py-3 rounded-xl font-black text-sm shadow-lg hover:bg-brand-darkred">
+                        SALVAR ATO NA PAUTA
                     </button>
                 </form>
 
@@ -299,15 +241,10 @@
 
             <!-- ABA 3: AGENDA DE CONTATOS -->
             <section id="tab-contatos" class="tab-content space-y-4 hidden">
-                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
-                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-address-book mr-1"></i> Agenda de Contatos</h3>
-                    <p>Cadastre contatos rápidos do seu dia a dia.</p>
-                </div>
-
                 <form id="form-contato" onsubmit="saveContato(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
                     <div class="flex justify-between items-center border-b pb-2">
                         <h2 class="font-bold text-base text-gray-700 dark:text-gray-200">Cadastrar Novo Contato</h2>
-                        <button type="button" onclick="limparContatos()" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
+                        <button type="button" onclick="limparContatos()" class="text-red-600 text-xs font-bold bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
                             <i class="fa-solid fa-trash-can"></i> Limpar Agenda
                         </button>
                     </div>
@@ -328,9 +265,7 @@
                     <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Contato na Agenda</button>
                 </form>
 
-                <div class="space-y-2">
-                    <div id="lista-contatos" class="space-y-2"></div>
-                </div>
+                <div id="lista-contatos" class="space-y-2"></div>
             </section>
 
             <!-- ABA 4: FINANCEIRO -->
@@ -351,7 +286,7 @@
             <section id="tab-caixa" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
                     <h3 class="font-bold text-brand-red dark:text-red-400"><i class="fa-solid fa-cash-register mr-1"></i> Livro Caixa & Despesas</h3>
-                    <button type="button" onclick="limparCaixa()" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-white dark:bg-gray-800 px-2 py-1 rounded border border-red-200 shadow-sm">
+                    <button type="button" onclick="limparCaixa()" class="text-red-600 text-xs font-bold bg-white dark:bg-gray-800 px-2 py-1 rounded border border-red-200 shadow-sm">
                         <i class="fa-solid fa-trash-can"></i> Limpar Caixa
                     </button>
                 </div>
@@ -372,7 +307,7 @@
                     </div>
                     <div>
                         <label class="text-xs font-semibold">Descrição</label>
-                        <input type="text" id="caixa-descricao" required placeholder="Ex: Transporte, Uber, Alimentação..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
+                        <input type="text" id="caixa-descricao" required placeholder="Ex: Uber, Alimentação, Cópias..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
                     </div>
                     <div>
                         <label class="text-xs font-bold text-brand-red dark:text-red-400">Valor (R$)*</label>
@@ -384,10 +319,9 @@
                 <div id="lista-caixa" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 6: CALCULADORAS RECURSOS 100% RECUPERADOS + BLOCO DE NOTAS -->
+            <!-- ABA 6: CALCULADORAS & BLOCO DE NOTAS -->
             <section id="tab-trabalhista" class="tab-content space-y-4 hidden">
                 
-                <!-- 1. CALCULADORA MATEMÁTICA SIMPLES -->
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
                     <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200 border-b pb-2"><i class="fa-solid fa-calculator mr-1"></i> 1. Calculadora Comum</h3>
                     <div class="bg-gray-900 text-green-400 p-3 rounded-lg text-right font-mono text-xl font-bold border" id="calc-comum-visor">0</div>
@@ -412,10 +346,9 @@
                     </div>
                 </div>
 
-                <!-- 2. CALCULADORA DE VERBAS RESCISÓRIAS TRABALHISTAS (RESTAURADA COMPLETA) -->
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
                     <h3 class="font-bold text-sm text-brand-red border-b pb-2 flex items-center gap-1">
-                        <i class="fa-solid fa-scale-balanced"></i> 2. Calculadora Rescisória Trabalhista Completa
+                        <i class="fa-solid fa-scale-balanced"></i> 2. Calculadora Rescisória Trabalhista
                     </h3>
                     
                     <div class="grid grid-cols-2 gap-2 text-xs">
@@ -437,33 +370,13 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div>
-                            <label class="font-semibold block">Tipo de Demissão:</label>
-                            <select id="calc-tipo-demissao" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
-                                <option value="sem_justa_causa">Sem Justa Causa (Direto Completo)</option>
-                                <option value="pedido">Pedido de Demissão</option>
-                                <option value="acordo">Acordo Trabalhista (Art. 484-A CLT)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="font-semibold block">Aviso Prévio Indenizado?</label>
-                            <select id="calc-aviso-previo" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
-                                <option value="sim">Sim (30 dias)</option>
-                                <option value="nao">Não / Trabalhado</option>
-                            </select>
-                        </div>
-                    </div>
-
                     <button onclick="calcularRescisaoExata()" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-xl font-bold text-sm shadow transition">
                         CALCULAR VERBAS RESCISÓRIAS EXATAS
                     </button>
 
-                    <!-- QUADRO DE RESULTADOS DETALHADOS DA RESCISÃO -->
                     <div id="calc-resultado" class="hidden p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl text-xs space-y-1.5 font-mono border"></div>
                 </div>
 
-                <!-- 3. BLOCO DE NOTAS COM DITADO E WHATSAPP (RESTAURADO COMPLETO) -->
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
                     <div class="flex justify-between items-center border-b pb-2">
                         <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200">Bloco de Notas Rápidas da Pauta</h3>
@@ -471,7 +384,7 @@
                             <i class="fa-solid fa-microphone"></i> Ditar Notas
                         </button>
                     </div>
-                    <textarea id="bloco-notas" rows="4" placeholder="Anote orientações, recados, acórdãos ou ocorrências das audiências..." class="w-full p-2 border rounded dark:bg-gray-700 text-xs font-medium" oninput="saveNotas()"></textarea>
+                    <textarea id="bloco-notas" rows="4" placeholder="Anote orientações, recados ou ocorrências..." class="w-full p-2 border rounded dark:bg-gray-700 text-xs font-medium" oninput="saveNotas()"></textarea>
                     
                     <button onclick="compartilharNotasWhats()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
                         <i class="fa-brands fa-whatsapp text-sm"></i> Compartilhar Anotações no WhatsApp
@@ -507,8 +420,7 @@
                     <p>Guia rápido do aplicativo.</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 text-xs space-y-2">
-                    <p><strong>• Planilha Excel:</strong> Gera o arquivo completo com 5 guias automáticas.</p>
-                    <p><strong>• Checklist Pós-Audiência:</strong> Sincroniza a foto tirada na Pauta e envia para o WhatsApp da Administração.</p>
+                    <p><strong>• Autocompletar Comarcas:</strong> Conforme você digita o nome de uma cidade, o sistema sugere a comarca automaticamente.</p>
                 </div>
             </section>
 
@@ -568,30 +480,59 @@
                 
                 <div class="grid grid-cols-2 gap-2 bg-gray-50 dark:bg-gray-700/50 p-2.5 rounded-xl border">
                     <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">Processo:*</label>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">1. E-mail p/ Cópia:*</label>
+                        <input type="email" id="chk-email" required placeholder="ec.cortez@uol.com.br" class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">2. Nome e OAB/Doc:*</label>
+                        <input type="text" id="chk-nome-doc" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">3. Celular com DDD:*</label>
+                        <input type="text" id="chk-celular" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">4. Nº do Processo:*</label>
                         <input type="text" id="chk-processo" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
                     </div>
                     <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">Cidade:*</label>
-                        <input type="text" id="chk-cidade" class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">5. Cidade / Comarca:*</label>
+                        <input type="text" id="chk-cidade" list="lista-cidades-comarcas" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">6. Valor (R$):*</label>
+                        <input type="text" id="chk-valor" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-extrabold text-brand-red">
                     </div>
                 </div>
 
                 <div>
-                    <label class="font-extrabold text-brand-red dark:text-red-400 flex justify-between items-center">
-                        <span>Observações / Como foi a diligência:*</span>
-                    </label>
-                    <textarea id="chk-obs" rows="2" placeholder="Descreva o que ocorreu..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-semibold focus:ring-2 focus:ring-brand-red outline-none"></textarea>
+                    <label class="font-extrabold text-brand-red dark:text-red-400 block mb-1">7. Modalidade / Serviço Prestado:*</label>
+                    <div class="grid grid-cols-2 gap-1.5 bg-gray-50 dark:bg-gray-700/30 p-2 rounded-lg border text-[11px]">
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Advogado"> Advogado</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Advogado + Preposto"> Advogado + Preposto</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Preposto"> Preposto</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Cópia / Protocolo"> Cópia / Protocolo</label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="font-bold text-gray-600 dark:text-gray-300 block">8. Chave PIX Oficial:*</label>
+                    <input type="text" id="chk-pix" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                </div>
+
+                <div>
+                    <label class="font-extrabold text-brand-red dark:text-red-400 block">9. Observações / Ocorrências:*</label>
+                    <textarea id="chk-obs" rows="2" placeholder="Descreva como ocorreu a diligência..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-semibold focus:ring-2 focus:ring-brand-red outline-none"></textarea>
                 </div>
 
                 <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-1">
                     <label class="font-bold text-gray-700 dark:text-gray-200 block text-[11px]">
-                        Anexar ATA / Tirar Nova Foto:
+                        10. Anexar ATA ou Tirar Nova Foto:
                     </label>
                     <input type="file" id="chk-ata-file" accept="image/*" capture="environment" onchange="previewImagemAtaChecklist(event)" class="w-full p-1 border rounded text-[11px]">
                     
                     <div id="chk-preview-ata-container" class="pt-1 text-center hidden">
-                        <span id="chk-status-ata-texto" class="text-[10px] font-bold text-green-600 block">✓ ATA Importada da Pauta:</span>
+                        <span id="chk-status-ata-texto" class="text-[10px] font-bold text-green-600 block">✓ Documento da ATA Importado da Pauta:</span>
                         <img id="chk-img-preview-ata" src="" class="max-h-28 mx-auto rounded border shadow-sm object-contain mt-1">
                     </div>
                 </div>
@@ -600,12 +541,15 @@
                     <button type="button" onclick="enviarChecklistWhatsApp()" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl shadow text-xs flex items-center justify-center gap-1">
                         <i class="fa-brands fa-whatsapp"></i> WhatsApp ADM
                     </button>
+                    <button type="button" onclick="enviarChecklistEmail()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl shadow text-xs flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-envelope"></i> Enviar por E-mail
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL DE BACKUP COM TODAS AS OPÇÕES ANTIGAS + ZERAR TUDO -->
+    <!-- MODAL DE BACKUP COMPLETO -->
     <div id="modal-backup" class="fixed inset-0 z-50 bg-black/60 modal-blur hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border dark:border-gray-700">
             <div class="flex justify-between items-center border-b pb-2">
@@ -636,17 +580,27 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT CONSOLIDADO COMPLETO -->
+    <!-- JAVASCRIPT CONSOLIDADO -->
     <script>
         const AUTH_USER = "diligence.br*";
         const AUTH_PASS = "320427";
         const WHATS_ADM = "5511978386574";
+        const EMAIL_CORTEZ = "ec.cortez@uol.com.br";
+
+        // LISTA INICIAL DE COMARCAS PARA O AUTOCOMPLETAR
+        const COMARCAS_PADRAO = [
+            "São Paulo - SP", "Campinas - SP", "Guarulhos - SP", "Bernardo do Campo - SP", "Santo André - SP",
+            "Osasco - SP", "Sorocaba - SP", "Ribeirão Preto - SP", "Santos - SP", "São José dos Campos - SP",
+            "Barueri - SP", "Jundiaí - SP", "Piracicaba - SP", "Bauru - SP", "Rio de Janeiro - RJ",
+            "Niterói - RJ", "Belo Horizonte - MG", "Curitiba - PR", "Porto Alegre - RS", "Brasília - DF"
+        ];
 
         let db = {
             perfil: { nome: '', doc: '', cidade: '', pix: '', email: '', celular: '' },
             atos: [],
             contatos: [],
             caixa: [],
+            comarcasSalvas: COMARCAS_PADRAO,
             notas: ''
         };
 
@@ -672,7 +626,7 @@
                 document.getElementById('app-content').classList.remove('hidden');
                 loadData();
             } else {
-                document.getElementById('login-error').classList.remove('hidden');
+                alert("Usuário ou senha incorretos!");
             }
         }
 
@@ -692,6 +646,7 @@
 
         function saveData() { 
             localStorage.setItem('diligence_db', JSON.stringify(db)); 
+            atualizarDatalistComarcas();
         }
 
         function loadData() {
@@ -701,6 +656,7 @@
             if(!db.contatos) db.contatos = [];
             if(!db.caixa) db.caixa = [];
             if(!db.perfil) db.perfil = { nome: '', doc: '', cidade: '', pix: '', email: '', celular: '' };
+            if(!db.comarcasSalvas || db.comarcasSalvas.length === 0) db.comarcasSalvas = COMARCAS_PADRAO;
             if(!db.notas) db.notas = '';
             
             document.getElementById('perfil-nome').value = db.perfil.nome || '';
@@ -711,6 +667,7 @@
             document.getElementById('perfil-celular').value = db.perfil.celular || '';
             document.getElementById('bloco-notas').value = db.notas || '';
 
+            atualizarDatalistComarcas();
             renderAtos();
             renderContatos();
             renderCaixa();
@@ -718,112 +675,184 @@
             renderRelatorios();
         }
 
-        /* --- CÁLCULO DAS VERBAS RESCISÓRIAS TRABALHISTAS --- */
+        /* --- ATUALIZA E PREENCHE O AUTOCOMPLETAR DAS COMARCAS --- */
+        function atualizarDatalistComarcas() {
+            const datalist = document.getElementById('lista-cidades-comarcas');
+            if (!datalist) return;
+            datalist.innerHTML = '';
+            
+            db.comarcasSalvas.forEach(cidade => {
+                const opt = document.createElement('option');
+                opt.value = cidade;
+                datalist.appendChild(opt);
+            });
+        }
+
+        function adicionarNovaComarcaAuto(cidade) {
+            if (cidade && !db.comarcasSalvas.includes(cidade)) {
+                db.comarcasSalvas.push(cidade);
+                saveData();
+            }
+        }
+
+        /* --- CHECKLIST E E-MAIL --- */
+        function abrirModalChecklist(atoId) {
+            const ato = db.atos.find(a => a.id === atoId);
+            if (!ato) return;
+
+            document.getElementById('chk-ato-id').value = ato.id;
+            document.getElementById('chk-email').value = db.perfil.email || EMAIL_CORTEZ;
+            document.getElementById('chk-nome-doc').value = `${db.perfil.nome || ''} (${db.perfil.doc || ''})`;
+            document.getElementById('chk-celular').value = db.perfil.celular || '';
+            document.getElementById('chk-processo').value = ato.processo;
+            document.getElementById('chk-cidade').value = ato.cidade || db.perfil.cidade || '';
+            document.getElementById('chk-pix').value = db.perfil.pix || '';
+            document.getElementById('chk-valor').value = `R$ ${ato.valor.toFixed(2)}`;
+            document.getElementById('chk-obs').value = ato.checklistObs || '';
+
+            imagemAtaChecklistTemp = ato.ataImg || null;
+            const previewContainer = document.getElementById('chk-preview-ata-container');
+            const txtStatus = document.getElementById('chk-status-ata-texto');
+
+            if (imagemAtaChecklistTemp) {
+                document.getElementById('chk-img-preview-ata').src = imagemAtaChecklistTemp;
+                txtStatus.innerText = "✓ Documento da ATA Importado da Pauta:";
+                previewContainer.classList.remove('hidden');
+            } else {
+                previewContainer.classList.add('hidden');
+            }
+
+            document.getElementById('modal-checklist').classList.remove('hidden');
+        }
+
+        function fecharModalChecklist() { document.getElementById('modal-checklist').classList.add('hidden'); }
+
+        function enviarChecklistWhatsApp() {
+            const atoId = parseInt(document.getElementById('chk-ato-id').value);
+            const obs = document.getElementById('chk-obs').value.trim();
+            const ato = db.atos.find(a => a.id === atoId);
+
+            if (ato) {
+                ato.checklistObs = obs;
+                if (imagemAtaChecklistTemp) ato.ataImg = imagemAtaChecklistTemp;
+                saveData();
+            }
+
+            const texto = `DILIGENCE.BR - CHECKLIST PÓS-AUDIÊNCIA\n\nProcesso: ${document.getElementById('chk-processo').value}\nCidade: ${document.getElementById('chk-cidade').value}\nObs: "${obs}"\nAnexo ATA: ${imagemAtaChecklistTemp ? '✓ Anexado' : '❌ Sem Foto'}`;
+            fecharModalChecklist();
+            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(texto)}`);
+        }
+
+        function enviarChecklistEmail() {
+            const emailDestino = document.getElementById('chk-email').value || EMAIL_CORTEZ;
+            const processo = document.getElementById('chk-processo').value;
+            const cidade = document.getElementById('chk-cidade').value;
+            const obs = document.getElementById('chk-obs').value;
+            const valor = document.getElementById('chk-valor').value;
+
+            const assunto = encodeURIComponent(`CHECKLIST PÓS-AUDIÊNCIA - PROC: ${processo}`);
+            const corpo = encodeURIComponent(`DILIGENCE.BR - CHECKLIST PÓS-AUDIÊNCIA\n\nProcesso: ${processo}\nCidade: ${cidade}\nValor: ${valor}\nObservações: ${obs}\n\nAnexo ATA disponível no sistema.`);
+
+            fecharModalChecklist();
+            window.location.href = `mailto:${emailDestino}?subject=${assunto}&body=${corpo}`;
+        }
+
+        function saveAto(e) {
+            e.preventDefault();
+            const statusSel = document.getElementById('ato-status-select').value;
+            if(!statusSel) return alert('Selecione o status!');
+
+            const cidadeValor = document.getElementById('ato-cidade').value.trim();
+            adicionarNovaComarcaAuto(cidadeValor);
+
+            db.atos.push({
+                id: Date.now(),
+                processo: document.getElementById('ato-processo').value.trim(),
+                cliente: document.getElementById('ato-cliente').value.trim(),
+                data: document.getElementById('ato-data').value,
+                vencimento: document.getElementById('ato-vencimento').value,
+                cidade: cidadeValor,
+                valor: parseFloat(document.getElementById('ato-valor').value),
+                status: statusSel,
+                ataImg: tempAtaBase64Pauta || null,
+                checklistObs: ''
+            });
+
+            saveData();
+            document.getElementById('form-ato').reset();
+            document.getElementById('preview-ata-container').classList.add('hidden');
+            tempAtaBase64Pauta = null;
+            renderAtos();
+            renderFinanceiro();
+            renderRelatorios();
+            alert('Ato e Cidade salvos com sucesso!');
+        }
+
+        function savePerfil(e) {
+            e.preventDefault();
+            const cidadePerfil = document.getElementById('perfil-cidade').value.trim();
+            adicionarNovaComarcaAuto(cidadePerfil);
+
+            db.perfil = {
+                nome: document.getElementById('perfil-nome').value,
+                doc: document.getElementById('perfil-doc').value,
+                cidade: cidadePerfil,
+                pix: document.getElementById('perfil-pix').value,
+                email: document.getElementById('perfil-email').value,
+                celular: document.getElementById('perfil-celular').value
+            };
+            saveData();
+            alert('Perfil salvo!');
+        }
+
+        /* --- DEMAIS CÁLCULOS E NOTAS --- */
         function calcularRescisaoExata() {
             const salario = parseFloat(document.getElementById('calc-salario').value) || 0;
             const diasMes = parseInt(document.getElementById('calc-dias-mes').value) || 0;
             const meses13 = parseInt(document.getElementById('calc-meses-13').value) || 0;
             const mesesFerias = parseInt(document.getElementById('calc-meses-ferias').value) || 0;
-            const tipoDemissao = document.getElementById('calc-tipo-demissao').value;
-            const avisoPrevio = document.getElementById('calc-aviso-previo').value;
 
-            if (salario <= 0) {
-                alert("Por favor, digite o valor do salário bruto.");
-                return;
-            }
+            if (salario <= 0) return alert("Digite o salário bruto.");
 
             const saldoSalario = (salario / 30) * diasMes;
-            const valorAviso = (avisoPrevio === 'sim' && tipoDemissao === 'sem_justa_causa') ? salario : 0;
             const valor13 = (salario / 12) * meses13;
-            const valorFeriasBrutas = (salario / 12) * mesesFerias;
-            const valorTercoFerias = valorFeriasBrutas / 3;
-            const totalBruto = saldoSalario + valorAviso + valor13 + valorFeriasBrutas + valorTercoFerias;
+            const valorFerias = (salario / 12) * mesesFerias;
+            const terco = valorFerias / 3;
+            const total = saldoSalario + valor13 + valorFerias + terco;
 
             const box = document.getElementById('calc-resultado');
             box.classList.remove('hidden');
             box.innerHTML = `
-                <strong class="text-brand-red block border-b pb-1 font-bold">RESUMO DAS VERBAS CALCULADAS:</strong>
-                <div class="flex justify-between"><span>• Saldo de Salário (${diasMes} dias):</span> <strong>R$ ${saldoSalario.toFixed(2)}</strong></div>
-                <div class="flex justify-between"><span>• Aviso Prévio Indenizado:</span> <strong>R$ ${valorAviso.toFixed(2)}</strong></div>
-                <div class="flex justify-between"><span>• 13º Proporcional (${meses13}/12):</span> <strong>R$ ${valor13.toFixed(2)}</strong></div>
-                <div class="flex justify-between"><span>• Férias Proporcionais (${mesesMeses || mesesFerias}/12):</span> <strong>R$ ${valorFeriasBrutas.toFixed(2)}</strong></div>
-                <div class="flex justify-between"><span>• 1/3 Constitucional de Férias:</span> <strong>R$ ${valorTercoFerias.toFixed(2)}</strong></div>
-                <div class="flex justify-between border-t pt-1 font-extrabold text-green-600 text-sm">
-                    <span>TOTAL BRUTO RESCISÓRIO:</span> <span>R$ ${totalBruto.toFixed(2)}</span>
-                </div>
+                <strong class="text-brand-red block border-b pb-1 font-bold">DETALHAMENTO DA RESCISÃO:</strong>
+                <div>• Saldo de Salário (${diasMes}d): <strong>R$ ${saldoSalario.toFixed(2)}</strong></div>
+                <div>• 13º Proporcional (${meses13}/12): <strong>R$ ${valor13.toFixed(2)}</strong></div>
+                <div>• Férias Proporcionais (${mesesFerias}/12): <strong>R$ ${valorFerias.toFixed(2)}</strong></div>
+                <div>• 1/3 das Férias: <strong>R$ ${terco.toFixed(2)}</strong></div>
+                <div class="border-t pt-1 font-black text-green-600 text-sm">TOTAL BRUTO: R$ ${total.toFixed(2)}</div>
             `;
         }
 
-        /* --- RECURSOS DO BLOCO DE NOTAS --- */
-        function saveNotas() {
-            db.notas = document.getElementById('bloco-notas').value;
-            saveData();
-        }
-
-        function compartilharNotasWhats() {
-            const notasTxt = document.getElementById('bloco-notas').value.trim();
-            if(!notasTxt) return alert("O Bloco de Notas está vazio!");
-            const texto = `DILIGENCE.BR - NOTAS DA PAUTA:\n\n${notasTxt}`;
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`);
-        }
-
-        function iniciarDitadoVoz(fieldId) {
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                alert("O seu navegador não suporta ditado por voz.");
-                return;
-            }
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'pt-BR';
-            recognition.start();
-
-            recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript;
-                const field = document.getElementById(fieldId);
-                field.value = field.value ? field.value + ' ' + transcript : transcript;
-                if(fieldId === 'bloco-notas') saveNotas();
+        function saveNotas() { db.notas = document.getElementById('bloco-notas').value; saveData(); }
+        function compartilharNotasWhats() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent('DILIGENCE.BR - NOTAS:\n\n' + db.notas)}`); }
+        
+        function iniciarDitadoVoz(id) {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return alert("Voz não suportada.");
+            const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const rec = new Speech();
+            rec.lang = 'pt-BR';
+            rec.start();
+            rec.onresult = (e) => {
+                const el = document.getElementById(id);
+                el.value = el.value ? el.value + ' ' + e.results[0][0].transcript : e.results[0][0].transcript;
+                if(id === 'bloco-notas') saveNotas();
             };
         }
 
-        /* --- CALCULADORA MATEMÁTICA SIMPLES --- */
-        function calcComumAdd(val) {
-            calcComumExpressao += val;
-            document.getElementById('calc-comum-visor').innerText = calcComumExpressao;
-        }
-        function calcComumLimpar() {
-            calcComumExpressao = '';
-            document.getElementById('calc-comum-visor').innerText = '0';
-        }
-        function calcComumCalcular() {
-            try {
-                const res = eval(calcComumExpressao);
-                document.getElementById('calc-comum-visor').innerText = res;
-                calcComumExpressao = res.toString();
-            } catch (e) {
-                document.getElementById('calc-comum-visor').innerText = 'Erro';
-                calcComumExpressao = '';
-            }
-        }
-
-        /* --- FUNÇÕES DE LIMPEZA E BACKUP --- */
-        function limparPerfil() {
-            if (confirm("Deseja realmente limpar todos os dados do seu perfil profissional?")) {
-                db.perfil = { nome: '', doc: '', cidade: '', pix: '', email: '', celular: '' };
-                document.getElementById('form-perfil').reset();
-                saveData();
-                alert("Dados do perfil limpos!");
-            }
-        }
-
-        function confirmarZerarTudoGeral() {
-            if (confirm("ATENÇÃO: Deseja ZERAR completamente o aplicativo? Todos os atos, contatos, caixa e perfil serão apagados permanentemente.")) {
-                localStorage.removeItem('diligence_db');
-                db = { perfil: { nome: '', doc: '', cidade: '', pix: '', email: '', celular: '' }, atos: [], contatos: [], caixa: [], notas: '' };
-                saveData();
-                loadData();
-                fecharModalBackup();
-                alert("Aplicativo zerado com sucesso!");
-            }
+        function calcComumAdd(v) { calcComumExpressao += v; document.getElementById('calc-comum-visor').innerText = calcComumExpressao; }
+        function calcComumLimpar() { calcComumExpressao = ''; document.getElementById('calc-comum-visor').innerText = '0'; }
+        function calcComumCalcular() { 
+            try { const r = eval(calcComumExpressao); document.getElementById('calc-comum-visor').innerText = r; calcComumExpressao = r.toString(); } 
+            catch(e) { document.getElementById('calc-comum-visor').innerText = 'Erro'; calcComumExpressao = ''; }
         }
 
         function previewImagemAta(evt) {
@@ -837,101 +866,6 @@
                 };
                 reader.readAsDataURL(file);
             }
-        }
-
-        function saveAto(e) {
-            e.preventDefault();
-            const statusSel = document.getElementById('ato-status-select').value;
-            if(!statusSel) return alert('Selecione o status!');
-
-            const novoAto = {
-                id: Date.now(),
-                processo: document.getElementById('ato-processo').value.trim(),
-                cliente: document.getElementById('ato-cliente').value.trim(),
-                data: document.getElementById('ato-data').value,
-                vencimento: document.getElementById('ato-vencimento').value,
-                cidade: document.getElementById('ato-cidade').value.trim(),
-                valor: parseFloat(document.getElementById('ato-valor').value),
-                status: statusSel,
-                ataImg: tempAtaBase64Pauta || null,
-                checklistObs: ''
-            };
-
-            db.atos.push(novoAto);
-            saveData();
-            document.getElementById('form-ato').reset();
-            document.getElementById('preview-ata-container').classList.add('hidden');
-            tempAtaBase64Pauta = null;
-
-            renderAtos();
-            renderFinanceiro();
-            renderRelatorios();
-            alert('Ato cadastrado com sucesso!');
-        }
-
-        function renderAtos() {
-            const container = document.getElementById('lista-atos');
-            if (!container) return;
-            container.innerHTML = '';
-
-            if (db.atos.length === 0) {
-                container.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs bg-white dark:bg-gray-800 rounded-xl border">Nenhum ato cadastrado.</div>';
-                return;
-            }
-
-            db.atos.forEach((ato) => {
-                const card = document.createElement('div');
-                card.className = "border dark:border-gray-700 bg-white dark:bg-gray-800 p-3 rounded-xl text-xs space-y-2 shadow-sm";
-                card.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <strong class="text-sm">Proc: ${ato.processo}</strong> - ${ato.cliente}<br>
-                            <span class="text-gray-400"><i class="fa-regular fa-clock mr-1"></i>${new Date(ato.data).toLocaleString('pt-BR')} | 📍 ${ato.cidade || 'N/I'}</span>
-                        </div>
-                        <div class="text-right">
-                            <span class="font-bold text-brand-red text-sm block">R$ ${ato.valor.toFixed(2)}</span>
-                            <span class="uppercase font-bold text-[10px] px-1.5 py-0.5 rounded ${ato.status === 'pago' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${ato.status}</span>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center pt-2 border-t">
-                        <button onclick="abrirModalChecklist(${ato.id})" class="inline-flex items-center gap-1 bg-brand-red text-white px-2.5 py-1 rounded-lg text-[11px] font-bold hover:bg-brand-darkred shadow">
-                            <i class="fa-solid fa-list-check"></i> 📋 Checklist Pós-Audiência
-                        </button>
-                        <button onclick="excluirAtoPauta(${ato.id})" class="text-red-600 font-bold hover:underline text-[11px] flex items-center gap-1 bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
-                            <i class="fa-solid fa-trash-can"></i> Excluir
-                        </button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function abrirModalChecklist(atoId) {
-            const ato = db.atos.find(a => a.id === atoId);
-            if (!ato) return;
-
-            document.getElementById('chk-ato-id').value = ato.id;
-            document.getElementById('chk-processo').value = ato.processo;
-            document.getElementById('chk-cidade').value = ato.cidade || db.perfil.cidade || '';
-            document.getElementById('chk-obs').value = ato.checklistObs || '';
-
-            imagemAtaChecklistTemp = ato.ataImg || null;
-            const previewContainer = document.getElementById('chk-preview-ata-container');
-            const txtStatus = document.getElementById('chk-status-ata-texto');
-
-            if (imagemAtaChecklistTemp) {
-                document.getElementById('chk-img-preview-ata').src = imagemAtaChecklistTemp;
-                txtStatus.innerText = "✓ ATA Importada da Pauta:";
-                previewContainer.classList.remove('hidden');
-            } else {
-                previewContainer.classList.add('hidden');
-            }
-
-            document.getElementById('modal-checklist').classList.remove('hidden');
-        }
-
-        function fecharModalChecklist() {
-            document.getElementById('modal-checklist').classList.add('hidden');
         }
 
         function previewImagemAtaChecklist(evt) {
@@ -948,25 +882,38 @@
             }
         }
 
-        function enviarChecklistWhatsApp() {
-            const atoId = parseInt(document.getElementById('chk-ato-id').value);
-            const obs = document.getElementById('chk-obs').value.trim();
-            const ato = db.atos.find(a => a.id === atoId);
+        function renderAtos() {
+            const container = document.getElementById('lista-atos');
+            if (!container) return;
+            container.innerHTML = '';
 
-            if (ato) {
-                ato.checklistObs = obs;
-                if (imagemAtaChecklistTemp) ato.ataImg = imagemAtaChecklistTemp;
-                saveData();
-                renderAtos();
-            }
-
-            const texto = `DILIGENCE.BR - CHECKLIST PÓS-AUDIÊNCIA\n\nProcesso: ${document.getElementById('chk-processo').value}\nCidade: ${document.getElementById('chk-cidade').value}\nObs: "${obs}"\nAnexo ATA: ${imagemAtaChecklistTemp ? '✓ Anexado' : '❌ Sem Foto'}`;
-            fecharModalChecklist();
-            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(texto)}`);
+            db.atos.forEach((ato) => {
+                const card = document.createElement('div');
+                card.className = "border dark:border-gray-700 bg-white dark:bg-gray-800 p-3 rounded-xl text-xs space-y-2 shadow-sm";
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <strong class="text-sm">Proc: ${ato.processo}</strong> - ${ato.cliente}<br>
+                            <span class="text-gray-400">📍 ${ato.cidade || 'N/I'}</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-bold text-brand-red text-sm block">R$ ${ato.valor.toFixed(2)}</span>
+                            <span class="uppercase font-bold text-[10px] px-1.5 py-0.5 rounded ${ato.status === 'pago' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${ato.status}</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t">
+                        <button onclick="abrirModalChecklist(${ato.id})" class="inline-flex items-center gap-1 bg-brand-red text-white px-2.5 py-1 rounded-lg text-[11px] font-bold">
+                            <i class="fa-solid fa-list-check"></i> 📋 Checklist Pós-Audiência
+                        </button>
+                        <button onclick="excluirAtoPauta(${ato.id})" class="text-red-600 font-bold text-[11px]">Excluir</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         }
 
         function excluirAtoPauta(id) {
-            if (confirm("Deseja realmente excluir este ato?")) {
+            if (confirm("Excluir ato?")) {
                 db.atos = db.atos.filter(a => a.id !== id);
                 saveData();
                 renderAtos();
@@ -976,34 +923,24 @@
         }
 
         function exportarExcelMultiAbas() {
-            if (typeof XLSX === 'undefined') return alert("Carregando motor do Excel...");
+            if (typeof XLSX === 'undefined') return alert("Carregando Excel...");
             const wb = XLSX.utils.book_new();
-
-            const wsPauta = XLSX.utils.json_to_sheet(db.atos.length ? db.atos : [{"Aviso": "Sem dados"}]);
-            XLSX.utils.book_append_sheet(wb, wsPauta, "Pauta");
-
-            const wsCaixa = XLSX.utils.json_to_sheet(db.caixa.length ? db.caixa : [{"Aviso": "Sem dados"}]);
-            XLSX.utils.book_append_sheet(wb, wsCaixa, "Livro Caixa");
-
-            const wsContatos = XLSX.utils.json_to_sheet(db.contatos.length ? db.contatos : [{"Aviso": "Sem dados"}]);
-            XLSX.utils.book_append_sheet(wb, wsContatos, "Agenda");
-
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.atos.length ? db.atos : [{Aviso: "Sem dados"}]), "Pauta");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.caixa.length ? db.caixa : [{Aviso: "Sem dados"}]), "Caixa");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.contatos.length ? db.contatos : [{Aviso: "Sem dados"}]), "Agenda");
             XLSX.writeFile(wb, `Relatorio_DILIGENCE_${new Date().toISOString().split('T')[0]}.xlsx`);
         }
 
         function fazerBackupCelularJSON() {
             const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
+            a.href = URL.createObjectURL(blob);
             a.download = `Backup_DILIGENCE_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
-            URL.revokeObjectURL(url);
         }
 
         function enviarBackupEmailPessoal() {
-            const dataStr = encodeURIComponent(JSON.stringify(db));
-            window.location.href = `mailto:${db.perfil.email || ''}?subject=Backup DILIGENCE.BR&body=${dataStr}`;
+            window.location.href = `mailto:${db.perfil.email || EMAIL_CORTEZ}?subject=Backup DILIGENCE.BR&body=${encodeURIComponent(JSON.stringify(db))}`;
         }
 
         function acionarRestauracao() { document.getElementById('input-restaurar-file').click(); }
@@ -1017,21 +954,18 @@
                         db = JSON.parse(evt.target.result);
                         saveData();
                         loadData();
-                        alert("Backup restaurado com sucesso!");
-                    } catch (err) { alert("Erro ao ler o arquivo de backup."); }
+                        alert("Backup restaurado!");
+                    } catch (err) { alert("Erro no arquivo de backup."); }
                 };
                 reader.readAsText(file);
             }
         }
 
         function renderFinanceiro() {
-            let entradas = 0, pendentes = 0;
-            db.atos.forEach(ato => {
-                if (ato.status === 'pago') entradas += ato.valor;
-                else pendentes += ato.valor;
-            });
-            document.getElementById('fin-entradas').innerText = `R$ ${entradas.toFixed(2)}`;
-            document.getElementById('fin-pendentes').innerText = `R$ ${pendentes.toFixed(2)}`;
+            let e = 0, p = 0;
+            db.atos.forEach(a => a.status === 'pago' ? e += a.valor : p += a.valor);
+            document.getElementById('fin-entradas').innerText = `R$ ${e.toFixed(2)}`;
+            document.getElementById('fin-pendentes').innerText = `R$ ${p.toFixed(2)}`;
         }
 
         function renderCaixa() {
@@ -1047,41 +981,18 @@
         }
 
         function renderRelatorios() {
-            let totalBruto = 0, totalPago = 0;
-            db.atos.forEach(a => {
-                totalBruto += a.valor;
-                if(a.status === 'pago') totalPago += a.valor;
-            });
-            document.getElementById('relatorio-valor-total').innerText = `R$ ${totalBruto.toFixed(2)}`;
-            document.getElementById('relatorio-valor-pago').innerText = `R$ ${totalPago.toFixed(2)}`;
-        }
-
-        function savePerfil(e) {
-            e.preventDefault();
-            db.perfil = {
-                nome: document.getElementById('perfil-nome').value,
-                doc: document.getElementById('perfil-doc').value,
-                cidade: document.getElementById('perfil-cidade').value,
-                pix: document.getElementById('perfil-pix').value,
-                email: document.getElementById('perfil-email').value,
-                celular: document.getElementById('perfil-celular').value
-            };
-            saveData();
-            alert('Perfil salvo com sucesso!');
+            let t = 0, p = 0;
+            db.atos.forEach(a => { t += a.valor; if(a.status === 'pago') p += a.valor; });
+            document.getElementById('relatorio-valor-total').innerText = `R$ ${t.toFixed(2)}`;
+            document.getElementById('relatorio-valor-pago').innerText = `R$ ${p.toFixed(2)}`;
         }
 
         function saveContato(e) {
             e.preventDefault();
-            db.contatos.push({
-                id: Date.now(),
-                nome: document.getElementById('ct-nome').value,
-                oab: document.getElementById('ct-oab').value,
-                celular: document.getElementById('ct-celular').value
-            });
+            db.contatos.push({ id: Date.now(), nome: document.getElementById('ct-nome').value, oab: document.getElementById('ct-oab').value, celular: document.getElementById('ct-celular').value });
             saveData();
             document.getElementById('form-contato').reset();
             renderContatos();
-            alert('Contato salvo!');
         }
 
         function renderContatos() {
@@ -1096,33 +1007,24 @@
             });
         }
 
-        function excluirContato(id) {
-            db.contatos = db.contatos.filter(c => c.id !== id);
-            saveData();
-            renderContatos();
-        }
+        function excluirContato(id) { db.contatos = db.contatos.filter(c => c.id !== id); saveData(); renderContatos(); }
 
         function saveLancamentoCaixa(e) {
             e.preventDefault();
-            db.caixa.push({
-                id: Date.now(),
-                data: document.getElementById('caixa-data').value,
-                tipo: document.getElementById('caixa-tipo').value,
-                descricao: document.getElementById('caixa-descricao').value,
-                valor: parseFloat(document.getElementById('caixa-valor').value)
-            });
+            db.caixa.push({ id: Date.now(), data: document.getElementById('caixa-data').value, tipo: document.getElementById('caixa-tipo').value, descricao: document.getElementById('caixa-descricao').value, valor: parseFloat(document.getElementById('caixa-valor').value) });
             saveData();
             document.getElementById('form-caixa').reset();
             renderCaixa();
-            alert('Transação registrada!');
         }
 
         function fecharModalBackup() { document.getElementById('modal-backup').classList.add('hidden'); }
         function abrirModalBackup() { document.getElementById('modal-backup').classList.remove('hidden'); }
         function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
+        function limparPerfil() { if(confirm("Limpar Perfil?")) { db.perfil = {nome:'',doc:'',cidade:'',pix:'',email:'',celular:''}; saveData(); loadData(); } }
         function limparAbaAtos() { if(confirm("Limpar Pauta?")) { db.atos = []; saveData(); renderAtos(); } }
         function limparContatos() { if(confirm("Limpar Agenda?")) { db.contatos = []; saveData(); renderContatos(); } }
         function limparCaixa() { if(confirm("Limpar Caixa?")) { db.caixa = []; saveData(); renderCaixa(); } }
+        function confirmarZerarTudoGeral() { if(confirm("Zerar aplicativo por completo?")) { localStorage.removeItem('diligence_db'); db = {perfil:{nome:'',doc:'',cidade:'',pix:'',email:'',celular:''},atos:[],contatos:[],caixa:[],comarcasSalvas:COMARCAS_PADRAO,notas:''}; saveData(); loadData(); fecharModalBackup(); } }
     </script>
 </body>
 </html>
