@@ -21,7 +21,10 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- BIBLIOTECAS DE EXPORTAÇÃO (EXCEL E PDF) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -197,8 +200,8 @@
                         <label class="text-xs font-semibold">E-mail do Correspondente</label>
                         <input type="email" id="perfil-email" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                     </div>
-                    <button type="submit" class="w-full bg-brand-red text-white py-2 rounded-lg font-bold text-sm shadow flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-floppy-disk"></i> Salvar Dados do Perfil
+                    <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-floppy-disk"></i> SALVAR DADOS DO PERFIL
                     </button>
                 </form>
 
@@ -270,12 +273,12 @@
                         <input type="url" id="ato-link" placeholder="https://teams.microsoft.com/..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
                     </div>
 
-                    <!-- FOTO OU ANEXO COM OPÇÕES DE ENVIAR PARA DILIGENCE.BR E E-MAIL -->
+                    <!-- FOTO COM COMPRESSÃO ANTI-CRASH E OPÇÕES DE COMPARTILHAMENTO -->
                     <div class="p-3 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-2">
                         <label class="text-xs font-bold text-gray-700 dark:text-gray-200 block">
                             <i class="fa-solid fa-camera text-brand-red"></i> Anexar/Tirar Foto da ATA ou Galeria:
                         </label>
-                        <input type="file" id="ato-ata-file" accept="image/*" capture="environment" onchange="previewImagemAta(event)" class="w-full p-1 border rounded text-xs bg-white dark:bg-gray-800">
+                        <input type="file" id="ato-ata-file" accept="image/*" capture="environment" onchange="previewECompressImagemAta(event)" class="w-full p-1 border rounded text-xs bg-white dark:bg-gray-800">
                         
                         <div id="preview-ata-container" class="hidden space-y-2 pt-2 border-t border-gray-200 dark:border-gray-600">
                             <div class="text-center">
@@ -315,7 +318,7 @@
 
                     <div class="flex gap-2">
                         <button type="submit" class="flex-1 bg-brand-red text-white py-3 rounded-xl font-black text-sm shadow hover:bg-brand-darkred flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-plus-circle"></i> INSERIR DILIGÊNCIA NA PAUTA
+                            <i class="fa-solid fa-floppy-disk"></i> SALVAR DILIGÊNCIA NA PAUTA
                         </button>
                     </div>
                 </form>
@@ -324,8 +327,7 @@
                     <div class="flex justify-between items-center bg-gray-200 dark:bg-gray-700 p-2 rounded-lg">
                         <span class="font-bold text-xs">Pauta de Atos Cadastrados</span>
                         <div class="flex gap-1 text-[10px] font-bold">
-                            <button onclick="selecionarTodos('atos', true)" class="bg-gray-800 text-white px-2 py-1 rounded">Todos</button>
-                            <button onclick="selecionarTodos('atos', false)" class="bg-gray-500 text-white px-2 py-1 rounded">Limpar</button>
+                            <button onclick="gerarPDFPautaGeral()" class="bg-red-700 text-white px-2 py-1 rounded shadow flex items-center gap-1"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
                         </div>
                     </div>
                     <div id="lista-atos" class="space-y-2"></div>
@@ -355,7 +357,7 @@
                         <textarea id="ct-obs" rows="2" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs"></textarea>
                     </div>
                     <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-user-plus"></i> INSERIR NOVO CONTATO NA AGENDA
+                        <i class="fa-solid fa-floppy-disk"></i> SALVAR CONTATO NA AGENDA
                     </button>
                 </form>
 
@@ -422,7 +424,7 @@
                         <input type="text" id="caixa-descricao" required placeholder="Ex: Uber Fórum, Cópias..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
                     </div>
                     <button type="submit" class="w-full bg-brand-red text-white py-2 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-plus-circle"></i> INSERIR LANÇAMENTO NO CAIXA
+                        <i class="fa-solid fa-floppy-disk"></i> SALVAR LANÇAMENTO NO CAIXA
                     </button>
                 </form>
 
@@ -476,9 +478,14 @@
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border space-y-3">
                     <div class="flex justify-between items-center border-b pb-1">
                         <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200">Bloco de Notas por Voz</h3>
-                        <button type="button" onclick="iniciarDitadoVoz('bloco-notas')" class="bg-brand-red text-white px-2 py-1 rounded text-xs font-bold shadow">
-                            <i class="fa-solid fa-microphone"></i> Ditar
-                        </button>
+                        <div class="flex gap-1">
+                            <button type="button" onclick="iniciarDitadoVoz('bloco-notas')" class="bg-brand-red text-white px-2 py-1 rounded text-xs font-bold shadow">
+                                <i class="fa-solid fa-microphone"></i> Ditar
+                            </button>
+                            <button type="button" onclick="saveNotas()" class="bg-green-600 text-white px-2 py-1 rounded text-xs font-bold shadow">
+                                <i class="fa-solid fa-floppy-disk"></i> Salvar
+                            </button>
+                        </div>
                     </div>
                     <textarea id="bloco-notas" rows="3" placeholder="Anote orientações..." class="w-full p-2 border rounded dark:bg-gray-700 text-xs" oninput="saveNotas()"></textarea>
                 </div>
@@ -531,16 +538,17 @@
                     </div>
 
                     <div class="flex gap-2">
-                        <button onclick="calcularRescisaoCompleta()" class="flex-1 bg-brand-red text-white py-2 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
+                        <button onclick="calcularRescisaoCompleta()" class="flex-1 bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
                             <i class="fa-solid fa-calculator"></i> GERAR MINUTA & DEMONSTRATIVO
                         </button>
                     </div>
 
                     <div id="rescisao-resultado" class="hidden p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-xs font-mono space-y-1 border"></div>
 
-                    <div class="grid grid-cols-3 gap-2 text-xs font-bold pt-2">
+                    <div class="grid grid-cols-4 gap-2 text-xs font-bold pt-2">
                         <button onclick="compartilharRescisao('whats')" class="bg-green-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-brands fa-whatsapp"></i> Whats</button>
                         <button onclick="compartilharRescisao('email')" class="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-envelope"></i> E-mail</button>
+                        <button onclick="compartilharRescisao('pdf')" class="bg-red-700 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-file-pdf"></i> PDF</button>
                         <button onclick="compartilharRescisao('csv')" class="bg-gray-800 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-file-csv"></i> CSV</button>
                     </div>
                 </div>
@@ -562,9 +570,14 @@
                     </div>
                 </div>
 
-                <button onclick="exportarExcelMultiAbas()" class="w-full bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs shadow flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-file-excel text-base"></i> EXPORTAR PLANILHA OFICIAL EXCEL (.XLSX)
-                </button>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="exportarExcelMultiAbas()" class="bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs shadow flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-excel text-base"></i> EXCEL (.XLSX)
+                    </button>
+                    <button onclick="gerarPDFRelatorioConsolidado()" class="bg-red-700 text-white py-2.5 rounded-xl font-extrabold text-xs shadow flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-pdf text-base"></i> RELATÓRIO PDF
+                    </button>
+                </div>
             </section>
 
             <!-- ABA 8: CENTRAL DE MANUAIS -->
@@ -621,7 +634,7 @@
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-lg w-full space-y-4 shadow-2xl border-2 border-brand-red my-8">
             <div class="flex justify-between items-center border-b pb-2">
                 <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-list-check"></i> CHECKLIST PÓS-AUDIÊNCIA</h3>
-                <button onclick="fecharModalChecklist()" class="text-gray-400 font-bold">&times;</button>
+                <button onclick="fecharModalChecklist()" class="text-gray-400 font-bold me-2">&times;</button>
             </div>
             <form id="form-checklist" class="space-y-3 text-xs">
                 <input type="hidden" id="chk-ato-id">
@@ -633,9 +646,9 @@
                     <label class="font-extrabold text-brand-red">Feedback da Audiência (Obrigatório):*</label>
                     <textarea id="chk-obs" rows="3" required placeholder="Como foi o ato..." class="w-full p-2 border rounded-lg dark:bg-gray-700 font-semibold"></textarea>
                 </div>
-                <div class="flex gap-2">
-                    <button type="button" onclick="enviarChecklistWhatsApp()" class="flex-1 bg-green-600 text-white py-2.5 rounded-xl font-bold shadow"><i class="fa-brands fa-whatsapp"></i> Whats ADM</button>
-                    <button type="button" onclick="gerarTicketComprovante()" class="bg-gray-800 text-white px-3 py-2.5 rounded-xl font-bold shadow">Ticket</button>
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="enviarChecklistWhatsApp()" class="bg-green-600 text-white py-2.5 rounded-xl font-bold shadow"><i class="fa-brands fa-whatsapp"></i> Whats ADM</button>
+                    <button type="button" onclick="gerarTicketComprovantePDF()" class="bg-red-700 text-white py-2.5 rounded-xl font-bold shadow"><i class="fa-solid fa-file-pdf"></i> Ticket PDF</button>
                 </div>
             </form>
         </div>
@@ -795,19 +808,43 @@
             renderRelatorios();
         }
 
-        function previewImagemAta(evt) {
+        /* COMPRESSÃO REDIMENSIONADA DE FOTO (ANTI-CRASH DE MEMÓRIA) */
+        function previewECompressImagemAta(evt) {
             const file = evt.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    tempAtaBase64Pauta = e.target.result;
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const max_dim = 1000;
+
+                    if (width > height && width > max_dim) {
+                        height = Math.round((height * max_dim) / width);
+                        width = max_dim;
+                    } else if (height > max_dim) {
+                        width = Math.round((width * max_dim) / height);
+                        height = max_dim;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    tempAtaBase64Pauta = canvas.toDataURL('image/jpeg', 0.7);
                     tempAtaDataHoraStr = new Date().toLocaleString('pt-BR');
+
                     document.getElementById('img-preview-ata').src = tempAtaBase64Pauta;
                     document.getElementById('carimbo-data-hora-ata').innerText = `✓ Foto Capturada em: ${tempAtaDataHoraStr}`;
                     document.getElementById('preview-ata-container').classList.remove('hidden');
                 };
-                reader.readAsDataURL(file);
-            }
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
 
         function enviarAtaWhatsADM() {
@@ -863,6 +900,7 @@
             renderFinanceiro();
             renderCaixa();
             renderRelatorios();
+            alert("✅ Diligência salva com sucesso na pauta!");
         }
 
         function renderAtos() {
@@ -994,8 +1032,30 @@
             window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(txt)}`);
         }
 
-        function gerarTicketComprovante() {
-            alert(`🎫 TICKET DE COMPROVAÇÃO DE DILIGÊNCIA\nProc: ${document.getElementById('chk-processo').value}\nStatus: Concluído com Sucesso.`);
+        function gerarTicketComprovantePDF() {
+            const proc = document.getElementById('chk-processo').value;
+            const cli = document.getElementById('chk-cliente').value;
+            const obs = document.getElementById('chk-obs').value;
+
+            const element = document.createElement('div');
+            element.className = "p-6 font-sans border-2 border-red-600 rounded-2xl bg-white text-black space-y-4";
+            element.innerHTML = `
+                <div style="text-align: center; border-bottom: 2px solid #dc2626; padding-bottom: 10px;">
+                    <h1 style="color: #dc2626; font-size: 20px; font-weight: bold;">DILIGENCE.BR</h1>
+                    <p style="font-size: 12px; font-weight: bold;">TICKET DE COMPROVAÇÃO DE DILIGÊNCIA</p>
+                    <p style="font-size: 10px; color: #555;">Data/Hora: ${new Date().toLocaleString('pt-BR')}</p>
+                </div>
+                <div style="font-size: 12px; line-height: 1.6;">
+                    <p><strong>Correspondente:</strong> ${db.perfil.nome || 'N/A'} (${db.perfil.doc || 'N/A'})</p>
+                    <p><strong>Nº do Processo:</strong> ${proc}</p>
+                    <p><strong>Cliente:</strong> ${cli}</p>
+                    <hr style="margin: 10px 0;">
+                    <p><strong>Feedback / Relatório da Audiência:</strong></p>
+                    <p style="background: #f3f4f6; padding: 10px; border-radius: 8px;">${obs || 'Sem observações.'}</p>
+                </div>
+            `;
+
+            html2pdf().set({ margin: 10, filename: `Comprovante_${proc}.pdf`, html2canvas: { scale: 2 } }).from(element).save();
         }
 
         function saveCaixa(e) {
@@ -1006,7 +1066,7 @@
                 valor: parseFloat(document.getElementById('caixa-valor').value),
                 descricao: document.getElementById('caixa-descricao').value.trim()
             });
-            saveData(); document.getElementById('form-caixa').reset(); renderCaixa();
+            saveData(); document.getElementById('form-caixa').reset(); renderCaixa(); alert("✅ Lançamento de caixa salvo!");
         }
 
         function renderCaixa() {
@@ -1111,11 +1171,18 @@
         function compartilharRescisao(tipo) {
             const txt = document.getElementById('rescisao-resultado').innerText;
             if(!txt) return alert('Calcule a rescisão primeiro!');
+            
             if(tipo === 'whats') window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
             if(tipo === 'email') window.open(`mailto:?subject=RescisaoTrabalhista&body=${encodeURIComponent(txt)}`);
             if(tipo === 'csv') {
                 const blob = new Blob([txt], { type: 'text/csv' });
                 const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'rescisao.csv'; a.click();
+            }
+            if(tipo === 'pdf') {
+                const element = document.createElement('div');
+                element.className = "p-6 font-sans border-2 border-red-600 rounded-2xl bg-white text-black space-y-4";
+                element.innerHTML = `<h2 style="color:#dc2626; font-size:18px; font-weight:bold;">DILIGENCE.BR - MINUTA RESCISÓRIA</h2><pre style="font-family:monospace; font-size:12px;">${txt}</pre>`;
+                html2pdf().set({ margin: 10, filename: `Rescisao.pdf` }).from(element).save();
             }
         }
 
@@ -1128,7 +1195,7 @@
                 oab: document.getElementById('ct-oab').value.trim(),
                 obs: document.getElementById('ct-obs').value.trim()
             });
-            saveData(); document.getElementById('form-contato').reset(); renderContatos();
+            saveData(); document.getElementById('form-contato').reset(); renderContatos(); alert("✅ Contato salvo na agenda!");
         }
 
         function renderContatos() {
@@ -1168,7 +1235,7 @@
                 pix: document.getElementById('perfil-pix').value,
                 email: document.getElementById('perfil-email').value
             };
-            saveData(); alert("Perfil salvo!");
+            saveData(); alert("✅ Dados do Perfil salvos!");
         }
 
         function compartilharPerfil(tipo) {
@@ -1185,12 +1252,36 @@
             document.getElementById('relatorio-valor-pendente').innerText = `R$ ${pendente.toFixed(2)}`;
         }
 
+        function gerarPDFPautaGeral() {
+            if (!db.atos || !db.atos.length) return alert("Pauta vazia!");
+            const element = document.createElement('div');
+            element.className = "p-4 font-sans space-y-2 text-black bg-white";
+            let html = `<h2 style="color:#dc2626; font-size:18px; font-weight:bold; border-bottom:2px solid #dc2626; padding-bottom:5px;">PAUTA DE DILIGÊNCIAS - DILIGENCE.BR</h2>`;
+            db.atos.forEach(a => {
+                html += `<div style="border-bottom:1px solid #ccc; padding:8px 0; font-size:12px;"><strong>Proc:</strong> ${a.processo} - ${a.cliente}<br><strong>Data/Hora:</strong> ${a.data} | <strong>Status:</strong> ${a.status.toUpperCase()} | <strong>Valor:</strong> R$ ${a.valor.toFixed(2)}</div>`;
+            });
+            element.innerHTML = html;
+            html2pdf().set({ margin: 10, filename: `Pauta_Diligencias.pdf` }).from(element).save();
+        }
+
+        function gerarPDFRelatorioConsolidado() {
+            const element = document.createElement('div');
+            element.className = "p-6 font-sans bg-white text-black space-y-4";
+            element.innerHTML = `
+                <h2 style="color:#dc2626; font-size:18px; font-weight:bold; border-bottom:2px solid #dc2626; padding-bottom:5px;">RELATÓRIO FINANCEIRO CONSOLIDADO - DILIGENCE.BR</h2>
+                <p><strong>Total Recebido (Pago):</strong> ${document.getElementById('relatorio-valor-pago').innerText}</p>
+                <p><strong>Total A Receber (Pendente):</strong> ${document.getElementById('relatorio-valor-pendente').innerText}</p>
+                <p><strong>Total de Atos Registrados:</strong> ${db.atos.length}</p>
+            `;
+            html2pdf().set({ margin: 10, filename: `Relatorio_Financeiro.pdf` }).from(element).save();
+        }
+
         function iniciarDitadoVoz(id) {
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return alert("Ditado não suportado.");
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const rec = new SpeechRecognition();
             rec.lang = 'pt-BR'; rec.start();
-            rec.onresult = (e) => { document.getElementById(id).value += ' ' + e.results[0][0].transcript; };
+            rec.onresult = (e) => { document.getElementById(id).value += ' ' + e.results[0][0].transcript; saveNotas(); };
         }
 
         function saveNotas() { db.notas = document.getElementById('bloco-notas').value; saveData(); }
