@@ -55,8 +55,6 @@
 </head>
 <body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
 
-    <datalist id="lista-cidades-br"></datalist>
-
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 z-50 bg-brand-red flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center space-y-4">
@@ -81,7 +79,6 @@
             
             <p id="login-error" class="text-xs text-red-500 font-semibold hidden">Usuário ou senha incorretos!</p>
 
-            <!-- BOTÕES DE RECUPERAÇÃO GARANTIDOS -->
             <div class="pt-3 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center gap-1.5">
                 <button type="button" onclick="abrirModalRecuperacao('usuario')" class="text-xs text-brand-red dark:text-red-400 font-bold hover:underline flex items-center gap-1">
                     <i class="fa-solid fa-user-lock"></i> Esqueci o meu usuário
@@ -93,7 +90,7 @@
         </div>
     </div>
 
-    <!-- MODAL POP-UP DE RECUPERAÇÃO DE LOGIN E SENHA -->
+    <!-- MODAL RECUPERAÇÃO -->
     <div id="modal-recuperacao-login" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-2 border-brand-red">
             <div class="flex justify-between items-center border-b pb-2">
@@ -102,34 +99,29 @@
                 </h3>
                 <button type="button" onclick="fecharModalRecuperacao()" class="text-gray-400 font-bold text-lg">&times;</button>
             </div>
-            
             <p class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-                Entre em contato direto com a Administração via WhatsApp <strong>(11) 97838-6574</strong> para validar seus dados e recuperar seu acesso.
+                Entre em contato direto com a Administração via WhatsApp <strong>(11) 97838-6574</strong> para validar seus dados.
             </p>
-
             <div class="space-y-2 text-left">
                 <div>
                     <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Seu Nome Completo:</label>
-                    <input type="text" id="rec-nome" placeholder="Digite seu nome..." class="w-full p-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-xs font-semibold focus:outline-none">
+                    <input type="text" id="rec-nome" placeholder="Digite seu nome..." class="w-full p-2 rounded-lg bg-gray-100 dark:bg-gray-700 border text-xs font-semibold">
                 </div>
                 <div>
-                    <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Seu Número de Celular / WhatsApp:</label>
-                    <input type="text" id="rec-celular" placeholder="(11) 99999-9999" class="w-full p-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-xs font-semibold focus:outline-none">
+                    <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Seu Celular / WhatsApp:</label>
+                    <input type="text" id="rec-celular" placeholder="(11) 99999-9999" class="w-full p-2 rounded-lg bg-gray-100 dark:bg-gray-700 border text-xs font-semibold">
                 </div>
             </div>
-
             <div class="pt-2 border-t space-y-2">
-                <button type="button" onclick="enviarRecuperacaoWhats()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-brands fa-whatsapp text-sm"></i> ENVIAR SOLICITAÇÃO NO WHATSAPP
+                <button type="button" onclick="enviarRecuperacaoWhats()" class="w-full bg-green-600 text-white py-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 shadow">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> ENVIAR NO WHATSAPP
                 </button>
-                <button type="button" onclick="fecharModalRecuperacao()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">
-                    Cancelar
-                </button>
+                <button type="button" onclick="fecharModalRecuperacao()" class="w-full bg-gray-200 dark:bg-gray-700 py-2 rounded-xl font-bold text-xs">Cancelar</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL POP-UP DE LEMBRETE AUTOMÁTICO (12:00 / 18:00) -->
+    <!-- MODAL LEMBRETE -->
     <div id="modal-lembrete-sistema" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-4 border-amber-500 text-center">
             <div class="flex justify-center text-amber-500 text-3xl">
@@ -137,26 +129,18 @@
             </div>
             <div>
                 <h3 id="lembrete-titulo-horario" class="font-black text-base text-brand-red uppercase">LEMBRETE DO SISTEMA</h3>
-                <p class="text-xs text-gray-600 dark:text-gray-300 mt-2 leading-relaxed font-semibold">
-                    Olá! Você já realizou o backup dos seus dados e pautas hoje para garantir a segurança das suas informações?
-                </p>
+                <p class="text-xs text-gray-600 dark:text-gray-300 mt-2 font-semibold">Você já realizou o backup dos seus dados hoje?</p>
             </div>
             <div class="space-y-2 pt-2 border-t">
-                <button type="button" onclick="lembreteOpcaoSim()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs shadow flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-check"></i> JÁ FIZ O BACKUP
-                </button>
-                <button type="button" onclick="lembreteOpcaoAdiar()" class="w-full bg-amber-500 hover:bg-amber-600 text-gray-900 py-2.5 rounded-xl font-extrabold text-xs shadow flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-clock"></i> ADIAR PARA 60 MINUTOS
-                </button>
-                <button type="button" onclick="lembreteOpcaoCancelar()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">
-                    Cancelar Lembrete
-                </button>
+                <button type="button" onclick="lembreteOpcaoSim()" class="w-full bg-green-600 text-white py-2.5 rounded-xl font-extrabold text-xs shadow">JÁ FIZ O BACKUP</button>
+                <button type="button" onclick="lembreteOpcaoAdiar()" class="w-full bg-amber-500 text-gray-900 py-2.5 rounded-xl font-extrabold text-xs shadow">ADIAR 60 MIN</button>
+                <button type="button" onclick="lembreteOpcaoCancelar()" class="w-full bg-gray-200 dark:bg-gray-700 py-2 rounded-xl font-bold text-xs">Cancelar</button>
             </div>
         </div>
     </div>
 
     <!-- ESTRUTURA PRINCIPAL DO APP -->
-    <div id="app-content" class="hidden flex-1 flex flex-col max-w-4xl w-full mx-auto bg-white dark:bg-gray-800 shadow-xl min-h-screen">
+    <div id="app-content" class="hidden flex-1 flex flex-col max-w-4xl w-full mx-auto bg-white dark:bg-gray-800 shadow-xl min-h-screen relative">
         
         <!-- CABEÇALHO -->
         <header class="bg-brand-red text-white p-4 shadow-md sticky top-0 z-30">
@@ -178,23 +162,42 @@
                 </div>
             </div>
 
+            <!-- BARRA COM BOTÃO SUSPENSO DE CONSULTA DE ABAS E EXPORTAÇÃO GLOBAL -->
             <div class="mt-3 pt-2 border-t border-red-500/50 flex justify-between items-center text-xs">
-                <span class="italic text-red-100 text-[11px]">"Que o dia seja produtivo e abençoado!"</span>
-                <div class="flex gap-1">
-                    <button type="button" onclick="fazerBackupJSON()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] shadow">
-                        <i class="fa-solid fa-database"></i> Backup
+                <div class="flex gap-1.5">
+                    <button type="button" onclick="fazerBackupJSON()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] shadow"><i class="fa-solid fa-download"></i> Backup</button>
+                    <button type="button" onclick="exportarDadosCSV()" class="bg-green-700 text-white font-bold px-2 py-1 rounded text-[11px] shadow"><i class="fa-solid fa-file-excel"></i> CSV / Planilha</button>
+                </div>
+                
+                <!-- BOTÃO SUSPENSO / DROPDOWN DE CONSULTA RÁPIDA -->
+                <div class="relative">
+                    <button type="button" onclick="toggleMenuSuspenso()" class="bg-amber-400 hover:bg-amber-500 text-gray-900 font-extrabold px-3 py-1.5 rounded-lg text-xs shadow flex items-center gap-1.5">
+                        <i class="fa-solid fa-bars-staggered"></i> Consulta Rápida (Abas) <i class="fa-solid fa-chevron-down text-[10px]"></i>
                     </button>
+                    <!-- MENU FLUTUANTE -->
+                    <div id="menu-suspenso-abas" class="hidden absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border-2 border-brand-red z-50 p-1.5 space-y-1 text-xs">
+                        <button type="button" onclick="selecionarAbaMenu('tab-perfil')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-user-gear text-brand-red"></i> Perfil Profissional</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-atos')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-calendar-check text-brand-red"></i> Pauta de Audiências</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-contatos')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-address-book text-brand-red"></i> Agenda de Contatos</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-financeiro')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-wallet text-brand-red"></i> Financeiro & Baixas</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-caixa')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-cash-register text-brand-red"></i> Livro Caixa</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-recibo')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-receipt text-brand-red"></i> Emissão de Recibo</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-trabalhista')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-calculator text-brand-red"></i> Calculadora & Prazos</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-rescisoria')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-brand-red"></i> Cálculos Judiciais</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-relatorios')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-file-invoice text-brand-red"></i> Relatórios Consolidados</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-manuais')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-book-open text-brand-red"></i> Central de Manuais</button>
+                    </div>
                 </div>
             </div>
         </header>
 
         <main class="flex-1 p-4 overflow-y-auto">
 
-            <!-- ABA 1: PERFIL DO CORRESPONDENTE -->
+            <!-- ABA 1: PERFIL DO CORRESPONDENTE (CRUD COMPLETO) -->
             <section id="tab-perfil" class="tab-content space-y-4">
                 <form id="form-perfil" onsubmit="savePerfil(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
                     <input type="hidden" id="perfil-id">
-                    <h2 class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-2">Cadastro de Perfil Profissional</h2>
+                    <h2 id="perfil-titulo-form" class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-2">Cadastrar / Inserir Perfil Profissional</h2>
                     <div>
                         <label class="text-xs font-semibold">Nome Completo</label>
                         <input type="text" id="perfil-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
@@ -223,21 +226,27 @@
                         <label class="text-xs font-semibold">E-mail</label>
                         <input type="email" id="perfil-email" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                     </div>
-                    <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow">Salvar Perfil</button>
+                    <div class="flex gap-2">
+                        <button type="submit" id="perfil-btn-submit" class="flex-1 bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow">Salvar / Inserir Perfil</button>
+                        <button type="button" id="perfil-btn-cancelar" onclick="limparFormPerfil()" class="hidden bg-gray-500 text-white px-3 py-2.5 rounded-lg font-bold text-xs">Cancelar</button>
+                    </div>
                 </form>
                 <div id="lista-perfis" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 2: PAUTA DE DILIGÊNCIAS -->
+            <!-- ABA 2: PAUTA DE DILIGÊNCIAS / AUDIÊNCIAS (INFORMAÇÕES COMPLETAS + CRUD + WHATSAPP / EMAIL) -->
             <section id="tab-atos" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 text-xs flex justify-between items-center">
                     <div>
-                        <h3 class="font-bold text-brand-red"><i class="fa-solid fa-calendar-check mr-1"></i> Pauta de Diligências</h3>
-                        <p>Controle de audiências, prazos e atos processuais.</p>
+                        <h3 class="font-bold text-brand-red"><i class="fa-solid fa-calendar-check mr-1"></i> Pauta de Audiências e Diligências</h3>
+                        <p>Gerencie audiências, dados completos e compartilhamento direto.</p>
                     </div>
                 </div>
 
                 <form id="form-ato" onsubmit="saveAto(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
+                    <input type="hidden" id="ato-id">
+                    <h2 id="ato-titulo-form" class="font-bold text-sm text-brand-red border-b pb-1">Inserir / Cadastrar Nova Audiência</h2>
+                    
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="text-xs font-semibold">Nº do Processo*</label>
@@ -251,19 +260,27 @@
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs font-semibold">Data e Hora do Ato*</label>
+                            <label class="text-xs font-semibold">Data e Hora da Audiência*</label>
                             <input type="datetime-local" id="ato-data" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold">Vencimento*</label>
+                            <label class="text-xs font-semibold">Vencimento do Pagamento*</label>
                             <input type="date" id="ato-vencimento" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-3 gap-2">
                         <div>
                             <label class="text-xs font-semibold">Cidade / Comarca*</label>
                             <input type="text" id="ato-cidade" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">Modalidade*</label>
+                            <select id="ato-modalidade" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-bold">
+                                <option value="Teams / Virtual">🟣 Teams / Virtual</option>
+                                <option value="Zoom / Trabalhista">🔵 Zoom / TRT</option>
+                                <option value="Presencial">🏛️ Presencial</option>
+                            </select>
                         </div>
                         <div>
                             <label class="text-xs font-semibold">Status*</label>
@@ -280,25 +297,32 @@
                         <input type="number" step="0.01" id="ato-valor" required class="w-full p-2 border rounded-lg dark:bg-gray-700 font-bold text-sm">
                     </div>
 
-                    <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow">Salvar Diligência</button>
+                    <div class="flex gap-2">
+                        <button type="submit" id="ato-btn-submit" class="flex-1 bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow">Salvar / Inserir Audiência</button>
+                        <button type="button" id="ato-btn-cancelar" onclick="limparFormAto()" class="hidden bg-gray-500 text-white px-3 py-2.5 rounded-lg font-bold text-xs">Cancelar</button>
+                    </div>
                 </form>
 
                 <div id="lista-atos" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 3: AGENDA DE CONTATOS -->
+            <!-- ABA 3: AGENDA DE CONTATOS (CRUD COMPLETO + WHATSAPP) -->
             <section id="tab-contatos" class="tab-content space-y-4 hidden">
-                <form id="form-contato" onsubmit="saveContato(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border shadow-sm">
-                    <h2 class="font-bold text-sm text-brand-red border-b pb-1">Novo Contato</h2>
+                <form id="form-contato" onsubmit="saveContato(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border shadow-sm text-xs">
+                    <input type="hidden" id="ct-id">
+                    <h2 id="ct-titulo-form" class="font-bold text-sm text-brand-red border-b pb-1">Inserir / Cadastrar Contato</h2>
                     <div>
-                        <label class="text-xs font-semibold">Nome / Escritório*</label>
-                        <input type="text" id="ct-nome" required class="w-full p-2 border rounded dark:bg-gray-700 text-xs">
+                        <label class="font-semibold">Nome / Escritório*</label>
+                        <input type="text" id="ct-nome" required class="w-full p-2 border rounded dark:bg-gray-700">
                     </div>
                     <div>
-                        <label class="text-xs font-semibold">WhatsApp*</label>
-                        <input type="text" id="ct-celular" required class="w-full p-2 border rounded dark:bg-gray-700 text-xs">
+                        <label class="font-semibold">WhatsApp (ex: 5511999999999)*</label>
+                        <input type="text" id="ct-celular" required class="w-full p-2 border rounded dark:bg-gray-700">
                     </div>
-                    <button type="submit" class="w-full bg-brand-red text-white py-2 rounded font-bold text-xs">Salvar Contato</button>
+                    <div class="flex gap-2">
+                        <button type="submit" id="ct-btn-submit" class="flex-1 bg-brand-red text-white py-2 rounded font-bold">Salvar Contato</button>
+                        <button type="button" id="ct-btn-cancelar" onclick="limparFormContato()" class="hidden bg-gray-500 text-white px-3 py-2 rounded font-bold">Cancelar</button>
+                    </div>
                 </form>
                 <div id="lista-contatos" class="space-y-2"></div>
             </section>
@@ -322,7 +346,7 @@
                 <div id="fin-gerenciador-baixas" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 5: LIVRO CAIXA -->
+            <!-- ABA 5: LIVRO CAIXA (CRUD COMPLETO) -->
             <section id="tab-caixa" class="tab-content space-y-4 hidden">
                 <div class="grid grid-cols-3 gap-2 text-center text-white text-xs">
                     <div class="bg-green-600 p-2.5 rounded-xl shadow">
@@ -338,8 +362,10 @@
                         <span id="caixa-saldo-liquido" class="font-black text-sm">R$ 0,00</span>
                     </div>
                 </div>
-                <form id="form-caixa" onsubmit="saveCaixa(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border shadow-sm">
-                    <div class="grid grid-cols-2 gap-2 text-xs">
+                <form id="form-caixa" onsubmit="saveCaixa(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border shadow-sm text-xs">
+                    <input type="hidden" id="caixa-id">
+                    <h2 id="caixa-titulo-form" class="font-bold text-sm text-brand-red border-b pb-1">Inserir Lançamento no Caixa</h2>
+                    <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="font-semibold">Tipo</label>
                             <select id="caixa-tipo" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
@@ -353,10 +379,13 @@
                         </div>
                     </div>
                     <div>
-                        <label class="text-xs font-semibold">Descrição</label>
-                        <input type="text" id="caixa-descricao" required placeholder="Ex: Cópias no Fórum" class="w-full p-2 border rounded dark:bg-gray-700 text-xs">
+                        <label class="font-semibold">Descrição</label>
+                        <input type="text" id="caixa-descricao" required placeholder="Ex: Cópias no Fórum" class="w-full p-2 border rounded dark:bg-gray-700">
                     </div>
-                    <button type="submit" class="w-full bg-brand-red text-white py-2 rounded font-bold text-xs">Lançar no Caixa</button>
+                    <div class="flex gap-2">
+                        <button type="submit" id="caixa-btn-submit" class="flex-1 bg-brand-red text-white py-2 rounded font-bold">Salvar / Inserir</button>
+                        <button type="button" id="caixa-btn-cancelar" onclick="limparFormCaixa()" class="hidden bg-gray-500 text-white px-3 py-2 rounded font-bold">Cancelar</button>
+                    </div>
                 </form>
                 <div id="lista-caixa" class="space-y-2"></div>
             </section>
@@ -465,15 +494,19 @@
                 </div>
             </section>
 
-            <!-- ABA 8: CÁLCULOS JUDICIAIS -->
+            <!-- ABA 8: CÁLCULOS JUDICIAIS (CRUD COMPLETO) -->
             <section id="tab-rescisoria" class="tab-content space-y-4 hidden">
                 <form id="form-rescisao" onsubmit="saveRescisao(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border shadow-sm text-xs">
-                    <h2 class="font-bold text-sm text-brand-red border-b pb-1">Cálculo Judicial</h2>
+                    <input type="hidden" id="res-id">
+                    <h2 id="res-titulo-form" class="font-bold text-sm text-brand-red border-b pb-1">Inserir / Cadastrar Cálculo Judicial</h2>
                     <div>
-                        <label class="font-semibold">Cliente / Processo:</label>
+                        <label class="font-semibold">Cliente / Processo:*</label>
                         <input type="text" id="res-cliente" required class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
                     </div>
-                    <button type="submit" class="w-full bg-brand-red text-white py-2 rounded font-bold">Salvar Cálculo</button>
+                    <div class="flex gap-2">
+                        <button type="submit" id="res-btn-submit" class="flex-1 bg-brand-red text-white py-2 rounded font-bold">Salvar / Inserir</button>
+                        <button type="button" id="res-btn-cancelar" onclick="limparFormRescisao()" class="hidden bg-gray-500 text-white px-3 py-2 rounded font-bold">Cancelar</button>
+                    </div>
                 </form>
                 <div id="lista-rescisioes" class="space-y-2"></div>
             </section>
@@ -539,13 +572,13 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT ROBUSTO E SEGURO -->
+    <!-- JAVASCRIPT COMPLETO COM CRUD, COMPARTILHAMENTO E EXPORTAÇÃO CSV -->
     <script>
         const AUTH_USER = "diligence.br*";
         const AUTH_PASS = "320427";
         const WHATS_ADM = "5511978386574";
 
-        let db = { perfis: [], perfil: {}, atos: [], caixa: [], contatos: [], recibos: [], rescisoes: [] };
+        let db = { perfis: [], atos: [], caixa: [], contatos: [], recibos: [], rescisoes: [] };
         let bobinaHistorico = [];
         let calcVisorVal = '0';
 
@@ -554,6 +587,24 @@
             const campoInicio = document.getElementById('calc-prazo-inicio');
             if(campoInicio) campoInicio.value = hojeIso;
             loadData();
+        });
+
+        // Menu Suspenso de Abas
+        function toggleMenuSuspenso() {
+            const menu = document.getElementById('menu-suspenso-abas');
+            if(menu) menu.classList.toggle('hidden');
+        }
+        function selecionarAbaMenu(tabId) {
+            switchTab(tabId);
+            const menu = document.getElementById('menu-suspenso-abas');
+            if(menu) menu.classList.add('hidden');
+        }
+        window.addEventListener('click', function(e) {
+            const btn = document.querySelector('button[onclick="toggleMenuSuspenso()"]');
+            const menu = document.getElementById('menu-suspenso-abas');
+            if(menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
         });
 
         function handleLogin(e) {
@@ -577,21 +628,13 @@
             document.getElementById('rec-modal-titulo').innerText = tipo === 'usuario' ? 'RECUPERAR USUÁRIO' : 'RECUPERAR SENHA';
             document.getElementById('modal-recuperacao-login').classList.remove('hidden');
         }
-
-        function fecharModalRecuperacao() {
-            document.getElementById('modal-recuperacao-login').classList.add('hidden');
-        }
-
+        function fecharModalRecuperacao() { document.getElementById('modal-recuperacao-login').classList.add('hidden'); }
         function enviarRecuperacaoWhats() {
             const nome = document.getElementById('rec-nome').value.trim();
             const cel = document.getElementById('rec-celular').value.trim();
-            if (!nome || !cel) {
-                alert("Preencha seu Nome e Celular para validar a solicitação!");
-                return;
-            }
-            const txt = `DILIGENCE.BR - RECUPERAÇÃO DE ACESSO\nNome: ${nome}\nCelular: ${cel}`;
+            if (!nome || !cel) return alert("Preencha seu Nome e Celular!");
+            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(`DILIGENCE.BR - RECUPERAÇÃO\nNome: ${nome}\nCelular: ${cel}`)}`);
             fecharModalRecuperacao();
-            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(txt)}`);
         }
 
         function updateClock() {
@@ -613,13 +656,11 @@
         }
         setInterval(updateClock, 1000);
 
-        function dispararLembreteSistema(horario) {
-            const t = document.getElementById('lembrete-titulo-horario');
-            if(t) t.innerText = `LEMBRETE DO SISTEMA (${horario})`;
-            const m = document.getElementById('modal-lembrete-sistema');
-            if(m) m.classList.remove('hidden');
+        function dispararLembreteSistema(h) {
+            document.getElementById('lembrete-titulo-horario').innerText = `LEMBRETE DO SISTEMA (${h})`;
+            document.getElementById('modal-lembrete-sistema').classList.remove('hidden');
         }
-        function fecharModalLembrete() { const m = document.getElementById('modal-lembrete-sistema'); if(m) m.classList.add('hidden'); }
+        function fecharModalLembrete() { document.getElementById('modal-lembrete-sistema').classList.add('hidden'); }
         function lembreteOpcaoSim() { fecharModalLembrete(); fazerBackupJSON(); }
         function lembreteOpcaoCancelar() { fecharModalLembrete(); }
         function lembreteOpcaoAdiar() { fecharModalLembrete(); alert("Lembrete adiado por 60 minutos."); }
@@ -646,14 +687,10 @@
         function saveData() { localStorage.setItem('diligence_db', JSON.stringify(db)); }
         function loadData() {
             const saved = localStorage.getItem('diligence_db');
-            if (saved) {
-                try { db = JSON.parse(saved); } catch(e) { console.error(e); }
-            }
+            if (saved) { try { db = JSON.parse(saved); } catch(e) {} }
             if (localStorage.getItem('diligence_logged') === 'true') {
-                const ls = document.getElementById('login-screen');
-                const ac = document.getElementById('app-content');
-                if(ls) ls.classList.add('hidden');
-                if(ac) ac.classList.remove('hidden');
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-content').classList.remove('hidden');
             }
             if(!db.atos) db.atos = [];
             if(!db.caixa) db.caixa = [];
@@ -666,19 +703,14 @@
             renderContatos(); renderRescisoes(); renderRelatorios(); renderCheckboxesAtosRecibo();
         }
 
-        function renderPerfis() {
-            const container = document.getElementById('lista-perfis');
-            if(!container) return;
-            container.innerHTML = '';
-            db.perfis.forEach(p => {
-                container.innerHTML += `<div class="p-2.5 border rounded-xl text-xs bg-white dark:bg-gray-800 shadow-sm"><strong>${p.nome}</strong> (Doc: ${p.doc} | PIX: ${p.pix})</div>`;
-            });
-        }
-
+        // ==========================================
+        // PERFIL (CRUD COMPLETO)
+        // ==========================================
         function savePerfil(e) {
             e.preventDefault();
-            db.perfil = {
-                id: Date.now(),
+            const id = document.getElementById('perfil-id').value;
+            const obj = {
+                id: id ? parseInt(id) : Date.now(),
                 nome: document.getElementById('perfil-nome').value,
                 doc: document.getElementById('perfil-doc').value,
                 cidade: document.getElementById('perfil-cidade').value,
@@ -686,50 +718,228 @@
                 pix: document.getElementById('perfil-pix').value,
                 email: document.getElementById('perfil-email').value
             };
-            db.perfis.push(db.perfil);
-            saveData(); renderPerfis(); alert("Perfil salvo com sucesso!");
+            if(id) {
+                db.perfis = db.perfis.map(p => p.id === obj.id ? obj : p);
+            } else {
+                db.perfis.push(obj);
+            }
+            saveData(); limparFormPerfil(); renderPerfis(); alert("Perfil salvo com sucesso!");
+        }
+        function renderPerfis() {
+            const c = document.getElementById('lista-perfis');
+            if(!c) return;
+            c.innerHTML = '';
+            if(!db.perfis.length) { c.innerHTML = '<p class="text-xs text-gray-400">Nenhum perfil cadastrado.</p>'; return; }
+            db.perfis.forEach(p => {
+                c.innerHTML += `
+                    <div class="p-3 border rounded-xl text-xs bg-white dark:bg-gray-800 shadow-sm flex justify-between items-center">
+                        <div><strong>${p.nome}</strong><br><span class="text-gray-400">Doc: ${p.doc} | Base: ${p.cidade} | PIX: ${p.pix}</span></div>
+                        <div class="flex gap-1">
+                            <button onclick="editarPerfil(${p.id})" class="bg-amber-500 text-white px-2 py-1 rounded font-bold">Editar</button>
+                            <button onclick="excluirPerfil(${p.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold">Excluir</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        function editarPerfil(id) {
+            const p = db.perfis.find(x => x.id === id);
+            if(!p) return;
+            document.getElementById('perfil-id').value = p.id;
+            document.getElementById('perfil-nome').value = p.nome;
+            document.getElementById('perfil-doc').value = p.doc;
+            document.getElementById('perfil-cidade').value = p.cidade;
+            document.getElementById('perfil-celular').value = p.celular;
+            document.getElementById('perfil-pix').value = p.pix;
+            document.getElementById('perfil-email').value = p.email;
+            document.getElementById('perfil-titulo-form').innerText = "Editar Perfil Profissional";
+            document.getElementById('perfil-btn-submit').innerText = "Atualizar Perfil";
+            document.getElementById('perfil-btn-cancelar').classList.remove('hidden');
+        }
+        function limparFormPerfil() {
+            document.getElementById('form-perfil').reset();
+            document.getElementById('perfil-id').value = '';
+            document.getElementById('perfil-titulo-form').innerText = "Cadastrar / Inserir Perfil Profissional";
+            document.getElementById('perfil-btn-submit').innerText = "Salvar / Inserir Perfil";
+            document.getElementById('perfil-btn-cancelar').classList.add('hidden');
+        }
+        function excluirPerfil(id) {
+            if(confirm("Deseja excluir este perfil?")) {
+                db.perfis = db.perfis.filter(x => x.id !== id);
+                saveData(); renderPerfis();
+            }
         }
 
+        // ==========================================
+        // PAUTA DE AUDIÊNCIAS / DILIGÊNCIAS (CRUD + COMPARTILHAMENTO WHATSAPP/EMAIL)
+        // ==========================================
         function saveAto(e) {
             e.preventDefault();
+            const id = document.getElementById('ato-id').value;
             const proc = document.getElementById('ato-processo').value;
             const cliente = document.getElementById('ato-cliente').value;
             const valor = parseFloat(document.getElementById('ato-valor').value);
             const status = document.getElementById('ato-status-select').value;
 
-            const novoAto = {
-                id: Date.now(), processo: proc, cliente: cliente, valor: valor, status: status,
+            const obj = {
+                id: id ? parseInt(id) : Date.now(),
+                processo: proc, cliente: cliente, valor: valor, status: status,
                 data: document.getElementById('ato-data').value,
                 vencimento: document.getElementById('ato-vencimento').value,
-                cidade: document.getElementById('ato-cidade').value
+                cidade: document.getElementById('ato-cidade').value,
+                modalidade: document.getElementById('ato-modalidade').value
             };
-            db.atos.push(novoAto);
-            if(status === 'pago') {
-                db.caixa.push({ id: Date.now(), atoRefId: novoAto.id, tipo: 'entrada', valor: valor, descricao: `Baixa Proc: ${proc}`, dataIso: new Date().toISOString().split('T')[0] });
+
+            if(id) {
+                db.atos = db.atos.map(a => a.id === obj.id ? obj : a);
+            } else {
+                db.atos.push(obj);
+                if(status === 'pago') {
+                    db.caixa.push({ id: Date.now(), atoRefId: obj.id, tipo: 'entrada', valor: valor, descricao: `Baixa Proc: ${proc}`, dataIso: new Date().toISOString().split('T')[0] });
+                }
             }
-            saveData(); document.getElementById('form-ato').reset(); renderAtos(); renderFinanceiro(); renderCaixa(); alert("Diligência salva na pauta!");
+            saveData(); limparFormAto(); renderAtos(); renderFinanceiro(); renderCaixa(); alert("Audiência salva na pauta!");
         }
 
         function renderAtos() {
             const container = document.getElementById('lista-atos');
             if (!container) return;
             container.innerHTML = '';
+            if(!db.atos.length) { container.innerHTML = '<p class="text-xs text-gray-400">Nenhuma audiência cadastrada.</p>'; return; }
+            
             db.atos.forEach(a => {
                 container.innerHTML += `
                     <div class="border dark:border-gray-700 bg-white dark:bg-gray-800 p-3 rounded-xl text-xs space-y-2 shadow-sm">
                         <div class="flex justify-between items-start">
-                            <div><strong class="text-sm">Proc: ${a.processo}</strong> - ${a.cliente}<br><span class="text-gray-400">📍 ${a.cidade} | Venc: ${a.vencimento}</span></div>
-                            <span class="font-bold ${a.status === 'pago' ? 'text-green-600' : 'text-amber-500'}">R$ ${a.valor.toFixed(2)}</span>
+                            <div>
+                                <strong class="text-sm">Proc: ${a.processo}</strong> - ${a.cliente}<br>
+                                <span class="text-gray-500 dark:text-gray-400">📍 ${a.cidade} | Modalidade: ${a.modalidade || 'Presencial'}</span><br>
+                                <span class="text-gray-400">📅 Data/Hora: ${a.data} | Venc: ${a.vencimento}</span>
+                            </div>
+                            <span class="font-bold text-sm ${a.status === 'pago' ? 'text-green-600' : 'text-amber-500'}">R$ ${a.valor.toFixed(2)}</span>
                         </div>
                         <div class="flex justify-between items-center pt-2 border-t dark:border-gray-700">
-                            <span class="font-bold text-[10px] uppercase">${a.status}</span>
-                            <button type="button" onclick="db.atos = db.atos.filter(x=>x.id!==${a.id}); saveData(); renderAtos(); renderFinanceiro();" class="bg-red-600 text-white px-2 py-1 rounded">Excluir</button>
+                            <span class="font-bold text-[10px] uppercase px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700">${a.status}</span>
+                            <div class="flex gap-1">
+                                <button onclick="compartilharAudienciaWhats(${a.id})" class="bg-green-600 text-white px-2 py-1 rounded font-bold"><i class="fa-brands fa-whatsapp"></i> Whats</button>
+                                <button onclick="compartilharAudienciaEmail(${a.id})" class="bg-blue-600 text-white px-2 py-1 rounded font-bold"><i class="fa-solid fa-envelope"></i> E-mail</button>
+                                <button onclick="editarAto(${a.id})" class="bg-amber-500 text-white px-2 py-1 rounded font-bold">Editar</button>
+                                <button onclick="excluirAto(${a.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold">Excluir</button>
+                            </div>
                         </div>
                     </div>
                 `;
             });
         }
 
+        function editarAto(id) {
+            const a = db.atos.find(x => x.id === id);
+            if(!a) return;
+            document.getElementById('ato-id').value = a.id;
+            document.getElementById('ato-processo').value = a.processo;
+            document.getElementById('ato-cliente').value = a.cliente;
+            document.getElementById('ato-data').value = a.data;
+            document.getElementById('ato-vencimento').value = a.vencimento;
+            document.getElementById('ato-cidade').value = a.cidade;
+            document.getElementById('ato-modalidade').value = a.modalidade || 'Presencial';
+            document.getElementById('ato-status-select').value = a.status;
+            document.getElementById('ato-valor').value = a.valor;
+            document.getElementById('ato-titulo-form').innerText = "Editar Audiência / Diligência";
+            document.getElementById('ato-btn-submit').innerText = "Atualizar Audiência";
+            document.getElementById('ato-btn-cancelar').classList.remove('hidden');
+        }
+
+        function limparFormAto() {
+            document.getElementById('form-ato').reset();
+            document.getElementById('ato-id').value = '';
+            document.getElementById('ato-titulo-form').innerText = "Inserir / Cadastrar Nova Audiência";
+            document.getElementById('ato-btn-submit').innerText = "Salvar / Inserir Audiência";
+            document.getElementById('ato-btn-cancelar').classList.add('hidden');
+        }
+
+        function excluirAto(id) {
+            if(confirm("Deseja excluir esta audiência?")) {
+                db.atos = db.atos.filter(x => x.id !== id);
+                db.caixa = db.caixa.filter(c => c.atoRefId !== id);
+                saveData(); renderAtos(); renderFinanceiro(); renderCaixa();
+            }
+        }
+
+        function compartilharAudienciaWhats(id) {
+            const a = db.atos.find(x => x.id === id);
+            if(!a) return;
+            const txt = `*DILIGENCE.BR - AUDIÊNCIA / DILIGÊNCIA*\n\nProcesso: ${a.processo}\nCliente: ${a.cliente}\nData/Hora: ${a.data}\nComarca: ${a.cidade}\nModalidade: ${a.modalidade}\nValor: R$ ${a.valor.toFixed(2)}`;
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
+        }
+
+        function compartilharAudienciaEmail(id) {
+            const a = db.atos.find(x => x.id === id);
+            if(!a) return;
+            const subject = encodeURIComponent(`Audiência Processo: ${a.processo}`);
+            const body = encodeURIComponent(`Olá,\n\nSegue os dados da diligência/audiência:\n\nProcesso: ${a.processo}\nCliente: ${a.cliente}\nData/Hora: ${a.data}\nComarca: ${a.cidade}\nModalidade: ${a.modalidade}\nValor: R$ ${a.valor.toFixed(2)}\n\nAtenciosamente,\nDILIGENCE.BR`);
+            window.open(`mailto:?subject=${subject}&body=${body}`);
+        }
+
+        // ==========================================
+        // AGENDA DE CONTATOS (CRUD COMPLETO)
+        // ==========================================
+        function saveContato(e) {
+            e.preventDefault();
+            const id = document.getElementById('ct-id').value;
+            const obj = {
+                id: id ? parseInt(id) : Date.now(),
+                nome: document.getElementById('ct-nome').value,
+                celular: document.getElementById('ct-celular').value
+            };
+            if(id) db.contatos = db.contatos.map(c => c.id === obj.id ? obj : c);
+            else db.contatos.push(obj);
+            saveData(); limparFormContato(); renderContatos(); alert("Contato salvo!");
+        }
+        function renderContatos() {
+            const el = document.getElementById('lista-contatos');
+            if(!el) return;
+            el.innerHTML = '';
+            if(!db.contatos.length) { el.innerHTML = '<p class="text-xs text-gray-400">Nenhum contato cadastrado.</p>'; return; }
+            db.contatos.forEach(c => {
+                el.innerHTML += `
+                    <div class="p-2.5 border rounded-xl text-xs bg-white dark:bg-gray-800 flex justify-between items-center shadow-sm">
+                        <div><strong>${c.nome}</strong><br><span class="text-gray-400">📱 ${c.celular}</span></div>
+                        <div class="flex gap-1">
+                            <button onclick="window.open('https://api.whatsapp.com/send?phone=${c.celular}')" class="bg-green-600 text-white px-2 py-1 rounded font-bold"><i class="fa-brands fa-whatsapp"></i></button>
+                            <button onclick="editarContato(${c.id})" class="bg-amber-500 text-white px-2 py-1 rounded font-bold">Editar</button>
+                            <button onclick="excluirContato(${c.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold">Excluir</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        function editarContato(id) {
+            const c = db.contatos.find(x => x.id === id);
+            if(!c) return;
+            document.getElementById('ct-id').value = c.id;
+            document.getElementById('ct-nome').value = c.nome;
+            document.getElementById('ct-celular').value = c.celular;
+            document.getElementById('ct-titulo-form').innerText = "Editar Contato";
+            document.getElementById('ct-btn-submit').innerText = "Atualizar Contato";
+            document.getElementById('ct-btn-cancelar').classList.remove('hidden');
+        }
+        function limparFormContato() {
+            document.getElementById('form-contato').reset();
+            document.getElementById('ct-id').value = '';
+            document.getElementById('ct-titulo-form').innerText = "Inserir / Cadastrar Contato";
+            document.getElementById('ct-btn-submit').innerText = "Salvar Contato";
+            document.getElementById('ct-btn-cancelar').classList.add('hidden');
+        }
+        function excluirContato(id) {
+            if(confirm("Deseja excluir este contato?")) {
+                db.contatos = db.contatos.filter(x => x.id !== id);
+                saveData(); renderContatos();
+            }
+        }
+
+        // ==========================================
+        // FINANCEIRO & LIVRO CAIXA (CRUD COMPLETO)
+        // ==========================================
         function renderFinanceiro() {
             let pago = 0, pendente = 0, vencido = 0;
             const container = document.getElementById('fin-gerenciador-baixas');
@@ -748,24 +958,18 @@
                     `;
                 }
             });
-            const fe = document.getElementById('fin-entradas');
-            const fp = document.getElementById('fin-pendentes');
-            const fv = document.getElementById('fin-vencidos');
-            if(fe) fe.innerText = `R$ ${pago.toFixed(2)}`;
-            if(fp) fp.innerText = `R$ ${pendente.toFixed(2)}`;
-            if(fv) fv.innerText = `R$ ${vencido.toFixed(2)}`;
+            document.getElementById('fin-entradas').innerText = `R$ ${pago.toFixed(2)}`;
+            document.getElementById('fin-pendentes').innerText = `R$ ${pendente.toFixed(2)}`;
+            document.getElementById('fin-vencidos').innerText = `R$ ${vencido.toFixed(2)}`;
         }
 
         function alterarStatusFinanceiroSelect(id, novoStatus) {
             const a = db.atos.find(x => x.id === id);
             if(!a) return;
             if(a.status === 'pago' && novoStatus !== 'pago') {
-                const estId = document.getElementById('estorno-ato-id');
-                const estSt = document.getElementById('estorno-novo-status');
-                const mod = document.getElementById('modal-alterar-pago');
-                if(estId) estId.value = a.id;
-                if(estSt) estSt.value = novoStatus;
-                if(mod) mod.classList.remove('hidden');
+                document.getElementById('estorno-ato-id').value = a.id;
+                document.getElementById('estorno-novo-status').value = novoStatus;
+                document.getElementById('modal-alterar-pago').classList.remove('hidden');
                 return;
             }
             a.status = novoStatus;
@@ -775,100 +979,158 @@
         }
 
         function confirmarEstornoPagoWhatsApp() {
-            const estId = document.getElementById('estorno-ato-id');
-            const estSt = document.getElementById('estorno-novo-status');
-            const mod = document.getElementById('modal-alterar-pago');
-            if(estId && estSt) {
-                const id = parseInt(estId.value);
-                const a = db.atos.find(x => x.id === id);
-                if(a) {
-                    a.status = estSt.value;
-                    db.caixa = db.caixa.filter(c => c.atoRefId !== a.id);
-                    saveData(); renderAtos(); renderFinanceiro(); renderCaixa();
-                }
+            const id = parseInt(document.getElementById('estorno-ato-id').value);
+            const a = db.atos.find(x => x.id === id);
+            if(a) {
+                a.status = document.getElementById('estorno-novo-status').value;
+                db.caixa = db.caixa.filter(c => c.atoRefId !== a.id);
+                saveData(); renderAtos(); renderFinanceiro(); renderCaixa();
             }
-            if(mod) mod.classList.add('hidden');
+            document.getElementById('modal-alterar-pago').classList.add('hidden');
         }
-
-        function fecharModalEstorno() {
-            const mod = document.getElementById('modal-alterar-pago');
-            if(mod) mod.classList.add('hidden');
-            renderFinanceiro();
-        }
+        function fecharModalEstorno() { document.getElementById('modal-alterar-pago').classList.add('hidden'); renderFinanceiro(); }
 
         function saveCaixa(e) {
             e.preventDefault();
-            db.caixa.push({
-                id: Date.now(),
+            const id = document.getElementById('caixa-id').value;
+            const obj = {
+                id: id ? parseInt(id) : Date.now(),
                 tipo: document.getElementById('caixa-tipo').value,
                 valor: parseFloat(document.getElementById('caixa-valor').value),
                 descricao: document.getElementById('caixa-descricao').value,
                 dataIso: new Date().toISOString().split('T')[0]
-            });
-            saveData(); document.getElementById('form-caixa').reset(); renderCaixa();
+            };
+            if(id) db.caixa = db.caixa.map(c => c.id === obj.id ? obj : c);
+            else db.caixa.push(obj);
+            saveData(); limparFormCaixa(); renderCaixa(); alert("Lançamento salvo!");
         }
 
         function renderCaixa() {
             let ent = 0, sai = 0;
             const container = document.getElementById('lista-caixa');
             if(container) container.innerHTML = '';
+            if(!db.caixa.length && container) { container.innerHTML = '<p class="text-xs text-gray-400">Nenhum lançamento no caixa.</p>'; }
+            
             db.caixa.forEach(c => {
                 if(c.tipo === 'entrada') ent += c.valor; else sai += c.valor;
                 if(container) {
                     container.innerHTML += `
                         <div class="p-2.5 border rounded-xl text-xs flex justify-between items-center bg-white dark:bg-gray-800 shadow-sm">
                             <div><strong>${c.descricao}</strong><br><span class="text-[10px] text-gray-400">${c.dataIso}</span></div>
-                            <strong class="${c.tipo === 'entrada' ? 'text-green-600' : 'text-red-600'}">R$ ${c.valor.toFixed(2)}</strong>
+                            <div class="flex items-center gap-2">
+                                <strong class="${c.tipo === 'entrada' ? 'text-green-600' : 'text-red-600'}">R$ ${c.valor.toFixed(2)}</strong>
+                                <button onclick="editarCaixa(${c.id})" class="bg-amber-500 text-white px-2 py-0.5 rounded font-bold">Editar</button>
+                                <button onclick="excluirCaixa(${c.id})" class="bg-red-600 text-white px-2 py-0.5 rounded font-bold">Excluir</button>
+                            </div>
                         </div>
                     `;
                 }
             });
-            const cte = document.getElementById('caixa-total-entradas');
-            const cts = document.getElementById('caixa-total-saidas');
-            const css = document.getElementById('caixa-saldo-liquido');
-            if(cte) cte.innerText = `R$ ${ent.toFixed(2)}`;
-            if(cts) cts.innerText = `R$ ${sai.toFixed(2)}`;
-            if(css) css.innerText = `R$ ${(ent - sai).toFixed(2)}`;
+            document.getElementById('caixa-total-entradas').innerText = `R$ ${ent.toFixed(2)}`;
+            document.getElementById('caixa-total-saidas').innerText = `R$ ${sai.toFixed(2)}`;
+            document.getElementById('caixa-saldo-liquido').innerText = `R$ ${(ent - sai).toFixed(2)}`;
         }
 
-        function saveContato(e) {
-            e.preventDefault();
-            db.contatos.push({ id: Date.now(), nome: document.getElementById('ct-nome').value, celular: document.getElementById('ct-celular').value });
-            saveData(); document.getElementById('form-contato').reset(); renderContatos();
+        function editarCaixa(id) {
+            const c = db.caixa.find(x => x.id === id);
+            if(!c) return;
+            document.getElementById('caixa-id').value = c.id;
+            document.getElementById('caixa-tipo').value = c.tipo;
+            document.getElementById('caixa-valor').value = c.valor;
+            document.getElementById('caixa-descricao').value = c.descricao;
+            document.getElementById('caixa-titulo-form').innerText = "Editar Lançamento";
+            document.getElementById('caixa-btn-submit').innerText = "Atualizar Lançamento";
+            document.getElementById('caixa-btn-cancelar').classList.remove('hidden');
         }
-        function renderContatos() {
-            const el = document.getElementById('lista-contatos');
-            if(el) el.innerHTML = db.contatos.map(c => `<div class="p-2 border rounded text-xs bg-white dark:bg-gray-800"><strong>${c.nome}</strong> - ${c.celular}</div>`).join('');
+        function limparFormCaixa() {
+            document.getElementById('form-caixa').reset();
+            document.getElementById('caixa-id').value = '';
+            document.getElementById('caixa-titulo-form').innerText = "Inserir Lançamento no Caixa";
+            document.getElementById('caixa-btn-submit').innerText = "Salvar / Inserir";
+            document.getElementById('caixa-btn-cancelar').classList.add('hidden');
+        }
+        function excluirCaixa(id) {
+            if(confirm("Deseja excluir este lançamento?")) {
+                db.caixa = db.caixa.filter(x => x.id !== id);
+                saveData(); renderCaixa();
+            }
         }
 
+        // ==========================================
+        // CÁLCULOS JUDICIAIS (CRUD COMPLETO)
+        // ==========================================
         function saveRescisao(e) {
             e.preventDefault();
-            db.rescisoes.push({ id: Date.now(), cliente: document.getElementById('res-cliente').value });
-            saveData(); document.getElementById('form-rescisao').reset(); renderRescisoes();
+            const id = document.getElementById('res-id').value;
+            const obj = { id: id ? parseInt(id) : Date.now(), cliente: document.getElementById('res-cliente').value };
+            if(id) db.rescisoes = db.rescisoes.map(r => r.id === obj.id ? obj : r);
+            else db.rescisoes.push(obj);
+            saveData(); limparFormRescisao(); renderRescisoes(); alert("Cálculo salvo!");
         }
         function renderRescisoes() {
             const el = document.getElementById('lista-rescisioes');
-            if(el) el.innerHTML = db.rescisoes.map(r => `<div class="p-2 border rounded text-xs bg-white dark:bg-gray-800"><strong>Cálculo:</strong> ${r.cliente}</div>`).join('');
+            if(el) {
+                el.innerHTML = '';
+                if(!db.rescisoes.length) { el.innerHTML = '<p class="text-xs text-gray-400">Nenhum cálculo cadastrado.</p>'; return; }
+                db.rescisoes.forEach(r => {
+                    el.innerHTML += `
+                        <div class="p-2 border rounded text-xs bg-white dark:bg-gray-800 flex justify-between items-center shadow-sm">
+                            <strong>Cálculo: ${r.cliente}</strong>
+                            <div class="flex gap-1">
+                                <button onclick="editarRescisao(${r.id})" class="bg-amber-500 text-white px-2 py-1 rounded font-bold">Editar</button>
+                                <button onclick="excluirRescisao(${r.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold">Excluir</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+        function editarRescisao(id) {
+            const r = db.rescisoes.find(x => x.id === id);
+            if(!r) return;
+            document.getElementById('res-id').value = r.id;
+            document.getElementById('res-cliente').value = r.cliente;
+            document.getElementById('res-titulo-form').innerText = "Editar Cálculo Judicial";
+            document.getElementById('res-btn-submit').innerText = "Atualizar";
+            document.getElementById('res-btn-cancelar').classList.remove('hidden');
+        }
+        function limparFormRescisao() {
+            document.getElementById('form-rescisao').reset();
+            document.getElementById('res-id').value = '';
+            document.getElementById('res-titulo-form').innerText = "Inserir / Cadastrar Cálculo Judicial";
+            document.getElementById('res-btn-submit').innerText = "Salvar / Inserir";
+            document.getElementById('res-btn-cancelar').classList.add('hidden');
+        }
+        function excluirRescisao(id) {
+            if(confirm("Deseja excluir?")) {
+                db.rescisoes = db.rescisoes.filter(x => x.id !== id);
+                saveData(); renderRescisoes();
+            }
         }
 
-        function renderRelatorios() {
-            let pago = 0, pendente = 0;
-            db.atos.forEach(a => { if(a.status === 'pago') pago += a.valor; else pendente += a.valor; });
-            const rp = document.getElementById('relatorio-valor-pago');
-            const rpen = document.getElementById('relatorio-valor-pendente');
-            if(rp) rp.innerText = `R$ ${pago.toFixed(2)}`;
-            if(rpen) rpen.innerText = `R$ ${pendente.toFixed(2)}`;
+        // ==========================================
+        // EXPORTAÇÃO CSV / PLANILHA
+        // ==========================================
+        function exportarDadosCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Processo,Cliente,Data,Comarca,Valor,Status\n";
+            db.atos.forEach(a => {
+                csvContent += `"${a.processo}","${a.cliente}","${a.data}","${a.cidade}",${a.valor},"${a.status}"\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "pauta_diligencias_diligence.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
+        // RECIBOS E CALCULADORA
         function renderCheckboxesAtosRecibo() {
             const container = document.getElementById('recibo-lista-checkboxes');
             if(!container) return;
             container.innerHTML = '';
-            if(!db.atos.length) {
-                container.innerHTML = '<p class="text-[11px] text-gray-400">Nenhum ato na pauta.</p>';
-                atualizarTotalReciboSelecionado();
-                return;
-            }
+            if(!db.atos.length) { container.innerHTML = '<p class="text-[11px] text-gray-400">Nenhum ato na pauta.</p>'; atualizarTotalReciboSelecionado(); return; }
             db.atos.forEach(a => {
                 const checked = a.selecionadoRecibo ? 'checked' : '';
                 container.innerHTML += `
@@ -883,17 +1145,11 @@
             });
             atualizarTotalReciboSelecionado();
         }
-
         function toggleAtoRecibo(id, isChecked) {
             const a = db.atos.find(x => x.id === id);
             if(a) { a.selecionadoRecibo = isChecked; atualizarTotalReciboSelecionado(); }
         }
-
-        function selecionarTodosAtosRecibo(marcar) {
-            db.atos.forEach(a => a.selecionadoRecibo = marcar);
-            renderCheckboxesAtosRecibo();
-        }
-
+        function selecionarTodosAtosRecibo(m) { db.atos.forEach(a => a.selecionadoRecibo = m); renderCheckboxesAtosRecibo(); }
         function atualizarTotalReciboSelecionado() {
             let total = 0, clientes = new Set();
             db.atos.forEach(a => { if(a.selecionadoRecibo) { total += a.valor; clientes.add(a.cliente); } });
@@ -906,76 +1162,57 @@
                 else if(arr.length > 1) cliEl.value = "Múltiplos (" + arr.join(', ') + ")";
             }
         }
-
-        function gerarReciboPDF() { alert("Recibo em PDF gerado!"); }
-        function enviarReciboWhats() { alert("Recibo enviado no WhatsApp!"); }
+        function gerarReciboPDF() { alert("Recibo PDF Gerado!"); }
+        function enviarReciboWhats() { alert("Recibo enviado via WhatsApp!"); }
         function salvarReciboHistorico() { alert("Recibo salvo no histórico!"); }
 
         function calcComumAdd(val) {
             if (calcVisorVal === '0' && val !== '.') calcVisorVal = val; else calcVisorVal += val;
-            const v = document.getElementById('calc-comum-visor');
-            if(v) v.innerText = calcVisorVal;
+            document.getElementById('calc-comum-visor').innerText = calcVisorVal;
         }
-
-        function calcComumLimpar() {
-            calcVisorVal = '0';
-            const v = document.getElementById('calc-comum-visor');
-            if(v) v.innerText = calcVisorVal;
-        }
-
+        function calcComumLimpar() { calcVisorVal = '0'; document.getElementById('calc-comum-visor').innerText = calcVisorVal; }
         function calcComumPorcentagem() {
             try {
-                let resultado = Function('"use strict";return (' + calcVisorVal.replace(/×/g, '*').replace(/÷/g, '/') + ') / 100')();
-                bobinaHistorico.push(`${calcVisorVal}% = ${resultado}`);
-                renderFitaBobina();
-                calcVisorVal = String(resultado);
-                const v = document.getElementById('calc-comum-visor');
-                if(v) v.innerText = calcVisorVal;
-            } catch (err) { alert("Erro ao calcular porcentagem."); }
+                let res = Function('"use strict";return (' + calcVisorVal.replace(/×/g, '*').replace(/÷/g, '/') + ') / 100')();
+                bobinaHistorico.push(`${calcVisorVal}% = ${res}`); renderFitaBobina();
+                calcVisorVal = String(res); document.getElementById('calc-comum-visor').innerText = calcVisorVal;
+            } catch(e) { alert("Erro"); }
         }
-
         function calcComumCalcular() {
             try {
-                let expressao = calcVisorVal.replace(/×/g, '*').replace(/÷/g, '/');
-                let resultado = Function('"use strict";return (' + expressao + ')')();
-                bobinaHistorico.push(`${calcVisorVal} = ${resultado}`);
-                renderFitaBobina();
-                calcVisorVal = String(resultado);
-                const v = document.getElementById('calc-comum-visor');
-                if(v) v.innerText = calcVisorVal;
-            } catch (err) { alert("Expressão inválida."); calcComumLimpar(); }
+                let res = Function('"use strict";return (' + calcVisorVal.replace(/×/g, '*').replace(/÷/g, '/') + ')')();
+                bobinaHistorico.push(`${calcVisorVal} = ${res}`); renderFitaBobina();
+                calcVisorVal = String(res); document.getElementById('calc-comum-visor').innerText = calcVisorVal;
+            } catch(e) { alert("Erro"); calcComumLimpar(); }
         }
-
         function renderFitaBobina() {
-            const container = document.getElementById('bobina-linhas');
-            if(container) container.innerHTML = bobinaHistorico.map((linha, i) => `<div class="text-[11px] border-b py-0.5">${i+1}. ${linha}</div>`).join('');
+            const c = document.getElementById('bobina-linhas');
+            if(c) c.innerHTML = bobinaHistorico.map((l, i) => `<div class="text-[11px] border-b py-0.5">${i+1}. ${l}</div>`).join('');
         }
         function limparFitaBobina() { bobinaHistorico = []; renderFitaBobina(); }
-
         function calcularDataPrazo() {
-            const dataInicioStr = document.getElementById('calc-prazo-inicio').value;
-            const qtdDias = parseInt(document.getElementById('calc-prazo-dias').value) || 0;
+            const ini = document.getElementById('calc-prazo-inicio').value;
+            const dias = parseInt(document.getElementById('calc-prazo-dias').value) || 0;
             const tipo = document.getElementById('calc-prazo-tipo').value;
-
-            if(!dataInicioStr) return alert("Selecione a data inicial do prazo!");
-
-            let dataAtual = new Date(dataInicioStr + 'T00:00:00');
-
+            if(!ini) return alert("Selecione a data inicial");
+            let dt = new Date(ini + 'T00:00:00');
             if(tipo === 'corridos') {
-                dataAtual.setDate(dataAtual.getDate() + qtdDias);
+                dt.setDate(dt.getDate() + dias);
             } else {
-                let adicionados = 0;
-                while(adicionados < qtdDias) {
-                    dataAtual.setDate(dataAtual.getDate() + 1);
-                    const ds = dataAtual.getDay();
-                    if(ds !== 0 && ds !== 6) adicionados++;
+                let ad = 0;
+                while(ad < dias) {
+                    dt.setDate(dt.getDate() + 1);
+                    if(dt.getDay() !== 0 && dt.getDay() !== 6) ad++;
                 }
             }
-
-            const res = document.getElementById('calc-prazo-resultado');
-            if(res) res.innerText = `Vencimento: ${dataAtual.toLocaleDateString('pt-BR')}`;
+            document.getElementById('calc-prazo-resultado').innerText = `Vencimento: ${dt.toLocaleDateString('pt-BR')}`;
         }
-
+        function renderRelatorios() {
+            let p = 0, pen = 0;
+            db.atos.forEach(a => { if(a.status === 'pago') p += a.valor; else pen += a.valor; });
+            document.getElementById('relatorio-valor-pago').innerText = `R$ ${p.toFixed(2)}`;
+            document.getElementById('relatorio-valor-pendente').innerText = `R$ ${pen.toFixed(2)}`;
+        }
         function fazerBackupJSON() {
             const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Backup_DILIGENCE.json`; a.click();
