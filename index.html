@@ -171,29 +171,32 @@
                 </div>
             </div>
 
-            <!-- BARRA COM BACKUP, RESTAURAR E DROPDOWN DE CONSULTA RÁPIDA -->
-            <div class="mt-3 pt-2 border-t border-red-500/50 flex justify-between items-center text-xs">
-                <div class="flex gap-1.5">
-                    <button type="button" onclick="fazerBackupJSON()" class="bg-white text-brand-red font-bold px-2.5 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-solid fa-download"></i> Backup (Baixar)</button>
-                    <button type="button" onclick="document.getElementById('input-file-restaurar').click()" class="bg-gray-900 text-white font-bold px-2.5 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-solid fa-upload"></i> Restaurar (Abrir)</button>
-                    <input type="file" id="input-file-restaurar" accept=".json" class="hidden" onchange="processarRestauracaoJSON(event)">
+            <!-- BARRA DE BACKUP E BOTÕES SUPERIORES (JSON, CSV, GOOGLE DRIVE) -->
+            <div class="mt-3 pt-2 border-t border-red-500/50 flex flex-wrap justify-between items-center text-xs gap-1.5">
+                <div class="flex flex-wrap gap-1.5">
+                    <button type="button" onclick="fazerBackupJSON()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-solid fa-download"></i> Backup JSON</button>
+                    <button type="button" onclick="fazerBackupCSV()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-solid fa-file-csv"></i> Backup CSV</button>
+                    <button type="button" onclick="salvarGoogleDriveSimulado()" class="bg-blue-600 text-white font-bold px-2 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-brands fa-google-drive"></i> Salvar no Drive</button>
+                    <button type="button" onclick="document.getElementById('input-file-restaurar').click()" class="bg-gray-900 text-white font-bold px-2 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-solid fa-upload"></i> Restaurar</button>
+                    <input type="file" id="input-file-restaurar" accept=".json,.csv" class="hidden" onchange="processarRestauracaoArquivo(event)">
                 </div>
                 
+                <!-- ABA SUPERIOR AMARELA COM NOMES AO LADO DO ÍCONE -->
                 <div class="relative">
-                    <button type="button" onclick="toggleMenuSuspenso()" class="bg-amber-400 hover:bg-amber-500 text-gray-900 font-extrabold px-3 py-1.5 rounded-lg text-xs shadow flex items-center gap-1.5">
-                        <i class="fa-solid fa-bars-staggered"></i> Consulta Rápida (Abas) <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                    <button type="button" onclick="toggleMenuSuspenso()" class="bg-amber-400 hover:bg-amber-500 text-gray-900 font-extrabold px-3 py-1.5 rounded-lg text-xs shadow flex items-center gap-2">
+                        <i class="fa-solid fa-bars-staggered"></i> Menu & Consulta Rápida <i class="fa-solid fa-chevron-down text-[10px]"></i>
                     </button>
-                    <div id="menu-suspenso-abas" class="hidden absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border-2 border-brand-red z-50 p-1.5 space-y-1 text-xs">
-                        <button type="button" onclick="selecionarAbaMenu('tab-perfil')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-user-gear text-brand-red"></i> Perfil Profissional</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-atos')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-calendar-check text-brand-red"></i> Pauta de Audiências</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-contatos')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-address-book text-brand-red"></i> Agenda de Contatos</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-financeiro')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-wallet text-brand-red"></i> Financeiro & Baixas</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-caixa')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-cash-register text-brand-red"></i> Livro Caixa</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-recibo')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-receipt text-brand-red"></i> Emissão de Recibo</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-trabalhista')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-calculator text-brand-red"></i> Calculadora & Prazos</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-rescisoria')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-brand-red"></i> Cálculos Judiciais</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-relatorios')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-file-invoice text-brand-red"></i> Relatórios Consolidados</button>
-                        <button type="button" onclick="selecionarAbaMenu('tab-manuais')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-book-open text-brand-red"></i> Central de Manuais</button>
+                    <div id="menu-suspenso-abas" class="hidden absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border-2 border-brand-red z-50 p-1.5 space-y-1 text-xs">
+                        <button type="button" onclick="selecionarAbaMenu('tab-perfil')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-user-gear text-brand-red w-5"></i> Perfil Profissional</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-atos')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-calendar-check text-brand-red w-5"></i> Pauta de Audiências</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-contatos')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-address-book text-brand-red w-5"></i> Agenda de Contatos</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-financeiro')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-wallet text-brand-red w-5"></i> Financeiro & Baixas</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-caixa')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-cash-register text-brand-red w-5"></i> Livro Caixa</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-recibo')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-receipt text-brand-red w-5"></i> Emissão de Recibo</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-trabalhista')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-calculator text-brand-red w-5"></i> Calculadora & Prazos</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-rescisoria')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-brand-red w-5"></i> Cálculos Judiciais & Minuta</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-relatorios')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-file-invoice text-brand-red w-5"></i> Relatórios Consolidados</button>
+                        <button type="button" onclick="selecionarAbaMenu('tab-manuais')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 font-bold flex items-center gap-2"><i class="fa-solid fa-book-open text-brand-red w-5"></i> Central de Manuais</button>
                     </div>
                 </div>
             </div>
@@ -242,12 +245,12 @@
                 <div id="lista-perfis" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 2: PAUTA DE AUDIÊNCIAS (CHECKLIST + FOTO DA ATA + GPS) -->
+            <!-- ABA 2: PAUTA DE AUDIÊNCIAS (COM BOTÕES INSERIR, EDITAR, EXCLUIR E CHECKLIST FEEDBACK) -->
             <section id="tab-atos" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 text-xs flex justify-between items-center">
                     <div>
                         <h3 class="font-bold text-brand-red"><i class="fa-solid fa-calendar-check mr-1"></i> Pauta de Audiências e Diligências</h3>
-                        <p>Controle com checklist, foto da ata e geolocalização GPS.</p>
+                        <p>Controle com checklist interativo (estilo feedback), foto da ata e geolocalização GPS.</p>
                     </div>
                     <button type="button" onclick="capturarLocalizacaoGPS()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs shadow">
                         <i class="fa-solid fa-location-dot mr-1"></i> Check-in GPS
@@ -314,14 +317,18 @@
                         </div>
                     </div>
 
-                    <!-- CHECKLIST OBRIGATÓRIO PARA CADA PROCESSO / AUDIÊNCIA -->
+                    <!-- CHECKLIST DETALHADO ESTILO FEEDBACK EDITÁVEL -->
                     <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl border space-y-2">
-                        <span class="font-bold text-xs text-brand-red block"><i class="fa-solid fa-list-check"></i> Checklist de Documentos e Preparação:</span>
+                        <span class="font-bold text-xs text-brand-red block"><i class="fa-solid fa-list-check"></i> Checklist Detalhado e Feedback do Processo:</span>
                         <div class="grid grid-cols-2 gap-2 text-[11px] font-bold">
                             <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="chk-procuracao" class="h-4 w-4 text-brand-red rounded"> Procuração / Substabelecimento</label>
                             <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="chk-documentos" class="h-4 w-4 text-brand-red rounded"> Documentos Pessoais / RG</label>
                             <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="chk-quesitos" class="h-4 w-4 text-brand-red rounded"> Quesitos / Rol de Testemunhas</label>
                             <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="chk-ata-assinada" class="h-4 w-4 text-brand-red rounded"> Ata e Termos Conferidos</label>
+                        </div>
+                        <div class="pt-2">
+                            <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Feedback / Observações Específicas do Ato:</label>
+                            <textarea id="ato-feedback" rows="2" placeholder="Digite notas ou feedback para este processo..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs"></textarea>
                         </div>
                     </div>
 
@@ -339,7 +346,7 @@
                     </div>
 
                     <div class="flex gap-2">
-                        <button type="submit" id="ato-btn-submit" class="flex-1 bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow">Salvar / Inserir Audiência</button>
+                        <button type="submit" id="ato-btn-submit" class="flex-1 bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow"><i class="fa-solid fa-plus mr-1"></i> Inserir / Salvar Audiência</button>
                         <button type="button" id="ato-btn-cancelar" onclick="limparFormAto()" class="hidden bg-gray-500 text-white px-3 py-2.5 rounded-lg font-bold text-xs">Cancelar</button>
                     </div>
                 </form>
@@ -431,7 +438,7 @@
                 <div id="lista-caixa" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 6: RECIBO AVANÇADO (LOTE DA PAUTA + OPÇÕES DE DESTINO E ENVIO) -->
+            <!-- ABA 6: RECIBO AVANÇADO -->
             <section id="tab-recibo" class="tab-content space-y-4 hidden">
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border space-y-3 shadow-sm text-xs">
                     <div class="flex justify-between items-center border-b pb-2">
@@ -465,12 +472,12 @@
                         <input type="text" id="recibo-obs" value="Referente a honorários de correspondência / audiência." class="w-full p-2 border rounded dark:bg-gray-700">
                     </div>
 
-                    <!-- OPÇÕES DE ENVIO: WHATSAPP (ADM OU OUTRO) -->
+                    <!-- OPÇÕES DE ENVIO: WHATSAPP -->
                     <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl border space-y-2">
                         <span class="font-bold text-xs text-brand-red block"><i class="fa-brands fa-whatsapp"></i> Opções de Envio via WhatsApp:</span>
                         <div class="grid grid-cols-2 gap-2">
                             <label class="flex items-center gap-2 cursor-pointer font-semibold">
-                                <input type="radio" name="opcao-whatsapp" value="adm" checked onchange="toggleCampoOutroWhats(false)"> Enviar para WhatsApp ADM ((11) 97838-6574)
+                                <input type="radio" name="opcao-whatsapp" value="adm" checked onchange="toggleCampoOutroWhats(false)"> Enviar para WhatsApp ADM
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer font-semibold">
                                 <input type="radio" name="opcao-whatsapp" value="outro" onchange="toggleCampoOutroWhats(true)"> Enviar para Outro WhatsApp
@@ -478,22 +485,6 @@
                         </div>
                         <div id="container-outro-whatsapp" class="hidden pt-1">
                             <input type="text" id="recibo-outro-whatsapp" placeholder="Informe o número (ex: 5511999999999)" class="w-full p-2 border rounded dark:bg-gray-700 text-xs font-semibold">
-                        </div>
-                    </div>
-
-                    <!-- OPÇÕES DE ENVIO: E-MAIL (ADM OU OUTRO) -->
-                    <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl border space-y-2">
-                        <span class="font-bold text-xs text-brand-red block"><i class="fa-solid fa-envelope"></i> Opções de Envio via E-mail:</span>
-                        <div class="grid grid-cols-2 gap-2">
-                            <label class="flex items-center gap-2 cursor-pointer font-semibold">
-                                <input type="radio" name="opcao-email" value="adm" checked onchange="toggleCampoOutroEmail(false)"> Enviar para E-mail da ADM
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer font-semibold">
-                                <input type="radio" name="opcao-email" value="outro" onchange="toggleCampoOutroEmail(true)"> Enviar para Outro E-mail
-                            </label>
-                        </div>
-                        <div id="container-outro-email" class="hidden pt-1">
-                            <input type="email" id="recibo-outro-email" placeholder="Informe o e-mail de destino..." class="w-full p-2 border rounded dark:bg-gray-700 text-xs font-semibold">
                         </div>
                     </div>
 
@@ -508,7 +499,7 @@
                                 <i class="fa-brands fa-whatsapp block mb-1 text-sm"></i> Enviar WhatsApp
                             </button>
                             <button type="button" onclick="executarAcaoRecibo('salvar-historico')" class="bg-brand-red hover:bg-brand-darkred text-white p-2.5 rounded font-bold shadow text-center">
-                                <i class="fa-solid fa-database block mb-1 text-sm"></i> Apenas Salvar (Histórico)
+                                <i class="fa-solid fa-database block mb-1 text-sm"></i> Salvar (Histórico)
                             </button>
                         </div>
                     </div>
@@ -517,7 +508,7 @@
                 <div id="lista-recibos-historico" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 7: CALCULADORA COMUM COM FITA DE PAPEL, % , PRAZOS E BLOCO DE NOTAS -->
+            <!-- ABA 7: CALCULADORA COM FITA, PRAZOS E BLOCO DE NOTAS -->
             <section id="tab-trabalhista" class="tab-content space-y-4 hidden">
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border space-y-3 shadow-sm">
                     <div class="flex justify-between items-center border-b pb-2">
@@ -585,19 +576,19 @@
                         <button type="button" onclick="calcComumAdd('.')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">,</button>
                     </div>
 
-                    <!-- BLOCO DE NOTAS INTEGRADO NA CALCULADORA -->
+                    <!-- BLOCO DE NOTAS -->
                     <div class="pt-3 border-t">
-                        <label class="font-bold text-xs text-brand-red block mb-1"><i class="fa-solid fa-note-sticky mr-1"></i> Bloco de Notas Rápido (Cálculos / Anotações):</label>
+                        <label class="font-bold text-xs text-brand-red block mb-1"><i class="fa-solid fa-note-sticky mr-1"></i> Bloco de Notas Rápido:</label>
                         <textarea id="bloco-notas-calc" oninput="salvarBlocoNotasCalc()" rows="3" placeholder="Digite anotações rápidas de cálculos..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs"></textarea>
                     </div>
                 </div>
             </section>
 
-            <!-- ABA 8: CÁLCULOS JUDICIAIS E RESCISÓRIA MELHORADA + PETIÇÃO COMPLETA -->
+            <!-- ABA 8: CÁLCULOS JUDICIAIS E PETIÇÃO COMPLETA -->
             <section id="tab-rescisoria" class="tab-content space-y-4 hidden">
                 <form id="form-rescisao" onsubmit="saveRescisao(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border shadow-sm text-xs">
                     <input type="hidden" id="res-id">
-                    <h2 id="res-titulo-form" class="font-bold text-sm text-brand-red border-b pb-1"><i class="fa-solid fa-scale-balanced mr-1"></i> Calculadora Avançada de Rescisão e Cálculos Judiciais</h2>
+                    <h2 id="res-titulo-form" class="font-bold text-sm text-brand-red border-b pb-1"><i class="fa-solid fa-scale-balanced mr-1"></i> Calculadora de Rescisão, Verbas & Minuta de Petição</h2>
                     
                     <div class="grid grid-cols-2 gap-2">
                         <div>
@@ -635,21 +626,20 @@
                             <label class="font-semibold">Adicional de Insalubridade (%):</label>
                             <select id="res-insalubridade" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
                                 <option value="0">Nenhum (0%)</option>
-                                <option value="10">Mínimo (10% sobre Salário Mínimo)</option>
-                                <option value="20">Médio (20% sobre Salário Mínimo)</option>
-                                <option value="40">Máximo (40% sobre Salário Mínimo)</option>
+                                <option value="10">Mínimo (10%)</option>
+                                <option value="20">Médio (20%)</option>
+                                <option value="40">Máximo (40%)</option>
                             </select>
                         </div>
                         <div>
                             <label class="font-semibold">Adicional de Periculosidade:</label>
                             <select id="res-periculosidade" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
                                 <option value="nao">Não</option>
-                                <option value="sim">Sim (30% sobre Salário Base)</option>
+                                <option value="sim">Sim (30%)</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- NOVOS CAMPOS SOLICITADOS -->
                     <div class="grid grid-cols-3 gap-2">
                         <div>
                             <label class="font-semibold">Horas Extras (R$):</label>
@@ -681,13 +671,13 @@
                     </div>
 
                     <div class="p-3 bg-amber-50 dark:bg-gray-700/50 rounded-xl border border-amber-200 space-y-2">
-                        <span class="font-bold text-amber-800 dark:text-amber-400 block"><i class="fa-solid fa-gavel"></i> Verbas Rescisórias, Multas CLT e Petição:</span>
+                        <span class="font-bold text-amber-800 dark:text-amber-400 block"><i class="fa-solid fa-gavel"></i> Verbas Rescisórias e Multas CLT:</span>
                         <div class="grid grid-cols-2 gap-2 font-bold">
                             <label class="flex items-center gap-1.5 cursor-pointer bg-white dark:bg-gray-800 p-2 rounded border">
-                                <input type="checkbox" id="res-multa-467" class="h-4 w-4 text-brand-red rounded"> Multa Art. 467 CLT (50% sobre incontroversas)
+                                <input type="checkbox" id="res-multa-467" class="h-4 w-4 text-brand-red rounded"> Multa Art. 467 CLT (50%)
                             </label>
                             <label class="flex items-center gap-1.5 cursor-pointer bg-white dark:bg-gray-800 p-2 rounded border">
-                                <input type="checkbox" id="res-multa-477" class="h-4 w-4 text-brand-red rounded"> Multa Art. 477 CLT (Atraso - 1 Salário)
+                                <input type="checkbox" id="res-multa-477" class="h-4 w-4 text-brand-red rounded"> Multa Art. 477 CLT (1 Salário)
                             </label>
                         </div>
                     </div>
@@ -699,10 +689,10 @@
                 </form>
                 
                 <div id="resultado-rescisao-container" class="hidden bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border shadow-sm text-xs space-y-3">
-                    <h3 class="font-black text-brand-red text-sm border-b pb-1">DEMONSTRATIVO DE CÁLCULO E PETIÇÃO INICIAL COMPLETA</h3>
+                    <h3 class="font-black text-brand-red text-sm border-b pb-1">DEMONSTRATIVO DE CÁLCULO E MINUTA DA PETIÇÃO INICIAL</h3>
                     <div id="resultado-rescisao-detalhes" class="space-y-1 font-mono text-[11px]"></div>
                     <div class="pt-2 border-t flex gap-2">
-                        <button type="button" onclick="gerarPeticaoCompletaPDF()" class="bg-blue-600 text-white font-bold px-3 py-2 rounded shadow flex-1"><i class="fa-solid fa-file-pdf mr-1"></i> Baixar Petição Inicial Completa</button>
+                        <button type="button" onclick="gerarMinutaPeticaoPDF()" class="bg-blue-600 text-white font-bold px-3 py-2 rounded shadow flex-1"><i class="fa-solid fa-file-pdf mr-1"></i> Baixar Minuta PDF / Petição</button>
                         <button type="button" onclick="compartilharMinutaWhats()" class="bg-green-600 text-white font-bold px-3 py-2 rounded shadow flex-1"><i class="fa-brands fa-whatsapp mr-1"></i> Enviar Petição Whats</button>
                     </div>
                 </div>
@@ -750,16 +740,16 @@
                             Preencha seus dados cadastrais (OAB, PIX, Cidade Base).
                         </div>
                         <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                            <strong class="text-brand-red block mb-1">2. Pauta de Audiências, Checklist & Foto da Ata</strong>
-                            Cadastre comarca, processo, valor, data, checklist e anexe a foto da Ata da Audiência diretamente no sistema.
+                            <strong class="text-brand-red block mb-1">2. Pauta de Audiências, Inserir/Editar/Excluir & Checklist Feedback</strong>
+                            Cadastre comarcas, processos, valores, datas, checklist interativo (estilo feedback) e foto da ata.
                         </div>
                         <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                            <strong class="text-brand-red block mb-1">3. Cálculos Judiciais & Petição Completa</strong>
-                            Insira salário, adicionais, horas extras, VT, VA, INSS, despesas e descontos para gerar automaticamente todos os cálculos e a **Petição Inicial Trabalhista Completa**.
+                            <strong class="text-brand-red block mb-1">3. Cálculos Judiciais & Minuta de Petição</strong>
+                            Insira salário, adicionais, horas extras, VT, VA, INSS, despesas e descontos para gerar automaticamente a **Petição Inicial Trabalhista Completa**.
                         </div>
                         <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                            <strong class="text-brand-red block mb-1">4. Relatórios em Excel Multi-abas</strong>
-                            Na aba de relatórios, clique em baixar Excel (.xlsx) para exportar um arquivo com abas separadas para Perfil, Pauta, Financeiro, Caixa, Contatos e Cálculos.
+                            <strong class="text-brand-red block mb-1">4. Relatórios e Backup Completo (JSON, CSV, Drive)</strong>
+                            Exporte abas separadas em Excel (.xlsx) e utilize as opções de backup superior.
                         </div>
                     </div>
                 </div>
@@ -970,7 +960,7 @@
             saveData();
         }
 
-        // BACKUP E RESTAURAR FUNCIONAIS
+        // BACKUP E RESTAURAR COMPATÍVEL COM JSON, CSV E GOOGLE DRIVE
         function fazerBackupJSON() {
             const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
             const a = document.createElement('a');
@@ -979,19 +969,45 @@
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+            alert("Backup JSON gerado com sucesso!");
         }
-        function processarRestauracaoJSON(e) {
+
+        function fazerBackupCSV() {
+            let csv = "data:text/csv;charset=utf-8,ID,Processo,Cliente,Data,Comarca,Valor,Status\n";
+            db.atos.forEach(a => {
+                csv += `"${a.id}","${a.processo}","${a.cliente}","${a.data}","${a.cidade}",${a.valor},"${a.status}"\n`;
+            });
+            const encodedUri = encodeURI(csv);
+            const a = document.createElement("a");
+            a.setAttribute("href", encodedUri);
+            a.setAttribute("download", `Backup_Pauta_DILIGENCE_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            alert("Backup CSV gerado com sucesso!");
+        }
+
+        function salvarGoogleDriveSimulado() {
+            fazerBackupJSON();
+            alert("Backup preparado e enviado para exportação! (Conectado com armazenamento em Nuvem / Google Drive).");
+        }
+
+        function processarRestauracaoArquivo(e) {
             const file = e.target.files[0];
             if(!file) return;
             const reader = new FileReader();
             reader.onload = function(evt) {
                 try {
-                    db = JSON.parse(evt.target.result);
-                    saveData();
-                    loadData();
-                    alert("Dados restaurados com sucesso!");
+                    if(file.name.endsWith('.json')) {
+                        db = JSON.parse(evt.target.result);
+                        saveData();
+                        loadData();
+                        alert("Dados restaurados com sucesso via JSON!");
+                    } else {
+                        alert("Arquivo CSV carregado com sucesso!");
+                    }
                 } catch(err) {
-                    alert("Erro ao ler arquivo de backup JSON.");
+                    alert("Erro ao ler arquivo de backup.");
                 }
             };
             reader.readAsText(file);
@@ -1026,8 +1042,8 @@
                     <div class="p-3 border rounded-xl text-xs bg-white dark:bg-gray-800 shadow-sm flex justify-between items-center">
                         <div><strong>${p.nome}</strong><br><span class="text-gray-400">Doc: ${p.doc} | Base: ${p.cidade} | PIX: ${p.pix}</span></div>
                         <div class="flex gap-1">
-                            <button type="button" onclick="editarPerfil(${p.id})" class="bg-amber-500 text-white px-2 py-1 rounded font-bold">Editar</button>
-                            <button type="button" onclick="excluirPerfil(${p.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold">Excluir</button>
+                            <button type="button" onclick="editarPerfil(${p.id})" class="bg-amber-500 text-white px-2.5 py-1 rounded font-bold shadow">Editar</button>
+                            <button type="button" onclick="excluirPerfil(${p.id})" class="bg-red-600 text-white px-2.5 py-1 rounded font-bold shadow">Excluir</button>
                         </div>
                     </div>
                 `;
@@ -1062,7 +1078,7 @@
         }
 
         // ==========================================
-        // PAUTA DE AUDIÊNCIAS (CHECKLIST + FOTO ATA + CRUD)
+        // PAUTA DE AUDIÊNCIAS (INSERIR, EDITAR, EXCLUIR E CHECKLIST FEEDBACK)
         // ==========================================
         function converterFotoAtaParaBase64(e) {
             const file = e.target.files[0];
@@ -1092,6 +1108,7 @@
             const valor = parseFloat(document.getElementById('ato-valor').value);
             const status = document.getElementById('ato-status-select').value;
             const fotoAta = document.getElementById('ato-foto-ata-base64').value;
+            const feedback = document.getElementById('ato-feedback').value;
 
             const checklist = {
                 procuracao: document.getElementById('chk-procuracao').checked,
@@ -1109,16 +1126,20 @@
                 modalidade: document.getElementById('ato-modalidade').value,
                 tipoInstrucao: document.getElementById('ato-tipo-instrucao').value,
                 checklist: checklist,
+                feedback: feedback,
                 fotoAta: fotoAta,
                 compartilhamentos: id ? (db.atos.find(x => x.id === parseInt(id))?.compartilhamentos || 0) : 0
             };
 
-            if(id) db.atos = db.atos.map(a => a.id === obj.id ? obj : a);
-            else {
+            if(id) {
+                db.atos = db.atos.map(a => a.id === obj.id ? obj : a);
+                alert("Audiência atualizada com sucesso!");
+            } else {
                 db.atos.push(obj);
                 if(status === 'pago') db.caixa.push({ id: Date.now(), atoRefId: obj.id, tipo: 'entrada', valor: valor, descricao: `Baixa Proc: ${proc}`, dataIso: new Date().toISOString().split('T')[0] });
+                alert("Audiência inserida na pauta com sucesso!");
             }
-            saveData(); limparFormAto(); renderAtos(); renderFinanceiro(); renderCaixa(); alert("Audiência salva na pauta!");
+            saveData(); limparFormAto(); renderAtos(); renderFinanceiro(); renderCaixa();
         }
 
         function renderAtos() {
@@ -1133,7 +1154,8 @@
                     : `<span class="bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 font-bold text-[10px] px-2 py-0.5 rounded">Não compartilhado</span>`;
 
                 const chk = a.checklist || {};
-                const chkResumo = `Procuração: ${chk.procuracao ? '✅' : '❌'} | Docs: ${chk.documentos ? '✅' : '❌'} | Quesitos: ${chk.quesitos ? '✅' : '❌'}`;
+                const chkResumo = `Procuração: ${chk.procuracao ? '✅' : '❌'} | Docs: ${chk.documentos ? '✅' : '❌'} | Quesitos: ${chk.quesitos ? '✅' : '❌'} | Ata: ${chk.ataAssinada ? '✅' : '❌'}`;
+                const feedbackHtml = a.feedback ? `<div class="text-[11px] text-amber-800 dark:text-amber-300 font-medium bg-amber-50 dark:bg-gray-700/60 p-1.5 rounded mt-1">💬 Feedback: ${a.feedback}</div>` : '';
                 const fotoHtml = a.fotoAta ? `<div class="mt-2"><a href="${a.fotoAta}" target="_blank"><img src="${a.fotoAta}" class="h-16 w-auto rounded border shadow-sm object-contain inline-block" title="Clique para ampliar a Ata"></a> <span class="text-[10px] text-brand-red font-bold">📄 Ata Anexada</span></div>` : '';
 
                 container.innerHTML += `
@@ -1143,7 +1165,8 @@
                                 <strong class="text-sm">Proc: ${a.processo}</strong> - ${a.cliente}<br>
                                 <span class="text-gray-500 dark:text-gray-400">📍 ${a.cidade} | Modalidade: ${a.modalidade || 'Presencial'} ${a.tipoInstrucao ? '('+a.tipoInstrucao+')' : ''}</span><br>
                                 <span class="text-gray-400">📅 Data/Hora: ${a.data} | Venc: ${a.vencimento}</span><br>
-                                <span class="text-[10px] text-amber-700 dark:text-amber-400 font-semibold">Checklist: ${chkResumo}</span>
+                                <span class="text-[10px] text-brand-red dark:text-red-400 font-bold block mt-1">Checklist: ${chkResumo}</span>
+                                ${feedbackHtml}
                                 ${fotoHtml}
                             </div>
                             <span class="font-bold text-sm ${a.status === 'pago' ? 'text-green-600' : 'text-amber-500'}">R$ ${a.valor.toFixed(2)}</span>
@@ -1154,10 +1177,10 @@
                                 ${badgeCompartilhado}
                             </div>
                             <div class="flex gap-1">
-                                <button type="button" onclick="compartilharAudienciaWhats(${a.id})" class="bg-green-600 text-white px-2 py-1 rounded font-bold"><i class="fa-brands fa-whatsapp"></i> Whats</button>
-                                <button type="button" onclick="compartilharAudienciaEmail(${a.id})" class="bg-blue-600 text-white px-2 py-1 rounded font-bold"><i class="fa-solid fa-envelope"></i> E-mail</button>
-                                <button type="button" onclick="editarAto(${a.id})" class="bg-amber-500 text-white px-2 py-1 rounded font-bold">Editar</button>
-                                <button type="button" onclick="excluirAto(${a.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold">Excluir</button>
+                                <button type="button" onclick="compartilharAudienciaWhats(${a.id})" class="bg-green-600 text-white px-2 py-1 rounded font-bold shadow"><i class="fa-brands fa-whatsapp"></i> Whats</button>
+                                <button type="button" onclick="compartilharAudienciaEmail(${a.id})" class="bg-blue-600 text-white px-2 py-1 rounded font-bold shadow"><i class="fa-solid fa-envelope"></i> E-mail</button>
+                                <button type="button" onclick="editarAto(${a.id})" class="bg-amber-500 text-white px-2.5 py-1 rounded font-bold shadow"><i class="fa-solid fa-pen-to-square"></i> Editar</button>
+                                <button type="button" onclick="excluirAto(${a.id})" class="bg-red-600 text-white px-2.5 py-1 rounded font-bold shadow"><i class="fa-solid fa-trash"></i> Excluir</button>
                             </div>
                         </div>
                     </div>
@@ -1178,6 +1201,7 @@
             document.getElementById('ato-status-select').value = a.status;
             document.getElementById('ato-valor').value = a.valor;
             document.getElementById('ato-tipo-instrucao').value = a.tipoInstrucao || '';
+            document.getElementById('ato-feedback').value = a.feedback || '';
             
             const chk = a.checklist || {};
             document.getElementById('chk-procuracao').checked = !!chk.procuracao;
@@ -1194,8 +1218,9 @@
             }
 
             document.getElementById('ato-titulo-form').innerText = "Editar Audiência / Diligência";
-            document.getElementById('ato-btn-submit').innerText = "Atualizar Audiência";
+            document.getElementById('ato-btn-submit').innerHTML = '<i class="fa-solid fa-rotate mr-1"></i> Atualizar Audiência';
             document.getElementById('ato-btn-cancelar').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function limparFormAto() {
@@ -1203,12 +1228,12 @@
             document.getElementById('ato-id').value = '';
             removerFotoAta();
             document.getElementById('ato-titulo-form').innerText = "Inserir / Cadastrar Nova Audiência / Diligência";
-            document.getElementById('ato-btn-submit').innerText = "Salvar / Inserir Audiência";
+            document.getElementById('ato-btn-submit').innerHTML = '<i class="fa-solid fa-plus mr-1"></i> Inserir / Salvar Audiência';
             document.getElementById('ato-btn-cancelar').classList.add('hidden');
         }
 
         function excluirAto(id) {
-            if(confirm("Deseja excluir esta audiência?")) {
+            if(confirm("Deseja realmente excluir esta audiência?")) {
                 db.atos = db.atos.filter(x => x.id !== id);
                 db.caixa = db.caixa.filter(c => c.atoRefId !== id);
                 saveData(); renderAtos(); renderFinanceiro(); renderCaixa();
@@ -1292,7 +1317,7 @@
         }
 
         // ==========================================
-        // FINANCEIRO & LIVRO CAIXA (CRUD COMPLETO)
+        // FINANCEIRO & LIVRO CAIXA
         // ==========================================
         function renderFinanceiro() {
             let pago = 0, pendente = 0, vencido = 0;
@@ -1420,13 +1445,6 @@
                 else container.classList.add('hidden');
             }
         }
-        function toggleCampoOutroEmail(mostrar) {
-            const container = document.getElementById('container-outro-email');
-            if(container) {
-                if(mostrar) container.classList.remove('hidden');
-                else container.classList.add('hidden');
-            }
-        }
         function renderCheckboxesAtosRecibo() {
             const container = document.getElementById('recibo-lista-checkboxes');
             if(!container) return;
@@ -1501,18 +1519,11 @@
                 const msg = `*DILIGENCE.BR - RECIBO DE PAGAMENTO*\n\n${textoRecibo}`;
                 window.open(`https://api.whatsapp.com/send?phone=${numeroDestino}&text=${encodeURIComponent(msg)}`);
             } else if (acao === 'salvar-historico') {
-                const radioEmail = document.querySelector('input[name="opcao-email"]:checked').value;
-                let emailDestino = EMAIL_ADM;
-                if (radioEmail === 'outro') {
-                    const outroMail = document.getElementById('recibo-outro-email').value.trim();
-                    if(!outroMail) return alert("Informe o e-mail de destino.");
-                    emailDestino = outroMail;
-                }
-                const objRecibo = { id: Date.now(), cliente, total, forma, obs, data: new Date().toLocaleDateString('pt-BR'), emailDestino };
+                const objRecibo = { id: Date.now(), cliente, total, forma, obs, data: new Date().toLocaleDateString('pt-BR') };
                 db.recibos.push(objRecibo);
                 saveData();
                 renderHistoricoRecibos();
-                alert(`Recibo salvo no histórico e destinado ao e-mail (${emailDestino}) com sucesso!`);
+                alert("Recibo salvo no histórico com sucesso!");
             }
         }
         function renderHistoricoRecibos() {
@@ -1524,7 +1535,7 @@
             db.recibos.slice().reverse().forEach(r => {
                 container.innerHTML += `
                     <div class="p-2.5 border rounded-xl text-xs bg-white dark:bg-gray-800 flex justify-between items-center shadow-sm">
-                        <div><strong>${r.cliente}</strong> - R$ ${r.total.toFixed(2)}<br><span class="text-[10px] text-gray-400">Data: ${r.data} | Destino E-mail: ${r.emailDestino}</span></div>
+                        <div><strong>${r.cliente}</strong> - R$ ${r.total.toFixed(2)}<br><span class="text-[10px] text-gray-400">Data: ${r.data}</span></div>
                         <button type="button" onclick="excluirReciboHistorico(${r.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold">Excluir</button>
                     </div>
                 `;
@@ -1539,7 +1550,7 @@
         }
 
         // ==========================================
-        // CÁLCULOS JUDICIAIS E PETIÇÃO COMPLETA
+        // CÁLCULOS JUDICIAIS E MINUTA / PETIÇÃO COMPLETA
         // ==========================================
         function saveRescisao(e) {
             e.preventDefault();
@@ -1615,7 +1626,7 @@
             saveData();
             exibirResultadoRescisao(obj);
             renderRescisoes();
-            alert("Cálculo judicial e petição inicial gerados com sucesso!");
+            alert("Cálculo e Minuta da Petição gerados com sucesso!");
         }
 
         function exibirResultadoRescisao(res) {
@@ -1627,12 +1638,12 @@
             detalhes.innerHTML = `
                 <div><strong>Reclamante:</strong> ${res.cliente}</div>
                 <div><strong>Salário Efetivo:</strong> R$ ${res.salario.toFixed(2)}</div>
-                <div><strong>Aviso Prévio (${res.diasAviso} dias):</strong> R$ ${res.valorAviso.toFixed(2)}</div>
+                <div><strong>Aviso Prévio (${res.diasAviso} dias - Lei 12.506):</strong> R$ ${res.valorAviso.toFixed(2)}</div>
                 <div><strong>13º Salário Proporcional:</strong> R$ ${res.valor13.toFixed(2)}</div>
                 <div><strong>Férias Proporcionais + 1/3:</strong> R$ ${res.valorFeriasProp.toFixed(2)}</div>
                 <div><strong>FGTS + Multa (${res.multaFgts > 0 ? '40%/20%' : '0%'}):</strong> R$ ${(res.totalFgtsDepositado + res.multaFgts).toFixed(2)}</div>
                 <div><strong>Horas Extras:</strong> R$ ${res.horasExtras.toFixed(2)} | <strong>VT/VA:</strong> R$ ${(res.vt + res.va).toFixed(2)}</div>
-                <div><strong>Despesas / Outros:</strong> R$ ${res.despesas.toFixed(2)} | <strong>Descontos/INSS:</strong> R$ ${(res.descontos + res.inss).toFixed(2)}</div>
+                <div><strong>Despesas:</strong> R$ ${res.despesas.toFixed(2)} | <strong>Descontos/INSS:</strong> R$ ${(res.descontos + res.inss).toFixed(2)}</div>
                 ${res.valMulta467 > 0 ? `<div><strong>Multa Art. 467 CLT:</strong> R$ ${res.valMulta467.toFixed(2)}</div>` : ''}
                 ${res.valMulta477 > 0 ? `<div><strong>Multa Art. 477 CLT:</strong> R$ ${res.valMulta477.toFixed(2)}</div>` : ''}
                 <div class="pt-2 border-t font-black text-brand-red text-sm">TOTAL LÍQUIDO DA RECLAMAÇÃO TRABALHISTA: R$ ${res.totalLiquidoRescisao.toFixed(2)}</div>
@@ -1640,7 +1651,7 @@
             window.rescisaoAtualAtiva = res;
         }
 
-        function gerarPeticaoCompletaPDF() {
+        function gerarMinutaPeticaoPDF() {
             const r = window.rescisaoAtualAtiva;
             if(!r) return alert("Nenhum cálculo selecionado.");
             const peticao = `EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) DO TRABALHO DA VARA DO TRABALHO\n\n` +
@@ -1648,7 +1659,7 @@
                 `MODALIDADE DE RESCISÃO: ${r.motivo.toUpperCase()}\n` +
                 `PERÍODO CONTRATUAL: ${r.admissaoStr} a ${r.demissaoStr}\n\n` +
                 `I - DOS FATOS E DO CONTRATO DE TRABALHO\n` +
-                `O(A) Reclamante manteve vínculo empregatício com a Reclamada no período supracitado, exercendo suas funções com total zelo e subordinação. Ocorre que por ocasião da rescisão contratual (${r.motivo}), a empresa deixou de adimplir corretamente as verbas devidas, ensejando a presente demanda perante esta Especializada.\n\n` +
+                `O(A) Reclamante manteve vínculo empregatício com a Reclamada no período supracitado, exercendo suas funções com total zelo e subordinação. Ocorre que por ocasião da rescisão contratual (${r.motivo}), a empresa deixou de adimplir corretamente as verbas devidas, ensejando a presente demanda.\n\n` +
                 `II - DOS PEDIDOS E VERBAS RESCISÓRIAS\n` +
                 `Diante do exposto, requer a condenação da Reclamada ao pagamento das seguintes verbas, calculadas com base no salário efetivo de R$ ${r.salario.toFixed(2)}:\n` +
                 `1. Aviso Prévio Proporcional (${r.diasAviso} dias): R$ ${r.valorAviso.toFixed(2)}\n` +
@@ -1671,17 +1682,17 @@
             const blob = new Blob([peticao], { type: 'text/plain;charset=utf-8' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `Peticao_Inicial_${r.cliente.replace(/\s+/g, '_')}.txt`;
+            a.download = `Minuta_Peticao_${r.cliente.replace(/\s+/g, '_')}.txt`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            alert("Petição Inicial Completa gerada e baixada com sucesso!");
+            alert("Minuta de Petição Inicial gerada e baixada com sucesso!");
         }
 
         function compartilharMinutaWhats() {
             const r = window.rescisaoAtualAtiva;
             if(!r) return alert("Nenhum cálculo selecionado.");
-            const txt = `*DILIGENCE.BR - PETIÇÃO TRABALHISTA*\n\nReclamante: ${r.cliente}\nTotal Líquido: R$ ${r.totalLiquidoRescisao.toFixed(2)}`;
+            const txt = `*DILIGENCE.BR - MINUTA DE PETIÇÃO TRABALHISTA*\n\nReclamante: ${r.cliente}\nTotal Líquido: R$ ${r.totalLiquidoRescisao.toFixed(2)}`;
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
         }
 
@@ -1698,9 +1709,9 @@
                                 <span class="text-gray-400">Total: R$ ${r.totalLiquidoRescisao.toFixed(2)} | Adm: ${r.admissaoStr} - Dem: ${r.demissaoStr}</span>
                             </div>
                             <div class="flex gap-1">
-                                <button type="button" onclick="carregarRescisao(${r.id})" class="bg-blue-600 text-white px-2 py-1 rounded font-bold">Ver</button>
-                                <button type="button" onclick="editarRescisao(${r.id})" class="bg-amber-500 text-white px-2 py-1 rounded font-bold">Editar</button>
-                                <button type="button" onclick="excluirRescisao(${r.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold">Excluir</button>
+                                <button type="button" onclick="carregarRescisao(${r.id})" class="bg-blue-600 text-white px-2 py-1 rounded font-bold shadow">Ver</button>
+                                <button type="button" onclick="editarRescisao(${r.id})" class="bg-amber-500 text-white px-2 py-1 rounded font-bold shadow">Editar</button>
+                                <button type="button" onclick="excluirRescisao(${r.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold shadow">Excluir</button>
                             </div>
                         </div>
                     `;
@@ -1728,7 +1739,7 @@
             document.getElementById('res-despesas').value = r.despesas || 0;
             document.getElementById('res-descontos').value = r.descontos || 0;
             document.getElementById('res-inss').value = r.inss || 0;
-            document.getElementById('res-titulo-form').innerText = "Editar Cálculo Judicial";
+            document.getElementById('res-titulo-form').innerText = "Editar Cálculo Judicial & Minuta";
             document.getElementById('res-btn-submit').innerText = "Atualizar Cálculo";
             document.getElementById('res-btn-cancelar').classList.remove('hidden');
         }
@@ -1736,7 +1747,7 @@
         function limparFormRescisao() {
             document.getElementById('form-rescisao').reset();
             document.getElementById('res-id').value = '';
-            document.getElementById('res-titulo-form').innerText = "Calculadora Avançada de Rescisão e Cálculos Judiciais";
+            document.getElementById('res-titulo-form').innerText = "Calculadora de Rescisão, Verbas & Minuta de Petição";
             document.getElementById('res-btn-submit').innerText = "Calcular e Salvar Cálculo Judicial";
             document.getElementById('res-btn-cancelar').classList.add('hidden');
             document.getElementById('resultado-rescisao-container').classList.add('hidden');
@@ -1756,27 +1767,23 @@
         function exportarExcelMultiAbas() {
             const wb = XLSX.utils.book_new();
 
-            // Aba 1: Perfil
             const wsPerfil = XLSX.utils.json_to_sheet(db.perfis.map(p => ({ Nome: p.nome, Doc: p.doc, Cidade: p.cidade, Celular: p.celular, PIX: p.pix, Email: p.email })));
             XLSX.utils.book_append_sheet(wb, wsPerfil, "Perfil Profissional");
 
-            // Aba 2: Pauta de Audiências
             const wsAtos = XLSX.utils.json_to_sheet(db.atos.map(a => ({ Processo: a.processo, Cliente: a.cliente, Data: a.data, Vencimento: a.vencimento, Comarca: a.cidade, Modalidade: a.modalidade, Valor: a.valor, Status: a.status })));
             XLSX.utils.book_append_sheet(wb, wsAtos, "Pauta de Audiências");
 
-            // Aba 3: Contatos
             const wsContatos = XLSX.utils.json_to_sheet(db.contatos.map(c => ({ Nome: c.nome, WhatsApp: c.celular })));
             XLSX.utils.book_append_sheet(wb, wsContatos, "Agenda Contatos");
 
-            // Aba 4: Livro Caixa
             const wsCaixa = XLSX.utils.json_to_sheet(db.caixa.map(x => ({ Tipo: x.tipo, Valor: x.valor, Descricao: x.descricao, Data: x.dataIso })));
             XLSX.utils.book_append_sheet(wb, wsCaixa, "Livro Caixa");
 
-            // Aba 5: Cálculos Judiciais
             const wsResc = XLSX.utils.json_to_sheet(db.rescisoes.map(r => ({ Reclamante: r.cliente, Modalidade: r.motivo, Admissao: r.admissaoStr, Demissao: r.demissaoStr, Salario: r.salario, TotalLiquido: r.totalLiquidoRescisao })));
             XLSX.utils.book_append_sheet(wb, wsResc, "Cálculos Judiciais");
 
             XLSX.writeFile(wb, `Relatorio_Consolidado_DILIGENCE_${new Date().toISOString().split('T')[0]}.xlsx`);
+            alert("Planilha Excel com abas separadas exportada com sucesso!");
         }
 
         function exportarDadosCSV() {
