@@ -22,7 +22,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- BIBLIOTECA PARA EXPORTAÇÃO NATIVA DO EXCEL EM MULTI-ABAS (.XLSX) -->
+    <!-- BIBLIOTECA NATIVA PARA EXPORTAÇÃO EXCEL MULTI-ABAS (.XLSX) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <script>
@@ -45,6 +45,9 @@
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+    <!-- DATALIST GLOBAL PARA AUTOCOMPLETAR CIDADES / COMARCAS -->
+    <datalist id="lista-cidades-comarcas"></datalist>
 
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 z-50 bg-brand-red flex items-center justify-center p-4">
@@ -91,7 +94,21 @@
                     </div>
                 </div>
             </div>
+
+            <div class="mt-3 pt-2 border-t border-red-500/50 flex justify-between items-center text-xs">
+                <span class="italic text-red-100 text-[11px]">Painel de Controle e Pauta</span>
+                <div class="flex gap-1">
+                    <button onclick="abrirModalBackup()" class="bg-white text-brand-red font-bold px-2.5 py-1 rounded text-[11px] hover:bg-red-50 transition shadow flex items-center gap-1">
+                        <i class="fa-solid fa-database"></i> Menu de Backup
+                    </button>
+                    <button onclick="acionarRestauracao()" class="bg-gray-900 text-white font-bold px-2 py-1 rounded text-[11px] hover:bg-black transition shadow flex items-center gap-1">
+                        <i class="fa-solid fa-upload"></i> Restaurar
+                    </button>
+                </div>
+            </div>
         </header>
+
+        <input type="file" id="input-restaurar-file" accept=".json" class="hidden" onchange="processarRestauracaoFile(event)">
 
         <main class="flex-1 p-4 overflow-y-auto">
 
@@ -126,10 +143,9 @@
 
                     <div>
                         <label class="text-xs font-semibold">Cidade / Comarca</label>
-                        <input type="text" id="ato-cidade" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-semibold">
+                        <input type="text" id="ato-cidade" list="lista-cidades-comarcas" required placeholder="Digite a comarca..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-semibold">
                     </div>
 
-                    <!-- FOTO OU ANEXO DA ATA NA PAUTA -->
                     <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-2">
                         <label class="text-xs font-bold text-gray-700 dark:text-gray-200 flex items-center gap-1">
                             <i class="fa-solid fa-camera text-brand-red"></i> Fotografar ATA ou Selecionar Documento:
@@ -149,7 +165,7 @@
                         </div>
                         <div>
                             <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Status*</label>
-                            <select id="ato-status-select" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-bold">
+                            <select id="ato-status-select" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-bold bg-white dark:text-white">
                                 <option value="pendente">🟡 PENDENTE</option>
                                 <option value="pago">🟢 PAGO</option>
                             </select>
@@ -193,7 +209,7 @@
                     </div>
                     <div>
                         <label class="font-bold text-gray-600 dark:text-gray-300 block">Cidade:*</label>
-                        <input type="text" id="chk-cidade" class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                        <input type="text" id="chk-cidade" list="lista-cidades-comarcas" class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
                     </div>
                 </div>
 
@@ -204,7 +220,6 @@
                     <textarea id="chk-obs" rows="2" placeholder="Descreva o que ocorreu..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-semibold focus:ring-2 focus:ring-brand-red outline-none"></textarea>
                 </div>
 
-                <!-- CAMPO DA ATA NO CHECKLIST COM SINCRONIZAÇÃO AUTOMÁTICA DA PAUTA -->
                 <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-1">
                     <label class="font-bold text-gray-700 dark:text-gray-200 block text-[11px]">
                         Anexar ATA / Tirar Nova Foto (Opcional):
@@ -226,13 +241,53 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT CORRIGIDO -->
+    <!-- MODAL DE BACKUP COMPLETO (COM TODAS AS 5 OPÇÕES) -->
+    <div id="modal-backup" class="fixed inset-0 z-50 bg-black/60 modal-blur hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border dark:border-gray-700">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-extrabold text-sm text-brand-red flex items-center gap-1">
+                    <i class="fa-solid fa-database"></i> Central de Backup & Autonomia
+                </h3>
+                <button onclick="fecharModalBackup()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">&times;</button>
+            </div>
+            
+            <p class="text-xs text-gray-600 dark:text-gray-300">Escolha a opção de backup desejada:</p>
+
+            <div class="space-y-2">
+                <button onclick="fazerBackupJSON()" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
+                    <i class="fa-solid fa-file-code"></i> 1. Salvar Backup no Celular (.JSON)
+                </button>
+                <button onclick="enviarBackupEmailPessoal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
+                    <i class="fa-solid fa-envelope"></i> 2. Enviar Cópia p/ Meu E-mail
+                </button>
+                <button onclick="exportarExcelMultiAbas()" class="w-full bg-green-700 hover:bg-green-800 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
+                    <i class="fa-solid fa-file-excel text-lg"></i> 3. Exportar Excel Multi-Abas (.XLSX)
+                </button>
+                <button onclick="acionarRestauracao()" class="w-full bg-gray-800 hover:bg-gray-900 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
+                    <i class="fa-solid fa-upload"></i> 4. RESTAURAR BACKUP (.JSON)
+                </button>
+                
+                <button onclick="confirmarZerarTudoGeral()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-extrabold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1 border border-red-300 mt-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i> ZERAR/DELETAR TODOS OS DADOS (RESET)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT CONSOLIDADO -->
     <script>
         const AUTH_USER = "diligence.br*";
         const AUTH_PASS = "320427";
         const WHATS_ADM = "5511978386574";
+        const EMAIL_PADRAO = "ec.cortez@uol.com.br";
 
-        let db = { perfil: {}, atos: [], caixa: [], contatos: [] };
+        const COMARCAS_PADRAO = [
+            "São Paulo - SP", "Campinas - SP", "Guarulhos - SP", "São Bernardo do Campo - SP", 
+            "Santo André - SP", "Osasco - SP", "Sorocaba - SP", "Ribeirão Preto - SP", 
+            "Santos - SP", "São José dos Campos - SP", "Barueri - SP", "Jundiaí - SP"
+        ];
+
+        let db = { perfil: { email: EMAIL_PADRAO }, atos: [], caixa: [], contatos: [], comarcasSalvas: COMARCAS_PADRAO };
         let tempAtaBase64Pauta = null;
         let imagemAtaChecklistTemp = null;
 
@@ -242,19 +297,54 @@
             document.getElementById('clock-date').innerText = now.toLocaleDateString('pt-BR') + " (UTC-3)";
         }
         setInterval(updateClock, 1000);
+        updateClock();
 
         function handleLogin(e) {
             e.preventDefault();
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('app-content').classList.remove('hidden');
-            loadData();
+            if (document.getElementById('login-user').value === AUTH_USER && document.getElementById('login-pass').value === AUTH_PASS) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-content').classList.remove('hidden');
+                loadData();
+            } else {
+                alert("Usuário ou senha incorretos!");
+            }
         }
 
-        function saveData() { localStorage.setItem('diligence_db', JSON.stringify(db)); }
+        function saveData() { 
+            localStorage.setItem('diligence_db', JSON.stringify(db)); 
+            atualizarDatalistComarcas();
+        }
+
         function loadData() {
             const saved = localStorage.getItem('diligence_db');
             if (saved) db = JSON.parse(saved);
+            
+            if(!db.comarcasSalvas || db.comarcasSalvas.length === 0) db.comarcasSalvas = COMARCAS_PADRAO;
+            if(!db.atos) db.atos = [];
+            if(!db.caixa) db.caixa = [];
+            if(!db.contatos) db.contatos = [];
+            if(!db.perfil) db.perfil = { email: EMAIL_PADRAO };
+
+            atualizarDatalistComarcas();
             renderAtos();
+        }
+
+        function atualizarDatalistComarcas() {
+            const datalist = document.getElementById('lista-cidades-comarcas');
+            if (!datalist) return;
+            datalist.innerHTML = '';
+            db.comarcasSalvas.forEach(cidade => {
+                const opt = document.createElement('option');
+                opt.value = cidade;
+                datalist.appendChild(opt);
+            });
+        }
+
+        function adicionarComarcaAuto(cidade) {
+            if (cidade && !db.comarcasSalvas.includes(cidade)) {
+                db.comarcasSalvas.push(cidade);
+                saveData();
+            }
         }
 
         function previewImagemAta(evt) {
@@ -272,16 +362,19 @@
 
         function saveAto(e) {
             e.preventDefault();
+            const cidadeDigitada = document.getElementById('ato-cidade').value.trim();
+            adicionarComarcaAuto(cidadeDigitada);
+
             const novoAto = {
                 id: Date.now(),
                 processo: document.getElementById('ato-processo').value.trim(),
                 cliente: document.getElementById('ato-cliente').value.trim(),
                 data: document.getElementById('ato-data').value,
                 vencimento: document.getElementById('ato-vencimento').value,
-                cidade: document.getElementById('ato-cidade').value.trim(),
+                cidade: cidadeDigitada,
                 valor: parseFloat(document.getElementById('ato-valor').value),
                 status: document.getElementById('ato-status-select').value,
-                ataImg: tempAtaBase64Pauta || null, // Salva a ATA na estrutura do ato
+                ataImg: tempAtaBase64Pauta || null,
                 checklistObs: ''
             };
 
@@ -322,7 +415,6 @@
             });
         }
 
-        /* --- CORREÇÃO PRINCIPAL: CARREGA A FOTO DA ATA DIRETO DA PAUTA PARA O CHECKLIST --- */
         function abrirModalChecklist(atoId) {
             const ato = db.atos.find(a => a.id === atoId);
             if (!ato) return;
@@ -332,7 +424,6 @@
             document.getElementById('chk-cidade').value = ato.cidade || '';
             document.getElementById('chk-obs').value = ato.checklistObs || '';
 
-            // CARREGA A FOTO/ANEXO SALVO DA PAUTA
             const previewContainer = document.getElementById('chk-preview-ata-container');
             const txtStatus = document.getElementById('chk-status-ata-texto');
             
@@ -374,13 +465,99 @@
 
             if (ato) {
                 ato.checklistObs = obs;
-                ato.ataImg = imagemAtaChecklistTemp; // Atualiza se tiver trocado
+                ato.ataImg = imagemAtaChecklistTemp;
                 saveData();
             }
 
             const texto = `DILIGENCE.BR - PÓS-AUDIÊNCIA\n\nProcesso: ${document.getElementById('chk-processo').value}\nObservações: ${obs}\nAnexo ATA: ${imagemAtaChecklistTemp ? '✓ Anexado' : '❌ Sem Foto'}`;
             fecharModalChecklist();
             window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(texto)}`);
+        }
+
+        /* --- CONTROLE E MODAL DE BACKUPS --- */
+        function abrirModalBackup() { document.getElementById('modal-backup').classList.remove('hidden'); }
+        function fecharModalBackup() { document.getElementById('modal-backup').classList.add('hidden'); }
+
+        function fazerBackupJSON() {
+            const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `Backup_DILIGENCE_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            fecharModalBackup();
+        }
+
+        function enviarBackupEmailPessoal() {
+            const emailDestino = db.perfil.email || EMAIL_PADRAO;
+            const assunto = encodeURIComponent("CÓPIA DE BACKUP - DILIGENCE.BR");
+            const corpo = encodeURIComponent(JSON.stringify(db));
+            fecharModalBackup();
+            window.location.href = `mailto:${emailDestino}?subject=${assunto}&body=${corpo}`;
+        }
+
+        function exportarExcelMultiAbas() {
+            if (typeof XLSX === 'undefined') {
+                alert("Erro ao carregar o gerador de Excel.");
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+
+            const dadosPauta = db.atos.map(a => ({
+                "Processo": a.processo,
+                "Cliente": a.cliente,
+                "Data": a.data,
+                "Vencimento": a.vencimento,
+                "Cidade": a.cidade,
+                "Valor (R$)": a.valor,
+                "Status": a.status,
+                "Observações Checklist": a.checklistObs || ''
+            }));
+            const wsPauta = XLSX.utils.json_to_sheet(dadosPauta.length ? dadosPauta : [{"Aviso": "Sem atos cadastrados"}]);
+            XLSX.utils.book_append_sheet(wb, wsPauta, "Pauta de Atos");
+
+            const wsCaixa = XLSX.utils.json_to_sheet(db.caixa.length ? db.caixa : [{"Aviso": "Sem lançamentos de caixa"}]);
+            XLSX.utils.book_append_sheet(wb, wsCaixa, "Livro Caixa");
+
+            const wsContatos = XLSX.utils.json_to_sheet(db.contatos.length ? db.contatos : [{"Aviso": "Sem contatos cadastrados"}]);
+            XLSX.utils.book_append_sheet(wb, wsContatos, "Agenda");
+
+            XLSX.writeFile(wb, `Relatorio_DILIGENCE_${new Date().toISOString().split('T')[0]}.xlsx`);
+            fecharModalBackup();
+        }
+
+        function acionarRestauracao() {
+            fecharModalBackup();
+            document.getElementById('input-restaurar-file').click();
+        }
+
+        function processarRestauracaoFile(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    try {
+                        db = JSON.parse(evt.target.result);
+                        saveData();
+                        loadData();
+                        alert("Backup restaurado com sucesso!");
+                    } catch (err) {
+                        alert("Arquivo de backup inválido.");
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function confirmarZerarTudoGeral() {
+            if (confirm("ATENÇÃO: Deseja realmente zerar o aplicativo? Todos os processos, fotos e lançamentos serão apagados.")) {
+                localStorage.removeItem('diligence_db');
+                db = { perfil: { email: EMAIL_PADRAO }, atos: [], caixa: [], contatos: [], comarcasSalvas: COMARCAS_PADRAO };
+                saveData();
+                loadData();
+                fecharModalBackup();
+                alert("Aplicativo restaurado do zero!");
+            }
         }
     </script>
 </body>
