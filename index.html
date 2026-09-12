@@ -299,15 +299,35 @@
                         <input type="url" id="ato-link" placeholder="https://teams.microsoft.com/..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
                     </div>
 
-                    <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-2">
+                    <!-- ÁREA DA ATA COM OPÇÕES DE COMPARTILHAMENTO EXCLUSIVAS -->
+                    <div class="p-3 bg-gray-50 dark:bg-gray-700/40 rounded-xl border border-gray-200 dark:border-gray-600 space-y-2">
                         <label class="text-xs font-bold text-gray-700 dark:text-gray-200 flex items-center gap-1">
-                            <i class="fa-solid fa-camera text-brand-red"></i> Fotografar ATA ou Selecionar da Galeria:
+                            <i class="fa-solid fa-camera text-brand-red"></i> Fotografar ATA ou Selecionar Documento:
                         </label>
                         <input type="file" id="ato-ata-file" accept="image/*" capture="environment" onchange="previewImagemAta(event)" class="w-full p-1.5 border rounded-lg text-xs bg-white dark:bg-gray-800">
                         
-                        <div id="preview-ata-container" class="hidden pt-1 text-center space-y-1">
-                            <span class="text-[10px] font-bold text-green-600 block">✓ Pré-visualização do Documento Fotografado:</span>
+                        <div id="preview-ata-container" class="hidden pt-2 text-center space-y-2">
+                            <span class="text-[10px] font-bold text-green-600 block">✓ Pré-visualização do Documento Anexado:</span>
                             <img id="img-preview-ata" src="" class="max-h-36 mx-auto rounded border shadow-sm object-contain">
+                            
+                            <!-- SELETOR DE DESTINO PARA A ATA -->
+                            <div class="p-2.5 bg-white dark:bg-gray-800 rounded-lg border space-y-2 text-left">
+                                <span class="text-[11px] font-black text-brand-red dark:text-red-400 block"><i class="fa-solid fa-share-nodes mr-1"></i> Escolha o Destino para Compartilhar esta ATA:</span>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] font-bold">
+                                    <button type="button" onclick="compartilharAtaOpcao('whats_adm')" class="bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg flex items-center gap-1.5 justify-center shadow">
+                                        <i class="fa-brands fa-whatsapp"></i> Whats ADM (11 97838-6574)
+                                    </button>
+                                    <button type="button" onclick="compartilharAtaOpcao('email_contratante')" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg flex items-center gap-1.5 justify-center shadow">
+                                        <i class="fa-solid fa-envelope"></i> E-mail ec.cortez@uol.com.br
+                                    </button>
+                                    <button type="button" onclick="compartilharAtaOpcao('email_meu')" class="bg-gray-700 hover:bg-gray-800 text-white p-2 rounded-lg flex items-center gap-1.5 justify-center shadow">
+                                        <i class="fa-solid fa-at"></i> Enviar para Meu E-mail
+                                    </button>
+                                    <button type="button" onclick="compartilharAtaOpcao('nada')" class="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 rounded-lg flex items-center gap-1.5 justify-center">
+                                        <i class="fa-solid fa-clock"></i> Nada fazer por enquanto
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -332,12 +352,6 @@
                     <button type="submit" class="w-full bg-brand-red text-white py-3 rounded-xl font-black text-sm shadow-lg hover:bg-brand-darkred flex items-center justify-center gap-2">
                         <i class="fa-solid fa-plus-circle text-base"></i> SALVAR / ADICIONAR NOVO ATO NA PAUTA
                     </button>
-                    
-                    <div class="flex gap-2 pt-2 border-t text-xs font-bold">
-                        <button type="button" onclick="compartilharPautaWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg"><i class="fa-brands fa-whatsapp mr-1"></i> Whats</button>
-                        <button type="button" onclick="compartilharPautaEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg"><i class="fa-solid fa-envelope mr-1"></i> E-mail</button>
-                        <button type="button" onclick="exportarExcelMultiAbas()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg"><i class="fa-solid fa-file-excel mr-1"></i> Planilha</button>
-                    </div>
                 </form>
 
                 <div class="space-y-2">
@@ -772,15 +786,15 @@
         </nav>
     </div>
 
-    <!-- MODAL FORMULÁRIO CHECKLIST PÓS-AUDIÊNCIA -->
+    <!-- MODAL FORMULÁRIO CHECKLIST PÓS-AUDIÊNCIA (FOTO DE ATA REMOVIDA) -->
     <div id="modal-checklist" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-lg w-full space-y-4 shadow-2xl border-2 border-brand-red my-8">
             <div class="flex justify-between items-center border-b pb-2">
                 <div>
                     <h3 class="font-extrabold text-sm text-brand-red flex items-center gap-1">
-                        <i class="fa-solid fa-list-check"></i> CONTROLE DE PAGAMENTO - DILIGÊNCIAS
+                        <i class="fa-solid fa-list-check"></i> CONTROLE DE PAGAMENTO & CHECKLIST DILIGÊNCIAS
                     </h3>
-                    <p class="text-[10px] text-gray-500">Formulário de encerramento da diligência</p>
+                    <p class="text-[10px] text-gray-500">Relatório e encerramento oficial da diligência realizada</p>
                 </div>
                 <button onclick="fecharModalChecklist()" class="text-gray-400 font-bold text-lg">&times;</button>
             </div>
@@ -791,26 +805,37 @@
                 <div class="grid grid-cols-2 gap-2 bg-gray-50 dark:bg-gray-700/50 p-2.5 rounded-xl border">
                     <div>
                         <label class="font-bold text-gray-600 dark:text-gray-300 block">E-mail Correspondente:*</label>
-                        <input type="email" id="chk-email" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                        <input type="email" id="chk-email" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
                     </div>
                     <div>
                         <label class="font-bold text-gray-600 dark:text-gray-300 block">Nome e Documento:*</label>
-                        <input type="text" id="chk-nome-doc" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                        <input type="text" id="chk-nome-doc" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
                     </div>
                     <div>
                         <label class="font-bold text-gray-600 dark:text-gray-300 block">Nº do Processo:*</label>
                         <input type="text" id="chk-processo" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
                     </div>
                     <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">Cidade:*</label>
-                        <input type="text" id="chk-cidade" list="lista-cidades-comarcas" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">Cliente / Contratante:*</label>
+                        <input type="text" id="chk-cliente" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 bg-gray-50 dark:bg-gray-700/50 p-2.5 rounded-xl border">
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">Data e Hora:*</label>
+                        <input type="text" id="chk-data-hora" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">Valor Acordado:*</label>
+                        <input type="text" id="chk-valor" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold text-brand-red">
                     </div>
                 </div>
 
                 <div>
                     <label class="font-extrabold text-brand-red dark:text-red-400 block mb-1">Serviço Prestado:*</label>
                     <div class="grid grid-cols-2 gap-1.5 bg-gray-50 dark:bg-gray-700/30 p-2 rounded-lg border text-[11px]">
-                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Advogado"> Advogado</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Advogado" checked> Advogado</label>
                         <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Preposto"> Preposto</label>
                         <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Cópia"> Cópia</label>
                         <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Protocolo"> Protocolo</label>
@@ -819,26 +844,18 @@
 
                 <div>
                     <label class="font-extrabold text-brand-red dark:text-red-400 flex justify-between items-center">
-                        <span>Observações / Como foi a diligência:*</span>
+                        <span>Ocorrências / Como foi a audiência (Feedback Obritatório):*</span>
                         <button type="button" onclick="iniciarDitadoVoz('chk-obs')" class="text-xs text-brand-red font-bold underline"><i class="fa-solid fa-microphone"></i> Ditar</button>
                     </label>
-                    <textarea id="chk-obs" rows="2" placeholder="Descreva o que ocorreu..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-semibold focus:ring-2 focus:ring-brand-red outline-none"></textarea>
-                </div>
-
-                <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-1">
-                    <label class="font-bold text-gray-700 dark:text-gray-200 block text-[11px]">Anexar ATA ou Print:</label>
-                    <input type="file" id="chk-ata-file" accept="image/*" capture="environment" onchange="previewImagemAtaChecklist(event)" class="w-full p-1 border rounded text-[11px]">
-                    <div id="chk-preview-ata-container" class="pt-1 text-center hidden">
-                        <img id="chk-img-preview-ata" src="" class="max-h-28 mx-auto rounded border shadow-sm object-contain">
-                    </div>
+                    <textarea id="chk-obs" rows="3" required placeholder="Descreva detalhadamente como foi o ato..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-semibold focus:ring-2 focus:ring-brand-red outline-none"></textarea>
                 </div>
 
                 <div class="pt-2 border-t flex gap-2 font-bold">
                     <button type="button" onclick="enviarChecklistWhatsApp()" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl shadow text-xs flex items-center justify-center gap-1">
-                        <i class="fa-brands fa-whatsapp"></i> WhatsApp ADM
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp ADM (11 97838-6574)
                     </button>
                     <button type="button" onclick="gerarTicketComprovante()" class="bg-gray-800 text-white px-3 py-2.5 rounded-xl shadow text-xs flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-receipt"></i> Ticket
+                        <i class="fa-solid fa-receipt"></i> Gerar Ticket
                     </button>
                 </div>
             </form>
@@ -876,6 +893,7 @@
         const AUTH_USER = "diligence.br*";
         const AUTH_PASS = "320427";
         const WHATS_ADM = "5511978386574";
+        const EMAIL_CONTRATANTE = "ec.cortez@uol.com.br";
 
         let db = {
             perfil: { nome: '', doc: '', cidade: '', pix: '', email: '', celular: '' },
@@ -886,7 +904,6 @@
         };
 
         let tempAtaBase64Pauta = null;
-        let imagemAtaChecklistTemp = null;
         let calcVisorVal = '0';
 
         function updateClock() {
@@ -901,7 +918,6 @@
             document.documentElement.classList.toggle('dark');
         }
 
-        // CONTROLE DE LOGIN SEM RECARREGAR A TELA
         function handleLogin(e) {
             if (e) e.preventDefault();
             const user = document.getElementById('login-user').value;
@@ -963,7 +979,6 @@
                 try { db = JSON.parse(saved); } catch(err){}
             }
             
-            // VERIFICA SE JÁ ESTÁ LOGADO PARA MANTER TELA ABERTA
             if (localStorage.getItem('diligence_logged') === 'true') {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app-content').classList.remove('hidden');
@@ -1002,6 +1017,53 @@
             }
         }
 
+        /* OPÇÕES DE COMPARTILHAMENTO DA ATA */
+        async function compartilharAtaOpcao(opcao) {
+            if (opcao === 'nada') {
+                alert("Foto/Documento salvo internamente. Nenhuma mensagem foi enviada.");
+                return;
+            }
+
+            const proc = document.getElementById('ato-processo').value.trim() || 'N/A';
+            const cli = document.getElementById('ato-cliente').value.trim() || 'N/A';
+            const val = parseFloat(document.getElementById('ato-valor').value) || 0;
+            const dataHora = document.getElementById('ato-data').value || 'N/A';
+            const cidade = document.getElementById('ato-cidade').value.trim() || 'N/A';
+
+            const textoRelatorio = `📋 DILIGENCE.BR - COMPROVANTE & DOCUMENTO DE AUDIÊNCIA\n` +
+                `--------------------------------\n` +
+                `Correspondente: ${db.perfil.nome || 'N/A'} - Doc: ${db.perfil.doc || 'N/A'}\n` +
+                `Contato: ${db.perfil.celular || 'N/A'} | E-mail: ${db.perfil.email || 'N/A'}\n` +
+                `--------------------------------\n` +
+                `Processo: ${proc}\n` +
+                `Cliente: ${cli}\n` +
+                `Data/Hora: ${dataHora}\n` +
+                `Cidade/Comarca: ${cidade}\n` +
+                `Valor Acordado: R$ ${val.toFixed(2)}\n` +
+                `--------------------------------\n` +
+                `Documento/ATA em anexo enviado via DILIGENCE.BR`;
+
+            if (opcao === 'whats_adm') {
+                if (tempAtaBase64Pauta && navigator.canShare) {
+                    try {
+                        const res = await fetch(tempAtaBase64Pauta);
+                        const blob = await res.blob();
+                        const file = new File([blob], `ATA_${proc}.png`, { type: 'image/png' });
+                        if (navigator.canShare({ files: [file] })) {
+                            await navigator.share({ title: 'ATA de Audiência', text: textoRelatorio, files: [file] });
+                            return;
+                        }
+                    } catch(err){}
+                }
+                window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(textoRelatorio)}`);
+            } else if (opcao === 'email_contratante') {
+                window.open(`mailto:${EMAIL_CONTRATANTE}?subject=${encodeURIComponent(`ATA/Documento - Processo ${proc}`)}&body=${encodeURIComponent(textoRelatorio)}`);
+            } else if (opcao === 'email_meu') {
+                const meuEmail = db.perfil.email || EMAIL_CONTRATANTE;
+                window.open(`mailto:${meuEmail}?subject=${encodeURIComponent(`ATA/Documento - Processo ${proc}`)}&body=${encodeURIComponent(textoRelatorio)}`);
+            }
+        }
+
         /* 1. CADASTRO DE ATOS NA PAUTA COM ALERTAS DE DUPLICIDADE E SINCRONIZAÇÃO AUTOMÁTICA */
         function saveAto(e) {
             if (e) e.preventDefault();
@@ -1009,7 +1071,6 @@
             const statusSel = document.getElementById('ato-status-select').value;
             if(!statusSel) return alert('Selecione o status do pagamento!');
 
-            // ALERTA DE DUPLICIDADE DE PROCESSO
             const duplicado = db.atos.find(a => a.processo.toLowerCase() === numProcesso.toLowerCase());
             if (duplicado) {
                 alert(`⚠️ ATENÇÃO: O processo de número "${numProcesso}" JÁ ESTÁ CADASTRADO na sua Pauta!`);
@@ -1034,7 +1095,6 @@
 
             db.atos.push(novoAto);
 
-            // Sincronização direta e automática com o Livro Caixa
             if (statusSel === 'pago') {
                 db.caixa.push({
                     id: Date.now() + 1,
@@ -1384,7 +1444,7 @@
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`);
         }
 
-        /* 6. PERFIL DO CORRESPONDENTE COM PREVENÇÃO DE REFRESH */
+        /* 6. PERFIL DO CORRESPONDENTE */
         function savePerfil(e) {
             if (e) e.preventDefault();
             db.perfil = {
@@ -1485,78 +1545,56 @@
             }
         }
 
-        /* 10. CHECKLIST PÓS-AUDIÊNCIA E TICKET COMPROVANTE */
+        /* 10. CHECKLIST PÓS-AUDIÊNCIA COM IMPORTAÇÃO AUTOMÁTICA DE DADOS DO ATO E DO PERFIL */
         function abrirModalChecklist(atoId) {
             const ato = db.atos.find(a => a.id === atoId);
             if (!ato) return;
 
             document.getElementById('chk-ato-id').value = ato.id;
             document.getElementById('chk-processo').value = ato.processo;
-            document.getElementById('chk-cidade').value = ato.cidade || '';
-            document.getElementById('chk-email').value = db.perfil.email || '';
-            document.getElementById('chk-nome-doc').value = `${db.perfil.nome || ''} - ${db.perfil.doc || ''}`;
+            document.getElementById('chk-cliente').value = ato.cliente;
+            document.getElementById('chk-data-hora').value = ato.data;
+            document.getElementById('chk-valor').value = `R$ ${ato.valor.toFixed(2)}`;
+            
+            // IMPORTA OS DADOS DO PERFIL
+            document.getElementById('chk-email').value = db.perfil.email || 'Não cadastrado';
+            document.getElementById('chk-nome-doc').value = `${db.perfil.nome || 'Correspondente'} (${db.perfil.doc || 'Sem Doc'})`;
+            
             document.getElementById('chk-obs').value = ato.checklistObs || '';
-
-            imagemAtaChecklistTemp = ato.ataImg || null;
-
-            if (imagemAtaChecklistTemp) {
-                document.getElementById('chk-img-preview-ata').src = imagemAtaChecklistTemp;
-                document.getElementById('chk-preview-ata-container').classList.remove('hidden');
-            } else {
-                document.getElementById('chk-preview-ata-container').classList.add('hidden');
-            }
 
             document.getElementById('modal-checklist').classList.remove('hidden');
         }
 
         function fecharModalChecklist() { document.getElementById('modal-checklist').classList.add('hidden'); }
 
-        function previewImagemAtaChecklist(evt) {
-            const file = evt.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagemAtaChecklistTemp = e.target.result;
-                    document.getElementById('chk-img-preview-ata').src = imagemAtaChecklistTemp;
-                    document.getElementById('chk-preview-ata-container').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        async function enviarChecklistWhatsApp() {
+        function enviarChecklistWhatsApp() {
             const atoId = parseInt(document.getElementById('chk-ato-id').value);
             const obs = document.getElementById('chk-obs').value.trim();
-            const ato = db.atos.find(a => a.id === atoId);
 
+            if (!obs) {
+                alert("Por favor, preencha o campo de ocorrências/feedback da audiência!");
+                return;
+            }
+
+            const ato = db.atos.find(a => a.id === atoId);
             if (ato) {
                 ato.checklistObs = obs;
-                ato.ataImg = imagemAtaChecklistTemp;
                 saveData();
             }
 
-            const textoComprovante = `📋 DILIGENCE.BR - CHECKLIST PÓS-AUDIÊNCIA\n--------------------------------\nCorrespondente: ${document.getElementById('chk-nome-doc').value}\nProcesso: ${document.getElementById('chk-processo').value}\nCidade: ${document.getElementById('chk-cidade').value}\n--------------------------------\nObservações: ${obs}\n--------------------------------\nComprovante enviado via DILIGENCE.BR`;
-
-            // COMPARTILHAMENTO DIRETO DA FOTO DE ATA (SE SUPORTADO PELO DISPOSITIVO)
-            if (imagemAtaChecklistTemp && navigator.canShare) {
-                try {
-                    const response = await fetch(imagemAtaChecklistTemp);
-                    const blob = await response.blob();
-                    const file = new File([blob], `ATA_${document.getElementById('chk-processo').value}.png`, { type: 'image/png' });
-
-                    if (navigator.canShare({ files: [file] })) {
-                        await navigator.share({
-                            title: 'Comprovante e ATA de Audiência',
-                            text: textoComprovante,
-                            files: [file]
-                        });
-                        fecharModalChecklist();
-                        return;
-                    }
-                } catch (err) {
-                    console.log("Falha no envio direto do arquivo...", err);
-                }
-            }
+            const textoComprovante = `📋 DILIGENCE.BR - CHECKLIST PÓS-AUDIÊNCIA\n` +
+                `--------------------------------\n` +
+                `Correspondente: ${document.getElementById('chk-nome-doc').value}\n` +
+                `Contato: ${db.perfil.celular || 'N/A'} | E-mail: ${document.getElementById('chk-email').value}\n` +
+                `--------------------------------\n` +
+                `Processo: ${document.getElementById('chk-processo').value}\n` +
+                `Cliente: ${document.getElementById('chk-cliente').value}\n` +
+                `Data/Hora: ${document.getElementById('chk-data-hora').value}\n` +
+                `Valor Acordado: ${document.getElementById('chk-valor').value}\n` +
+                `--------------------------------\n` +
+                `Ocorrências / Feedback do Ato:\n${obs}\n` +
+                `--------------------------------\n` +
+                `Relatório enviado via DILIGENCE.BR`;
 
             fecharModalChecklist();
             window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(textoComprovante)}`);
