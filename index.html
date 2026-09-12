@@ -42,17 +42,22 @@
         .modal-blur { backdrop-filter: blur(4px); }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        @keyframes pulse-ring {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        .bobina-paper {
+            background-color: #fffbeb;
+            background-image: radial-gradient(#d97706 0.5px, transparent 0.5px);
+            background-size: 8px 8px;
         }
-        .backup-pulse { animation: pulse-ring 2s infinite; }
-        .manual-highlight { background-color: #fef08a; color: #854d0e; font-weight: bold; padding: 0 2px; border-radius: 2px; }
-        .dark .manual-highlight { background-color: #854d0e; color: #fef08a; }
+        .dark .bobina-paper {
+            background-color: #1f2937;
+            background-image: radial-gradient(#9ca3af 0.5px, transparent 0.5px);
+            background-size: 8px 8px;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+    <!-- DATALIST DINÂMICO DE CIDADES/COMARCAS DO BRASIL (IBGE) -->
+    <datalist id="lista-cidades-br"></datalist>
 
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 z-50 bg-brand-red flex items-center justify-center p-4">
@@ -75,59 +80,14 @@
                 </div>
                 <button type="submit" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-lg font-bold text-sm shadow-md transition">Entrar no Sistema</button>
             </form>
-            
-            <div class="pt-2 border-t flex flex-col items-center gap-1.5">
-                <button onclick="abrirModalRecuperacao('usuario')" class="text-xs text-brand-red dark:text-red-400 font-bold hover:underline">
-                    <i class="fa-solid fa-user-lock mr-1"></i> Esqueci o meu usuário
-                </button>
-                <button onclick="abrirModalRecuperacao('senha')" class="text-xs text-brand-red dark:text-red-400 font-bold hover:underline">
-                    <i class="fa-solid fa-key mr-1"></i> Esqueci a minha senha
-                </button>
-                <p id="login-error" class="text-xs text-red-500 font-semibold hidden mt-1">Usuário ou senha incorretos!</p>
-            </div>
+            <p id="login-error" class="text-xs text-red-500 font-semibold hidden mt-1">Usuário ou senha incorretos!</p>
         </div>
     </div>
-
-    <!-- MODAL ESQUECI O USUÁRIO / SENHA -->
-    <div id="modal-recuperacao-login" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-2 border-brand-red">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 id="rec-modal-titulo" class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-headset mr-1"></i> RECUPERAÇÃO DE ACESSO</h3>
-                <button onclick="fecharModalRecuperacao()" class="text-gray-400 font-bold">&times;</button>
-            </div>
-            
-            <p id="rec-modal-subtitulo" class="text-xs text-gray-600 dark:text-gray-300">
-                Entre em contato direto com a administração via WhatsApp <strong>(11) 97838-6574</strong> para solicitar ajuda.
-            </p>
-
-            <div class="space-y-2 text-left">
-                <div>
-                    <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Seu Nome Completo:</label>
-                    <input type="text" id="rec-nome" placeholder="Digite seu nome..." class="w-full p-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-xs font-semibold focus:outline-none">
-                </div>
-                <div>
-                    <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Seu Número de Celular / WhatsApp:</label>
-                    <input type="text" id="rec-celular" placeholder="(11) 99999-9999" class="w-full p-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-xs font-semibold focus:outline-none">
-                </div>
-            </div>
-
-            <div class="pt-2 border-t space-y-2">
-                <button onclick="enviarRecuperacaoWhats()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-brands fa-whatsapp text-sm"></i> ENVIAR SOLICITAÇÃO NO WHATSAPP
-                </button>
-                <button onclick="fecharModalRecuperacao()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">
-                    Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <datalist id="lista-cidades-comarcas"></datalist>
 
     <!-- ESTRUTURA PRINCIPAL DO APP -->
     <div id="app-content" class="hidden flex-1 flex flex-col max-w-4xl w-full mx-auto bg-white dark:bg-gray-800 shadow-xl min-h-screen">
         
-        <!-- CABEÇALHO / HEADER -->
+        <!-- CABEÇALHO -->
         <header class="bg-brand-red text-white p-4 shadow-md sticky top-0 z-30">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-3">
@@ -143,28 +103,19 @@
                         <div id="clock-time" class="font-bold leading-none">00:00:00</div>
                         <div id="clock-date" class="text-[10px] text-red-200">Brasília (UTC-3)</div>
                     </div>
-                    <button onclick="toggleDarkMode()" class="p-2 bg-brand-darkred rounded-lg text-sm hover:bg-red-900 transition">
-                        <i class="fa-solid font-bold fa-moon dark:hidden"></i>
-                        <i class="fa-solid font-bold fa-sun hidden dark:inline"></i>
-                    </button>
+                    <button onclick="fazerLogout()" class="bg-black text-white px-2 py-1 rounded text-xs font-bold hover:bg-gray-900 shadow">Sair</button>
                 </div>
             </div>
 
-            <div class="mt-3 pt-3 border-t border-red-500/50 flex flex-col gap-2">
-                <div class="flex justify-between items-center text-xs bg-red-800/40 p-2 rounded-lg gap-2">
-                    <div class="flex flex-col flex-1">
-                        <span id="daily-message" class="italic text-red-100 text-[11px] font-medium leading-tight">
-                            <i class="fa-solid fa-quote-left mr-1"></i> <span id="txt-mensagem-rotativa">"Que o dia seja produtivo e abençoado!"</span>
-                        </span>
-                        <span class="text-[10px] font-bold text-amber-300 mt-1" id="header-ultimo-backup">
-                            <i class="fa-solid fa-clock-rotate-left mr-1"></i>Último Backup: <span id="txt-ultimo-backup">Nenhum</span>
-                        </span>
-                    </div>
-                    <div class="flex gap-1 items-center">
-                        <button id="btn-backup-header" onclick="abrirModalBackup()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] hover:bg-red-50 transition shadow"><i class="fa-solid fa-database mr-1"></i>Backup</button>
-                        <button onclick="acionarRestauracao()" class="bg-gray-900 text-white font-bold px-2 py-1 rounded text-[11px] hover:bg-black transition shadow"><i class="fa-solid fa-upload mr-1"></i>Restaurar</button>
-                        <button onclick="fazerLogout()" class="bg-black text-white font-bold px-2 py-1 rounded text-[11px] hover:bg-gray-800 transition shadow"><i class="fa-solid fa-right-from-bracket mr-1"></i>Sair</button>
-                    </div>
+            <div class="mt-3 pt-2 border-t border-red-500/50 flex justify-between items-center text-xs">
+                <span class="italic text-red-100 text-[11px]">"Tudo posso naquele que me fortalece."</span>
+                <div class="flex gap-1">
+                    <button onclick="abrirModalBackup()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] hover:bg-red-50 shadow">
+                        <i class="fa-solid fa-database"></i> Backup
+                    </button>
+                    <button onclick="acionarRestauracao()" class="bg-gray-900 text-white font-bold px-2 py-1 rounded text-[11px] hover:bg-black shadow">
+                        <i class="fa-solid fa-upload"></i> Restaurar
+                    </button>
                 </div>
             </div>
         </header>
@@ -175,92 +126,60 @@
 
             <!-- ABA 1: PERFIL DO CORRESPONDENTE -->
             <section id="tab-perfil" class="tab-content space-y-4">
-                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
-                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Perfil do Correspondente</h3>
-                    <p>Preencha seus dados para habilitar recibos digitais, checklists e compartilhamentos.</p>
-                </div>
-
                 <form id="form-perfil" onsubmit="savePerfil(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <div class="flex justify-between items-center border-b pb-2">
-                        <h2 class="font-bold text-base text-gray-700 dark:text-gray-200">Dados Profissionais</h2>
-                        <button type="button" onclick="confirmarLimparAba('perfil')" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
-                            <i class="fa-solid fa-trash-can"></i> Limpar Perfil
-                        </button>
-                    </div>
+                    <h2 class="font-bold text-base text-gray-700 dark:text-gray-200 border-b pb-2">Dados do Correspondente</h2>
                     <div>
                         <label class="text-xs font-semibold">Nome Completo</label>
-                        <input type="text" id="perfil-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        <input type="text" id="perfil-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs font-semibold">OAB / RG / CPF</label>
-                            <input type="text" id="perfil-doc" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                            <label class="text-xs font-semibold">OAB / Documento</label>
+                            <input type="text" id="perfil-doc" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold">Cidade / UF Base</label>
-                            <input type="text" id="perfil-cidade" list="lista-cidades-comarcas" required placeholder="Digite a cidade..." class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                            <label class="text-xs font-semibold">Cidade Base</label>
+                            <input type="text" id="perfil-cidade" oninput="buscarCidadesIBGE(this.value)" list="lista-cidades-br" placeholder="Digite a cidade..." required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs font-semibold">Celular / WhatsApp (DDD)</label>
-                            <input type="text" id="perfil-celular" placeholder="(11) 99999-9999" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                            <label class="text-xs font-semibold">Celular / WhatsApp</label>
+                            <input type="text" id="perfil-celular" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                         <div>
                             <label class="text-xs font-semibold">Chave PIX Oficial</label>
-                            <input type="text" id="perfil-pix" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                            <input type="text" id="perfil-pix" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                     </div>
                     <div>
-                        <label class="text-xs font-semibold">E-mail do Correspondente</label>
-                        <input type="email" id="perfil-email" placeholder="seuemail@email.com" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        <label class="text-xs font-semibold">E-mail Profissional</label>
+                        <input type="email" id="perfil-email" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                     </div>
-                    
                     <button type="submit" class="w-full bg-brand-red text-white py-2 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Perfil</button>
-                    
-                    <div class="flex gap-2 pt-2 border-t text-xs font-bold">
-                        <button type="button" onclick="compartilharPerfilWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg"><i class="fa-brands fa-whatsapp mr-1"></i> Whats</button>
-                        <button type="button" onclick="compartilharPerfilEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg"><i class="fa-solid fa-envelope mr-1"></i> E-mail</button>
-                        <button type="button" onclick="exportarExcelMultiAbas()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg"><i class="fa-solid fa-file-excel mr-1"></i> Excel Multi-Abas</button>
-                    </div>
                 </form>
             </section>
 
-            <!-- ABA 2: PAUTA & CADASTRO DE DILIGÊNCIAS -->
+            <!-- ABA 2: PAUTA DE DILIGÊNCIAS -->
             <section id="tab-atos" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
                     <div>
-                        <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-calendar-check mr-1"></i> Cadastro e Pauta de Diligências</h3>
-                        <p>Atos cadastrados refletem automaticamente no Financeiro, Caixa e Relatórios.</p>
+                        <h3 class="font-bold text-brand-red dark:text-red-400"><i class="fa-solid fa-calendar-check mr-1"></i> Cadastro de Diligências</h3>
+                        <p>Busca automática de comarcas de todo o Brasil via IBGE.</p>
                     </div>
-                    <button type="button" onclick="capturarLocalizacaoGPS()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-2.5 py-1.5 rounded-lg text-[10px] shadow flex items-center gap-1">
-                        <i class="fa-solid fa-location-dot"></i> Check-in Fórum GPS
+                    <button type="button" onclick="capturarLocalizacaoGPS()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-2 py-1 rounded text-[10px] shadow">
+                        <i class="fa-solid fa-location-dot"></i> Check-in GPS
                     </button>
                 </div>
 
                 <form id="form-ato" onsubmit="saveAto(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <div class="flex justify-between items-center border-b pb-2">
-                        <h2 class="font-bold text-base text-gray-700 dark:text-gray-200 flex items-center gap-2">
-                            <i class="fa-solid fa-plus-circle text-brand-red"></i> Cadastrar Novo Ato
-                        </h2>
-                        <button type="button" onclick="confirmarLimparAba('atos')" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
-                            <i class="fa-solid fa-trash-can"></i> Limpar Toda a Pauta
-                        </button>
-                    </div>
-                    
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs font-semibold flex items-center justify-between">
-                                Nº do Processo*
-                                <button type="button" onclick="iniciarDitadoVoz('ato-processo')" class="text-brand-red font-bold hover:underline text-[11px]"><i class="fa-solid fa-microphone"></i> Ditar</button>
-                            </label>
+                            <label class="text-xs font-semibold">Nº do Processo*</label>
                             <input type="text" id="ato-processo" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold flex items-center justify-between">
-                                Cliente / Contratante*
-                                <button type="button" onclick="iniciarDitadoVoz('ato-cliente')" class="text-brand-red font-bold hover:underline text-[11px]"><i class="fa-solid fa-microphone"></i> Ditar</button>
-                            </label>
+                            <label class="text-xs font-semibold">Cliente / Contratante*</label>
                             <input type="text" id="ato-cliente" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                     </div>
@@ -271,317 +190,236 @@
                             <input type="datetime-local" id="ato-data" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold">Vencimento do Pagamento*</label>
+                            <label class="text-xs font-semibold">Vencimento Pagamento*</label>
                             <input type="date" id="ato-vencimento" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        <div>
-                            <label class="text-xs font-semibold flex items-center justify-between">
-                                <span>Cidade do Ato / Comarca*</span>
-                            </label>
-                            <input type="text" id="ato-cidade" list="lista-cidades-comarcas" required placeholder="Digite a comarca..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-semibold focus:ring-2 focus:ring-brand-red outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold">Modalidade / Plataforma</label>
-                            <select id="ato-modalidade" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-semibold">
-                                <option value="teams">🟣 Cível (Virtual - Teams)</option>
-                                <option value="zoom">🔵 TRT/Trabalhista (Virtual - Zoom)</option>
-                                <option value="outra">📞 Outra Plataforma (Virtual)</option>
-                                <option value="presencial">🏛️ Presencial (Fórum / GPS)</option>
-                            </select>
-                        </div>
-                    </div>
-
                     <div>
-                        <label class="text-xs font-semibold">Link da Sala Virtual (Opcional)</label>
-                        <input type="url" id="ato-link" placeholder="https://teams.microsoft.com/..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
+                        <label class="text-xs font-semibold">Cidade do Ato / Comarca (IBGE Autocomplete)*</label>
+                        <input type="text" id="ato-cidade" oninput="buscarCidadesIBGE(this.value)" list="lista-cidades-br" placeholder="Digite o nome da cidade (Ex: Embu, São Paulo...)" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-semibold">
                     </div>
 
-                    <!-- ÁREA DA ATA COM OPÇÕES DE COMPARTILHAMENTO EXCLUSIVAS -->
-                    <div class="p-3 bg-gray-50 dark:bg-gray-700/40 rounded-xl border border-gray-200 dark:border-gray-600 space-y-2">
-                        <label class="text-xs font-bold text-gray-700 dark:text-gray-200 flex items-center gap-1">
-                            <i class="fa-solid fa-camera text-brand-red"></i> Fotografar ATA ou Selecionar Documento:
+                    <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-2">
+                        <label class="text-xs font-bold text-gray-700 dark:text-gray-200">
+                            <i class="fa-solid fa-camera text-brand-red"></i> Fotografar ou Selecionar ATA/Documento:
                         </label>
-                        <input type="file" id="ato-ata-file" accept="image/*" capture="environment" onchange="previewImagemAta(event)" class="w-full p-1.5 border rounded-lg text-xs bg-white dark:bg-gray-800">
-                        
-                        <div id="preview-ata-container" class="hidden pt-2 text-center space-y-2">
-                            <span class="text-[10px] font-bold text-green-600 block">✓ Pré-visualização do Documento Anexado:</span>
-                            <img id="img-preview-ata" src="" class="max-h-36 mx-auto rounded border shadow-sm object-contain">
-                            
-                            <!-- SELETOR DE DESTINO PARA A ATA -->
-                            <div class="p-2.5 bg-white dark:bg-gray-800 rounded-lg border space-y-2 text-left">
-                                <span class="text-[11px] font-black text-brand-red dark:text-red-400 block"><i class="fa-solid fa-share-nodes mr-1"></i> Escolha o Destino para Compartilhar esta ATA:</span>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] font-bold">
-                                    <button type="button" onclick="compartilharAtaOpcao('whats_adm')" class="bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg flex items-center gap-1.5 justify-center shadow">
-                                        <i class="fa-brands fa-whatsapp"></i> Whats ADM (11 97838-6574)
-                                    </button>
-                                    <button type="button" onclick="compartilharAtaOpcao('email_contratante')" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg flex items-center gap-1.5 justify-center shadow">
-                                        <i class="fa-solid fa-envelope"></i> E-mail ec.cortez@uol.com.br
-                                    </button>
-                                    <button type="button" onclick="compartilharAtaOpcao('email_meu')" class="bg-gray-700 hover:bg-gray-800 text-white p-2 rounded-lg flex items-center gap-1.5 justify-center shadow">
-                                        <i class="fa-solid fa-at"></i> Enviar para Meu E-mail
-                                    </button>
-                                    <button type="button" onclick="compartilharAtaOpcao('nada')" class="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 rounded-lg flex items-center gap-1.5 justify-center">
-                                        <i class="fa-solid fa-clock"></i> Nada fazer por enquanto
-                                    </button>
-                                </div>
-                            </div>
+                        <input type="file" id="ato-ata-file" accept="image/*" capture="environment" onchange="previewImagemAta(event)" class="w-full p-1 border rounded text-xs bg-white dark:bg-gray-800">
+                        <div id="preview-ata-container" class="hidden text-center space-y-1">
+                            <img id="img-preview-ata" src="" class="max-h-32 mx-auto rounded border shadow-sm">
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 p-2.5 bg-red-50 dark:bg-gray-700/60 rounded-xl border-2 border-brand-red">
+                    <div class="grid grid-cols-2 gap-2 p-2 bg-red-50 dark:bg-gray-700/60 rounded-xl border border-brand-red">
                         <div>
-                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Valor Acordado (R$)*</label>
+                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Valor (R$)*</label>
                             <input type="number" step="0.01" id="ato-valor" required placeholder="0.00" class="w-full p-2 border rounded-lg dark:bg-gray-700 font-bold text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Status do Pagamento*</label>
+                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Status*</label>
                             <select id="ato-status-select" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-bold bg-white dark:text-white">
-                                <option value="" disabled selected>-- SELECIONE --</option>
-                                <option value="pago">🟢 PAGO (Recebido)</option>
-                                <option value="pendente">🟡 PENDENTE (A Receber)</option>
-                                <option value="vencido">🔴 VENCIDO</option>
-                                <option value="troca">🔄 TROCA DE AUDIÊNCIA</option>
-                                <option value="debito">🔴 DÉBITO / SAÍDA</option>
+                                <option value="pendente">🟡 PENDENTE</option>
+                                <option value="pago">🟢 PAGO</option>
                             </select>
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-brand-red text-white py-3 rounded-xl font-black text-sm shadow-lg hover:bg-brand-darkred flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-plus-circle text-base"></i> SALVAR / ADICIONAR NOVO ATO NA PAUTA
+                    <button type="submit" class="w-full bg-brand-red text-white py-3 rounded-xl font-black text-sm shadow hover:bg-brand-darkred">
+                        SALVAR DILIGÊNCIA NA PAUTA
                     </button>
                 </form>
 
+                <!-- PAUTA REGISTRADA COM SELEÇÃO MÚLTIPLA -->
                 <div class="space-y-2">
-                    <div class="flex justify-between items-center">
-                        <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300">Pauta Registrada</h3>
-                        <button type="button" onclick="focarNovoAto()" class="bg-brand-red hover:bg-brand-darkred text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow flex items-center gap-1">
-                            <i class="fa-solid fa-plus"></i> Novo Ato
-                        </button>
+                    <div class="flex justify-between items-center bg-gray-200 dark:bg-gray-700 p-2 rounded-lg">
+                        <span class="font-bold text-xs">Pauta Registrada</span>
+                        <div class="flex gap-1 text-[10px] font-bold">
+                            <button onclick="selecionarTodos('atos', true)" class="bg-gray-800 text-white px-2 py-1 rounded">Marcar Todos</button>
+                            <button onclick="selecionarTodos('atos', false)" class="bg-gray-500 text-white px-2 py-1 rounded">Desmarcar</button>
+                        </div>
                     </div>
+
                     <div id="lista-atos" class="space-y-2"></div>
+
+                    <!-- PAINEL DE COMPARTILHAMENTO EM MASSA DA PAUTA -->
+                    <div class="p-3 bg-red-50 dark:bg-gray-700/80 rounded-xl border border-brand-red space-y-2">
+                        <span class="text-xs font-extrabold text-brand-red dark:text-red-300 block">Compartilhar Selecionados [x]:</span>
+                        <div class="grid grid-cols-3 gap-2 text-xs font-bold">
+                            <button onclick="compartilharMassa('atos', 'whats')" class="bg-green-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+                            <button onclick="compartilharMassa('atos', 'email')" class="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-envelope"></i> E-mail</button>
+                            <button onclick="compartilharMassa('atos', 'csv')" class="bg-gray-800 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-file-csv"></i> Planilha CSV</button>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             <!-- ABA 3: AGENDA DE CONTATOS -->
             <section id="tab-contatos" class="tab-content space-y-4 hidden">
-                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
-                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-address-book mr-1"></i> Agenda de Contatos</h3>
-                    <p>Cadastre e compartilhe contatos por WhatsApp, E-mail ou Excel.</p>
-                </div>
-
                 <form id="form-contato" onsubmit="saveContato(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <div class="flex justify-between items-center border-b pb-2">
-                        <h2 class="font-bold text-base text-gray-700 dark:text-gray-200">Cadastrar Novo Contato</h2>
-                        <button type="button" onclick="confirmarLimparAba('contatos')" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
-                            <i class="fa-solid fa-trash-can"></i> Limpar Toda a Agenda
-                        </button>
-                    </div>
+                    <h2 class="font-bold text-base text-gray-700 dark:text-gray-200">Cadastrar Novo Contato</h2>
                     <div>
-                        <label class="text-xs font-semibold flex items-center justify-between">
-                            Nome Completo / Razão Social*
-                            <button type="button" onclick="iniciarDitadoVoz('ct-nome')" class="text-brand-red font-bold hover:underline text-[11px]"><i class="fa-solid fa-microphone"></i> Ditar</button>
-                        </label>
+                        <label class="text-xs font-semibold">Nome Completo / Razão Social*</label>
                         <input type="text" id="ct-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs font-semibold">OAB (Inscrição)</label>
-                            <input type="text" id="ct-oab" placeholder="Ex: SP123456" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                        <div>
                             <label class="text-xs font-semibold">Celular / WhatsApp*</label>
                             <input type="text" id="ct-celular" required placeholder="(11) 99999-9999" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs font-semibold">CPF</label>
-                            <input type="text" id="ct-cpf" placeholder="000.000.000-00" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold">RG</label>
-                            <input type="text" id="ct-rg" placeholder="00.000.000-0" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-semibold">Data de Nascimento</label>
-                            <input type="date" id="ct-nascimento" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold">E-mail</label>
-                            <input type="email" id="ct-email" placeholder="cliente@email.com" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
+                            <label class="text-xs font-semibold">OAB / Documento</label>
+                            <input type="text" id="ct-oab" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                     </div>
                     <div>
-                        <label class="text-xs font-semibold flex items-center justify-between">
-                            Observações / Vínculo
-                            <button type="button" onclick="iniciarDitadoVoz('ct-obs')" class="text-brand-red font-bold hover:underline text-[11px]"><i class="fa-solid fa-microphone"></i> Ditar</button>
-                        </label>
-                        <textarea id="ct-obs" rows="2" placeholder="Ex: Escritório parceiro..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs"></textarea>
+                        <label class="text-xs font-semibold">Anotações do Contato</label>
+                        <textarea id="ct-obs" rows="2" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs"></textarea>
                     </div>
-                    <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Contato na Agenda</button>
+                    <button type="submit" class="w-full bg-brand-red text-white py-2 rounded-lg font-bold text-sm shadow">Salvar Contato</button>
                 </form>
 
+                <!-- LISTA E BUSCA DE CONTATOS -->
                 <div class="space-y-2">
-                    <div class="flex justify-between items-center">
-                        <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300">Contatos Salvos</h3>
-                        <input type="text" id="buscar-contato" placeholder="Buscar contato..." oninput="renderContatos()" class="p-1.5 border rounded text-xs dark:bg-gray-700">
+                    <div class="flex justify-between items-center bg-gray-200 dark:bg-gray-700 p-2 rounded-lg gap-2">
+                        <input type="text" id="busca-contato" oninput="renderContatos()" placeholder="🔍 Localizar contato rápido por nome..." class="w-full p-1.5 border rounded text-xs dark:bg-gray-800">
+                        <div class="flex gap-1 text-[10px] font-bold shrink-0">
+                            <button onclick="selecionarTodos('contatos', true)" class="bg-gray-800 text-white px-2 py-1 rounded">Todos</button>
+                            <button onclick="selecionarTodos('contatos', false)" class="bg-gray-500 text-white px-2 py-1 rounded">Limpar</button>
+                        </div>
                     </div>
+
                     <div id="lista-contatos" class="space-y-2"></div>
+
+                    <!-- COMPARTILHAR CONTATOS -->
+                    <div class="p-3 bg-red-50 dark:bg-gray-700/80 rounded-xl border border-brand-red space-y-2">
+                        <span class="text-xs font-extrabold text-brand-red dark:text-red-300 block">Compartilhar Contatos Selecionados [x]:</span>
+                        <div class="grid grid-cols-3 gap-2 text-xs font-bold">
+                            <button onclick="compartilharMassa('contatos', 'whats')" class="bg-green-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+                            <button onclick="compartilharMassa('contatos', 'email')" class="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-envelope"></i> E-mail</button>
+                            <button onclick="compartilharMassa('contatos', 'csv')" class="bg-gray-800 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-file-csv"></i> Planilha CSV</button>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             <!-- ABA 4: FINANCEIRO & BAIXAS -->
             <section id="tab-financeiro" class="tab-content space-y-4 hidden">
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-center text-white">
+                <div class="grid grid-cols-2 gap-2 text-center text-white">
                     <div class="bg-green-600 p-2.5 rounded-xl shadow">
-                        <span class="text-[9px] uppercase font-bold block">Entradas (Pago)</span>
-                        <span id="fin-entradas" class="font-black text-sm">R$ 0,00</span>
+                        <span class="text-[9px] uppercase font-bold block">Quitados</span>
+                        <span id="fin-entradas" class="font-black text-base">R$ 0,00</span>
                     </div>
                     <div class="bg-amber-500 p-2.5 rounded-xl shadow text-gray-900">
                         <span class="text-[9px] uppercase font-bold block">A Receber</span>
-                        <span id="fin-pendentes" class="font-black text-sm">R$ 0,00</span>
-                    </div>
-                    <div class="bg-purple-700 p-2.5 rounded-xl shadow">
-                        <span class="text-[9px] uppercase font-bold block">🔄 Trocas</span>
-                        <span id="fin-trocas" class="font-black text-sm">R$ 0,00</span>
-                    </div>
-                    <div class="bg-red-600 p-2.5 rounded-xl shadow">
-                        <span class="text-[9px] uppercase font-bold block">Saídas (Débitos)</span>
-                        <span id="fin-saidas" class="font-black text-sm">R$ 0,00</span>
-                    </div>
-                    <div class="bg-blue-700 p-2.5 rounded-xl shadow col-span-2 md:col-span-1">
-                        <span class="text-[9px] uppercase font-bold block">Saldo Líquido</span>
-                        <span id="fin-saldo" class="font-black text-sm">R$ 0,00</span>
+                        <span id="fin-pendentes" class="font-black text-base">R$ 0,00</span>
                     </div>
                 </div>
 
+                <!-- EMISSÃO DE RECIBO COM QUADRO DE OPÇÕES SELEÇÃO DE CLIENTE -->
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border-2 border-brand-red space-y-3 shadow-md">
-                    <div class="flex justify-between items-center border-b pb-2">
-                        <h3 class="font-bold text-sm text-brand-red"><i class="fa-solid fa-receipt mr-1"></i> Emissão de Recibo para Atos QUITADOS</h3>
-                        <span class="text-[10px] bg-green-100 text-green-800 font-bold px-2 py-0.5 rounded">Atos Pagos</span>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
+                    <h3 class="font-bold text-sm text-brand-red border-b pb-2"><i class="fa-solid fa-receipt mr-1"></i> Emissão de Recibo para Atos Quitados</h3>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                            <label class="font-semibold">Cliente:</label>
-                            <select id="fin-recibo-cliente" onchange="renderProcessosParaRecibo()" class="w-full p-2 border rounded dark:bg-gray-700 font-bold"></select>
+                            <label class="font-semibold block">Cliente da Pauta:</label>
+                            <select id="fin-recibo-cliente" class="w-full p-2 border rounded dark:bg-gray-700 font-bold"></select>
                         </div>
                         <div>
-                            <label class="font-semibold">Mês Referência:</label>
-                            <input type="month" id="fin-recibo-mes" onchange="renderProcessosParaRecibo()" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
-                        </div>
-                        <div>
-                            <label class="font-semibold">Data Emissão do Recibo:</label>
-                            <input type="date" id="fin-recibo-data" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                            <label class="font-semibold block">Relação / Vínculo no Recibo:</label>
+                            <select id="fin-recibo-vinculo" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                                <option value="Contratante Diligence">⚙️ Contratante Diligence</option>
+                                <option value="Contratada Nome Perfil">👤 Contratada (Nome do Perfil)</option>
+                                <option value="Outros">🔄 Outros / Personalizado</option>
+                            </select>
                         </div>
                     </div>
-
-                    <div class="space-y-1">
-                        <div class="flex justify-between items-center text-xs pt-1">
-                            <label class="font-bold">Processos QUITADOS do Período:</label>
-                        </div>
-                        <div id="fin-recibo-processos-check" class="max-h-40 overflow-y-auto border p-2 rounded-lg bg-gray-50 dark:bg-gray-700/40 space-y-1 text-xs"></div>
-                    </div>
-
-                    <button onclick="gerarReciboSeletivo()" class="w-full bg-green-600 hover:bg-green-700 text-white font-extrabold py-2.5 rounded-lg text-xs shadow flex items-center justify-center gap-2">
-                        <i class="fa-brands fa-whatsapp text-sm"></i> GERAR RECIBO SELETO E COMPARTILHAR
+                    <button onclick="gerarReciboFinanceiro()" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold text-xs shadow">
+                        <i class="fa-brands fa-whatsapp"></i> Gerar e Emitir Recibo de Quitação
                     </button>
                 </div>
 
-                <div class="space-y-2">
-                    <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300"><i class="fa-solid fa-list-check mr-1"></i> Gerenciar Baixa dos Processos (Sincronizado com a Pauta)</h3>
-                    <div id="fin-gerenciador-baixas" class="space-y-2"></div>
-                </div>
+                <div id="fin-gerenciador-baixas" class="space-y-2"></div>
             </section>
 
             <!-- ABA 5: LIVRO CAIXA -->
             <section id="tab-caixa" class="tab-content space-y-4 hidden">
-                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
-                    <div>
-                        <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-cash-register mr-1"></i> Livro Caixa & Despesas de Rua</h3>
-                        <p>Controle de Entradas, Despesas Operacionais e Gastos da Rua.</p>
-                    </div>
-                    <button type="button" onclick="confirmarLimparAba('caixa')" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-white dark:bg-gray-800 px-2 py-1 rounded border border-red-200 shadow-sm">
-                        <i class="fa-solid fa-trash-can"></i> Limpar Caixa
-                    </button>
-                </div>
-
                 <div class="grid grid-cols-3 gap-2 text-center text-white">
                     <div class="bg-green-600 p-2.5 rounded-xl shadow">
-                        <span class="text-[9px] uppercase font-bold block">Entradas (+)</span>
+                        <span class="text-[9px] uppercase font-bold block">Entradas</span>
                         <span id="caixa-total-entradas" class="font-black text-sm">R$ 0,00</span>
                     </div>
                     <div class="bg-red-600 p-2.5 rounded-xl shadow">
-                        <span class="text-[9px] uppercase font-bold block">Saídas / Despesas (-)</span>
+                        <span class="text-[9px] uppercase font-bold block">Saídas</span>
                         <span id="caixa-total-saidas" class="font-black text-sm">R$ 0,00</span>
                     </div>
                     <div class="bg-blue-800 p-2.5 rounded-xl shadow">
-                        <span class="text-[9px] uppercase font-bold block">Saldo em Caixa</span>
+                        <span class="text-[9px] uppercase font-bold block">Saldo Liquido</span>
                         <span id="caixa-saldo-liquido" class="font-black text-sm">R$ 0,00</span>
                     </div>
                 </div>
 
-                <form id="form-caixa" onsubmit="saveLancamentoCaixa(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <h2 class="font-bold text-sm text-gray-700 dark:text-gray-200 border-b pb-1"><i class="fa-solid fa-plus-circle mr-1"></i> Novo Lançamento no Caixa</h2>
-                    
+                <form id="form-caixa" onsubmit="saveCaixa(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
+                    <h2 class="font-bold text-sm text-gray-700 dark:text-gray-200 border-b pb-1">Novo Lançamento no Caixa</h2>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs font-semibold">Data do Lançamento</label>
-                            <input type="date" id="caixa-data" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-bold">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold">Tipo de Transação</label>
-                            <select id="caixa-tipo" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-bold">
-                                <option value="saida">🔴 SAÍDA / DESPESA (-)</option>
-                                <option value="entrada">🟢 ENTRADA / RECEBIMENTO (+)</option>
+                            <label class="text-xs font-semibold">Tipo</label>
+                            <select id="caixa-tipo" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-bold">
+                                <option value="saida">🔴 DESPESA / SAÍDA (-)</option>
+                                <option value="entrada">🟢 ENTRADA (+)</option>
                             </select>
                         </div>
+                        <div>
+                            <label class="text-xs font-semibold">Valor (R$)</label>
+                            <input type="number" step="0.01" id="caixa-valor" required placeholder="0.00" class="w-full p-2 border rounded-lg dark:bg-gray-700 font-bold text-sm">
+                        </div>
                     </div>
-
                     <div>
-                        <label class="text-xs font-semibold">Categoria / Tipo de Despesa</label>
-                        <select id="caixa-categoria-select" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-semibold">
-                            <option value="Uber / Táxi / Transporte">🚗 Uber / Táxi / Transporte</option>
-                            <option value="Cópias Extras / Autenticações">📄 Cópias Extras / Autenticações</option>
-                            <option value="Diligência PROCON / Órgãos Públicos">🏛️ Diligência PROCON / Órgãos Públicos</option>
-                            <option value="Cliente Particular / Avulso">👤 Cliente Particular / Avulso</option>
-                            <option value="Mensalidade Celular / Internet">📱 Mensalidade Celular / Internet</option>
-                            <option value="Alimentação / Estacionamento / Outros">☕ Alimentação / Estacionamento / Outros</option>
-                        </select>
+                        <label class="text-xs font-semibold">Descrição</label>
+                        <input type="text" id="caixa-descricao" required placeholder="Ex: Uber Fórum, Cópias..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
                     </div>
-
-                    <div>
-                        <label class="text-xs font-semibold">Descrição / Detalhamento</label>
-                        <textarea id="caixa-descricao" rows="2" placeholder="Escreva o motivo da despesa/entrada..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs"></textarea>
-                    </div>
-
-                    <div>
-                        <label class="text-xs font-bold text-brand-red dark:text-red-400">Valor da Operação (R$)*</label>
-                        <input type="number" step="0.01" id="caixa-valor" required placeholder="0.00" class="w-full p-2 border rounded-lg dark:bg-gray-700 font-bold text-sm">
-                    </div>
-
-                    <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">
-                        <i class="fa-solid fa-floppy-disk mr-1"></i> Registrar Transação no Caixa
+                    <button type="submit" class="w-full bg-brand-red text-white py-2 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-plus-circle"></i> Inserir Lançamento no Caixa
                     </button>
                 </form>
 
                 <div class="space-y-2">
-                    <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300"><i class="fa-solid fa-receipt mr-1"></i> Extrato de Contas do Caixa</h3>
+                    <div class="flex justify-between items-center bg-gray-200 dark:bg-gray-700 p-2 rounded-lg">
+                        <span class="font-bold text-xs">Extrato do Caixa</span>
+                        <div class="flex gap-1 text-[10px] font-bold">
+                            <button onclick="selecionarTodos('caixa', true)" class="bg-gray-800 text-white px-2 py-1 rounded">Todos</button>
+                            <button onclick="selecionarTodos('caixa', false)" class="bg-gray-500 text-white px-2 py-1 rounded">Limpar</button>
+                        </div>
+                    </div>
+
                     <div id="lista-caixa" class="space-y-2"></div>
+
+                    <!-- COMPARTILHAR CAIXA -->
+                    <div class="p-3 bg-red-50 dark:bg-gray-700/80 rounded-xl border border-brand-red space-y-2">
+                        <span class="text-xs font-extrabold text-brand-red dark:text-red-300 block">Compartilhar Extrato do Caixa [x]:</span>
+                        <div class="grid grid-cols-3 gap-2 text-xs font-bold">
+                            <button onclick="compartilharMassa('caixa', 'whats')" class="bg-green-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+                            <button onclick="compartilharMassa('caixa', 'email')" class="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-envelope"></i> E-mail</button>
+                            <button onclick="compartilharMassa('caixa', 'csv')" class="bg-gray-800 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-file-csv"></i> Planilha CSV</button>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <!-- ABA 6: CALCULADORAS AVANÇADAS & BLOCO DE NOTAS POR VOZ -->
+            <!-- ABA 6: CALCULADORAS AVANÇADAS & DITADO POR VOZ -->
             <section id="tab-trabalhista" class="tab-content space-y-4 hidden">
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
-                    <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200 border-b pb-2"><i class="fa-solid fa-calculator mr-1"></i> 1. Calculadora Comum</h3>
-                    <div class="bg-gray-900 text-green-400 p-3 rounded-lg text-right font-mono text-xl font-bold border" id="calc-comum-visor">0</div>
-                    <div class="grid grid-cols-4 gap-2 text-sm font-bold">
+                
+                <!-- CALCULADORA COMUM COM HISTÓRICO BOBINA -->
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border space-y-3">
+                    <h3 class="font-bold text-sm text-brand-red border-b pb-2"><i class="fa-solid fa-calculator mr-1"></i> Calculadora Comum Teclas Grandes & Fita Bobina</h3>
+                    
+                    <!-- FITA DE PAPEL DA BOBINA DE SOMA -->
+                    <div id="calc-bobina-fita" class="bobina-paper p-3 rounded-lg border font-mono text-xs max-h-36 overflow-y-auto space-y-1 shadow-inner text-gray-800 dark:text-gray-100">
+                        <div class="text-center font-bold text-[10px] border-b pb-1 text-amber-700 dark:text-amber-400">--- FITA DE PAPEL / BOBINA DE REGISTRO ---</div>
+                        <div id="bobina-linhas" class="space-y-0.5"></div>
+                    </div>
+
+                    <div class="bg-gray-900 text-green-400 p-3 rounded-lg text-right font-mono text-2xl font-bold border" id="calc-comum-visor">0</div>
+                    
+                    <div class="grid grid-cols-4 gap-2 text-base font-bold">
                         <button onclick="calcComumLimpar()" class="bg-red-600 text-white p-3 rounded-lg">C</button>
                         <button onclick="calcComumAdd('/')" class="bg-gray-700 text-white p-3 rounded-lg">÷</button>
                         <button onclick="calcComumAdd('*')" class="bg-gray-700 text-white p-3 rounded-lg">×</button>
@@ -600,110 +438,98 @@
                         <button onclick="calcComumAdd('0')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg col-span-2">0</button>
                         <button onclick="calcComumAdd('.')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">,</button>
                     </div>
+
+                    <div class="grid grid-cols-3 gap-2 text-xs font-bold pt-2">
+                        <button onclick="compartilharBobina('whats')" class="bg-green-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-brands fa-whatsapp"></i> Whats</button>
+                        <button onclick="compartilharBobina('email')" class="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-envelope"></i> E-mail</button>
+                        <button onclick="compartilharBobina('csv')" class="bg-gray-800 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-file-csv"></i> CSV</button>
+                    </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
-                    <h3 class="font-bold text-sm text-brand-red border-b pb-2"><i class="fa-solid fa-scale-balanced mr-1"></i> 2. Calculadora Rescisória Trabalhista Completa</h3>
+                <!-- CALCULADORA RESCISÓRIA TRABALHISTA COMPLETA -->
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border space-y-3">
+                    <h3 class="font-bold text-sm text-brand-red border-b pb-2"><i class="fa-solid fa-scale-balanced mr-1"></i> Calculadora Rescisória Trabalhista CLT Completa</h3>
+                    
                     <div class="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                            <label class="font-semibold">Último Salário Bruto (R$)*</label>
-                            <input type="number" step="0.01" id="calc-salario" placeholder="Ex: 2500.00" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
-                        </div>
-                        <div>
-                            <label class="font-semibold">Dias Trabalhados no Mês</label>
-                            <input type="number" id="calc-dias-mes" placeholder="Ex: 15" class="w-full p-2 border rounded dark:bg-gray-700">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div>
-                            <label class="font-semibold">Meses Proporcionais 13º</label>
-                            <input type="number" id="calc-meses-13" placeholder="Ex: 8" class="w-full p-2 border rounded dark:bg-gray-700">
-                        </div>
-                        <div>
-                            <label class="font-semibold">Meses Proporcionais Férias</label>
-                            <input type="number" id="calc-meses-ferias" placeholder="Ex: 10" class="w-full p-2 border rounded dark:bg-gray-700">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 text-xs bg-red-50 dark:bg-gray-700/50 p-2 rounded-lg border">
-                        <div>
-                            <label class="font-semibold text-brand-red dark:text-red-400">Férias Vencidas</label>
-                            <select id="calc-ferias-vencidas" class="w-full p-2 border rounded dark:bg-gray-700 font-semibold">
-                                <option value="0">Nenhuma</option>
-                                <option value="1">1 Período Vencido</option>
-                                <option value="1_dobro">1 Período em Dobro (Art. 137)</option>
+                            <label class="font-semibold">Vínculo Empregatício</label>
+                            <select id="calc-tipo-vinculo" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                                <option value="clt">Com Registro em Carteira (CLT)</option>
+                                <option value="informal">Sem Registro em Carteira (Informal)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="font-semibold text-brand-red dark:text-red-400">Anos Completos na Empresa</label>
-                            <input type="number" id="calc-anos-empresa" placeholder="Ex: 3 (Lei 12.506)" class="w-full p-2 border rounded dark:bg-gray-700">
+                            <label class="font-semibold">Salário Bruto (R$)</label>
+                            <input type="number" step="0.01" id="calc-salario" placeholder="2500.00" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
                         </div>
                     </div>
+
                     <div class="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                            <label class="font-semibold">Aviso Prévio</label>
-                            <select id="calc-aviso" class="w-full p-2 border rounded dark:bg-gray-700">
-                                <option value="nenhum">Nenhum / Cumprido</option>
-                                <option value="indenizado">Indenizado</option>
-                            </select>
+                            <label class="font-semibold">Meses Trabalhados</label>
+                            <input type="number" id="calc-meses" placeholder="12" class="w-full p-2 border rounded dark:bg-gray-700">
                         </div>
                         <div>
-                            <label class="font-semibold">Saldo Atual FGTS (R$)</label>
-                            <input type="number" step="0.01" id="calc-fgts" placeholder="Para multa" class="w-full p-2 border rounded dark:bg-gray-700">
+                            <label class="font-semibold">Alíquota INSS (%)</label>
+                            <input type="number" step="0.01" id="calc-inss-pct" placeholder="7.5 - 14%" value="7.5" class="w-full p-2 border rounded dark:bg-gray-700">
                         </div>
                     </div>
+
                     <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div>
-                            <label class="font-semibold">Multa FGTS</label>
-                            <select id="calc-tipo-multa-fgts" class="w-full p-2 border rounded dark:bg-gray-700">
-                                <option value="40">40% (Sem Justa Causa)</option>
-                                <option value="20">20% (Acordo Art. 484-A)</option>
-                                <option value="0">Sem Multa</option>
-                            </select>
-                        </div>
                         <div>
                             <label class="font-semibold">Horas Extras (R$)</label>
-                            <input type="number" step="0.01" id="calc-horas-extras" placeholder="Valor" class="w-full p-2 border rounded dark:bg-gray-700">
+                            <input type="number" step="0.01" id="calc-he" placeholder="0.00" class="w-full p-2 border rounded dark:bg-gray-700">
+                        </div>
+                        <div>
+                            <label class="font-semibold">Adicional Noturno (R$)</label>
+                            <input type="number" step="0.01" id="calc-noturno" placeholder="0.00" class="w-full p-2 border rounded dark:bg-gray-700">
                         </div>
                     </div>
-                    
-                    <div class="flex flex-col gap-1 text-xs pt-1 border-t">
-                        <label class="font-semibold">Multas da CLT:</label>
-                        <label><input type="checkbox" id="calc-multa-467"> Multa Art. 467 CLT (50% incontroversas)</label>
-                        <label><input type="checkbox" id="calc-multa-477"> Multa Art. 477 CLT (1 salário por atraso)</label>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                            <label class="font-semibold">Faltas / Outros Descontos (R$)</label>
+                            <input type="number" step="0.01" id="calc-descontos" placeholder="0.00" class="w-full p-2 border rounded dark:bg-gray-700">
+                        </div>
+                        <div>
+                            <label class="font-semibold">Aviso Prévio Indenizado</label>
+                            <select id="calc-aviso-opt" class="w-full p-2 border rounded dark:bg-gray-700">
+                                <option value="sim">Sim (1 Salário)</option>
+                                <option value="nao">Não / Cumprido</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <button onclick="calcularRescisaoExata()" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-xl font-bold text-sm shadow transition">
-                        CALCULAR VERBAS RESCISÓRIAS EXATAS
-                    </button>
+                    <button onclick="calcularRescisaoCompleta()" class="w-full bg-brand-red text-white py-2 rounded-lg font-bold text-xs shadow">Calcular Demonstrativo Rescisório</button>
 
-                    <div id="calc-resultado" class="hidden p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-xs space-y-2 font-mono border"></div>
+                    <div id="calc-rescisao-resultado" class="hidden p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-xs font-mono space-y-1 border"></div>
+
+                    <div class="grid grid-cols-3 gap-2 text-xs font-bold pt-2">
+                        <button onclick="compartilharRescisao('whats')" class="bg-green-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-brands fa-whatsapp"></i> Whats</button>
+                        <button onclick="compartilharRescisao('email')" class="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-envelope"></i> E-mail</button>
+                        <button onclick="compartilharRescisao('csv')" class="bg-gray-800 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-file-csv"></i> CSV</button>
+                    </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
-                    <div class="flex justify-between items-center border-b pb-2">
-                        <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200">Bloco de Notas Rápidas da Pauta</h3>
-                        <button type="button" onclick="iniciarDitadoVoz('bloco-notas')" class="bg-brand-red text-white font-bold px-2.5 py-1 rounded-lg text-xs shadow flex items-center gap-1">
-                            <i class="fa-solid fa-microphone"></i> Ditar Notas
+                <!-- BLOCO DE NOTAS POR VOZ -->
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border space-y-3">
+                    <div class="flex justify-between items-center border-b pb-1">
+                        <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200">Bloco de Notas Rápidas por Voz</h3>
+                        <button type="button" onclick="iniciarDitadoVoz('bloco-notas')" class="bg-brand-red text-white px-2 py-1 rounded text-xs font-bold shadow">
+                            <i class="fa-solid fa-microphone"></i> Ditar
                         </button>
                     </div>
-                    <textarea id="bloco-notas" rows="3" placeholder="Anote orientações e ocorrências..." class="w-full p-2 border rounded dark:bg-gray-700 text-xs" oninput="saveNotas()"></textarea>
-                    <button onclick="compartilharNotasWhats()" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold text-xs"><i class="fa-brands fa-whatsapp mr-1"></i> Compartilhar Notas no WhatsApp</button>
+                    <textarea id="bloco-notas" rows="3" placeholder="Anote orientações da audiência..." class="w-full p-2 border rounded dark:bg-gray-700 text-xs" oninput="saveNotas()"></textarea>
                 </div>
             </section>
 
-            <!-- ABA 7: RELATÓRIOS -->
+            <!-- ABA 7: RELATÓRIOS & PLANILHA INTERNA COM ALERTA DE EDIÇÃO -->
             <section id="tab-relatorios" class="tab-content space-y-4 hidden">
-                <div id="relatorio-resumo-card" class="bg-gray-900 text-white p-4 rounded-xl text-xs space-y-2 shadow-lg">
-                    <div class="font-bold text-amber-400 border-b border-gray-700 pb-1 flex justify-between items-center">
-                        <span>PAINEL DE TOTALIZADORES CONSOLIDADOS</span>
-                    </div>
-                    <div class="grid grid-cols-3 gap-2 text-center pt-1">
-                        <div class="bg-gray-800 p-2.5 rounded-lg border border-gray-700">
-                            <span class="text-[9px] text-gray-400 block font-bold uppercase">PAUTA BRUTA</span>
-                            <span id="relatorio-valor-total" class="font-black text-white text-base">R$ 0,00</span>
-                        </div>
+                <div class="bg-gray-900 text-white p-4 rounded-xl text-xs space-y-2 shadow-lg">
+                    <div class="font-bold text-amber-400 border-b border-gray-700 pb-1">PAINEL DE CONTROLADORIA CONSOLIDADO</div>
+                    <div class="grid grid-cols-2 gap-2 text-center pt-1">
                         <div class="bg-gray-800 p-2.5 rounded-lg border border-green-800">
-                            <span class="text-[9px] text-green-400 block font-bold uppercase">PAUTA QUITADA</span>
+                            <span class="text-[9px] text-green-400 block font-bold uppercase">RECEBIDO</span>
                             <span id="relatorio-valor-pago" class="font-black text-green-400 text-base">R$ 0,00</span>
                         </div>
                         <div class="bg-gray-800 p-2.5 rounded-lg border border-amber-800">
@@ -713,197 +539,184 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 space-y-3">
-                    <button onclick="exportarExcelMultiAbas()" class="w-full bg-green-700 hover:bg-green-800 text-white py-2.5 rounded-lg shadow font-extrabold flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-file-excel text-base"></i> EXPORTAR PLANILHA EXCEL MULTI-ABAS (.XLSX)
+                <!-- VISUALIZADOR DA PLANILHA NO APP COM MENSAGEM DE ALERTA DE EDIÇÃO -->
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border space-y-3 shadow-sm">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h3 class="font-bold text-xs text-brand-red"><i class="fa-solid fa-table mr-1"></i> Visualizador da Planilha Geral do App</h3>
+                        <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">Modo Leitura</span>
+                    </div>
+
+                    <div class="overflow-x-auto border rounded-lg max-h-60" onclick="alertarExportacaoNuvem()">
+                        <table class="w-full text-left text-[11px] cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                            <thead class="bg-gray-800 text-white text-[10px] uppercase">
+                                <tr>
+                                    <th class="p-2">Módulo</th>
+                                    <th class="p-2">Descrição / Processo</th>
+                                    <th class="p-2">Valor (R$)</th>
+                                    <th class="p-2">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-visualizador-interna" class="divide-y dark:divide-gray-700"></tbody>
+                        </table>
+                    </div>
+
+                    <button onclick="exportarExcelMultiAbas()" class="w-full bg-green-700 hover:bg-green-800 text-white py-2.5 rounded-xl font-extrabold text-xs shadow flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-excel text-base"></i> EXPORTAR PLANILHA OFICIAL (.XLSX) PARA O GMAIL / GOOGLE DRIVE
                     </button>
                 </div>
             </section>
 
-            <!-- ABA 8: CENTRAL DE MANUAIS -->
+            <!-- ABA 8: CENTRAL DE MANUAIS EM ABAS SANFONA -->
             <section id="tab-manuais" class="tab-content space-y-4 hidden">
-                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
-                    <div>
-                        <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-book-open mr-1"></i> Central de Manuais do DILIGENCE.BR</h3>
-                        <p>Pesquise instruções e guias do sistema.</p>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 space-y-2 shadow-sm">
+                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border space-y-2 shadow-sm">
                     <label class="font-extrabold text-xs text-brand-red flex items-center gap-1">
-                        <i class="fa-solid fa-magnifying-glass"></i> PESQUISAR NO MANUAL:
+                        <i class="fa-solid fa-magnifying-glass"></i> PESQUISAR DÚVIDA NO MANUAL UNIVERSAL:
                     </label>
-                    <div class="relative">
-                        <input type="text" id="input-busca-manual" oninput="filtrarManualPorPalavraChave()" placeholder="Digite uma palavra..." class="w-full p-2.5 pr-8 border rounded-xl text-xs dark:bg-gray-700 font-semibold focus:ring-2 focus:ring-brand-red outline-none">
-                    </div>
+                    <input type="text" id="input-busca-manual" oninput="filtrarManual()" placeholder="Digite palavras como: Pauta, GPS, Excel, Caixa..." class="w-full p-2 border rounded-xl text-xs dark:bg-gray-700 font-semibold focus:ring-2 focus:ring-brand-red outline-none">
                 </div>
 
-                <div id="container-conteudo-manuais" class="space-y-4 text-xs">
-                    <div class="manual-block bg-white dark:bg-gray-800 p-4 rounded-xl border-2 border-green-600 space-y-2 shadow-sm">
-                        <h2 class="font-black text-sm text-green-700 dark:text-green-400 border-b pb-1">
-                            📊 GUIA COMPLETO DO EXCEL MULTI-ABAS (.XLSX)
-                        </h2>
-                        <p>O arquivo .XLSX gerado pelo sistema é nativo e contém 5 abas organizadas: <strong>1. Consolidado Geral</strong>, <strong>2. Pauta de Diligências</strong>, <strong>3. Financeiro</strong>, <strong>4. Livro Caixa</strong> e <strong>5. Agenda de Contatos</strong>.</p>
+                <div id="container-manuais-sanfona" class="space-y-2 text-xs">
+                    
+                    <!-- MANUAL PAUTA -->
+                    <div class="manual-item border rounded-xl bg-white dark:bg-gray-800 overflow-hidden shadow-sm">
+                        <button onclick="toggleSanfona('m-pauta')" class="w-full p-3 bg-red-50 dark:bg-gray-700 text-left font-bold text-brand-red dark:text-red-300 flex justify-between items-center">
+                            <span><i class="fa-solid fa-calendar-check mr-2"></i>1. Como Usar a Pauta & Autocomplete IBGE</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                        <div id="m-pauta" class="p-3 space-y-2 hidden border-t text-gray-700 dark:text-gray-200">
+                            <p>• <strong>Autocomplete IBGE:</strong> Digite o nome de qualquer cidade do Brasil no campo de Comarca para ver as opções oficiais.</p>
+                            <p>• <strong>Compartilhamento Múltiplo `[x]`:</strong> Marque as caixinhas dos atos desejados e envie por Whats, E-mail ou CSV em 1 clique.</p>
+                        </div>
                     </div>
+
+                    <!-- MANUAL AGENDA -->
+                    <div class="manual-item border rounded-xl bg-white dark:bg-gray-800 overflow-hidden shadow-sm">
+                        <button onclick="toggleSanfona('m-agenda')" class="w-full p-3 bg-red-50 dark:bg-gray-700 text-left font-bold text-brand-red dark:text-red-300 flex justify-between items-center">
+                            <span><i class="fa-solid fa-address-book mr-2"></i>2. Agenda de Contatos & Edição</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                        <div id="m-agenda" class="p-3 space-y-2 hidden border-t text-gray-700 dark:text-gray-200">
+                            <p>• <strong>Busca Rápida:</strong> O campo de busca localiza instantaneamente o contato por nome enquanto você digita.</p>
+                            <p>• <strong>Visualizar e Editar:</strong> Clique no botão de olho no card para abrir o cadastro, visualizar o que está anotado ou atualizar o telefone/OAB.</p>
+                        </div>
+                    </div>
+
+                    <!-- MANUAL CAIXA -->
+                    <div class="manual-item border rounded-xl bg-white dark:bg-gray-800 overflow-hidden shadow-sm">
+                        <button onclick="toggleSanfona('m-caixa')" class="w-full p-3 bg-red-50 dark:bg-gray-700 text-left font-bold text-brand-red dark:text-red-300 flex justify-between items-center">
+                            <span><i class="fa-solid fa-cash-register mr-2"></i>3. Livro Caixa & Despesas de Rua</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                        <div id="m-caixa" class="p-3 space-y-2 hidden border-t text-gray-700 dark:text-gray-200">
+                            <p>• <strong>Entradas e Saídas:</strong> Lance gastos de transporte, alimentação ou recebimentos. O saldo calcula em tempo real.</p>
+                        </div>
+                    </div>
+
+                    <!-- MANUAL CALCULADORAS -->
+                    <div class="manual-item border rounded-xl bg-white dark:bg-gray-800 overflow-hidden shadow-sm">
+                        <button onclick="toggleSanfona('m-calc')" class="w-full p-3 bg-red-50 dark:bg-gray-700 text-left font-bold text-brand-red dark:text-red-300 flex justify-between items-center">
+                            <span><i class="fa-solid fa-calculator mr-2"></i>4. Calculadora Bobina & Rescisória CLT</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                        <div id="m-calc" class="p-3 space-y-2 hidden border-t text-gray-700 dark:text-gray-200">
+                            <p>• <strong>Bobina de Registro:</strong> Registra cada soma linha por linha em uma fita de papel digital.</p>
+                            <p>• <strong>Rescisória CLT:</strong> Simula verbas rescisórias com registro, informal, adicionais e descontos.</p>
+                        </div>
+                    </div>
+
                 </div>
             </section>
 
         </main>
 
-        <!-- RODAPÉ FIXO -->
-        <footer class="bg-gray-900 text-gray-300 p-4 text-center text-xs space-y-1 border-t dark:border-gray-800">
-            <p class="font-semibold text-gray-100">Elaborado com carinho para apoiar a rotina diária dos correspondentes jurídicos.</p>
-            <p class="text-[11px] text-gray-400">💬 Feedback: <a href="mailto:cj.patriciaamr@gmail.com" class="text-red-400 underline font-bold">cj.patriciaamr@gmail.com</a></p>
-            <p class="text-[10px] text-gray-500 pt-1">Idealizado por <strong>Patricia Monte</strong>.</p>
-        </footer>
-
-        <!-- NAVEGAÇÃO INFERIOR -->
+        <!-- NAVEGAÇÃO INFERIOR POR ABAS -->
         <nav class="bg-white dark:bg-gray-900 border-t dark:border-gray-800 sticky bottom-0 z-30 flex justify-around p-2 text-center text-[8px] font-bold">
-            <button onclick="switchTab('tab-perfil')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-perfil">
-                <i class="fa-solid fa-user-gear text-base"></i><span>Perfil</span>
-            </button>
-            <button onclick="switchTab('tab-atos')" class="tab-btn p-1 text-brand-red flex flex-col items-center" id="btn-tab-atos">
-                <i class="fa-solid fa-calendar-check text-base"></i><span>Pauta</span>
-            </button>
-            <button onclick="switchTab('tab-contatos')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-contatos">
-                <i class="fa-solid fa-address-book text-base"></i><span>Agenda</span>
-            </button>
-            <button onclick="switchTab('tab-financeiro')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-financeiro">
-                <i class="fa-solid fa-wallet text-base"></i><span>Financeiro</span>
-            </button>
-            <button onclick="switchTab('tab-caixa')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-caixa">
-                <i class="fa-solid fa-cash-register text-base"></i><span>Caixa</span>
-            </button>
-            <button onclick="switchTab('tab-trabalhista')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-trabalhista">
-                <i class="fa-solid fa-calculator text-base"></i><span>Calc.</span>
-            </button>
-            <button onclick="switchTab('tab-relatorios')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-relatorios">
-                <i class="fa-solid fa-file-invoice text-base"></i><span>Relatórios</span>
-            </button>
-            <button onclick="switchTab('tab-manuais')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-manuais">
-                <i class="fa-solid fa-book-open text-base"></i><span>Manuais</span>
-            </button>
+            <button onclick="switchTab('tab-perfil')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-perfil"><i class="fa-solid fa-user-gear text-base"></i><span>Perfil</span></button>
+            <button onclick="switchTab('tab-atos')" class="tab-btn p-1 text-brand-red flex flex-col items-center" id="btn-tab-atos"><i class="fa-solid fa-calendar-check text-base"></i><span>Pauta</span></button>
+            <button onclick="switchTab('tab-contatos')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-contatos"><i class="fa-solid fa-address-book text-base"></i><span>Agenda</span></button>
+            <button onclick="switchTab('tab-financeiro')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-financeiro"><i class="fa-solid fa-wallet text-base"></i><span>Financeiro</span></button>
+            <button onclick="switchTab('tab-caixa')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-caixa"><i class="fa-solid fa-cash-register text-base"></i><span>Caixa</span></button>
+            <button onclick="switchTab('tab-trabalhista')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-trabalhista"><i class="fa-solid fa-calculator text-base"></i><span>Calc.</span></button>
+            <button onclick="switchTab('tab-relatorios')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-relatorios"><i class="fa-solid fa-file-invoice text-base"></i><span>Relatórios</span></button>
+            <button onclick="switchTab('tab-manuais')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-manuais"><i class="fa-solid fa-book-open text-base"></i><span>Manuais</span></button>
         </nav>
     </div>
 
-    <!-- MODAL FORMULÁRIO CHECKLIST PÓS-AUDIÊNCIA (FOTO DE ATA REMOVIDA) -->
+    <!-- MODAL EDICÃO DE CONTATOS -->
+    <div id="modal-edit-contato" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-3 shadow-2xl border border-brand-red">
+            <h3 class="font-bold text-sm text-brand-red border-b pb-1">👁️ Visualizar e Editar Contato</h3>
+            <input type="hidden" id="edit-ct-id">
+            <div>
+                <label class="text-[10px] font-bold">Nome</label>
+                <input type="text" id="edit-ct-nome" class="w-full p-1.5 border rounded text-xs dark:bg-gray-700">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="text-[10px] font-bold">Celular</label>
+                    <input type="text" id="edit-ct-celular" class="w-full p-1.5 border rounded text-xs dark:bg-gray-700">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold">OAB/Doc</label>
+                    <input type="text" id="edit-ct-oab" class="w-full p-1.5 border rounded text-xs dark:bg-gray-700">
+                </div>
+            </div>
+            <div>
+                <label class="text-[10px] font-bold">Anotações</label>
+                <textarea id="edit-ct-obs" rows="2" class="w-full p-1.5 border rounded text-xs dark:bg-gray-700"></textarea>
+            </div>
+            <div class="flex gap-2 pt-1 font-bold">
+                <button onclick="salvarEdicaoContato()" class="flex-1 bg-green-600 text-white py-2 rounded-lg text-xs">Salvar Alterações</button>
+                <button onclick="fecharModalEditContato()" class="bg-gray-500 text-white px-3 py-2 rounded-lg text-xs">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CHECKLIST -->
     <div id="modal-checklist" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-lg w-full space-y-4 shadow-2xl border-2 border-brand-red my-8">
             <div class="flex justify-between items-center border-b pb-2">
-                <div>
-                    <h3 class="font-extrabold text-sm text-brand-red flex items-center gap-1">
-                        <i class="fa-solid fa-list-check"></i> CONTROLE DE PAGAMENTO & CHECKLIST DILIGÊNCIAS
-                    </h3>
-                    <p class="text-[10px] text-gray-500">Relatório e encerramento oficial da diligência realizada</p>
-                </div>
-                <button onclick="fecharModalChecklist()" class="text-gray-400 font-bold text-lg">&times;</button>
+                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-list-check"></i> CHECKLIST PÓS-AUDIÊNCIA</h3>
+                <button onclick="fecharModalChecklist()" class="text-gray-400 font-bold">&times;</button>
             </div>
-            
             <form id="form-checklist" class="space-y-3 text-xs">
                 <input type="hidden" id="chk-ato-id">
-                
-                <div class="grid grid-cols-2 gap-2 bg-gray-50 dark:bg-gray-700/50 p-2.5 rounded-xl border">
-                    <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">E-mail Correspondente:*</label>
-                        <input type="email" id="chk-email" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
-                    </div>
-                    <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">Nome e Documento:*</label>
-                        <input type="text" id="chk-nome-doc" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
-                    </div>
-                    <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">Nº do Processo:*</label>
-                        <input type="text" id="chk-processo" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
-                    </div>
-                    <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">Cliente / Contratante:*</label>
-                        <input type="text" id="chk-cliente" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
-                    </div>
+                <div class="grid grid-cols-2 gap-2 bg-gray-50 dark:bg-gray-700/50 p-2 rounded-xl border">
+                    <div><label class="font-bold">Processo:</label><input type="text" id="chk-processo" readonly class="w-full p-1 border rounded bg-gray-200 dark:bg-gray-600 font-bold"></div>
+                    <div><label class="font-bold">Cidade:</label><input type="text" id="chk-cidade" class="w-full p-1 border rounded dark:bg-gray-700 font-semibold"></div>
                 </div>
-
-                <div class="grid grid-cols-2 gap-2 bg-gray-50 dark:bg-gray-700/50 p-2.5 rounded-xl border">
-                    <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">Data e Hora:*</label>
-                        <input type="text" id="chk-data-hora" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
-                    </div>
-                    <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">Valor Acordado:*</label>
-                        <input type="text" id="chk-valor" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold text-brand-red">
-                    </div>
-                </div>
-
                 <div>
-                    <label class="font-extrabold text-brand-red dark:text-red-400 block mb-1">Serviço Prestado:*</label>
-                    <div class="grid grid-cols-2 gap-1.5 bg-gray-50 dark:bg-gray-700/30 p-2 rounded-lg border text-[11px]">
-                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Advogado" checked> Advogado</label>
-                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Preposto"> Preposto</label>
-                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Cópia"> Cópia</label>
-                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Protocolo"> Protocolo</label>
-                    </div>
+                    <label class="font-extrabold text-brand-red">Relato / Observações da Audiência:*</label>
+                    <textarea id="chk-obs" rows="3" required placeholder="Como foi o ato..." class="w-full p-2 border rounded-lg dark:bg-gray-700 font-semibold"></textarea>
                 </div>
-
-                <div>
-                    <label class="font-extrabold text-brand-red dark:text-red-400 flex justify-between items-center">
-                        <span>Ocorrências / Como foi a audiência (Feedback Obritatório):*</span>
-                        <button type="button" onclick="iniciarDitadoVoz('chk-obs')" class="text-xs text-brand-red font-bold underline"><i class="fa-solid fa-microphone"></i> Ditar</button>
-                    </label>
-                    <textarea id="chk-obs" rows="3" required placeholder="Descreva detalhadamente como foi o ato..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-semibold focus:ring-2 focus:ring-brand-red outline-none"></textarea>
-                </div>
-
-                <div class="pt-2 border-t flex gap-2 font-bold">
-                    <button type="button" onclick="enviarChecklistWhatsApp()" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl shadow text-xs flex items-center justify-center gap-1">
-                        <i class="fa-brands fa-whatsapp"></i> WhatsApp ADM (11 97838-6574)
-                    </button>
-                    <button type="button" onclick="gerarTicketComprovante()" class="bg-gray-800 text-white px-3 py-2.5 rounded-xl shadow text-xs flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-receipt"></i> Gerar Ticket
-                    </button>
-                </div>
+                <button type="button" onclick="enviarChecklistWhatsApp()" class="w-full bg-green-600 text-white py-2.5 rounded-xl font-bold shadow"><i class="fa-brands fa-whatsapp"></i> Enviar Checklist no WhatsApp</button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL MENU DE BACKUP E RESET -->
+    <!-- MODAL BACKUP -->
     <div id="modal-backup" class="fixed inset-0 z-50 bg-black/60 modal-blur hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border dark:border-gray-700">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-3 shadow-2xl">
             <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-database mr-1"></i> Central de Backup & Autonomia</h3>
-                <button onclick="fecharModalBackup()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">&times;</button>
+                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-database"></i> Central de Backup</h3>
+                <button onclick="fecharModalBackup()" class="text-gray-400 font-bold">&times;</button>
             </div>
-
-            <div class="space-y-2">
-                <button onclick="fazerBackupJSON()" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-solid fa-file-code"></i> 1. Salvar Backup no Celular (.JSON)
-                </button>
-                <button onclick="exportarExcelMultiAbas()" class="w-full bg-green-700 hover:bg-green-800 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-solid fa-file-excel text-lg"></i> 2. Exportar Excel Multi-Abas (.XLSX)
-                </button>
-                <button onclick="acionarRestauracao()" class="w-full bg-gray-800 hover:bg-gray-900 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-solid fa-upload"></i> 3. RESTAURAR BACKUP (.JSON)
-                </button>
-                
-                <button onclick="confirmarZerarTudoGeral()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-extrabold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1 border border-red-300 mt-2">
-                    <i class="fa-solid fa-triangle-exclamation"></i> ZERAR TODOS OS DADOS (APP NOVINHO)
-                </button>
-            </div>
+            <button onclick="fazerBackupJSON()" class="w-full bg-brand-red text-white py-2 rounded-xl font-bold text-xs shadow">1. Salvar Backup (.JSON)</button>
+            <button onclick="exportarExcelMultiAbas()" class="w-full bg-green-700 text-white py-2 rounded-xl font-bold text-xs shadow">2. Exportar Excel (.XLSX)</button>
+            <button onclick="acionarRestauracao()" class="w-full bg-gray-800 text-white py-2 rounded-xl font-bold text-xs shadow">3. Restaurar Backup (.JSON)</button>
+            <button onclick="confirmarZerarTudoGeral()" class="w-full bg-red-100 text-red-700 font-extrabold py-2 rounded-xl text-xs border border-red-300">ZERAR TUDO (APP NOVO)</button>
         </div>
     </div>
 
-    <!-- JAVASCRIPT CONSOLIDADO E CORRIGIDO -->
+    <!-- JAVASCRIPT LOGIC CONSOLIDATED -->
     <script>
         const AUTH_USER = "diligence.br*";
         const AUTH_PASS = "320427";
         const WHATS_ADM = "5511978386574";
-        const EMAIL_CONTRATANTE = "ec.cortez@uol.com.br";
 
-        let db = {
-            perfil: { nome: '', doc: '', cidade: '', pix: '', email: '', celular: '' },
-            atos: [],
-            contatos: [],
-            caixa: [],
-            notas: ''
-        };
-
+        let db = { perfil: {}, atos: [], caixa: [], contatos: [], notas: '' };
         let tempAtaBase64Pauta = null;
+        let bobinaHistorico = [];
         let calcVisorVal = '0';
 
         function updateClock() {
@@ -914,16 +727,26 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        function toggleDarkMode() {
-            document.documentElement.classList.toggle('dark');
+        /* IBGE CIDADES AUTOCOMPLETE */
+        async function buscarCidadesIBGE(termo) {
+            if (!termo || termo.length < 2) return;
+            try {
+                const res = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/municipios`);
+                const municipios = await res.json();
+                const list = document.getElementById('lista-cidades-br');
+                list.innerHTML = '';
+                const filtrados = municipios.filter(m => m.nome.toLowerCase().includes(termo.toLowerCase())).slice(0, 30);
+                filtrados.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = `${m.nome} / ${m.microrregiao.mesorregiao.UF.sigla}`;
+                    list.appendChild(opt);
+                });
+            } catch (err) {}
         }
 
         function handleLogin(e) {
-            if (e) e.preventDefault();
-            const user = document.getElementById('login-user').value;
-            const pass = document.getElementById('login-pass').value;
-
-            if (user === AUTH_USER && pass === AUTH_PASS) {
+            e.preventDefault();
+            if (document.getElementById('login-user').value === AUTH_USER && document.getElementById('login-pass').value === AUTH_PASS) {
                 localStorage.setItem('diligence_logged', 'true');
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app-content').classList.remove('hidden');
@@ -934,24 +757,8 @@
         }
 
         function fazerLogout() {
-            if (confirm("Deseja realmente sair do sistema?")) {
-                localStorage.removeItem('diligence_logged');
-                location.reload();
-            }
-        }
-
-        function abrirModalRecuperacao(tipo) {
-            document.getElementById('rec-modal-titulo').innerText = tipo === 'usuario' ? 'RECUPERAR USUÁRIO' : 'RECUPERAR SENHA';
-            document.getElementById('modal-recuperacao-login').classList.remove('hidden');
-        }
-        function fecharModalRecuperacao() { document.getElementById('modal-recuperacao-login').classList.add('hidden'); }
-
-        function enviarRecuperacaoWhats() {
-            const nome = document.getElementById('rec-nome').value.trim();
-            const cel = document.getElementById('rec-celular').value.trim();
-            const txt = `DILIGENCE.BR - RECUPERAÇÃO DE ACESSO\nNome: ${nome}\nCelular: ${cel}`;
-            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(txt)}`);
-            fecharModalRecuperacao();
+            localStorage.removeItem('diligence_logged');
+            location.reload();
         }
 
         function switchTab(tabId) {
@@ -959,25 +766,20 @@
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.replace('text-brand-red', 'text-gray-500'));
             
             document.getElementById(tabId).classList.remove('hidden');
-            const btn = document.getElementById('btn-' + tabId);
-            if (btn) btn.classList.replace('text-gray-500', 'text-brand-red');
+            document.getElementById('btn-' + tabId).classList.replace('text-gray-500', 'text-brand-red');
 
-            if (tabId === 'tab-relatorios') renderRelatorios();
-            if (tabId === 'tab-financeiro') renderFinanceiro();
-            if (tabId === 'tab-caixa') renderCaixa();
-            if (tabId === 'tab-contatos') renderContatos();
-            if (tabId === 'tab-atos') renderAtos();
+            if(tabId === 'tab-relatorios') renderRelatorios();
+            if(tabId === 'tab-financeiro') renderFinanceiro();
+            if(tabId === 'tab-caixa') renderCaixa();
+            if(tabId === 'tab-contatos') renderContatos();
+            if(tabId === 'tab-atos') renderAtos();
         }
 
-        function saveData() { 
-            localStorage.setItem('diligence_db', JSON.stringify(db)); 
-        }
+        function saveData() { localStorage.setItem('diligence_db', JSON.stringify(db)); }
 
         function loadData() {
             const saved = localStorage.getItem('diligence_db');
-            if (saved) {
-                try { db = JSON.parse(saved); } catch(err){}
-            }
+            if (saved) db = JSON.parse(saved);
             
             if (localStorage.getItem('diligence_logged') === 'true') {
                 document.getElementById('login-screen').classList.add('hidden');
@@ -992,9 +794,9 @@
             document.getElementById('perfil-nome').value = db.perfil.nome || '';
             document.getElementById('perfil-doc').value = db.perfil.doc || '';
             document.getElementById('perfil-cidade').value = db.perfil.cidade || '';
+            document.getElementById('perfil-celular').value = db.perfil.celular || '';
             document.getElementById('perfil-pix').value = db.perfil.pix || '';
             document.getElementById('perfil-email').value = db.perfil.email || '';
-            document.getElementById('perfil-celular').value = db.perfil.celular || '';
             document.getElementById('bloco-notas').value = db.notas || '';
 
             renderAtos();
@@ -1004,119 +806,52 @@
             renderRelatorios();
         }
 
-        function previewImagemAta(evt) {
-            const file = evt.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    tempAtaBase64Pauta = e.target.result;
-                    document.getElementById('img-preview-ata').src = tempAtaBase64Pauta;
-                    document.getElementById('preview-ata-container').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
+        function savePerfil(e) {
+            e.preventDefault();
+            db.perfil = {
+                nome: document.getElementById('perfil-nome').value,
+                doc: document.getElementById('perfil-doc').value,
+                cidade: document.getElementById('perfil-cidade').value,
+                celular: document.getElementById('perfil-celular').value,
+                pix: document.getElementById('perfil-pix').value,
+                email: document.getElementById('perfil-email').value
+            };
+            saveData();
+            alert("Perfil salvo com sucesso!");
         }
 
-        /* OPÇÕES DE COMPARTILHAMENTO DA ATA */
-        async function compartilharAtaOpcao(opcao) {
-            if (opcao === 'nada') {
-                alert("Foto/Documento salvo internamente. Nenhuma mensagem foi enviada.");
-                return;
-            }
-
-            const proc = document.getElementById('ato-processo').value.trim() || 'N/A';
-            const cli = document.getElementById('ato-cliente').value.trim() || 'N/A';
-            const val = parseFloat(document.getElementById('ato-valor').value) || 0;
-            const dataHora = document.getElementById('ato-data').value || 'N/A';
-            const cidade = document.getElementById('ato-cidade').value.trim() || 'N/A';
-
-            const textoRelatorio = `📋 DILIGENCE.BR - COMPROVANTE & DOCUMENTO DE AUDIÊNCIA\n` +
-                `--------------------------------\n` +
-                `Correspondente: ${db.perfil.nome || 'N/A'} - Doc: ${db.perfil.doc || 'N/A'}\n` +
-                `Contato: ${db.perfil.celular || 'N/A'} | E-mail: ${db.perfil.email || 'N/A'}\n` +
-                `--------------------------------\n` +
-                `Processo: ${proc}\n` +
-                `Cliente: ${cli}\n` +
-                `Data/Hora: ${dataHora}\n` +
-                `Cidade/Comarca: ${cidade}\n` +
-                `Valor Acordado: R$ ${val.toFixed(2)}\n` +
-                `--------------------------------\n` +
-                `Documento/ATA em anexo enviado via DILIGENCE.BR`;
-
-            if (opcao === 'whats_adm') {
-                if (tempAtaBase64Pauta && navigator.canShare) {
-                    try {
-                        const res = await fetch(tempAtaBase64Pauta);
-                        const blob = await res.blob();
-                        const file = new File([blob], `ATA_${proc}.png`, { type: 'image/png' });
-                        if (navigator.canShare({ files: [file] })) {
-                            await navigator.share({ title: 'ATA de Audiência', text: textoRelatorio, files: [file] });
-                            return;
-                        }
-                    } catch(err){}
-                }
-                window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(textoRelatorio)}`);
-            } else if (opcao === 'email_contratante') {
-                window.open(`mailto:${EMAIL_CONTRATANTE}?subject=${encodeURIComponent(`ATA/Documento - Processo ${proc}`)}&body=${encodeURIComponent(textoRelatorio)}`);
-            } else if (opcao === 'email_meu') {
-                const meuEmail = db.perfil.email || EMAIL_CONTRATANTE;
-                window.open(`mailto:${meuEmail}?subject=${encodeURIComponent(`ATA/Documento - Processo ${proc}`)}&body=${encodeURIComponent(textoRelatorio)}`);
-            }
-        }
-
-        /* 1. CADASTRO DE ATOS NA PAUTA COM ALERTAS DE DUPLICIDADE E SINCRONIZAÇÃO AUTOMÁTICA */
+        /* PAUTA E DUPLICIDADE */
         function saveAto(e) {
-            if (e) e.preventDefault();
-            const numProcesso = document.getElementById('ato-processo').value.trim();
-            const statusSel = document.getElementById('ato-status-select').value;
-            if(!statusSel) return alert('Selecione o status do pagamento!');
-
-            const duplicado = db.atos.find(a => a.processo.toLowerCase() === numProcesso.toLowerCase());
-            if (duplicado) {
-                alert(`⚠️ ATENÇÃO: O processo de número "${numProcesso}" JÁ ESTÁ CADASTRADO na sua Pauta!`);
+            e.preventDefault();
+            const proc = document.getElementById('ato-processo').value.trim();
+            if (db.atos.find(a => a.processo.toLowerCase() === proc.toLowerCase())) {
+                alert(`⚠️ O Processo "${proc}" JÁ EXISTE na Pauta!`);
                 return;
             }
 
             const novoAto = {
                 id: Date.now(),
-                processo: numProcesso,
+                processo: proc,
                 cliente: document.getElementById('ato-cliente').value.trim(),
                 data: document.getElementById('ato-data').value,
                 vencimento: document.getElementById('ato-vencimento').value,
                 cidade: document.getElementById('ato-cidade').value.trim(),
-                modalidade: document.getElementById('ato-modalidade').value,
-                link: document.getElementById('ato-link').value.trim(),
                 valor: parseFloat(document.getElementById('ato-valor').value),
-                status: statusSel,
-                ataImg: tempAtaBase64Pauta || null,
-                checklistObs: '',
-                dataPagamento: statusSel === 'pago' ? new Date().toLocaleDateString('pt-BR') : null
+                status: document.getElementById('ato-status-select').value,
+                checked: false
             };
 
             db.atos.push(novoAto);
-
-            if (statusSel === 'pago') {
-                db.caixa.push({
-                    id: Date.now() + 1,
-                    atoRefId: novoAto.id,
-                    data: novoAto.vencimento,
-                    tipo: 'entrada',
-                    categoria: 'Honorários de Pauta',
-                    descricao: `Proc: ${novoAto.processo} - ${novoAto.cliente}`,
-                    valor: novoAto.valor
-                });
+            if(novoAto.status === 'pago') {
+                db.caixa.push({ id: Date.now()+1, atoRefId: novoAto.id, tipo: 'entrada', valor: novoAto.valor, descricao: `Pauta: ${novoAto.processo}` });
             }
 
             saveData();
             document.getElementById('form-ato').reset();
-            document.getElementById('preview-ata-container').classList.add('hidden');
-            tempAtaBase64Pauta = null;
-            
             renderAtos();
             renderFinanceiro();
             renderCaixa();
             renderRelatorios();
-            alert("Ato cadastrado e sincronizado no Financeiro!");
         }
 
         function renderAtos() {
@@ -1124,228 +859,216 @@
             if (!container) return;
             container.innerHTML = '';
 
-            db.atos.forEach((ato) => {
+            db.atos.forEach(a => {
                 const card = document.createElement('div');
-                card.className = "border dark:border-gray-700 bg-white dark:bg-gray-800 p-3 rounded-xl text-xs space-y-2 shadow-sm";
+                card.className = "border dark:border-gray-700 bg-white dark:bg-gray-800 p-3 rounded-xl text-xs flex justify-between items-center shadow-sm";
                 card.innerHTML = `
-                    <div class="flex justify-between items-start">
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" ${a.checked ? 'checked' : ''} onchange="toggleCheck('atos', ${a.id})" class="w-4 h-4">
                         <div>
-                            <strong class="text-sm">Proc: ${ato.processo}</strong> - ${ato.cliente}<br>
-                            <span class="text-gray-500 dark:text-gray-400">📍 ${ato.cidade || 'N/I'} | Vencimento: ${ato.vencimento}</span>
+                            <strong>Proc: ${a.processo}</strong> - ${a.cliente}<br>
+                            <span class="text-gray-400">📍 ${a.cidade} | Venc: ${a.vencimento}</span>
                         </div>
-                        <span class="font-bold text-brand-red text-sm">R$ ${ato.valor.toFixed(2)}</span>
                     </div>
-                    <div class="flex justify-between items-center pt-2 border-t dark:border-gray-700">
-                        <span class="font-bold ${ato.status === 'pago' ? 'text-green-600' : 'text-amber-500'}">
-                            ${ato.status === 'pago' ? '🟢 PAGO' : '🟡 PENDENTE'}
-                        </span>
-                        <div class="flex gap-1">
-                            <button onclick="abrirModalChecklist(${ato.id})" class="bg-brand-red hover:bg-brand-darkred text-white px-2.5 py-1 rounded-lg font-bold shadow text-[11px]">
-                                📋 Checklist Pós-Audiência
-                            </button>
-                            <button onclick="deletarAto(${ato.id})" class="text-red-500 p-1 hover:bg-red-50 rounded">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
+                    <div class="text-right">
+                        <strong class="text-brand-red block">R$ ${a.valor.toFixed(2)}</strong>
+                        <button onclick="abrirModalChecklist(${a.id})" class="text-[10px] bg-brand-red text-white px-2 py-0.5 rounded font-bold">📋 Checklist</button>
                     </div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function deletarAto(id) {
-            if (confirm("Deseja realmente remover este ato da pauta?")) {
-                db.atos = db.atos.filter(a => a.id !== id);
-                db.caixa = db.caixa.filter(c => c.atoRefId !== id);
-                saveData();
-                renderAtos();
-                renderFinanceiro();
-                renderCaixa();
-                renderRelatorios();
+        /* SELEÇÃO E COMPARTILHAMENTO EM MASSA */
+        function toggleCheck(modulo, id) {
+            const item = db[modulo].find(x => x.id === id);
+            if(item) { item.checked = !item.checked; saveData(); }
+        }
+
+        function selecionarTodos(modulo, status) {
+            db[modulo].forEach(x => x.checked = status);
+            saveData();
+            if(modulo === 'atos') renderAtos();
+            if(modulo === 'contatos') renderContatos();
+            if(modulo === 'caixa') renderCaixa();
+        }
+
+        function compartilharMassa(modulo, tipo) {
+            const selecionados = db[modulo].filter(x => x.checked);
+            if(selecionados.length === 0) return alert('Selecione ao menos um item clicando na caixinha [x]!');
+
+            let texto = `DILIGENCE.BR - RELATÓRIO DE ${modulo.toUpperCase()}\n------------------------\n`;
+            if(modulo === 'atos') {
+                selecionados.forEach(a => texto += `• Proc: ${a.processo} (${a.cliente}) - R$ ${a.valor.toFixed(2)} [${a.status.toUpperCase()}]\n`);
+            } else if(modulo === 'contatos') {
+                selecionados.forEach(c => texto += `• ${c.nome} - Cel: ${c.celular} (${c.oab || 'Sem OAB'})\n`);
+            } else if(modulo === 'caixa') {
+                selecionados.forEach(x => texto += `• ${x.descricao} - R$ ${x.valor.toFixed(2)} [${x.tipo.toUpperCase()}]\n`);
+            }
+
+            if(tipo === 'whats') {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`);
+            } else if(tipo === 'email') {
+                window.open(`mailto:?subject=Relatorio_${modulo}&body=${encodeURIComponent(texto)}`);
+            } else if(tipo === 'csv') {
+                const blob = new Blob([texto], { type: 'text/csv' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `Relatorio_${modulo}.csv`;
+                a.click();
             }
         }
 
-        function focarNovoAto() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            document.getElementById('ato-processo').focus();
-        }
-
-        /* 2. CONTROLE FINANCEIRO E EMISSÃO DE RECIBOS */
-        function renderFinanceiro() {
-            let totalPago = 0, totalPendente = 0, totalTrocas = 0, totalSaidas = 0;
-            const container = document.getElementById('fin-gerenciador-baixas');
-            const selectCliente = document.getElementById('fin-recibo-cliente');
-            
-            if (container) container.innerHTML = '';
-            if (selectCliente) selectCliente.innerHTML = '<option value="todos">-- TODOS OS CLIENTES --</option>';
-
-            const clientesSet = new Set();
-
-            db.atos.forEach(ato => {
-                if (ato.cliente) clientesSet.add(ato.cliente);
-
-                if (ato.status === 'pago') totalPago += ato.valor;
-                else if (ato.status === 'pendente') totalPendente += ato.valor;
-                else if (ato.status === 'troca') totalTrocas += ato.valor;
-                else if (ato.status === 'debito') totalSaidas += ato.valor;
-
-                if (container) {
-                    const row = document.createElement('div');
-                    row.className = "p-2 border rounded-lg flex justify-between items-center text-xs dark:border-gray-700 bg-white dark:bg-gray-800";
-                    row.innerHTML = `
-                        <div>
-                            <strong>${ato.processo}</strong> (${ato.cliente})<br>
-                            <span class="text-gray-400">Venc: ${ato.vencimento} - R$ ${ato.valor.toFixed(2)}</span>
-                        </div>
-                        <button onclick="alternarStatusFinanceiro(${ato.id})" class="px-2 py-1 rounded font-bold text-[11px] ${ato.status === 'pago' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">
-                            ${ato.status === 'pago' ? '🟢 PAGO' : '🟡 DAR BAIXA'}
-                        </button>
-                    `;
-                    container.appendChild(row);
-                }
+        /* AGENDA EDITÁVEL */
+        function saveContato(e) {
+            e.preventDefault();
+            db.contatos.push({
+                id: Date.now(),
+                nome: document.getElementById('ct-nome').value.trim(),
+                celular: document.getElementById('ct-celular').value.trim(),
+                oab: document.getElementById('ct-oab').value.trim(),
+                obs: document.getElementById('ct-obs').value.trim(),
+                checked: false
             });
-
-            clientesSet.forEach(cli => {
-                if(selectCliente) selectCliente.innerHTML += `<option value="${cli}">${cli}</option>`;
-            });
-
-            document.getElementById('fin-entradas').innerText = `R$ ${totalPago.toFixed(2)}`;
-            document.getElementById('fin-pendentes').innerText = `R$ ${totalPendente.toFixed(2)}`;
-            document.getElementById('fin-trocas').innerText = `R$ ${totalTrocas.toFixed(2)}`;
-            document.getElementById('fin-saidas').innerText = `R$ ${totalSaidas.toFixed(2)}`;
-            document.getElementById('fin-saldo').innerText = `R$ ${(totalPago - totalSaidas).toFixed(2)}`;
-
-            renderProcessosParaRecibo();
+            saveData();
+            document.getElementById('form-contato').reset();
+            renderContatos();
         }
 
-        function alternarStatusFinanceiro(id) {
-            const ato = db.atos.find(a => a.id === id);
-            if (ato) {
-                ato.status = ato.status === 'pago' ? 'pendente' : 'pago';
-                if (ato.status === 'pago') {
-                    ato.dataPagamento = new Date().toLocaleDateString('pt-BR');
-                    db.caixa.push({
-                        id: Date.now(),
-                        atoRefId: ato.id,
-                        data: ato.vencimento,
-                        tipo: 'entrada',
-                        categoria: 'Honorários de Pauta',
-                        descricao: `Baixa Financeira: Proc ${ato.processo}`,
-                        valor: ato.valor
-                    });
-                } else {
-                    db.caixa = db.caixa.filter(c => c.atoRefId !== ato.id);
-                }
-                saveData();
-                renderAtos();
-                renderFinanceiro();
-                renderCaixa();
-                renderRelatorios();
-            }
-        }
-
-        function renderProcessosParaRecibo() {
-            const container = document.getElementById('fin-recibo-processos-check');
+        function renderContatos() {
+            const container = document.getElementById('lista-contatos');
             if(!container) return;
             container.innerHTML = '';
+            const busca = document.getElementById('busca-contato')?.value.toLowerCase() || '';
 
-            const cliFiltro = document.getElementById('fin-recibo-cliente').value;
-            const atosPagos = db.atos.filter(a => a.status === 'pago' && (cliFiltro === 'todos' || a.cliente === cliFiltro));
-
-            if(atosPagos.length === 0) {
-                container.innerHTML = '<span class="text-gray-400 italic">Nenhum processo quitado para este filtro.</span>';
-                return;
-            }
-
-            atosPagos.forEach(a => {
-                container.innerHTML += `
-                    <label class="flex items-center gap-2 border-b pb-1 dark:border-gray-700">
-                        <input type="checkbox" class="chk-recibo-item" value="${a.id}" checked>
-                        <span><strong>Proc: ${a.processo}</strong> (${a.cliente}) - R$ ${a.valor.toFixed(2)}</span>
-                    </label>
+            db.contatos.filter(c => c.nome.toLowerCase().includes(busca)).forEach(c => {
+                const card = document.createElement('div');
+                card.className = "border dark:border-gray-700 bg-white dark:bg-gray-800 p-2.5 rounded-xl text-xs flex justify-between items-center shadow-sm";
+                card.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" ${c.checked ? 'checked' : ''} onchange="toggleCheck('contatos', ${c.id})" class="w-4 h-4">
+                        <div>
+                            <strong class="text-sm">${c.nome}</strong><br>
+                            <span class="text-gray-400">📱 ${c.celular} | OAB: ${c.oab || 'N/I'}</span>
+                        </div>
+                    </div>
+                    <button onclick="abrirModalEditContato(${c.id})" class="bg-gray-800 text-white px-2 py-1 rounded text-[10px] font-bold">👁️ Ver/Editar</button>
                 `;
+                container.appendChild(card);
             });
         }
 
-        function gerarReciboSeletivo() {
-            const marcados = Array.from(document.querySelectorAll('.chk-recibo-item:checked')).map(cb => parseInt(cb.value));
-            if(marcados.length === 0) return alert('Selecione ao menos um processo quitado para gerar o recibo!');
+        function abrirModalEditContato(id) {
+            const c = db.contatos.find(x => x.id === id);
+            if(!c) return;
+            document.getElementById('edit-ct-id').value = c.id;
+            document.getElementById('edit-ct-nome').value = c.nome;
+            document.getElementById('edit-ct-celular').value = c.celular;
+            document.getElementById('edit-ct-oab').value = c.oab || '';
+            document.getElementById('edit-ct-obs').value = c.obs || '';
+            document.getElementById('modal-edit-contato').classList.remove('hidden');
+        }
+        function fecharModalEditContato() { document.getElementById('modal-edit-contato').classList.add('hidden'); }
 
-            const atosSelecionados = db.atos.filter(a => marcados.includes(a.id));
-            let total = 0;
-            let listaTxt = '';
-
-            atosSelecionados.forEach((a, index) => {
-                total += a.valor;
-                listaTxt += `${index + 1}. Proc: ${a.processo} - ${a.cliente} (R$ ${a.valor.toFixed(2)})\n`;
-            });
-
-            const reciboTexto = `🧾 RECIBO DE QUITAÇÃO DE HONORÁRIOS\n--------------------------------\nCorrespondente: ${db.perfil.nome || 'DILIGENCE.BR'}\nDocumento: ${db.perfil.doc || 'N/A'}\nPIX: ${db.perfil.pix || 'N/A'}\n--------------------------------\nPROCESSOS QUITADOS:\n${listaTxt}--------------------------------\nVALOR TOTAL QUITADO: R$ ${total.toFixed(2)}\nData: ${new Date().toLocaleDateString('pt-BR')}\n--------------------------------\nQuitação concedida via DILIGENCE.BR.`;
-
-            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(reciboTexto)}`);
+        function salvarEdicaoContato() {
+            const id = parseInt(document.getElementById('edit-ct-id').value);
+            const c = db.contatos.find(x => x.id === id);
+            if(c) {
+                c.nome = document.getElementById('edit-ct-nome').value;
+                c.celular = document.getElementById('edit-ct-celular').value;
+                c.oab = document.getElementById('edit-ct-oab').value;
+                c.obs = document.getElementById('edit-ct-obs').value;
+                saveData();
+                renderContatos();
+                fecharModalEditContato();
+            }
         }
 
-        /* 3. LIVRO CAIXA DE DESPESAS DA RUA */
-        function saveLancamentoCaixa(e) {
-            if (e) e.preventDefault();
-            const novoLancamento = {
+        /* FINANCEIRO & RECIBO */
+        function renderFinanceiro() {
+            let pago = 0, pendente = 0;
+            const container = document.getElementById('fin-gerenciador-baixas');
+            const selectCli = document.getElementById('fin-recibo-cliente');
+            if(container) container.innerHTML = '';
+            if(selectCli) selectCli.innerHTML = '';
+
+            db.atos.forEach(a => {
+                if(a.status === 'pago') pago += a.valor; else pendente += a.valor;
+                if(selectCli) selectCli.innerHTML += `<option value="${a.cliente}">${a.cliente} (Proc: ${a.processo})</option>`;
+                if(container) {
+                    container.innerHTML += `
+                        <div class="p-2 border rounded text-xs flex justify-between items-center bg-white dark:bg-gray-800">
+                            <span><strong>${a.processo}</strong> (${a.cliente}) - R$ ${a.valor.toFixed(2)}</span>
+                            <button onclick="alternarBaixa(${a.id})" class="px-2 py-0.5 rounded font-bold ${a.status === 'pago' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">
+                                ${a.status === 'pago' ? '🟢 PAGO' : '🟡 PENDENTE'}
+                            </button>
+                        </div>
+                    `;
+                }
+            });
+
+            document.getElementById('fin-entradas').innerText = `R$ ${pago.toFixed(2)}`;
+            document.getElementById('fin-pendentes').innerText = `R$ ${pendente.toFixed(2)}`;
+        }
+
+        function alternarBaixa(id) {
+            const a = db.atos.find(x => x.id === id);
+            if(a) {
+                a.status = a.status === 'pago' ? 'pendente' : 'pago';
+                saveData();
+                renderAtos();
+                renderFinanceiro();
+            }
+        }
+
+        function gerarReciboFinanceiro() {
+            const cli = document.getElementById('fin-recibo-cliente').value;
+            const vinculo = document.getElementById('fin-recibo-vinculo').value;
+            const txt = `🧾 RECIBO DE HONORÁRIOS DILIGENCE.BR\n------------------------\nCliente: ${cli}\nVínculo: ${vinculo}\nRecebido por: ${db.perfil.nome || 'Correspondente'}\nPIX: ${db.perfil.pix || 'N/I'}\n------------------------\nQuitação autorizada.`;
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
+        }
+
+        /* CAIXA */
+        function saveCaixa(e) {
+            e.preventDefault();
+            db.caixa.push({
                 id: Date.now(),
-                data: document.getElementById('caixa-data').value,
                 tipo: document.getElementById('caixa-tipo').value,
-                categoria: document.getElementById('caixa-categoria-select').value,
+                valor: parseFloat(document.getElementById('caixa-valor').value),
                 descricao: document.getElementById('caixa-descricao').value.trim(),
-                valor: parseFloat(document.getElementById('caixa-valor').value)
-            };
-
-            db.caixa.push(novoLancamento);
+                checked: false
+            });
             saveData();
             document.getElementById('form-caixa').reset();
-            document.getElementById('caixa-data').value = new Date().toISOString().split('T')[0];
             renderCaixa();
         }
 
         function renderCaixa() {
-            let totalEntradas = 0, totalSaidas = 0;
+            let ent = 0, sai = 0;
             const container = document.getElementById('lista-caixa');
-            if (container) container.innerHTML = '';
+            if(container) container.innerHTML = '';
 
-            db.caixa.forEach((c) => {
-                if (c.tipo === 'entrada') totalEntradas += c.valor;
-                else totalSaidas += c.valor;
-
-                if (container) {
-                    const item = document.createElement('div');
-                    item.className = "p-2.5 border rounded-xl text-xs flex justify-between items-center dark:border-gray-700 bg-white dark:bg-gray-800";
-                    item.innerHTML = `
-                        <div>
-                            <strong>${c.categoria || 'Geral'}</strong> - ${c.descricao}<br>
-                            <span class="text-gray-400">${c.data}</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <strong class="${c.tipo === 'entrada' ? 'text-green-600' : 'text-red-600'}">
-                                ${c.tipo === 'entrada' ? '+' : '-'} R$ ${c.valor.toFixed(2)}
-                            </strong>
-                            <button onclick="deletarCaixa(${c.id})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash-can"></i></button>
+            db.caixa.forEach(c => {
+                if(c.tipo === 'entrada') ent += c.valor; else sai += c.valor;
+                if(container) {
+                    container.innerHTML += `
+                        <div class="p-2 border rounded text-xs flex justify-between items-center bg-white dark:bg-gray-800">
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" ${c.checked ? 'checked' : ''} onchange="toggleCheck('caixa', ${c.id})" class="w-4 h-4">
+                                <span>${c.descricao}</span>
+                            </div>
+                            <strong class="${c.tipo === 'entrada' ? 'text-green-600' : 'text-red-600'}">R$ ${c.valor.toFixed(2)}</strong>
                         </div>
                     `;
-                    container.appendChild(item);
                 }
             });
 
-            document.getElementById('caixa-total-entradas').innerText = `R$ ${totalEntradas.toFixed(2)}`;
-            document.getElementById('caixa-total-saidas').innerText = `R$ ${totalSaidas.toFixed(2)}`;
-            document.getElementById('caixa-saldo-liquido').innerText = `R$ ${(totalEntradas - totalSaidas).toFixed(2)}`;
+            document.getElementById('caixa-total-entradas').innerText = `R$ ${ent.toFixed(2)}`;
+            document.getElementById('caixa-total-saidas').innerText = `R$ ${sai.toFixed(2)}`;
+            document.getElementById('caixa-saldo-liquido').innerText = `R$ ${(ent - sai).toFixed(2)}`;
         }
 
-        function deletarCaixa(id) {
-            if(confirm('Deseja excluir este lançamento do Caixa?')) {
-                db.caixa = db.caixa.filter(c => c.id !== id);
-                saveData();
-                renderCaixa();
-            }
-        }
-
-        /* 4. CALCULADORAS MATEMÁTICA E TRABALHISTA CLT */
+        /* CALCULADORA BOBINA */
         function calcComumAdd(val) {
             if (calcVisorVal === '0') calcVisorVal = val;
             else calcVisorVal += val;
@@ -1359,7 +1082,10 @@
 
         function calcComumCalcular() {
             try {
-                calcVisorVal = eval(calcVisorVal).toString();
+                const res = eval(calcVisorVal);
+                bobinaHistorico.push(`${calcVisorVal} = ${res}`);
+                renderBobina();
+                calcVisorVal = res.toString();
                 document.getElementById('calc-comum-visor').innerText = calcVisorVal;
             } catch (e) {
                 document.getElementById('calc-comum-visor').innerText = 'Erro';
@@ -1367,70 +1093,107 @@
             }
         }
 
-        function calcularRescisaoExata() {
-            const salario = parseFloat(document.getElementById('calc-salario').value) || 0;
-            const diasMes = parseFloat(document.getElementById('calc-dias-mes').value) || 0;
-            const meses13 = parseFloat(document.getElementById('calc-meses-13').value) || 0;
-            const mesesFerias = parseFloat(document.getElementById('calc-meses-ferias').value) || 0;
-            const feriasVencidasOpt = document.getElementById('calc-ferias-vencidas').value;
-            const avisoOpt = document.getElementById('calc-aviso').value;
-            const fgts = parseFloat(document.getElementById('calc-fgts').value) || 0;
-            const pctMulta = parseFloat(document.getElementById('calc-tipo-multa-fgts').value) || 0;
-            const horasExtras = parseFloat(document.getElementById('calc-horas-extras').value) || 0;
+        function renderBobina() {
+            const container = document.getElementById('bobina-linhas');
+            container.innerHTML = '';
+            bobinaHistorico.forEach((linha, i) => {
+                container.innerHTML += `<div class="border-b border-amber-200/50 pb-0.5">#${i+1}: ${linha}</div>`;
+            });
+        }
 
-            const saldoSalario = (salario / 30) * diasMes;
-            const decimoTerceiro = (salario / 12) * meses13;
-            const feriasProp = (salario / 12) * mesesFerias;
-            const tercoFeriasProp = feriasProp / 3;
+        function compartilharBobina(tipo) {
+            let txt = `FITA DE SOMA BOBINA DILIGENCE.BR\n------------------------\n` + bobinaHistorico.join('\n');
+            if(tipo === 'whats') window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
+            if(tipo === 'email') window.open(`mailto:?subject=SomaBobina&body=${encodeURIComponent(txt)}`);
+            if(tipo === 'csv') {
+                const blob = new Blob([txt], { type: 'text/csv' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'soma.csv'; a.click();
+            }
+        }
 
-            let feriasVencidasVal = 0;
-            if(feriasVencidasOpt === '1') feriasVencidasVal = salario + (salario / 3);
-            if(feriasVencidasOpt === '1_dobro') feriasVencidasVal = (salario * 2) + ((salario * 2) / 3);
+        function calcularRescisaoCompleta() {
+            const sal = parseFloat(document.getElementById('calc-salario').value) || 0;
+            const mes = parseFloat(document.getElementById('calc-meses').value) || 0;
+            const inss = parseFloat(document.getElementById('calc-inss-pct').value) || 0;
+            const he = parseFloat(document.getElementById('calc-he').value) || 0;
+            const noturno = parseFloat(document.getElementById('calc-noturno').value) || 0;
+            const desc = parseFloat(document.getElementById('calc-descontos').value) || 0;
 
-            let avisoVal = 0;
-            if(avisoOpt === 'indenizado') avisoVal = salario;
+            const prop = (sal / 12) * mes;
+            const inssVal = (prop * inss) / 100;
+            const total = prop + he + noturno - desc - inssVal;
 
-            const multaFgtsVal = (fgts * pctMulta) / 100;
-
-            let multa467 = 0;
-            if(document.getElementById('calc-multa-467').checked) multa467 = (saldoSalario + decimoTerceiro + feriasProp) * 0.5;
-
-            let multa477 = 0;
-            if(document.getElementById('calc-multa-477').checked) multa477 = salario;
-
-            const totalBruto = saldoSalario + decimoTerceiro + feriasProp + tercoFeriasProp + feriasVencidasVal + avisoVal + multaFgtsVal + horasExtras + multa467 + multa477;
-
-            const resDiv = document.getElementById('calc-resultado');
+            const resDiv = document.getElementById('calc-rescisao-resultado');
             resDiv.innerHTML = `
-                <strong>DEMONSTRATIVO DE VERBAS RESCISÓRIAS:</strong><br>
-                • Saldo de Salário (${diasMes}d): R$ ${saldoSalario.toFixed(2)}<br>
-                • 13º Proporcional (${meses13}/12): R$ ${decimoTerceiro.toFixed(2)}<br>
-                • Férias Prop. + 1/3: R$ ${(feriasProp + tercoFeriasProp).toFixed(2)}<br>
-                • Férias Vencidas: R$ ${feriasVencidasVal.toFixed(2)}<br>
-                • Aviso Prévio: R$ ${avisoVal.toFixed(2)}<br>
-                • Multa FGTS (${pctMulta}%): R$ ${multaFgtsVal.toFixed(2)}<br>
-                • Multa Art. 467 CLT: R$ ${multa467.toFixed(2)}<br>
-                • Multa Art. 477 CLT: R$ ${multa477.toFixed(2)}<br>
-                --------------------------------<br>
-                <strong class="text-green-600 text-sm">TOTAL ESTIMADO: R$ ${totalBruto.toFixed(2)}</strong>
+                • Prop. Rescisório: R$ ${prop.toFixed(2)}<br>
+                • Adicionais (HE/Noturno): R$ ${(he+noturno).toFixed(2)}<br>
+                • Desconto INSS (${inss}%): - R$ ${inssVal.toFixed(2)}<br>
+                • Outros Descontos: - R$ ${desc.toFixed(2)}<br>
+                ------------------------<br>
+                <strong>TOTAL LÍQUIDO RESCISÓRIO: R$ ${total.toFixed(2)}</strong>
             `;
             resDiv.classList.remove('hidden');
         }
 
-        /* 5. DITADO POR VOZ INTEGRADO */
-        function iniciarDitadoVoz(elementId) {
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                return alert("Ditado por voz não suportado neste navegador.");
+        function compartilharRescisao(tipo) {
+            const txt = document.getElementById('calc-rescisao-resultado').innerText;
+            if(tipo === 'whats') window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
+            if(tipo === 'email') window.open(`mailto:?subject=RescisaoTrabalhista&body=${encodeURIComponent(txt)}`);
+            if(tipo === 'csv') {
+                const blob = new Blob([txt], { type: 'text/csv' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'rescisao.csv'; a.click();
             }
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'pt-BR';
-            recognition.start();
+        }
 
-            recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript;
-                const field = document.getElementById(elementId);
-                if (field) field.value += (field.value ? ' ' : '') + transcript;
+        /* RELATÓRIOS E PLANILHA INTERNA */
+        function renderRelatorios() {
+            let pago = 0, pendente = 0;
+            const tbody = document.getElementById('tabela-visualizador-interna');
+            if(tbody) tbody.innerHTML = '';
+
+            db.atos.forEach(a => {
+                if(a.status === 'pago') pago += a.valor; else pendente += a.valor;
+                if(tbody) {
+                    tbody.innerHTML += `
+                        <tr class="border-b dark:border-gray-700">
+                            <td class="p-2 font-bold">Pauta</td>
+                            <td class="p-2">${a.processo} (${a.cliente})</td>
+                            <td class="p-2 font-bold">R$ ${a.valor.toFixed(2)}</td>
+                            <td class="p-2">${a.status.toUpperCase()}</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            document.getElementById('relatorio-valor-pago').innerText = `R$ ${pago.toFixed(2)}`;
+            document.getElementById('relatorio-valor-pendente').innerText = `R$ ${pendente.toFixed(2)}`;
+        }
+
+        function alertarExportacaoNuvem() {
+            alert("Quer editar ou alterar dados desta planilha?\n\nExporte a planilha oficial (.XLSX) para a nuvem do seu Gmail.com / Google Drive.");
+        }
+
+        /* MANUAIS E BUSCA */
+        function toggleSanfona(id) {
+            document.getElementById(id).classList.toggle('hidden');
+        }
+
+        function filtrarManual() {
+            const termo = document.getElementById('input-busca-manual').value.toLowerCase();
+            document.querySelectorAll('.manual-item').forEach(el => {
+                if(el.innerText.toLowerCase().includes(termo)) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+        }
+
+        function iniciarDitadoVoz(id) {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return alert("Voz não suportada.");
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const rec = new SpeechRecognition();
+            rec.lang = 'pt-BR';
+            rec.start();
+            rec.onresult = (e) => {
+                document.getElementById(id).value += ' ' + e.results[0][0].transcript;
             };
         }
 
@@ -1439,183 +1202,13 @@
             saveData();
         }
 
-        function compartilharNotasWhats() {
-            const text = `DILIGENCE.BR - BLOCO DE NOTAS:\n\n${document.getElementById('bloco-notas').value}`;
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`);
-        }
-
-        /* 6. PERFIL DO CORRESPONDENTE */
-        function savePerfil(e) {
-            if (e) e.preventDefault();
-            db.perfil = {
-                nome: document.getElementById('perfil-nome').value,
-                doc: document.getElementById('perfil-doc').value,
-                cidade: document.getElementById('perfil-cidade').value,
-                celular: document.getElementById('perfil-celular').value,
-                pix: document.getElementById('perfil-pix').value,
-                email: document.getElementById('perfil-email').value
-            };
-            saveData();
-            alert("✅ Perfil do Correspondente atualizado com sucesso!");
-        }
-
-        function saveContato(e) {
-            if (e) e.preventDefault();
-            db.contatos.push({
-                id: Date.now(),
-                nome: document.getElementById('ct-nome').value.trim(),
-                celular: document.getElementById('ct-celular').value.trim(),
-                oab: document.getElementById('ct-oab').value.trim(),
-                cpf: document.getElementById('ct-cpf').value.trim(),
-                email: document.getElementById('ct-email').value.trim(),
-                obs: document.getElementById('ct-obs').value.trim()
-            });
-            saveData();
-            document.getElementById('form-contato').reset();
-            renderContatos();
-            alert('Contato salvo!');
-        }
-
-        function renderContatos() {
-            const container = document.getElementById('lista-contatos');
-            if (!container) return;
-            container.innerHTML = '';
-            const busca = document.getElementById('buscar-contato')?.value.toLowerCase() || '';
-
-            db.contatos.filter(c => c.nome.toLowerCase().includes(busca)).forEach(c => {
-                const item = document.createElement('div');
-                item.className = "p-3 border rounded-xl text-xs flex justify-between items-center dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm";
-                item.innerHTML = `
-                    <div>
-                        <strong class="text-sm">${c.nome}</strong> (${c.oab || 'Sem OAB'})<br>
-                        <span class="text-gray-400">📱 ${c.celular} | ✉️ ${c.email || 'N/A'}</span>
-                    </div>
-                    <button onclick="deletarContato(${c.id})" class="text-red-500 hover:text-red-700 p-1"><i class="fa-solid fa-trash-can"></i></button>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        function deletarContato(id) {
-            if(confirm('Excluir este contato?')) {
-                db.contatos = db.contatos.filter(c => c.id !== id);
-                saveData();
-                renderContatos();
-            }
-        }
-
-        /* 7. RELATÓRIOS E TOTALIZADORES CONSOLIDADOS */
-        function renderRelatorios() {
-            let totalBruto = 0, totalPago = 0, totalPendente = 0;
-            db.atos.forEach(a => {
-                totalBruto += a.valor;
-                if (a.status === 'pago') totalPago += a.valor;
-                else totalPendente += a.valor;
-            });
-
-            document.getElementById('relatorio-valor-total').innerText = `R$ ${totalBruto.toFixed(2)}`;
-            document.getElementById('relatorio-valor-pago').innerText = `R$ ${totalPago.toFixed(2)}`;
-            document.getElementById('relatorio-valor-pendente').innerText = `R$ ${totalPendente.toFixed(2)}`;
-        }
-
-        /* 8. BUSCA NO MANUAL DE INSTRUÇÕES */
-        function filtrarManualPorPalavraChave() {
-            const termo = document.getElementById('input-busca-manual').value.toLowerCase();
-            const blocos = document.querySelectorAll('.manual-block');
-
-            blocos.forEach(b => {
-                if (b.innerText.toLowerCase().includes(termo)) b.classList.remove('hidden');
-                else b.classList.add('hidden');
-            });
-        }
-
-        /* 9. CHECK-IN GPS FÓRUM INDEPENDENTE */
-        function capturarLocalizacaoGPS() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    const texto = `📍 DILIGENCE.BR - COMPROVANTE DE PRESENÇA NO FÓRUM (GPS)\nLatitude: ${lat}\nLongitude: ${lng}\nData/Hora: ${new Date().toLocaleString('pt-BR')}\nLink no Google Maps: https://maps.google.com/?q=${lat},${lng}`;
-                    window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(texto)}`);
-                }, () => {
-                    alert("Por favor, ative a permissão de GPS do celular para realizar o check-in.");
-                });
-            } else {
-                alert("Navegador não suporta geolocalização.");
-            }
-        }
-
-        /* 10. CHECKLIST PÓS-AUDIÊNCIA COM IMPORTAÇÃO AUTOMÁTICA DE DADOS DO ATO E DO PERFIL */
-        function abrirModalChecklist(atoId) {
-            const ato = db.atos.find(a => a.id === atoId);
-            if (!ato) return;
-
-            document.getElementById('chk-ato-id').value = ato.id;
-            document.getElementById('chk-processo').value = ato.processo;
-            document.getElementById('chk-cliente').value = ato.cliente;
-            document.getElementById('chk-data-hora').value = ato.data;
-            document.getElementById('chk-valor').value = `R$ ${ato.valor.toFixed(2)}`;
-            
-            // IMPORTA OS DADOS DO PERFIL
-            document.getElementById('chk-email').value = db.perfil.email || 'Não cadastrado';
-            document.getElementById('chk-nome-doc').value = `${db.perfil.nome || 'Correspondente'} (${db.perfil.doc || 'Sem Doc'})`;
-            
-            document.getElementById('chk-obs').value = ato.checklistObs || '';
-
-            document.getElementById('modal-checklist').classList.remove('hidden');
-        }
-
-        function fecharModalChecklist() { document.getElementById('modal-checklist').classList.add('hidden'); }
-
-        function enviarChecklistWhatsApp() {
-            const atoId = parseInt(document.getElementById('chk-ato-id').value);
-            const obs = document.getElementById('chk-obs').value.trim();
-
-            if (!obs) {
-                alert("Por favor, preencha o campo de ocorrências/feedback da audiência!");
-                return;
-            }
-
-            const ato = db.atos.find(a => a.id === atoId);
-            if (ato) {
-                ato.checklistObs = obs;
-                saveData();
-            }
-
-            const textoComprovante = `📋 DILIGENCE.BR - CHECKLIST PÓS-AUDIÊNCIA\n` +
-                `--------------------------------\n` +
-                `Correspondente: ${document.getElementById('chk-nome-doc').value}\n` +
-                `Contato: ${db.perfil.celular || 'N/A'} | E-mail: ${document.getElementById('chk-email').value}\n` +
-                `--------------------------------\n` +
-                `Processo: ${document.getElementById('chk-processo').value}\n` +
-                `Cliente: ${document.getElementById('chk-cliente').value}\n` +
-                `Data/Hora: ${document.getElementById('chk-data-hora').value}\n` +
-                `Valor Acordado: ${document.getElementById('chk-valor').value}\n` +
-                `--------------------------------\n` +
-                `Ocorrências / Feedback do Ato:\n${obs}\n` +
-                `--------------------------------\n` +
-                `Relatório enviado via DILIGENCE.BR`;
-
-            fecharModalChecklist();
-            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(textoComprovante)}`);
-        }
-
-        function gerarTicketComprovante() {
-            const proc = document.getElementById('chk-processo').value;
-            const obs = document.getElementById('chk-obs').value;
-            alert(`🎫 TICKET DE COMPROVAÇÃO DE ATO DILIGENCE.BR\n------------------------------------\nProcesso: ${proc}\nData da Emissão: ${new Date().toLocaleString('pt-BR')}\nStatus: Concluído com Sucesso\nObservação Registrada: ${obs}\n------------------------------------\nValidado pelo Correspondente Jurídico.`);
-        }
-
-        /* 11. CENTRAL DE BACKUP E RESTAURAÇÃO (.JSON) */
+        /* BACKUP E RESTAURAÇÃO */
         function abrirModalBackup() { document.getElementById('modal-backup').classList.remove('hidden'); }
         function fecharModalBackup() { document.getElementById('modal-backup').classList.add('hidden'); }
 
         function fazerBackupJSON() {
             const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `Backup_DILIGENCE_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Backup_DILIGENCE.json`; a.click();
             fecharModalBackup();
         }
 
@@ -1626,107 +1219,38 @@
 
         function processarRestauracaoFile(e) {
             const file = e.target.files[0];
-            if (file) {
+            if(file) {
                 const reader = new FileReader();
-                reader.onload = function(evt) {
+                reader.onload = (evt) => {
                     try {
                         db = JSON.parse(evt.target.result);
-                        saveData();
-                        loadData();
-                        alert("✅ RESTAURAÇÃO DE BACKUP CONCLUÍDA COM SUCESSO! Todos os seus dados foram restaurados.");
-                    } catch (err) {
-                        alert("Erro ao ler arquivo .JSON. Escolha um arquivo de backup do DILIGENCE.BR válido.");
-                    }
+                        saveData(); loadData();
+                        alert("✅ RESTAURAÇÃO CONCLUÍDA!");
+                    } catch(err) { alert("Arquivo inválido."); }
                 };
                 reader.readAsText(file);
             }
         }
 
-        /* 12. RESET E ZERAR TUDO (APP NOVINHO) */
         function confirmarZerarTudoGeral() {
-            if (confirm("⚠️ ATENÇÃO EXTREMA: Deseja realmente ZERAR TODOS OS DADOS do aplicativo? Isso apagará todas as pautas, contatos e lançamentos de caixa.")) {
+            if(confirm("⚠️ ZERAR TODOS OS DADOS DO APP?")) {
                 localStorage.removeItem('diligence_db');
                 localStorage.removeItem('diligence_logged');
-                db = { perfil: {}, atos: [], caixa: [], contatos: [], notas: '' };
-                saveData();
                 location.reload();
             }
         }
 
-        function confirmarLimparAba(aba) {
-            if (confirm(`Tem certeza que deseja limpar todos os dados salvos na aba "${aba}"?`)) {
-                if (aba === 'atos') db.atos = [];
-                if (aba === 'caixa') db.caixa = [];
-                if (aba === 'contatos') db.contatos = [];
-                if (aba === 'perfil') db.perfil = {};
-                saveData();
-                loadData();
-                alert(`Dados da aba "${aba}" limpos com sucesso!`);
-            }
-        }
-
-        /* 13. EXPORTAÇÃO EXCEL MULTI-ABAS NATIVA (.XLSX) COM 5 ABAS ORGANIZADAS */
         function exportarExcelMultiAbas() {
-            if (typeof XLSX === 'undefined') {
-                alert("Aguarde a biblioteca Excel carregar...");
-                return;
-            }
-
+            if (typeof XLSX === 'undefined') return alert("Aguarde a biblioteca carregar...");
             const wb = XLSX.utils.book_new();
-
-            // Aba 1: Consolidado Geral
-            const consolidado = [];
-            db.atos.forEach(a => {
-                consolidado.push({
-                    "Módulo": "PAUTA / HONORÁRIOS",
-                    "Data": a.vencimento,
-                    "Descrição": `Proc: ${a.processo} (${a.cliente}) - ${a.cidade}`,
-                    "Entrada (R$)": a.valor,
-                    "Saída (R$)": 0,
-                    "Status": a.status.toUpperCase()
-                });
-            });
-            db.caixa.forEach(c => {
-                consolidado.push({
-                    "Módulo": "LIVRO CAIXA",
-                    "Data": c.data,
-                    "Descrição": `${c.categoria}: ${c.descricao}`,
-                    "Entrada (R$)": c.tipo === 'entrada' ? c.valor : 0,
-                    "Saída (R$)": c.tipo === 'saida' ? c.valor : 0,
-                    "Status": c.tipo.toUpperCase()
-                });
-            });
-
-            const wsConsolidado = XLSX.utils.json_to_sheet(consolidado.length ? consolidado : [{"Status": "Sem dados"}]);
-            XLSX.utils.book_append_sheet(wb, wsConsolidado, "Consolidado Geral");
-
-            // Aba 2: Pauta
-            const wsPauta = XLSX.utils.json_to_sheet(db.atos.length ? db.atos : [{"Status": "Pauta Vazia"}]);
-            XLSX.utils.book_append_sheet(wb, wsPauta, "Pauta de Diligências");
-
-            // Aba 3: Financeiro
-            const wsFin = XLSX.utils.json_to_sheet(db.atos.map(a => ({
-                "Processo": a.processo,
-                "Cliente": a.cliente,
-                "Valor": a.valor,
-                "Status": a.status,
-                "Data Quitação": a.dataPagamento || 'Aguardando'
-            })));
-            XLSX.utils.book_append_sheet(wb, wsFin, "Financeiro & Baixas");
-
-            // Aba 4: Caixa
-            const wsCaixa = XLSX.utils.json_to_sheet(db.caixa.length ? db.caixa : [{"Status": "Caixa Vazio"}]);
-            XLSX.utils.book_append_sheet(wb, wsCaixa, "Livro Caixa");
-
-            // Aba 5: Contatos
-            const wsContatos = XLSX.utils.json_to_sheet(db.contatos.length ? db.contatos : [{"Status": "Agenda Vazia"}]);
-            XLSX.utils.book_append_sheet(wb, wsContatos, "Agenda de Contatos");
-
-            XLSX.writeFile(wb, `Relatorio_Completo_DILIGENCE_${new Date().toISOString().split('T')[0]}.xlsx`);
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.atos.length ? db.atos : [{"Aviso": "Pauta Vazia"}]), "Pauta");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.caixa.length ? db.caixa : [{"Aviso": "Caixa Vazio"}]), "Caixa");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.contatos.length ? db.contatos : [{"Aviso": "Agenda Vazia"}]), "Agenda");
+            XLSX.writeFile(wb, `Relatorio_DILIGENCE_${new Date().toISOString().split('T')[0]}.xlsx`);
             fecharModalBackup();
         }
 
-        // EXECUTA O CARREGAMENTO INICIAL
+        // CARREGAMENTO INICIAL
         loadData();
     </script>
 </body>
