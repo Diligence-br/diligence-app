@@ -215,12 +215,12 @@
                 </div>
             </section>
 
-            <!-- ABA 2: PAUTA DE DILIGÊNCIAS -->
+            <!-- ABA 2: PAUTA DE DILIGÊNCIAS (COM EDIÇÃO, HISTÓRICO E COMPARTILHAMENTO MÚLTIPLO) -->
             <section id="tab-atos" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 text-xs flex justify-between items-center">
                     <div>
                         <h3 class="font-bold text-brand-red"><i class="fa-solid fa-calendar-check mr-1"></i> Cadastro e Pauta de Diligências</h3>
-                        <p>Automações de vencimento e Check-in GPS direto para o WhatsApp ADM.</p>
+                        <p>Automações de vencimento, histórico de alterações e Check-in GPS ADM.</p>
                     </div>
                     <button type="button" onclick="capturarLocalizacaoGPS()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs shadow">
                         <i class="fa-solid fa-location-dot mr-1"></i> Check-in GPS ADM
@@ -228,6 +228,7 @@
                 </div>
 
                 <form id="form-ato" onsubmit="saveAto(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
+                    <input type="hidden" id="ato-id">
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="text-xs font-semibold">Nº do Processo*</label>
@@ -317,18 +318,29 @@
                     </div>
 
                     <div class="flex gap-2">
-                        <button type="submit" class="flex-1 bg-brand-red text-white py-3 rounded-xl font-black text-sm shadow hover:bg-brand-darkred flex items-center justify-center gap-1">
+                        <button type="submit" id="ato-btn-salvar" class="flex-1 bg-brand-red text-white py-3 rounded-xl font-black text-sm shadow hover:bg-brand-darkred flex items-center justify-center gap-1">
                             <i class="fa-solid fa-floppy-disk"></i> SALVAR DILIGÊNCIA NA PAUTA
+                        </button>
+                        <button type="button" id="ato-btn-cancelar" onclick="limparFormAto()" class="hidden bg-gray-500 text-white px-3 py-3 rounded-xl font-bold text-xs">
+                            Cancelar
                         </button>
                     </div>
                 </form>
 
+                <!-- OPÇÕES DE COMPARTILHAMENTO DA PAUTA GERAL -->
+                <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-xl border space-y-2 text-xs">
+                    <span class="font-bold text-brand-red block"><i class="fa-solid fa-share-nodes"></i> Compartilhar Pauta Geral:</span>
+                    <div class="grid grid-cols-4 gap-2 font-bold">
+                        <button onclick="compartilharPautaGeral('whats')" class="bg-green-600 text-white p-2 rounded-lg shadow"><i class="fa-brands fa-whatsapp"></i> Whats</button>
+                        <button onclick="compartilharPautaGeral('email')" class="bg-blue-600 text-white p-2 rounded-lg shadow"><i class="fa-solid fa-envelope"></i> E-mail</button>
+                        <button onclick="gerarPDFPautaGeral()" class="bg-red-700 text-white p-2 rounded-lg shadow"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+                        <button onclick="compartilharPautaGeral('csv')" class="bg-gray-800 text-white p-2 rounded-lg shadow"><i class="fa-solid fa-file-csv"></i> CSV</button>
+                    </div>
+                </div>
+
                 <div class="space-y-2">
                     <div class="flex justify-between items-center bg-gray-200 dark:bg-gray-700 p-2 rounded-lg">
                         <span class="font-bold text-xs">Pauta de Atos Cadastrados</span>
-                        <div class="flex gap-1 text-[10px] font-bold">
-                            <button onclick="gerarPDFPautaGeral()" class="bg-red-700 text-white px-2 py-1 rounded shadow flex items-center gap-1"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
-                        </div>
                     </div>
                     <div id="lista-atos" class="space-y-2"></div>
                 </div>
@@ -393,7 +405,7 @@
                 <div id="fin-gerenciador-baixas" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 5: LIVRO CAIXA (INSERIR, EDITAR, EXCLUIR E COMPARTILHAMENTO POR DATAS/INDIVIDUAL) -->
+            <!-- ABA 5: LIVRO CAIXA -->
             <section id="tab-caixa" class="tab-content space-y-4 hidden">
                 <div class="grid grid-cols-3 gap-2 text-center text-white">
                     <div class="bg-green-600 p-2.5 rounded-xl shadow">
@@ -577,70 +589,75 @@
                 </div>
             </section>
 
-            <!-- ABA DEDICADA: CALCULADORA RESCISÓRIA TRABALHISTA CLT COMPLETA -->
+            <!-- ABA 7: RESCISÃO TRABALHISTA (COM INSERIR, EDITAR, EXCLUIR E COMPARTILHAMENTO) -->
             <section id="tab-rescisoria" class="tab-content space-y-4 hidden">
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border space-y-3 shadow-sm">
-                    <h3 class="font-bold text-sm text-brand-red border-b pb-2"><i class="fa-solid fa-scale-balanced mr-1"></i> Calculadora de Verbas Rescisórias Trabalhistas</h3>
+                <form id="form-rescisao" onsubmit="saveRescisao(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
+                    <input type="hidden" id="res-id">
+                    <h2 id="res-form-titulo" class="font-bold text-sm text-brand-red border-b pb-2"><i class="fa-solid fa-scale-balanced mr-1"></i> Cadastro de Cálculo Rescisório Trabalhista</h2>
                     
                     <div class="grid grid-cols-2 gap-2 text-xs">
                         <div>
                             <label class="font-semibold">Cliente / Processo:*</label>
-                            <input type="text" id="res-cliente" placeholder="Ex: João da Silva / Proc 123" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                            <input type="text" id="res-cliente" required placeholder="Ex: João da Silva / Proc 123" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
                         </div>
                         <div>
                             <label class="font-semibold">Tipo de Vínculo:*</label>
                             <select id="res-vinculo" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
-                                <option value="clt">Com Registro em Carteira (CLT)</option>
-                                <option value="informal">Sem Registro (Informal / Vínculo)</option>
+                                <option value="CLT registrado">Com Registro em Carteira (CLT registrado)</option>
+                                <option value="Sem registro - vínculo a reconhecer">Sem Registro (Vínculo a Reconhecer)</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                            <label class="font-semibold">Último Salário Bruto (R$)*</label>
-                            <input type="number" step="0.01" id="res-salario" placeholder="2500.00" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                            <label class="font-semibold">Modalidade de Desligamento:*</label>
+                            <select id="res-motivo" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                                <option value="Dispensa sem justa causa">Dispensa sem justa causa</option>
+                                <option value="Pedido de demissão">Pedido de demissão</option>
+                                <option value="Justa causa">Justa causa</option>
+                                <option value="Rescisão indireta">Rescisão indireta</option>
+                                <option value="Acordo art. 484-A">Acordo art. 484-A</option>
+                            </select>
                         </div>
                         <div>
-                            <label class="font-semibold">Meses Trabalhados no Ano</label>
-                            <input type="number" id="res-meses" placeholder="12" class="w-full p-2 border rounded dark:bg-gray-700">
+                            <label class="font-semibold">Último Salário Bruto (R$)*</label>
+                            <input type="number" step="0.01" id="res-salario" required placeholder="2500.00" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="grid grid-cols-3 gap-2 text-xs">
+                        <div>
+                            <label class="font-semibold">Meses Trab. no Ano</label>
+                            <input type="number" id="res-meses" value="12" class="w-full p-2 border rounded dark:bg-gray-700">
+                        </div>
                         <div>
                             <label class="font-semibold">Alíquota INSS (%)</label>
                             <input type="number" step="0.01" id="res-inss-pct" value="7.5" class="w-full p-2 border rounded dark:bg-gray-700">
                         </div>
                         <div>
-                            <label class="font-semibold">Horas Extras / Noturno (R$)</label>
-                            <input type="number" step="0.01" id="res-adicionais" placeholder="0.00" class="w-full p-2 border rounded dark:bg-gray-700">
+                            <label class="font-semibold">Adicionais / HE (R$)</label>
+                            <input type="number" step="0.01" id="res-adicionais" value="0" class="w-full p-2 border rounded dark:bg-gray-700">
                         </div>
                     </div>
 
-                    <div>
-                        <label class="font-semibold text-xs">Faltas e Outros Descontos (R$)</label>
-                        <input type="number" step="0.01" id="res-descontos" placeholder="0.00" class="w-full p-2 border rounded dark:bg-gray-700 text-xs">
-                    </div>
-
-                    <div class="flex gap-2">
-                        <button onclick="calcularRescisaoCompleta()" class="flex-1 bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-calculator"></i> GERAR MINUTA & DEMONSTRATIVO
+                    <div class="flex gap-2 pt-1">
+                        <button type="submit" id="res-btn-salvar" class="flex-1 bg-brand-red text-white py-2.5 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-floppy-disk"></i> SALVAR CÁLCULO RESCISÓRIO
+                        </button>
+                        <button type="button" id="res-btn-cancelar" onclick="limparFormRescisao()" class="hidden bg-gray-500 text-white px-3 py-2.5 rounded-lg font-bold text-xs">
+                            Cancelar
                         </button>
                     </div>
+                </form>
 
-                    <div id="rescisao-resultado" class="hidden p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-xs font-mono space-y-1 border"></div>
-
-                    <div class="grid grid-cols-4 gap-2 text-xs font-bold pt-2">
-                        <button onclick="compartilharRescisao('whats')" class="bg-green-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-brands fa-whatsapp"></i> Whats</button>
-                        <button onclick="compartilharRescisao('email')" class="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-envelope"></i> E-mail</button>
-                        <button onclick="compartilharRescisao('pdf')" class="bg-red-700 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-                        <button onclick="compartilharRescisao('csv')" class="bg-gray-800 text-white p-2 rounded-lg flex items-center justify-center gap-1"><i class="fa-solid fa-file-csv"></i> CSV</button>
-                    </div>
+                <div class="space-y-2">
+                    <h4 class="font-bold text-xs text-gray-700 dark:text-gray-200">Histórico de Cálculos Rescisórios Salvos:</h4>
+                    <div id="lista-rescisioes" class="space-y-2"></div>
                 </div>
             </section>
 
-            <!-- ABA 7: RELATÓRIOS -->
+            <!-- ABA 8: RELATÓRIOS -->
             <section id="tab-relatorios" class="tab-content space-y-4 hidden">
                 <div class="bg-gray-900 text-white p-4 rounded-xl text-xs space-y-2 shadow-lg">
                     <div class="font-bold text-amber-400 border-b border-gray-700 pb-1">TOTALIZADORES CONSOLIDADOS</div>
@@ -666,7 +683,7 @@
                 </div>
             </section>
 
-            <!-- ABA 8: CENTRAL DE MANUAIS -->
+            <!-- ABA 9: CENTRAL DE MANUAIS -->
             <section id="tab-manuais" class="tab-content space-y-4 hidden">
                 <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border space-y-2 shadow-sm">
                     <label class="font-extrabold text-xs text-brand-red"><i class="fa-solid fa-magnifying-glass"></i> PESQUISAR MANUAL:</label>
@@ -696,6 +713,18 @@
             <button onclick="switchTab('tab-relatorios')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-relatorios"><i class="fa-solid fa-file-invoice text-base"></i><span>Relatórios</span></button>
             <button onclick="switchTab('tab-manuais')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-manuais"><i class="fa-solid fa-book-open text-base"></i><span>Manuais</span></button>
         </nav>
+    </div>
+
+    <!-- MODAL HISTÓRICO DE ALTERAÇÕES DA PAUTA -->
+    <div id="modal-historico-ato" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-md w-full space-y-3 shadow-2xl border-2 border-brand-red">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-clock-rotate-left mr-1"></i> HISTÓRICO DE ALTERAÇÕES</h3>
+                <button onclick="fecharModalHistoricoAto()" class="text-gray-400 font-bold text-lg">&times;</button>
+            </div>
+            <div id="conteudo-historico-ato" class="max-h-60 overflow-y-auto space-y-2 text-xs font-mono"></div>
+            <button onclick="fecharModalHistoricoAto()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">Fechar</button>
+        </div>
     </div>
 
     <!-- MODAL TRAVA DE ALTERAÇÃO DE STATUS PAGO -->
@@ -762,7 +791,7 @@
         const WHATS_ADM = "5511978386574";
         const EMAIL_CONTRATANTE = "ec.cortez@uol.com.br";
 
-        let db = { perfil: {}, atos: [], caixa: [], contatos: [], recibos: [], notas: '' };
+        let db = { perfil: {}, atos: [], caixa: [], contatos: [], recibos: [], rescisoes: [], notas: '' };
         let tempAtaBase64Pauta = null;
         let tempAtaDataHoraStr = null;
         let bobinaHistorico = [];
@@ -855,6 +884,7 @@
             if(tabId === 'tab-caixa') renderCaixa();
             if(tabId === 'tab-contatos') renderContatos();
             if(tabId === 'tab-atos') renderAtos();
+            if(tabId === 'tab-rescisoria') renderRescisoes();
             if(tabId === 'tab-recibo') { popularSelectAtosRecibo(); renderRecibos(); }
         }
 
@@ -873,6 +903,7 @@
             if(!db.caixa) db.caixa = [];
             if(!db.contatos) db.contatos = [];
             if(!db.recibos) db.recibos = [];
+            if(!db.rescisoes) db.rescisoes = [];
             if(!db.perfil) db.perfil = {};
 
             const hoje = new Date().toISOString().split('T')[0];
@@ -894,6 +925,7 @@
             renderFinanceiro();
             renderCaixa();
             renderContatos();
+            renderRescisoes();
             renderRelatorios();
             popularSelectAtosRecibo();
             renderRecibos();
@@ -944,54 +976,123 @@
             window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(txt)}`);
         }
 
+        /* LÓGICA DA PAUTA (INSERIR, EDITAR, HISTÓRICO DE MUDANÇAS E COMPARTILHAMENTO) */
         function saveAto(e) {
             e.preventDefault();
+            const id = document.getElementById('ato-id').value;
             const proc = document.getElementById('ato-processo').value.trim();
-            if (db.atos.find(a => a.processo.toLowerCase() === proc.toLowerCase())) {
-                alert(`⚠️ O Processo "${proc}" JÁ EXISTE na Pauta!`);
-                return;
-            }
+            const cliente = document.getElementById('ato-cliente').value.trim();
+            const dataAto = document.getElementById('ato-data').value;
+            const vencimento = document.getElementById('ato-vencimento').value;
+            const cidade = document.getElementById('ato-cidade').value.trim();
+            const modalidade = document.getElementById('ato-modalidade').value;
+            const link = document.getElementById('ato-link').value.trim();
+            const valor = parseFloat(document.getElementById('ato-valor').value);
+            const status = document.getElementById('ato-status-select').value;
+            const agoraStr = new Date().toLocaleString('pt-BR');
 
-            const emailDestino = document.getElementById('ato-ata-email-dest')?.value.trim();
+            if (id) {
+                const a = db.atos.find(item => item.id == id);
+                if (a) {
+                    const mudancaStr = `Editado em ${agoraStr} -> Proc: ${a.processo} para ${proc} | Val: R$ ${a.valor.toFixed(2)} para R$ ${valor.toFixed(2)} | Status: ${a.status} para ${status}`;
+                    if(!a.historicoAlteracoes) a.historicoAlteracoes = [];
+                    a.historicoAlteracoes.push(mudancaStr);
 
-            const novoAto = {
-                id: Date.now(),
-                processo: proc,
-                cliente: document.getElementById('ato-cliente').value.trim(),
-                data: document.getElementById('ato-data').value,
-                vencimento: document.getElementById('ato-vencimento').value,
-                cidade: document.getElementById('ato-cidade').value.trim(),
-                modalidade: document.getElementById('ato-modalidade').value,
-                link: document.getElementById('ato-link').value.trim(),
-                valor: parseFloat(document.getElementById('ato-valor').value),
-                status: document.getElementById('ato-status-select').value,
-                ataImg: tempAtaBase64Pauta || null,
-                ataDataHora: tempAtaDataHoraStr || new Date().toLocaleString('pt-BR'),
-                ataEmail: emailDestino || null,
-                dataBaixa: document.getElementById('ato-status-select').value === 'pago' ? new Date().toLocaleString('pt-BR') : null
-            };
-
-            if (emailDestino) {
-                const txtEmail = `ATA/Documento anexado do Processo ${proc} em ${novoAto.ataDataHora}`;
-                window.open(`mailto:${emailDestino}?subject=DocumentoATA_Proc_${proc}&body=${encodeURIComponent(txtEmail)}`);
-            }
-
-            db.atos.push(novoAto);
-            if(novoAto.status === 'pago') {
-                db.caixa.push({ id: Date.now()+1, atoRefId: novoAto.id, tipo: 'entrada', valor: novoAto.valor, descricao: `Pauta: ${novoAto.processo}`, dataIso: new Date().toISOString().split('T')[0], dataHora: new Date().toLocaleString('pt-BR') });
+                    a.processo = proc;
+                    a.cliente = cliente;
+                    a.data = dataAto;
+                    a.vencimento = vencimento;
+                    a.cidade = cidade;
+                    a.modalidade = modalidade;
+                    a.link = link;
+                    a.valor = valor;
+                    a.status = status;
+                }
+            } else {
+                if (db.atos.find(a => a.processo.toLowerCase() === proc.toLowerCase())) {
+                    alert(`⚠️ O Processo "${proc}" JÁ EXISTE na Pauta!`);
+                    return;
+                }
+                const novoAto = {
+                    id: Date.now(),
+                    processo: proc,
+                    cliente: cliente,
+                    data: dataAto,
+                    vencimento: vencimento,
+                    cidade: cidade,
+                    modalidade: modalidade,
+                    link: link,
+                    valor: valor,
+                    status: status,
+                    ataImg: tempAtaBase64Pauta || null,
+                    ataDataHora: tempAtaDataHoraStr || agoraStr,
+                    historicoAlteracoes: [`Criado em ${agoraStr}`],
+                    dataBaixa: status === 'pago' ? agoraStr : null
+                };
+                db.atos.push(novoAto);
+                if(status === 'pago') {
+                    db.caixa.push({ id: Date.now()+1, atoRefId: novoAto.id, tipo: 'entrada', valor: valor, descricao: `Pauta: ${proc}`, dataIso: new Date().toISOString().split('T')[0], dataHora: agoraStr });
+                }
             }
 
             saveData();
-            document.getElementById('form-ato').reset();
-            document.getElementById('preview-ata-container').classList.add('hidden');
-            tempAtaBase64Pauta = null;
-            tempAtaDataHoraStr = null;
+            limparFormAto();
             renderAtos();
             renderFinanceiro();
             renderCaixa();
             renderRelatorios();
             popularSelectAtosRecibo();
             alert("✅ Diligência salva com sucesso na pauta!");
+        }
+
+        function editarAto(id) {
+            const a = db.atos.find(item => item.id == id);
+            if (!a) return;
+
+            document.getElementById('ato-id').value = a.id;
+            document.getElementById('ato-processo').value = a.processo;
+            document.getElementById('ato-cliente').value = a.cliente;
+            document.getElementById('ato-data').value = a.data || '';
+            document.getElementById('ato-vencimento').value = a.vencimento || '';
+            document.getElementById('ato-cidade').value = a.cidade || '';
+            document.getElementById('ato-modalidade').value = a.modalidade || 'teams';
+            document.getElementById('ato-link').value = a.link || '';
+            document.getElementById('ato-valor').value = a.valor || 0;
+            document.getElementById('ato-status-select').value = a.status || 'pendente';
+
+            document.getElementById('ato-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR ALTERAÇÕES NA PAUTA';
+            document.getElementById('ato-btn-cancelar').classList.remove('hidden');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function limparFormAto() {
+            document.getElementById('form-ato').reset();
+            document.getElementById('ato-id').value = '';
+            document.getElementById('ato-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR DILIGÊNCIA NA PAUTA';
+            document.getElementById('ato-btn-cancelar').classList.add('hidden');
+            document.getElementById('preview-ata-container').classList.add('hidden');
+            tempAtaBase64Pauta = null;
+            tempAtaDataHoraStr = null;
+        }
+
+        function abrirHistoricoAto(id) {
+            const a = db.atos.find(item => item.id == id);
+            if(!a) return;
+            const container = document.getElementById('conteudo-historico-ato');
+            container.innerHTML = '';
+            if(!a.historicoAlteracoes || !a.historicoAlteracoes.length) {
+                container.innerHTML = '<p class="text-gray-400 italic">Nenhum registro de alteração.</p>';
+            } else {
+                a.historicoAlteracoes.forEach(hist => {
+                    container.innerHTML += `<div class="p-1.5 border-b dark:border-gray-700">📌 ${hist}</div>`;
+                });
+            }
+            document.getElementById('modal-historico-ato').classList.remove('hidden');
+        }
+
+        function fecharModalHistoricoAto() {
+            document.getElementById('modal-historico-ato').classList.add('hidden');
         }
 
         function renderAtos() {
@@ -1008,9 +1109,12 @@
                             <strong class="text-sm">Proc: ${a.processo}</strong> - ${a.cliente}<br>
                             <span class="text-gray-400">📍 ${a.cidade} | Venc: ${a.vencimento}</span>
                         </div>
-                        <span class="font-bold ${a.status === 'pago' ? 'text-green-600' : (a.status === 'vencido' ? 'text-red-600' : 'text-amber-500')}">
-                            R$ ${a.valor.toFixed(2)}
-                        </span>
+                        <div class="flex items-center gap-1">
+                            <button onclick="abrirHistoricoAto(${a.id})" title="Ver Histórico de Alterações" class="bg-amber-100 dark:bg-gray-700 text-amber-700 dark:text-amber-400 px-2 py-1 rounded font-bold"><i class="fa-solid fa-pencil"></i></button>
+                            <span class="font-bold ${a.status === 'pago' ? 'text-green-600' : (a.status === 'vencido' ? 'text-red-600' : 'text-amber-500')}">
+                                R$ ${a.valor.toFixed(2)}
+                            </span>
+                        </div>
                     </div>
                     <div class="flex justify-between items-center pt-2 border-t dark:border-gray-700">
                         <span class="font-bold text-[10px] uppercase ${a.status === 'pago' ? 'bg-green-100 text-green-800 p-1 rounded' : (a.status === 'vencido' ? 'bg-red-100 text-red-800 p-1 rounded' : 'bg-amber-100 text-amber-800 p-1 rounded')}">
@@ -1018,9 +1122,8 @@
                         </span>
                         <div class="flex gap-1">
                             <button onclick="abrirModalChecklist(${a.id})" class="bg-brand-red text-white px-2 py-1 rounded font-bold text-[10px]">📋 Checklist</button>
-                            <button onclick="deletarAto(${a.id})" class="bg-red-600 hover:bg-red-700 text-white font-bold px-2 py-1 rounded text-[10px] flex items-center gap-1">
-                                <i class="fa-solid fa-trash-can"></i> Excluir
-                            </button>
+                            <button onclick="editarAto(${a.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]">✏️ Editar</button>
+                            <button onclick="deletarAto(${a.id})" class="bg-red-600 hover:bg-red-700 text-white font-bold px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     </div>
                 `;
@@ -1033,6 +1136,27 @@
                 db.atos = db.atos.filter(a => a.id !== id);
                 db.caixa = db.caixa.filter(c => c.atoRefId !== id);
                 saveData(); renderAtos(); renderFinanceiro(); renderCaixa(); renderRelatorios(); popularSelectAtosRecibo();
+            }
+        }
+
+        function gerarTextoPautaGeral() {
+            let txt = `DILIGENCE.BR - PAUTA DE DILIGÊNCIAS\n--------------------------------\n`;
+            db.atos.forEach(a => {
+                txt += `Proc: ${a.processo} | Cliente: ${a.cliente} | Comarca: ${a.cidade} | Venc: ${a.vencimento} | Valor: R$ ${a.valor.toFixed(2)} [${a.status.toUpperCase()}]\n`;
+            });
+            return txt;
+        }
+
+        function compartilharPautaGeral(tipo) {
+            if(!db.atos.length) return alert("Pauta vazia!");
+            const txt = gerarTextoPautaGeral();
+            if(tipo === 'whats') {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
+            } else if(tipo === 'email') {
+                window.open(`mailto:${EMAIL_CONTRATANTE}?subject=PautaDiligencias&body=${encodeURIComponent(txt)}`);
+            } else if(tipo === 'csv') {
+                const blob = new Blob([txt], { type: 'text/csv' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'pauta.csv'; a.click();
             }
         }
 
@@ -1149,7 +1273,7 @@
             html2pdf().set({ margin: 10, filename: `Comprovante_${proc}.pdf`, html2canvas: { scale: 2 } }).from(element).save();
         }
 
-        /* LÓGICA DO LIVRO CAIXA (INSERIR, EDITAR, EXCLUIR E FILTROS DE DATA) */
+        /* LÓGICA DO LIVRO CAIXA */
         function saveCaixa(e) {
             e.preventDefault();
             const id = document.getElementById('caixa-id').value;
@@ -1159,41 +1283,24 @@
 
             if (id) {
                 const c = db.caixa.find(item => item.id == id);
-                if (c) {
-                    c.tipo = tipo;
-                    c.valor = valor;
-                    c.descricao = descricao;
-                }
+                if (c) { c.tipo = tipo; c.valor = valor; c.descricao = descricao; }
             } else {
-                db.caixa.push({
-                    id: Date.now(),
-                    tipo: tipo,
-                    valor: valor,
-                    descricao: descricao,
-                    dataIso: new Date().toISOString().split('T')[0],
-                    dataHora: new Date().toLocaleString('pt-BR')
-                });
+                db.caixa.push({ id: Date.now(), tipo: tipo, valor: valor, descricao: descricao, dataIso: new Date().toISOString().split('T')[0], dataHora: new Date().toLocaleString('pt-BR') });
             }
 
-            saveData();
-            limparFormCaixa();
-            renderCaixa();
-            alert("✅ Lançamento de caixa salvo com sucesso!");
+            saveData(); limparFormCaixa(); renderCaixa(); alert("✅ Lançamento de caixa salvo com sucesso!");
         }
 
         function editarCaixa(id) {
             const c = db.caixa.find(item => item.id == id);
             if (!c) return;
-
             document.getElementById('caixa-id').value = c.id;
             document.getElementById('caixa-tipo').value = c.tipo;
             document.getElementById('caixa-valor').value = c.valor;
             document.getElementById('caixa-descricao').value = c.descricao;
-
             document.getElementById('caixa-form-titulo').innerText = "Editar Lançamento no Caixa";
             document.getElementById('caixa-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR ALTERAÇÕES';
             document.getElementById('caixa-btn-cancelar').classList.remove('hidden');
-
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1208,15 +1315,13 @@
         function deletarCaixa(id) {
             if(confirm('Excluir este lançamento do caixa?')) {
                 db.caixa = db.caixa.filter(c => c.id !== id);
-                saveData(); 
-                renderCaixa();
+                saveData(); renderCaixa();
             }
         }
 
         function filtrarCaixaPorDatas() {
             const ini = document.getElementById('caixa-filtro-ini').value;
             const fim = document.getElementById('caixa-filtro-fim').value;
-
             return db.caixa.filter(c => {
                 const dataItem = c.dataIso || new Date().toISOString().split('T')[0];
                 if (ini && dataItem < ini) return false;
@@ -1229,7 +1334,6 @@
             let ent = 0, sai = 0;
             const container = document.getElementById('lista-caixa');
             if(container) container.innerHTML = '';
-
             const listaFiltrada = filtrarCaixaPorDatas();
 
             listaFiltrada.forEach(c => {
@@ -1251,10 +1355,8 @@
                 }
             });
 
-            // Recalcula totais gerais para os cards superiores
             let totalEntAll = 0, totalSaiAll = 0;
             db.caixa.forEach(c => { if(c.tipo === 'entrada') totalEntAll += c.valor; else totalSaiAll += c.valor; });
-
             document.getElementById('caixa-total-entradas').innerText = `R$ ${totalEntAll.toFixed(2)}`;
             document.getElementById('caixa-total-saidas').innerText = `R$ ${totalSaiAll.toFixed(2)}`;
             document.getElementById('caixa-saldo-liquido').innerText = `R$ ${(totalEntAll - totalSaiAll).toFixed(2)}`;
@@ -1289,6 +1391,119 @@
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(lista), "Caixa_Filtrado");
                 XLSX.writeFile(wb, `Extrato_Caixa.xlsx`);
+            }
+        }
+
+        /* LÓGICA DA ABA RESCISÃO TRABALHISTA */
+        function saveRescisao(e) {
+            e.preventDefault();
+            const id = document.getElementById('res-id').value;
+            const cliente = document.getElementById('res-cliente').value.trim();
+            const vinculo = document.getElementById('res-vinculo').value;
+            const motivo = document.getElementById('res-motivo').value;
+            const salario = parseFloat(document.getElementById('res-salario').value) || 0;
+            const meses = parseFloat(document.getElementById('res-meses').value) || 12;
+            const inssPct = parseFloat(document.getElementById('res-inss-pct').value) || 7.5;
+            const adicionais = parseFloat(document.getElementById('res-adicionais').value) || 0;
+
+            const prop = (salario / 12) * meses;
+            const inssVal = (prop * inssPct) / 100;
+            let multaRescisoria = 0;
+            if(motivo === 'Dispensa sem justa causa' || motivo === 'Rescisão indireta') {
+                multaRescisoria = prop * 0.40;
+            }
+            const totalLiquido = prop + adicionais + multaRescisoria - inssVal;
+
+            const objetoRescisao = {
+                id: id ? parseInt(id) : Date.now(),
+                cliente: cliente,
+                vinculo: vinculo,
+                motivo: motivo,
+                salario: salario,
+                meses: meses,
+                totalLiquido: totalLiquido,
+                dataRegistro: new Date().toLocaleString('pt-BR')
+            };
+
+            if (id) {
+                const index = db.rescisoes.findIndex(item => item.id == id);
+                if (index !== -1) db.rescisoes[index] = objetoRescisao;
+            } else {
+                db.rescisoes.push(objetoRescisao);
+            }
+
+            saveData();
+            limparFormRescisao();
+            renderRescisoes();
+            alert("✅ Cálculo rescisório salvo com sucesso!");
+        }
+
+        function editarRescisao(id) {
+            const r = db.rescisoes.find(item => item.id == id);
+            if (!r) return;
+            document.getElementById('res-id').value = r.id;
+            document.getElementById('res-cliente').value = r.cliente;
+            document.getElementById('res-vinculo').value = r.vinculo;
+            document.getElementById('res-motivo').value = r.motivo;
+            document.getElementById('res-salario').value = r.salario;
+            document.getElementById('res-meses').value = r.meses;
+
+            document.getElementById('res-form-titulo').innerHTML = '<i class="fa-solid fa-scale-balanced mr-1"></i> Editar Cálculo Rescisório Trabalhista';
+            document.getElementById('res-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR ALTERAÇÕES';
+            document.getElementById('res-btn-cancelar').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function limparFormRescisao() {
+            document.getElementById('form-rescisao').reset();
+            document.getElementById('res-id').value = '';
+            document.getElementById('res-form-titulo').innerHTML = '<i class="fa-solid fa-scale-balanced mr-1"></i> Cadastro de Cálculo Rescisório Trabalhista';
+            document.getElementById('res-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR CÁLCULO RESCISÓRIO';
+            document.getElementById('res-btn-cancelar').classList.add('hidden');
+        }
+
+        function deletarRescisao(id) {
+            if(confirm('Excluir este cálculo rescisório?')) {
+                db.rescisoes = db.rescisoes.filter(r => r.id !== id);
+                saveData(); renderRescisoes();
+            }
+        }
+
+        function renderRescisoes() {
+            const container = document.getElementById('lista-rescisioes');
+            if(!container) return; container.innerHTML = '';
+            if(!db.rescisoes.length) {
+                container.innerHTML = '<p class="text-xs text-gray-400 italic">Nenhum cálculo rescisório salvo.</p>';
+                return;
+            }
+            db.rescisoes.forEach(r => {
+                container.innerHTML += `
+                    <div class="p-2.5 border rounded-xl text-xs flex justify-between items-center bg-white dark:bg-gray-800 shadow-sm">
+                        <div>
+                            <strong>${r.cliente}</strong> (${r.vinculo})<br>
+                            <span class="text-gray-500">Motivo: ${r.motivo} | Salário: R$ ${r.salario.toFixed(2)}</span><br>
+                            <span class="font-bold text-brand-red">Total Líquido: R$ ${r.totalLiquido.toFixed(2)}</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="compartilharRescisaoItem('whats', ${r.id})" class="bg-green-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-brands fa-whatsapp"></i></button>
+                            <button onclick="compartilharRescisaoItem('email', ${r.id})" class="bg-blue-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-envelope"></i></button>
+                            <button onclick="editarRescisao(${r.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deletarRescisao(${r.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function compartilharRescisaoItem(tipo, id) {
+            const r = db.rescisoes.find(item => item.id == id);
+            if(!r) return;
+            const txt = `DILIGENCE.BR - DEMONSTRATIVO RESCISÓRIO\n--------------------------------\nCliente/Proc: ${r.cliente}\nVínculo: ${r.vinculo}\nModalidade: ${r.motivo}\nSalário Base: R$ ${r.salario.toFixed(2)}\nTotal Líquido Calculado: R$ ${r.totalLiquido.toFixed(2)}\nData: ${r.dataRegistro}`;
+
+            if(tipo === 'whats') {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
+            } else if(tipo === 'email') {
+                window.open(`mailto:${EMAIL_CONTRATANTE}?subject=RescisaoTrabalhista_${r.cliente}&body=${encodeURIComponent(txt)}`);
             }
         }
 
@@ -1445,52 +1660,6 @@
             }
         }
 
-        function calcularRescisaoCompleta() {
-            const cli = document.getElementById('res-cliente').value.trim() || 'N/A';
-            const vinculo = document.getElementById('res-vinculo').value;
-            const sal = parseFloat(document.getElementById('res-salario').value) || 0;
-            const mes = parseFloat(document.getElementById('res-meses').value) || 0;
-            const inss = parseFloat(document.getElementById('res-inss-pct').value) || 0;
-            const adic = parseFloat(document.getElementById('res-adicionais').value) || 0;
-            const desc = parseFloat(document.getElementById('res-descontos').value) || 0;
-
-            const prop = (sal / 12) * mes;
-            const inssVal = (prop * inss) / 100;
-            const total = prop + adic - desc - inssVal;
-
-            const resDiv = document.getElementById('rescisao-resultado');
-            resDiv.innerHTML = `
-                MINUTA & DEMONSTRATIVO DE RESCISÃO TRABALHISTA:<br>
-                • Cliente / Processo: ${cli}<br>
-                • Modalidade: ${vinculo === 'clt' ? 'Com Registro CLT' : 'Sem Registro (Informal)'}<br>
-                • Verbas Proporcionais (${mes}/12m): R$ ${prop.toFixed(2)}<br>
-                • Adicionais (HE / Noturno): R$ ${adic.toFixed(2)}<br>
-                • Desconto INSS (${inss}%): - R$ ${inssVal.toFixed(2)}<br>
-                • Outros Descontos: - R$ ${desc.toFixed(2)}<br>
-                --------------------------------<br>
-                <strong>TOTAL LÍQUIDO RESCISÓRIO: R$ ${total.toFixed(2)}</strong>
-            `;
-            resDiv.classList.remove('hidden');
-        }
-
-        function compartilharRescisao(tipo) {
-            const txt = document.getElementById('rescisao-resultado').innerText;
-            if(!txt) return alert('Calcule a rescisão primeiro!');
-            
-            if(tipo === 'whats') window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
-            if(tipo === 'email') window.open(`mailto:?subject=RescisaoTrabalhista&body=${encodeURIComponent(txt)}`);
-            if(tipo === 'csv') {
-                const blob = new Blob([txt], { type: 'text/csv' });
-                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'rescisao.csv'; a.click();
-            }
-            if(tipo === 'pdf') {
-                const element = document.createElement('div');
-                element.className = "p-6 font-sans border-2 border-red-600 rounded-2xl bg-white text-black space-y-4";
-                element.innerHTML = `<h2 style="color:#dc2626; font-size:18px; font-weight:bold;">DILIGENCE.BR - MINUTA RESCISÓRIA</h2><pre style="font-family:monospace; font-size:12px;">${txt}</pre>`;
-                html2pdf().set({ margin: 10, filename: `Rescisao.pdf` }).from(element).save();
-            }
-        }
-
         function saveContato(e) {
             e.preventDefault();
             const id = document.getElementById('ct-id').value;
@@ -1501,42 +1670,25 @@
 
             if (id) {
                 const c = db.contatos.find(item => item.id == id);
-                if (c) {
-                    c.nome = nome;
-                    c.celular = celular;
-                    c.oab = oab;
-                    c.obs = obs;
-                }
+                if (c) { c.nome = nome; c.celular = celular; c.oab = oab; c.obs = obs; }
             } else {
-                db.contatos.push({
-                    id: Date.now(),
-                    nome: nome,
-                    celular: celular,
-                    oab: oab,
-                    obs: obs
-                });
+                db.contatos.push({ id: Date.now(), nome: nome, celular: celular, oab: oab, obs: obs });
             }
 
-            saveData();
-            limparFormContato();
-            renderContatos();
-            alert("✅ Contato salvo na agenda!");
+            saveData(); limparFormContato(); renderContatos(); alert("✅ Contato salvo na agenda!");
         }
 
         function editarContato(id) {
             const c = db.contatos.find(item => item.id == id);
             if (!c) return;
-
             document.getElementById('ct-id').value = c.id;
             document.getElementById('ct-nome').value = c.nome;
             document.getElementById('ct-celular').value = c.celular;
             document.getElementById('ct-oab').value = c.oab || '';
             document.getElementById('ct-obs').value = c.obs || '';
-
             document.getElementById('ct-form-titulo').innerText = "Editar Contato";
             document.getElementById('ct-btn-salvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR ALTERAÇÕES';
             document.getElementById('ct-btn-cancelar').classList.remove('hidden');
-
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1562,12 +1714,8 @@
                             ${c.obs ? `<br><span class="text-[10px] italic text-gray-500">${c.obs}</span>` : ''}
                         </div>
                         <div class="flex gap-1">
-                            <button onclick="editarContato(${c.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px] flex items-center gap-1">
-                                <i class="fa-solid fa-pen-to-square"></i> Editar
-                            </button>
-                            <button onclick="deletarContato(${c.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px] flex items-center gap-1">
-                                <i class="fa-solid fa-trash-can"></i> Excluir
-                            </button>
+                            <button onclick="editarContato(${c.id})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deletarContato(${c.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     </div>
                 `;
@@ -1682,6 +1830,7 @@
             XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.caixa.length ? db.caixa : [{"Aviso": "Caixa Vazio"}]), "Caixa");
             XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.contatos.length ? db.contatos : [{"Aviso": "Agenda Vazia"}]), "Agenda");
             XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.recibos.length ? db.recibos : [{"Aviso": "Recibos Vazio"}]), "Recibos");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(db.rescisoes.length ? db.rescisoes : [{"Aviso": "Rescisões Vazio"}]), "Rescisoes");
             XLSX.writeFile(wb, `Relatorio_DILIGENCE.xlsx`);
             fecharModalBackup();
         }
