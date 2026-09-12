@@ -163,6 +163,7 @@
                     <div class="flex gap-1 items-center">
                         <button id="btn-backup-header" onclick="abrirModalBackup()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] hover:bg-red-50 transition shadow"><i class="fa-solid fa-database mr-1"></i>Backup</button>
                         <button onclick="acionarRestauracao()" class="bg-gray-900 text-white font-bold px-2 py-1 rounded text-[11px] hover:bg-black transition shadow"><i class="fa-solid fa-upload mr-1"></i>Restaurar</button>
+                        <button onclick="fazerLogout()" class="bg-black text-white font-bold px-2 py-1 rounded text-[11px] hover:bg-gray-800 transition shadow"><i class="fa-solid fa-right-from-bracket mr-1"></i>Sair</button>
                     </div>
                 </div>
             </div>
@@ -870,7 +871,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT CONSOLIDADO E AUDITADO -->
+    <!-- JAVASCRIPT CONSOLIDADO E CORRIGIDO -->
     <script>
         const AUTH_USER = "diligence.br*";
         const AUTH_PASS = "320427";
@@ -900,14 +901,26 @@
             document.documentElement.classList.toggle('dark');
         }
 
+        // CONTROLE DE LOGIN SEM RECARREGAR A TELA
         function handleLogin(e) {
-            e.preventDefault();
-            if (document.getElementById('login-user').value === AUTH_USER && document.getElementById('login-pass').value === AUTH_PASS) {
+            if (e) e.preventDefault();
+            const user = document.getElementById('login-user').value;
+            const pass = document.getElementById('login-pass').value;
+
+            if (user === AUTH_USER && pass === AUTH_PASS) {
+                localStorage.setItem('diligence_logged', 'true');
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app-content').classList.remove('hidden');
                 loadData();
             } else {
                 document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
+
+        function fazerLogout() {
+            if (confirm("Deseja realmente sair do sistema?")) {
+                localStorage.removeItem('diligence_logged');
+                location.reload();
             }
         }
 
@@ -950,6 +963,12 @@
                 try { db = JSON.parse(saved); } catch(err){}
             }
             
+            // VERIFICA SE JÁ ESTÁ LOGADO PARA MANTER TELA ABERTA
+            if (localStorage.getItem('diligence_logged') === 'true') {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-content').classList.remove('hidden');
+            }
+
             if(!db.atos) db.atos = [];
             if(!db.caixa) db.caixa = [];
             if(!db.contatos) db.contatos = [];
@@ -985,7 +1004,7 @@
 
         /* 1. CADASTRO DE ATOS NA PAUTA COM ALERTAS DE DUPLICIDADE E SINCRONIZAÇÃO AUTOMÁTICA */
         function saveAto(e) {
-            e.preventDefault();
+            if (e) e.preventDefault();
             const numProcesso = document.getElementById('ato-processo').value.trim();
             const statusSel = document.getElementById('ato-status-select').value;
             if(!statusSel) return alert('Selecione o status do pagamento!');
@@ -1208,7 +1227,7 @@
 
         /* 3. LIVRO CAIXA DE DESPESAS DA RUA */
         function saveLancamentoCaixa(e) {
-            e.preventDefault();
+            if (e) e.preventDefault();
             const novoLancamento = {
                 id: Date.now(),
                 data: document.getElementById('caixa-data').value,
@@ -1365,9 +1384,23 @@
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`);
         }
 
-        /* 6. AGENDA DE CONTATOS */
+        /* 6. PERFIL DO CORRESPONDENTE COM PREVENÇÃO DE REFRESH */
+        function savePerfil(e) {
+            if (e) e.preventDefault();
+            db.perfil = {
+                nome: document.getElementById('perfil-nome').value,
+                doc: document.getElementById('perfil-doc').value,
+                cidade: document.getElementById('perfil-cidade').value,
+                celular: document.getElementById('perfil-celular').value,
+                pix: document.getElementById('perfil-pix').value,
+                email: document.getElementById('perfil-email').value
+            };
+            saveData();
+            alert("✅ Perfil do Correspondente atualizado com sucesso!");
+        }
+
         function saveContato(e) {
-            e.preventDefault();
+            if (e) e.preventDefault();
             db.contatos.push({
                 id: Date.now(),
                 nome: document.getElementById('ct-nome').value.trim(),
@@ -1491,7 +1524,7 @@
             }
         }
 
-        function enviarChecklistWhatsApp() {
+        async function enviarChecklistWhatsApp() {
             const atoId = parseInt(document.getElementById('chk-ato-id').value);
             const obs = document.getElementById('chk-obs').value.trim();
             const ato = db.atos.find(a => a.id === atoId);
@@ -1502,9 +1535,31 @@
                 saveData();
             }
 
-            const texto = `📋 DILIGENCE.BR - CHECKLIST PÓS-AUDIÊNCIA\n--------------------------------\nCorrespondente: ${document.getElementById('chk-nome-doc').value}\nProcesso: ${document.getElementById('chk-processo').value}\nCidade: ${document.getElementById('chk-cidade').value}\n--------------------------------\nObservações: ${obs}\nStatus Foto ATA: ${imagemAtaChecklistTemp ? '✓ Anexada com sucesso' : '❌ Não anexada'}`;
+            const textoComprovante = `📋 DILIGENCE.BR - CHECKLIST PÓS-AUDIÊNCIA\n--------------------------------\nCorrespondente: ${document.getElementById('chk-nome-doc').value}\nProcesso: ${document.getElementById('chk-processo').value}\nCidade: ${document.getElementById('chk-cidade').value}\n--------------------------------\nObservações: ${obs}\n--------------------------------\nComprovante enviado via DILIGENCE.BR`;
+
+            // COMPARTILHAMENTO DIRETO DA FOTO DE ATA (SE SUPORTADO PELO DISPOSITIVO)
+            if (imagemAtaChecklistTemp && navigator.canShare) {
+                try {
+                    const response = await fetch(imagemAtaChecklistTemp);
+                    const blob = await response.blob();
+                    const file = new File([blob], `ATA_${document.getElementById('chk-processo').value}.png`, { type: 'image/png' });
+
+                    if (navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            title: 'Comprovante e ATA de Audiência',
+                            text: textoComprovante,
+                            files: [file]
+                        });
+                        fecharModalChecklist();
+                        return;
+                    }
+                } catch (err) {
+                    console.log("Falha no envio direto do arquivo...", err);
+                }
+            }
+
             fecharModalChecklist();
-            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(texto)}`);
+            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(textoComprovante)}`);
         }
 
         function gerarTicketComprovante() {
@@ -1553,11 +1608,10 @@
         function confirmarZerarTudoGeral() {
             if (confirm("⚠️ ATENÇÃO EXTREMA: Deseja realmente ZERAR TODOS OS DADOS do aplicativo? Isso apagará todas as pautas, contatos e lançamentos de caixa.")) {
                 localStorage.removeItem('diligence_db');
+                localStorage.removeItem('diligence_logged');
                 db = { perfil: {}, atos: [], caixa: [], contatos: [], notas: '' };
                 saveData();
-                loadData();
-                fecharModalBackup();
-                alert("✅ Aplicativo zerado com sucesso! Prontinho para uso limpo.");
+                location.reload();
             }
         }
 
@@ -1633,6 +1687,9 @@
             XLSX.writeFile(wb, `Relatorio_Completo_DILIGENCE_${new Date().toISOString().split('T')[0]}.xlsx`);
             fecharModalBackup();
         }
+
+        // EXECUTA O CARREGAMENTO INICIAL
+        loadData();
     </script>
 </body>
 </html>
