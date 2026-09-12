@@ -22,7 +22,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- BIBLIOTECA NATIVA PARA EXPORTAÇÃO EXCEL MULTI-ABAS (.XLSX) -->
+    <!-- BIBLIOTECA PARA EXPORTAÇÃO NATIVA DO EXCEL EM MULTI-ABAS (.XLSX) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <script>
@@ -42,12 +42,17 @@
         .modal-blur { backdrop-filter: blur(4px); }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        }
+        .backup-pulse { animation: pulse-ring 2s infinite; }
+        .manual-highlight { background-color: #fef08a; color: #854d0e; font-weight: bold; padding: 0 2px; border-radius: 2px; }
+        .dark .manual-highlight { background-color: #854d0e; color: #fef08a; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
-
-    <!-- DATALIST GLOBAL PARA AUTOCOMPLETAR CIDADES / COMARCAS -->
-    <datalist id="lista-cidades-comarcas"></datalist>
 
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 z-50 bg-brand-red flex items-center justify-center p-4">
@@ -70,13 +75,59 @@
                 </div>
                 <button type="submit" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-lg font-bold text-sm shadow-md transition">Entrar no Sistema</button>
             </form>
+            
+            <div class="pt-2 border-t flex flex-col items-center gap-1.5">
+                <button onclick="abrirModalRecuperacao('usuario')" class="text-xs text-brand-red dark:text-red-400 font-bold hover:underline">
+                    <i class="fa-solid fa-user-lock mr-1"></i> Esqueci o meu usuário
+                </button>
+                <button onclick="abrirModalRecuperacao('senha')" class="text-xs text-brand-red dark:text-red-400 font-bold hover:underline">
+                    <i class="fa-solid fa-key mr-1"></i> Esqueci a minha senha
+                </button>
+                <p id="login-error" class="text-xs text-red-500 font-semibold hidden mt-1">Usuário ou senha incorretos!</p>
+            </div>
         </div>
     </div>
+
+    <!-- MODAL ESQUECI O USUÁRIO / SENHA -->
+    <div id="modal-recuperacao-login" class="fixed inset-0 z-50 bg-black/70 modal-blur hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-2 border-brand-red">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 id="rec-modal-titulo" class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-headset mr-1"></i> RECUPERAÇÃO DE ACESSO</h3>
+                <button onclick="fecharModalRecuperacao()" class="text-gray-400 font-bold">&times;</button>
+            </div>
+            
+            <p id="rec-modal-subtitulo" class="text-xs text-gray-600 dark:text-gray-300">
+                Entre em contato direto com a administração via WhatsApp <strong>(11) 97838-6574</strong> para solicitar ajuda.
+            </p>
+
+            <div class="space-y-2 text-left">
+                <div>
+                    <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Seu Nome Completo:</label>
+                    <input type="text" id="rec-nome" placeholder="Digite seu nome..." class="w-full p-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-xs font-semibold focus:outline-none">
+                </div>
+                <div>
+                    <label class="text-[11px] font-bold text-gray-600 dark:text-gray-300">Seu Número de Celular / WhatsApp:</label>
+                    <input type="text" id="rec-celular" placeholder="(11) 99999-9999" class="w-full p-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-xs font-semibold focus:outline-none">
+                </div>
+            </div>
+
+            <div class="pt-2 border-t space-y-2">
+                <button onclick="enviarRecuperacaoWhats()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 shadow">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> ENVIAR SOLICITAÇÃO NO WHATSAPP
+                </button>
+                <button onclick="fecharModalRecuperacao()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-bold text-xs">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <datalist id="lista-cidades-comarcas"></datalist>
 
     <!-- ESTRUTURA PRINCIPAL DO APP -->
     <div id="app-content" class="hidden flex-1 flex flex-col max-w-4xl w-full mx-auto bg-white dark:bg-gray-800 shadow-xl min-h-screen">
         
-        <!-- CABEÇALHO -->
+        <!-- CABEÇALHO / HEADER -->
         <header class="bg-brand-red text-white p-4 shadow-md sticky top-0 z-30">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-3">
@@ -92,18 +143,27 @@
                         <div id="clock-time" class="font-bold leading-none">00:00:00</div>
                         <div id="clock-date" class="text-[10px] text-red-200">Brasília (UTC-3)</div>
                     </div>
+                    <button onclick="toggleDarkMode()" class="p-2 bg-brand-darkred rounded-lg text-sm hover:bg-red-900 transition">
+                        <i class="fa-solid font-bold fa-moon dark:hidden"></i>
+                        <i class="fa-solid font-bold fa-sun hidden dark:inline"></i>
+                    </button>
                 </div>
             </div>
 
-            <div class="mt-3 pt-2 border-t border-red-500/50 flex justify-between items-center text-xs">
-                <span class="italic text-red-100 text-[11px]">Painel de Controle e Pauta</span>
-                <div class="flex gap-1">
-                    <button onclick="abrirModalBackup()" class="bg-white text-brand-red font-bold px-2.5 py-1 rounded text-[11px] hover:bg-red-50 transition shadow flex items-center gap-1">
-                        <i class="fa-solid fa-database"></i> Menu de Backup
-                    </button>
-                    <button onclick="acionarRestauracao()" class="bg-gray-900 text-white font-bold px-2 py-1 rounded text-[11px] hover:bg-black transition shadow flex items-center gap-1">
-                        <i class="fa-solid fa-upload"></i> Restaurar
-                    </button>
+            <div class="mt-3 pt-3 border-t border-red-500/50 flex flex-col gap-2">
+                <div class="flex justify-between items-center text-xs bg-red-800/40 p-2 rounded-lg gap-2">
+                    <div class="flex flex-col flex-1">
+                        <span id="daily-message" class="italic text-red-100 text-[11px] font-medium leading-tight">
+                            <i class="fa-solid fa-quote-left mr-1"></i> <span id="txt-mensagem-rotativa">"Que o dia seja produtivo e abençoado!"</span>
+                        </span>
+                        <span class="text-[10px] font-bold text-amber-300 mt-1" id="header-ultimo-backup">
+                            <i class="fa-solid fa-clock-rotate-left mr-1"></i>Último Backup: <span id="txt-ultimo-backup">Nenhum</span>
+                        </span>
+                    </div>
+                    <div class="flex gap-1 items-center">
+                        <button id="btn-backup-header" onclick="abrirModalBackup()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] hover:bg-red-50 transition shadow"><i class="fa-solid fa-database mr-1"></i>Backup</button>
+                        <button onclick="acionarRestauracao()" class="bg-gray-900 text-white font-bold px-2 py-1 rounded text-[11px] hover:bg-black transition shadow"><i class="fa-solid fa-upload mr-1"></i>Restaurar</button>
+                    </div>
                 </div>
             </div>
         </header>
@@ -112,20 +172,94 @@
 
         <main class="flex-1 p-4 overflow-y-auto">
 
+            <!-- ABA 1: PERFIL DO CORRESPONDENTE -->
+            <section id="tab-perfil" class="tab-content space-y-4">
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
+                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Perfil do Correspondente</h3>
+                    <p>Preencha seus dados para habilitar recibos digitais, checklists e compartilhamentos.</p>
+                </div>
+
+                <form id="form-perfil" onsubmit="savePerfil(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h2 class="font-bold text-base text-gray-700 dark:text-gray-200">Dados Profissionais</h2>
+                        <button type="button" onclick="confirmarLimparAba('perfil')" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
+                            <i class="fa-solid fa-trash-can"></i> Limpar Perfil
+                        </button>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold">Nome Completo</label>
+                        <input type="text" id="perfil-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold">OAB / RG / CPF</label>
+                            <input type="text" id="perfil-doc" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">Cidade / UF Base</label>
+                            <input type="text" id="perfil-cidade" list="lista-cidades-comarcas" required placeholder="Digite a cidade..." class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold">Celular / WhatsApp (DDD)</label>
+                            <input type="text" id="perfil-celular" placeholder="(11) 99999-9999" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">Chave PIX Oficial</label>
+                            <input type="text" id="perfil-pix" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold">E-mail do Correspondente</label>
+                        <input type="email" id="perfil-email" placeholder="seuemail@email.com" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm">
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-brand-red text-white py-2 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Perfil</button>
+                    
+                    <div class="flex gap-2 pt-2 border-t text-xs font-bold">
+                        <button type="button" onclick="compartilharPerfilWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg"><i class="fa-brands fa-whatsapp mr-1"></i> Whats</button>
+                        <button type="button" onclick="compartilharPerfilEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg"><i class="fa-solid fa-envelope mr-1"></i> E-mail</button>
+                        <button type="button" onclick="exportarExcelMultiAbas()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg"><i class="fa-solid fa-file-excel mr-1"></i> Excel Multi-Abas</button>
+                    </div>
+                </form>
+            </section>
+
             <!-- ABA 2: PAUTA & CADASTRO DE DILIGÊNCIAS -->
-            <section id="tab-atos" class="tab-content space-y-4">
+            <section id="tab-atos" class="tab-content space-y-4 hidden">
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-calendar-check mr-1"></i> Cadastro e Pauta de Diligências</h3>
+                        <p>Atos cadastrados refletem automaticamente no Financeiro, Caixa e Relatórios.</p>
+                    </div>
+                    <button type="button" onclick="capturarLocalizacaoGPS()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-2.5 py-1.5 rounded-lg text-[10px] shadow flex items-center gap-1">
+                        <i class="fa-solid fa-location-dot"></i> Check-in Fórum GPS
+                    </button>
+                </div>
+
                 <form id="form-ato" onsubmit="saveAto(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
-                    <h2 class="font-bold text-base text-gray-700 dark:text-gray-200 flex items-center gap-2">
-                        <i class="fa-solid fa-plus-circle text-brand-red"></i> Cadastrar Novo Ato na Pauta
-                    </h2>
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h2 class="font-bold text-base text-gray-700 dark:text-gray-200 flex items-center gap-2">
+                            <i class="fa-solid fa-plus-circle text-brand-red"></i> Cadastrar Novo Ato
+                        </h2>
+                        <button type="button" onclick="confirmarLimparAba('atos')" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
+                            <i class="fa-solid fa-trash-can"></i> Limpar Toda a Pauta
+                        </button>
+                    </div>
                     
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs font-semibold">Nº do Processo</label>
+                            <label class="text-xs font-semibold flex items-center justify-between">
+                                Nº do Processo
+                                <button type="button" onclick="iniciarDitadoVoz('ato-processo')" class="text-brand-red font-bold hover:underline text-[11px]"><i class="fa-solid fa-microphone"></i> Ditar</button>
+                            </label>
                             <input type="text" id="ato-processo" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold">Cliente / Contratante</label>
+                            <label class="text-xs font-semibold flex items-center justify-between">
+                                Cliente / Contratante
+                                <button type="button" onclick="iniciarDitadoVoz('ato-cliente')" class="text-brand-red font-bold hover:underline text-[11px]"><i class="fa-solid fa-microphone"></i> Ditar</button>
+                            </label>
                             <input type="text" id="ato-cliente" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
                         </div>
                     </div>
@@ -141,14 +275,32 @@
                         </div>
                     </div>
 
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-xs font-semibold flex items-center justify-between">
+                                <span>Cidade do Ato / Comarca* <span class="text-[10px] text-brand-red font-normal">(Busca automática)</span></span>
+                            </label>
+                            <input type="text" id="ato-cidade" list="lista-cidades-comarcas" required placeholder="Digite 3 letras (ex: Emb, Cam, Sã)..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-semibold focus:ring-2 focus:ring-brand-red outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">Modalidade / Plataforma</label>
+                            <select id="ato-modalidade" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-semibold">
+                                <option value="teams">🟣 Cível (Virtual - Teams)</option>
+                                <option value="zoom">🔵 TRT/Trabalhista (Virtual - Zoom)</option>
+                                <option value="outra">📞 Outra Plataforma (Virtual)</option>
+                                <option value="presencial">🏛️ Presencial (Fórum / GPS)</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div>
-                        <label class="text-xs font-semibold">Cidade / Comarca</label>
-                        <input type="text" id="ato-cidade" list="lista-cidades-comarcas" required placeholder="Digite a comarca..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-semibold">
+                        <label class="text-xs font-semibold">Link da Sala Virtual (Opcional)</label>
+                        <input type="url" id="ato-link" placeholder="https://teams.microsoft.com/..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs">
                     </div>
 
                     <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-2">
                         <label class="text-xs font-bold text-gray-700 dark:text-gray-200 flex items-center gap-1">
-                            <i class="fa-solid fa-camera text-brand-red"></i> Fotografar ATA ou Selecionar Documento:
+                            <i class="fa-solid fa-camera text-brand-red"></i> Fotografar ATA ou Selecionar da Galeria:
                         </label>
                         <input type="file" id="ato-ata-file" accept="image/*" capture="environment" onchange="previewImagemAta(event)" class="w-full p-1.5 border rounded-lg text-xs bg-white dark:bg-gray-800">
                         
@@ -158,35 +310,610 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2 p-2.5 bg-red-50 dark:bg-gray-700/60 rounded-xl border-2 border-brand-red">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 p-2.5 bg-red-50 dark:bg-gray-700/60 rounded-xl border-2 border-brand-red">
                         <div>
-                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Valor (R$)*</label>
+                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Valor Acordado (R$)*</label>
                             <input type="number" step="0.01" id="ato-valor" required placeholder="0.00" class="w-full p-2 border rounded-lg dark:bg-gray-700 font-bold text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Status*</label>
+                            <label class="text-xs font-extrabold text-brand-red dark:text-red-400">Status do Pagamento*</label>
                             <select id="ato-status-select" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm font-bold bg-white dark:text-white">
-                                <option value="pendente">🟡 PENDENTE</option>
-                                <option value="pago">🟢 PAGO</option>
+                                <option value="" disabled selected>-- SELECIONE --</option>
+                                <option value="pago">🟢 PAGO (Recebido)</option>
+                                <option value="pendente">🟡 PENDENTE (A Receber)</option>
+                                <option value="vencido">🔴 VENCIDO</option>
+                                <option value="troca">🔄 TROCA DE AUDIÊNCIA</option>
+                                <option value="debito">🔴 DÉBITO / SAÍDA</option>
                             </select>
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-brand-red text-white py-3 rounded-xl font-black text-sm shadow-lg hover:bg-brand-darkred">
-                        SALVAR ATO NA PAUTA
+                    <button type="submit" class="w-full bg-brand-red text-white py-3 rounded-xl font-black text-sm shadow-lg hover:bg-brand-darkred flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-plus-circle text-base"></i> SALVAR / ADICIONAR NOVO ATO NA PAUTA
                     </button>
+                    
+                    <div class="flex gap-2 pt-2 border-t text-xs font-bold">
+                        <button type="button" onclick="compartilharPautaWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg"><i class="fa-brands fa-whatsapp mr-1"></i> Whats</button>
+                        <button type="button" onclick="compartilharPautaEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg"><i class="fa-solid fa-envelope mr-1"></i> E-mail</button>
+                        <button type="button" onclick="exportarExcelMultiAbas()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg"><i class="fa-solid fa-file-excel mr-1"></i> Planilha</button>
+                    </div>
                 </form>
 
                 <div class="space-y-2">
-                    <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300">Pauta Registrada</h3>
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300">Pauta Registrada</h3>
+                        <button type="button" onclick="focarNovoAto()" class="bg-brand-red hover:bg-brand-darkred text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow flex items-center gap-1">
+                            <i class="fa-solid fa-plus"></i> Novo Ato
+                        </button>
+                    </div>
                     <div id="lista-atos" class="space-y-2"></div>
                 </div>
             </section>
 
+            <!-- ABA 3: AGENDA DE CONTATOS -->
+            <section id="tab-contatos" class="tab-content space-y-4 hidden">
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs">
+                    <h3 class="font-bold text-brand-red dark:text-red-400 mb-1"><i class="fa-solid fa-address-book mr-1"></i> Agenda de Contatos</h3>
+                    <p>Cadastre e compartilhe contatos selecionados [x] por WhatsApp, E-mail ou Excel.</p>
+                </div>
+
+                <form id="form-contato" onsubmit="saveContato(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h2 class="font-bold text-base text-gray-700 dark:text-gray-200">Cadastrar Novo Contato</h2>
+                        <button type="button" onclick="confirmarLimparAba('contatos')" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-red-50 dark:bg-gray-700 px-2 py-1 rounded border border-red-200">
+                            <i class="fa-solid fa-trash-can"></i> Limpar Toda a Agenda
+                        </button>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold flex items-center justify-between">
+                            Nome Completo / Razão Social*
+                            <button type="button" onclick="iniciarDitadoVoz('ct-nome')" class="text-brand-red font-bold hover:underline text-[11px]"><i class="fa-solid fa-microphone"></i> Ditar</button>
+                        </label>
+                        <input type="text" id="ct-nome" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold">OAB (Inscrição)</label>
+                            <input type="text" id="ct-oab" placeholder="Ex: SP123456" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">Celular / WhatsApp*</label>
+                            <input type="text" id="ct-celular" required placeholder="(11) 99999-9999" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold">CPF</label>
+                            <input type="text" id="ct-cpf" placeholder="000.000.000-00" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">RG</label>
+                            <input type="text" id="ct-rg" placeholder="00.000.000-0" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold">Data de Nascimento</label>
+                            <input type="date" id="ct-nascimento" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">E-mail</label>
+                            <input type="email" id="ct-email" placeholder="cliente@email.com" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold flex items-center justify-between">
+                            Observações / Vínculo
+                            <button type="button" onclick="iniciarDitadoVoz('ct-obs')" class="text-brand-red font-bold hover:underline text-[11px]"><i class="fa-solid fa-microphone"></i> Ditar</button>
+                        </label>
+                        <textarea id="ct-obs" rows="2" placeholder="Ex: Escritório parceiro, preposto contratado..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">Salvar Contato na Agenda</button>
+                </form>
+
+                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 space-y-3">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h3 class="font-bold text-xs text-brand-red"><i class="fa-solid fa-share-nodes mr-1"></i> Compartilhar Contatos Selecionados</h3>
+                        <div class="flex items-center gap-1 text-xs">
+                            <label class="font-semibold text-[10px]">Data do Envio:</label>
+                            <input type="date" id="contato-data-envio" class="p-1 border rounded text-[11px] font-bold dark:bg-gray-700">
+                        </div>
+                    </div>
+                    <div class="flex gap-2 text-xs font-bold">
+                        <button onclick="compartilharContatosWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg shadow"><i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp</button>
+                        <button onclick="compartilharContatosEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-envelope mr-1"></i> E-mail</button>
+                        <button onclick="exportarExcelMultiAbas()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-file-excel mr-1"></i> Excel Multi-Abas</button>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300">Contatos Salvos</h3>
+                        <input type="text" id="buscar-contato" placeholder="Buscar contato..." oninput="renderContatos()" class="p-1.5 border rounded text-xs dark:bg-gray-700">
+                    </div>
+                    <div id="lista-contatos" class="space-y-2"></div>
+                </div>
+            </section>
+
+            <!-- ABA 4: FINANCEIRO & BAIXAS -->
+            <section id="tab-financeiro" class="tab-content space-y-4 hidden">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-center text-white">
+                    <div class="bg-green-600 p-2.5 rounded-xl shadow">
+                        <span class="text-[9px] uppercase font-bold block">Entradas (Pago)</span>
+                        <span id="fin-entradas" class="font-black text-sm">R$ 0,00</span>
+                    </div>
+                    <div class="bg-amber-500 p-2.5 rounded-xl shadow text-gray-900">
+                        <span class="text-[9px] uppercase font-bold block">A Receber</span>
+                        <span id="fin-pendentes" class="font-black text-sm">R$ 0,00</span>
+                    </div>
+                    <div class="bg-purple-700 p-2.5 rounded-xl shadow">
+                        <span class="text-[9px] uppercase font-bold block">🔄 Trocas</span>
+                        <span id="fin-trocas" class="font-black text-sm">R$ 0,00</span>
+                    </div>
+                    <div class="bg-red-600 p-2.5 rounded-xl shadow">
+                        <span class="text-[9px] uppercase font-bold block">Saídas (Débitos)</span>
+                        <span id="fin-saidas" class="font-black text-sm">R$ 0,00</span>
+                    </div>
+                    <div class="bg-blue-700 p-2.5 rounded-xl shadow col-span-2 md:col-span-1">
+                        <span class="text-[9px] uppercase font-bold block">Saldo Líquido</span>
+                        <span id="fin-saldo" class="font-black text-sm">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border-2 border-brand-red space-y-3 shadow-md">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h3 class="font-bold text-sm text-brand-red"><i class="fa-solid fa-receipt mr-1"></i> Emissão de Recibo para Atos QUITADOS (PAGO)</h3>
+                        <span class="text-[10px] bg-green-100 text-green-800 font-bold px-2 py-0.5 rounded">Apenas 'Pago' ativado</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
+                        <div>
+                            <label class="font-semibold">Cliente:</label>
+                            <select id="fin-recibo-cliente" onchange="renderProcessosParaRecibo()" class="w-full p-2 border rounded dark:bg-gray-700 font-bold"></select>
+                        </div>
+                        <div>
+                            <label class="font-semibold">Mês Referência:</label>
+                            <input type="month" id="fin-recibo-mes" onchange="renderProcessosParaRecibo()" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                        </div>
+                        <div>
+                            <label class="font-semibold">Data Emissão do Recibo:</label>
+                            <input type="date" id="fin-recibo-data" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-center text-xs pt-1">
+                            <label class="font-bold">Processos QUITADOS do Período:</label>
+                            <label class="text-[11px] text-brand-red font-bold flex items-center gap-1 cursor-pointer">
+                                <input type="checkbox" id="chk-selecionar-todos-periodo" onchange="toggleSelecionarTodosRecibo(this)"> Selecionar Todos [x]
+                            </label>
+                        </div>
+                        <div id="fin-recibo-processos-check" class="max-h-40 overflow-y-auto border p-2 rounded-lg bg-gray-50 dark:bg-gray-700/40 space-y-1 text-xs"></div>
+                    </div>
+
+                    <button onclick="gerarReciboSeletivo()" class="w-full bg-green-600 hover:bg-green-700 text-white font-extrabold py-2.5 rounded-lg text-xs shadow flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> GERAR RECIBO SELETO E COMPARTILHAR
+                    </button>
+                </div>
+
+                <div class="space-y-2">
+                    <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300"><i class="fa-solid fa-list-check mr-1"></i> Gerenciar Baixa dos Processos (Reflete da Pauta)</h3>
+                    <div id="fin-gerenciador-baixas" class="space-y-2"></div>
+                </div>
+            </section>
+
+            <!-- ABA 5: LIVRO CAIXA -->
+            <section id="tab-caixa" class="tab-content space-y-4 hidden">
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-cash-register mr-1"></i> Livro Caixa & Fluxo de Despesas</h3>
+                        <p>Controle de Entradas, Despesas da Rua e Gastos Operacionais.</p>
+                    </div>
+                    <button type="button" onclick="confirmarLimparAba('caixa')" class="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1 bg-white dark:bg-gray-800 px-2 py-1 rounded border border-red-200 shadow-sm">
+                        <i class="fa-solid fa-trash-can"></i> Limpar Caixa
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 text-center text-white">
+                    <div class="bg-green-600 p-2.5 rounded-xl shadow">
+                        <span class="text-[9px] uppercase font-bold block">Entradas (+)</span>
+                        <span id="caixa-total-entradas" class="font-black text-sm">R$ 0,00</span>
+                    </div>
+                    <div class="bg-red-600 p-2.5 rounded-xl shadow">
+                        <span class="text-[9px] uppercase font-bold block">Saídas / Despesas (-)</span>
+                        <span id="caixa-total-saidas" class="font-black text-sm">R$ 0,00</span>
+                    </div>
+                    <div class="bg-blue-800 p-2.5 rounded-xl shadow">
+                        <span class="text-[9px] uppercase font-bold block">Saldo em Caixa</span>
+                        <span id="caixa-saldo-liquido" class="font-black text-sm">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <form id="form-caixa" onsubmit="saveLancamentoCaixa(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 shadow-sm">
+                    <h2 class="font-bold text-sm text-gray-700 dark:text-gray-200 border-b pb-1"><i class="fa-solid fa-plus-circle mr-1"></i> Novo Lançamento no Fluxo de Caixa</h2>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold">Data do Lançamento</label>
+                            <input type="date" id="caixa-data" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-bold">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold">Tipo de Transação</label>
+                            <select id="caixa-tipo" required class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-bold">
+                                <option value="saida">🔴 SAÍDA / DESPESA (-)</option>
+                                <option value="entrada">🟢 ENTRADA / RECEBIMENTO (+)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold">Categoria / Tipo de Despesa</label>
+                        <select id="caixa-categoria-select" onchange="tratarSelecaoCategoriaCaixa(this)" class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-semibold">
+                            <option value="Uber / Táxi / Transporte">🚗 Uber / Táxi / Transporte</option>
+                            <option value="Cópias Extras / Autenticações">📄 Cópias Extras / Autenticações</option>
+                            <option value="Diligência PROCON / Órgãos Públicos">🏛️ Diligência PROCON / Órgãos Públicos</option>
+                            <option value="Cliente Particular / Avulso">👤 Cliente Particular / Avulso</option>
+                            <option value="Mensalidade Celular / Internet">📱 Mensalidade Celular / Internet</option>
+                            <option value="Alimentação / Estacionamento / Outros">☕ Alimentação / Estacionamento / Outros</option>
+                            <option value="outro">✏️ Outras Despesas (Escrever detalhadamente)...</option>
+                        </select>
+                    </div>
+
+                    <div id="box-caixa-descricao-livre">
+                        <label class="text-xs font-semibold">Descrição / Detalhamento da História</label>
+                        <textarea id="caixa-descricao" rows="2" placeholder="Escreva aqui seus gastos e historico..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs placeholder-gray-400 dark:placeholder-gray-500"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-brand-red dark:text-red-400">Valor da Operação (R$)*</label>
+                        <input type="number" step="0.01" id="caixa-valor" required placeholder="0.00" class="w-full p-2 border rounded-lg dark:bg-gray-700 font-bold text-sm">
+                    </div>
+
+                    <button type="submit" class="w-full bg-brand-red text-white py-2.5 rounded-lg font-bold text-sm shadow hover:bg-brand-darkred">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Registrar Transação no Caixa
+                    </button>
+                </form>
+
+                <div class="space-y-2">
+                    <h3 class="font-bold text-sm text-gray-700 dark:text-gray-300"><i class="fa-solid fa-receipt mr-1"></i> Extrato de Contas do Caixa</h3>
+                    <div id="lista-caixa" class="space-y-2"></div>
+                </div>
+            </section>
+
+            <!-- ABA 6: CALCULADORAS AVANÇADAS & BLOCO DE NOTAS POR VOZ -->
+            <section id="tab-trabalhista" class="tab-content space-y-4 hidden">
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
+                    <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200 border-b pb-2"><i class="fa-solid fa-calculator mr-1"></i> 1. Calculadora Matemática Comum</h3>
+                    <div class="bg-gray-900 text-green-400 p-3 rounded-lg text-right font-mono text-xl font-bold border" id="calc-comum-visor">0</div>
+                    <div class="grid grid-cols-4 gap-2 text-sm font-bold">
+                        <button onclick="calcComumLimpar()" class="bg-red-600 text-white p-3 rounded-lg">C</button>
+                        <button onclick="calcComumAdd('/')" class="bg-gray-700 text-white p-3 rounded-lg">÷</button>
+                        <button onclick="calcComumAdd('*')" class="bg-gray-700 text-white p-3 rounded-lg">×</button>
+                        <button onclick="calcComumAdd('-')" class="bg-gray-700 text-white p-3 rounded-lg">-</button>
+                        <button onclick="calcComumAdd('7')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">7</button>
+                        <button onclick="calcComumAdd('8')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">8</button>
+                        <button onclick="calcComumAdd('9')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">9</button>
+                        <button onclick="calcComumAdd('+')" class="bg-gray-700 text-white p-3 rounded-lg">+</button>
+                        <button onclick="calcComumAdd('4')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">4</button>
+                        <button onclick="calcComumAdd('5')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">5</button>
+                        <button onclick="calcComumAdd('6')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">6</button>
+                        <button onclick="calcComumCalcular()" class="bg-brand-red text-white p-3 rounded-lg row-span-2 flex items-center justify-center text-xl">=</button>
+                        <button onclick="calcComumAdd('1')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">1</button>
+                        <button onclick="calcComumAdd('2')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">2</button>
+                        <button onclick="calcComumAdd('3')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">3</button>
+                        <button onclick="calcComumAdd('0')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg col-span-2">0</button>
+                        <button onclick="calcComumAdd('.')" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">,</button>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
+                    <h3 class="font-bold text-sm text-brand-red border-b pb-2"><i class="fa-solid fa-scale-balanced mr-1"></i> 2. Calculadora Rescisória Trabalhista Completa</h3>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                            <label class="font-semibold">Último Salário Bruto (R$)*</label>
+                            <input type="number" step="0.01" id="calc-salario" placeholder="Ex: 2500.00" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                        </div>
+                        <div>
+                            <label class="font-semibold">Dias Trabalhados no Mês</label>
+                            <input type="number" id="calc-dias-mes" placeholder="Ex: 15" class="w-full p-2 border rounded dark:bg-gray-700">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                            <label class="font-semibold">Meses Proporcionais 13º</label>
+                            <input type="number" id="calc-meses-13" placeholder="Ex: 8" class="w-full p-2 border rounded dark:bg-gray-700">
+                        </div>
+                        <div>
+                            <label class="font-semibold">Meses Proporcionais Férias</label>
+                            <input type="number" id="calc-meses-ferias" placeholder="Ex: 10" class="w-full p-2 border rounded dark:bg-gray-700">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs bg-red-50 dark:bg-gray-700/50 p-2 rounded-lg border">
+                        <div>
+                            <label class="font-semibold text-brand-red dark:text-red-400">Férias Vencidas (Períodos)</label>
+                            <select id="calc-ferias-vencidas" class="w-full p-2 border rounded dark:bg-gray-700 font-semibold">
+                                <option value="0">Nenhuma</option>
+                                <option value="1">1 Período Vencido</option>
+                                <option value="2">2 Períodos Vencidos</option>
+                                <option value="1_dobro">1 Período em Dobro (Art. 137)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="font-semibold text-brand-red dark:text-red-400">Anos Completos na Empresa</label>
+                            <input type="number" id="calc-anos-empresa" placeholder="Ex: 3 (Lei 12.506)" class="w-full p-2 border rounded dark:bg-gray-700">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                            <label class="font-semibold">Aviso Prévio</label>
+                            <select id="calc-aviso" class="w-full p-2 border rounded dark:bg-gray-700">
+                                <option value="nenhum">Nenhum / Cumprido</option>
+                                <option value="indenizado">Indenizado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="font-semibold">Saldo Atual do FGTS (R$)</label>
+                            <input type="number" step="0.01" id="calc-fgts" placeholder="Para cálculo da multa" class="w-full p-2 border rounded dark:bg-gray-700">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                            <label class="font-semibold">Multa Rescisória FGTS</label>
+                            <select id="calc-tipo-multa-fgts" class="w-full p-2 border rounded dark:bg-gray-700">
+                                <option value="40">40% (Sem Justa Causa)</option>
+                                <option value="20">20% (Acordo Art. 484-A)</option>
+                                <option value="0">Sem Multa FGTS</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="font-semibold">Horas Extras / Banco de Horas (R$)</label>
+                            <input type="number" step="0.01" id="calc-horas-extras" placeholder="Valor total" class="w-full p-2 border rounded dark:bg-gray-700">
+                        </div>
+                    </div>
+                    <div class="bg-gray-100 dark:bg-gray-700/50 p-2 rounded-lg border space-y-1 text-xs">
+                        <span class="font-bold text-gray-700 dark:text-gray-200">Deduções / Descontos Opcionais:</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="font-semibold">Adiantamento / Vale (R$)</label>
+                                <input type="number" step="0.01" id="calc-desc-vale" placeholder="0.00" class="w-full p-1.5 border rounded dark:bg-gray-700">
+                            </div>
+                            <div>
+                                <label class="font-semibold">Desconto VT/VA/Outros (R$)</label>
+                                <input type="number" step="0.01" id="calc-desc-outros" placeholder="0.00" class="w-full p-1.5 border rounded dark:bg-gray-700">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1 text-xs pt-1 border-t">
+                        <label class="font-semibold">Multas da CLT:</label>
+                        <label><input type="checkbox" id="calc-multa-467"> Multa Art. 467 CLT (50% sobre incontroversas)</label>
+                        <label><input type="checkbox" id="calc-multa-477"> Multa Art. 477 CLT (1 salário por atraso na quitação)</label>
+                    </div>
+
+                    <button onclick="calcularRescisaoExata()" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-xl font-bold text-sm shadow transition">
+                        CALCULAR VERBAS RESCISÓRIAS EXATAS
+                    </button>
+
+                    <div id="calc-resultado" class="hidden p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-xs space-y-2 font-mono border"></div>
+
+                    <div class="flex flex-col gap-2 pt-2 border-t text-xs font-bold">
+                        <button type="button" onclick="gerarMinutaAcordo()" class="w-full bg-purple-700 text-white py-2.5 rounded-lg shadow"><i class="fa-solid fa-file-contract mr-1"></i> GERAR PROPOSTA / MINUTA DE ACORDO</button>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="compartilharCalcWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg"><i class="fa-brands fa-whatsapp mr-1"></i> Whats</button>
+                            <button type="button" onclick="compartilharCalcEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg"><i class="fa-solid fa-envelope mr-1"></i> E-mail</button>
+                            <button type="button" onclick="exportarExcelMultiAbas()" class="flex-1 bg-gray-700 text-white py-2 rounded-lg"><i class="fa-solid fa-file-excel mr-1"></i> Excel Multi-Abas</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200">Bloco de Notas Rápidas da Pauta</h3>
+                        <button type="button" onclick="iniciarDitadoVoz('bloco-notas')" class="bg-brand-red text-white font-bold px-2.5 py-1 rounded-lg text-xs shadow flex items-center gap-1">
+                            <i class="fa-solid fa-microphone"></i> Ditar Notas
+                        </button>
+                    </div>
+                    <textarea id="bloco-notas" rows="3" placeholder="Anote orientações e ocorrências..." class="w-full p-2 border rounded dark:bg-gray-700 text-xs" oninput="saveNotas()"></textarea>
+                    <button onclick="compartilharNotasWhats()" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold text-xs"><i class="fa-brands fa-whatsapp mr-1"></i> Compartilhar Notas no WhatsApp</button>
+                </div>
+            </section>
+
+            <!-- ABA 7: RELATÓRIOS SEPARADOS E CONSOLIDADOS -->
+            <section id="tab-relatorios" class="tab-content space-y-4 hidden">
+                <div id="relatorio-resumo-card" class="bg-gray-900 text-white p-4 rounded-xl text-xs space-y-2 shadow-lg">
+                    <div class="font-bold text-amber-400 border-b border-gray-700 pb-1 flex justify-between items-center">
+                        <span>PAINEL DE TOTALIZADORES CONSOLIDADOS</span>
+                        <span id="relatorio-total-atos" class="bg-amber-400/20 px-2 py-0.5 rounded text-amber-300">0 Atos</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center pt-1">
+                        <div class="bg-gray-800 p-2.5 rounded-lg border border-gray-700">
+                            <span class="text-[9px] text-gray-400 block font-bold uppercase">PAUTA BRUTA</span>
+                            <span id="relatorio-valor-total" class="font-black text-white text-base">R$ 0,00</span>
+                        </div>
+                        <div class="bg-gray-800 p-2.5 rounded-lg border border-green-800">
+                            <span class="text-[9px] text-green-400 block font-bold uppercase">PAUTA QUITADA</span>
+                            <span id="relatorio-valor-pago" class="font-black text-green-400 text-base">R$ 0,00</span>
+                        </div>
+                        <div class="bg-gray-800 p-2.5 rounded-lg border border-amber-800">
+                            <span class="text-[9px] text-amber-400 block font-bold uppercase">A RECEBER</span>
+                            <span id="relatorio-valor-pendente" class="font-black text-amber-400 text-base">R$ 0,00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 space-y-3">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <div>
+                            <label class="font-bold text-xs block">Pesquisar por Cliente/Processo:</label>
+                            <input type="text" id="filter-cliente" placeholder="Digite o nome..." oninput="renderRelatorios()" class="w-full p-2 border rounded dark:bg-gray-700 text-xs font-semibold focus:ring-2 focus:ring-brand-red outline-none">
+                        </div>
+                        <div>
+                            <label class="font-bold text-xs block">Filtrar Período / Mês:</label>
+                            <select id="filter-periodo-tipo" onchange="togglePeriodoInputs()" class="w-full p-2 border rounded dark:bg-gray-700 text-xs font-semibold">
+                                <option value="todos">Todos os Períodos</option>
+                                <option value="mes">Mês Específico</option>
+                                <option value="custom">Intervalo Personalizado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="font-bold text-xs block">Filtrar por Status:</label>
+                            <select id="filter-status" onchange="renderRelatorios()" class="w-full p-2 border rounded dark:bg-gray-700 text-xs font-semibold">
+                                <option value="todos">Todos os Status (Ver Tudo)</option>
+                                <option value="pago">Apenas PAGOS</option>
+                                <option value="pendente">Apenas PENDENTES / A RECEBER</option>
+                                <option value="troca">Apenas TROCAS</option>
+                                <option value="vencido">Apenas VENCIDOS</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="periodo-inputs-container" class="hidden grid grid-cols-2 gap-2 pt-1 border-t">
+                        <div id="box-filter-mes">
+                            <label class="text-[11px] font-bold block">Selecione o Mês/Ano:</label>
+                            <input type="month" id="filter-mes-select" onchange="renderRelatorios()" class="w-full p-1.5 border rounded text-xs font-bold dark:bg-gray-700">
+                        </div>
+                        <div id="box-filter-range" class="hidden col-span-2 grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] font-bold block">De:</label>
+                                <input type="date" id="filter-data-inicio" onchange="renderRelatorios()" class="w-full p-1.5 border rounded text-xs dark:bg-gray-700">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold block">Até:</label>
+                                <input type="date" id="filter-data-fim" onchange="renderRelatorios()" class="w-full p-1.5 border rounded text-xs dark:bg-gray-700">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 pt-2 border-t text-xs font-bold">
+                        <button onclick="compartilharRelatorioWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg shadow"><i class="fa-brands fa-whatsapp mr-1"></i> Whats (Separado por Abas)</button>
+                        <button onclick="compartilharRelatorioEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-envelope mr-1"></i> E-mail (Completo)</button>
+                        <!-- BOTÃO EXPORTAR PLANILHA EXCEL MULTI-ABAS REAL -->
+                        <button onclick="exportarExcelMultiAbas()" class="flex-1 bg-green-700 hover:bg-green-800 text-white py-2 rounded-lg shadow font-extrabold flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-file-excel text-base"></i> Planilha Excel (.XLSX)
+                        </button>
+                    </div>
+                </div>
+
+                <div id="relatorios-lista" class="space-y-2"></div>
+            </section>
+
+            <!-- ABA 8: CENTRAL DE MANUAIS COM INSTRUÇÕES DA PLANILHA MULTI-ABAS -->
+            <section id="tab-manuais" class="tab-content space-y-4 hidden">
+                <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 dark:border-gray-600 text-xs flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-brand-red dark:text-red-400 mb-0.5"><i class="fa-solid fa-book-open mr-1"></i> Central de Manuais do DILIGENCE.BR</h3>
+                        <p>Navegue nos guias e aprenda a usar a nova Planilha Excel Multi-Abas.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border dark:border-gray-700 space-y-2 shadow-sm">
+                    <label class="font-extrabold text-xs text-brand-red flex items-center gap-1">
+                        <i class="fa-solid fa-magnifying-glass"></i> PESQUISAR NO MANUAL DE INSTRUÇÕES:
+                    </label>
+                    <div class="relative">
+                        <input type="text" id="input-busca-manual" oninput="filtrarManualPorPalavraChave()" placeholder="Digite uma palavra (ex: planilha, abas, excel, comarca, checklist, backup)..." class="w-full p-2.5 pr-8 border rounded-xl text-xs dark:bg-gray-700 dark:border-gray-600 font-semibold focus:ring-2 focus:ring-brand-red outline-none">
+                        <button onclick="limparBuscaManual()" class="absolute right-2.5 top-2.5 text-gray-400 hover:text-gray-600 font-bold text-xs">&times;</button>
+                    </div>
+                    <div class="flex gap-2 text-xs font-bold pt-1">
+                        <button onclick="compartilharManualWhats()" class="flex-1 bg-green-600 text-white py-2 rounded-lg shadow"><i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp</button>
+                        <button onclick="compartilharManualEmail()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg shadow"><i class="fa-solid fa-envelope mr-1"></i> E-mail</button>
+                    </div>
+                </div>
+
+                <div id="container-conteudo-manuais" class="space-y-4">
+                    
+                    <!-- GUIA DA NOVA PLANILHA MULTI-ABAS (NOVIDADE) -->
+                    <div class="manual-block bg-white dark:bg-gray-800 p-4 rounded-xl border-2 border-green-600 space-y-3 shadow-sm text-xs">
+                        <h2 class="font-black text-sm text-green-700 dark:text-green-400 border-b pb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-file-excel text-base"></i> 📊 NOVO: PLANILHA EXCEL MULTI-ABAS (.XLSX)
+                        </h2>
+                        
+                        <div class="space-y-2 text-gray-700 dark:text-gray-300">
+                            <p>Ao clicar em <strong>"Planilha Excel (.XLSX)"</strong>, o aplicativo gera automaticamente um único arquivo do Excel contendo <strong>5 abas organizadas</strong>:</p>
+                            
+                            <div class="manual-item p-2 bg-green-50 dark:bg-gray-700/40 rounded-lg border border-green-200">
+                                <strong class="text-green-800 dark:text-green-300 block text-[12px]">1. Aba "Consolidado Geral" (Fluxo Unificado):</strong>
+                                Unifica todas as entradas da Pauta (Audiências com indicação de PAGO ou PENDENTE), receitas avulsas do Caixa e todas as despesas/gastos da rua.
+                            </div>
+                            <div class="manual-item p-2 bg-green-50 dark:bg-gray-700/40 rounded-lg border border-green-200">
+                                <strong class="text-green-800 dark:text-green-300 block text-[12px]">2. Aba "Pauta de Diligências":</strong>
+                                Relação completa de todos os atos cadastrados (Processo, Cliente, Data, Vencimento, Cidade, Status e Valor).
+                            </div>
+                            <div class="manual-item p-2 bg-green-50 dark:bg-gray-700/40 rounded-lg border border-green-200">
+                                <strong class="text-green-800 dark:text-green-300 block text-[12px]">3. Aba "Financeiro":</strong>
+                                Extrato de pagamentos recebidos e pendências a cobrar.
+                            </div>
+                            <div class="manual-item p-2 bg-green-50 dark:bg-gray-700/40 rounded-lg border border-green-200">
+                                <strong class="text-green-800 dark:text-green-300 block text-[12px]">4. Aba "Livro Caixa":</strong>
+                                Detalhamento de todas as entradas e despesas diárias do escritório/rua.
+                            </div>
+                            <div class="manual-item p-2 bg-green-50 dark:bg-gray-700/40 rounded-lg border border-green-200">
+                                <strong class="text-green-800 dark:text-green-300 block text-[12px]">5. Aba "Agenda de Contatos":</strong>
+                                Cadastro completo dos contatos, OABs, CPFs e WhatsApp.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GUIA POR ABAS DO SISTEMA -->
+                    <div class="manual-block bg-white dark:bg-gray-800 p-4 rounded-xl border dark:border-gray-700 space-y-3 shadow-sm text-xs">
+                        <h2 class="font-bold text-sm text-brand-red border-b pb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-layer-group"></i> 2. GUIA DETALHADO POR ABAS DO APLICATIVO
+                        </h2>
+                        
+                        <div class="space-y-2 text-gray-700 dark:text-gray-300">
+                            <div class="manual-item p-2 bg-gray-50 dark:bg-gray-700/40 rounded-lg border">
+                                <strong class="text-brand-red dark:text-red-400 block text-[13px]"><i class="fa-solid fa-user-gear mr-1"></i> ABA 1: Perfil do Correspondente</strong>
+                                Cadastre Nome Completo, Documentos (OAB/CPF/RG), Cidade, Celular/WhatsApp com DDD, E-mail e Chave PIX oficial.
+                            </div>
+
+                            <div class="manual-item p-2 bg-gray-50 dark:bg-gray-700/40 rounded-lg border">
+                                <strong class="text-brand-red dark:text-red-400 block text-[13px]"><i class="fa-solid fa-calendar-check mr-1"></i> ABA 2: Pauta, Comarcas, Trava [D] & Checklist 📋</strong>
+                                Registre novos atos. O cadastro e a exclusão refletem instantaneamente no Financeiro, Caixa e Relatórios. O formulário do Checklist abre normalmente quantas vezes precisar para atualizar observações e anexo de ATA.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
         </main>
+
+        <!-- RODAPÉ FIXO MANTIDO COM CARINHO -->
+        <footer class="bg-gray-900 text-gray-300 p-4 text-center text-xs space-y-2 border-t dark:border-gray-800">
+            <p class="font-semibold text-gray-100">Elaborado com carinho para apoiar a rotina diária dos correspondentes jurídicos.</p>
+            <p class="text-[11px] text-gray-400">💬 Feedback: <a href="mailto:cj.patriciaamr@gmail.com" class="text-red-400 underline font-bold">cj.patriciaamr@gmail.com</a></p>
+            <p class="text-[10px] text-gray-500 pt-1">Idealizado por <strong>Patricia Monte</strong>.</p>
+        </footer>
+
+        <!-- NAVEGAÇÃO INFERIOR -->
+        <nav class="bg-white dark:bg-gray-900 border-t dark:border-gray-800 sticky bottom-0 z-30 flex justify-around p-2 text-center text-[8px] font-bold">
+            <button onclick="switchTab('tab-perfil')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-perfil">
+                <i class="fa-solid fa-user-gear text-base"></i><span>Perfil</span>
+            </button>
+            <button onclick="switchTab('tab-atos')" class="tab-btn p-1 text-brand-red flex flex-col items-center" id="btn-tab-atos">
+                <i class="fa-solid fa-calendar-check text-base"></i><span>Pauta</span>
+            </button>
+            <button onclick="switchTab('tab-contatos')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-contatos">
+                <i class="fa-solid fa-address-book text-base"></i><span>Agenda</span>
+            </button>
+            <button onclick="switchTab('tab-financeiro')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-financeiro">
+                <i class="fa-solid fa-wallet text-base"></i><span>Financeiro</span>
+            </button>
+            <button onclick="switchTab('tab-caixa')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-caixa">
+                <i class="fa-solid fa-cash-register text-base"></i><span>Caixa</span>
+            </button>
+            <button onclick="switchTab('tab-trabalhista')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-trabalhista">
+                <i class="fa-solid fa-calculator text-base"></i><span>Calc.</span>
+            </button>
+            <button onclick="switchTab('tab-relatorios')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-relatorios">
+                <i class="fa-solid fa-file-invoice text-base"></i><span>Relatórios</span>
+            </button>
+            <button onclick="switchTab('tab-manuais')" class="tab-btn p-1 text-gray-500 flex flex-col items-center" id="btn-tab-manuais">
+                <i class="fa-solid fa-book-open text-base"></i><span>Manuais</span>
+            </button>
+        </nav>
     </div>
 
-    <!-- MODAL FORMULÁRIO CHECKLIST PÓS-AUDIÊNCIA -->
+    <!-- MODAIS E COMPONENTES -->
     <div id="modal-checklist" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-lg w-full space-y-4 shadow-2xl border-2 border-brand-red my-8">
             <div class="flex justify-between items-center border-b pb-2">
@@ -204,71 +931,120 @@
                 
                 <div class="grid grid-cols-2 gap-2 bg-gray-50 dark:bg-gray-700/50 p-2.5 rounded-xl border">
                     <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">Processo:*</label>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">1. E-mail do Correspondente:*</label>
+                        <input type="email" id="chk-email" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">2. Nome e OAB/RG/CPF:*</label>
+                        <input type="text" id="chk-nome-doc" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">3. Celular com DDD:*</label>
+                        <input type="text" id="chk-celular" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">4. Data/Hora do Ato:*</label>
+                        <input type="text" id="chk-data-ato" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">5. Nº do Processo:*</label>
                         <input type="text" id="chk-processo" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-bold">
                     </div>
                     <div>
-                        <label class="font-bold text-gray-600 dark:text-gray-300 block">Cidade:*</label>
-                        <input type="text" id="chk-cidade" list="lista-cidades-comarcas" class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">6. Cidade:*</label>
+                        <input type="text" id="chk-cidade" list="lista-cidades-comarcas" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
                     </div>
                 </div>
 
                 <div>
+                    <label class="font-extrabold text-brand-red dark:text-red-400 block mb-1">7. Serviço Prestado (Marque todas que se aplicam):*</label>
+                    <div class="grid grid-cols-2 gap-1.5 bg-gray-50 dark:bg-gray-700/30 p-2 rounded-lg border text-[11px]">
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Acompanhamento em banco"> Acompanhamento em banco</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Advogado"> Advogado</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Advogado + Preposto"> Advogado + Preposto</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Preposto"> Preposto</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Cópia"> Cópia</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Protocolo"> Protocolo</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Delegacia"> Delegacia</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Perícia"> Perícia</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Procon"> Procon</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" class="chk-servico" value="Outros"> Outros</label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">8. Dados Bancários / Chave PIX:*</label>
+                        <input type="text" id="chk-pix" required class="w-full p-1.5 border rounded dark:bg-gray-700 font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-600 dark:text-gray-300 block">12. Valor Acordado (R$):*</label>
+                        <input type="text" id="chk-valor" readonly class="w-full p-1.5 border rounded bg-gray-200 dark:bg-gray-600 font-extrabold text-brand-red">
+                    </div>
+                </div>
+
+                <div id="box-alerta-obs" class="hidden p-2 bg-red-100 border border-red-400 text-red-700 font-bold rounded text-[11px]">
+                    ⚠️ ATENÇÃO: Por favor, descreva como foi a diligência/audiência no campo de observações abaixo antes de enviar!
+                </div>
+
+                <div>
                     <label class="font-extrabold text-brand-red dark:text-red-400 flex justify-between items-center">
-                        <span>Observações / Como foi a diligência:*</span>
+                        <span>9. Observações / Como foi a diligência:*</span>
+                        <button type="button" onclick="iniciarDitadoVoz('chk-obs')" class="text-xs text-brand-red font-bold underline"><i class="fa-solid fa-microphone"></i> Ditar</button>
                     </label>
-                    <textarea id="chk-obs" rows="2" placeholder="Descreva o que ocorreu..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-semibold focus:ring-2 focus:ring-brand-red outline-none"></textarea>
+                    <textarea id="chk-obs" rows="2" placeholder="Descreva o que ocorreu (ex: houve acordo, adiamento, emenda, renúncia, etc)..." class="w-full p-2 border rounded-lg dark:bg-gray-700 text-xs font-semibold focus:ring-2 focus:ring-brand-red outline-none"></textarea>
                 </div>
 
                 <div class="p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-xl border space-y-1">
                     <label class="font-bold text-gray-700 dark:text-gray-200 block text-[11px]">
-                        Anexar ATA / Tirar Nova Foto (Opcional):
+                        10. Anexar ATA ou Print da Audiência:
                     </label>
                     <input type="file" id="chk-ata-file" accept="image/*" capture="environment" onchange="previewImagemAtaChecklist(event)" class="w-full p-1 border rounded text-[11px]">
                     
                     <div id="chk-preview-ata-container" class="pt-1 text-center hidden">
-                        <span id="chk-status-ata-texto" class="text-[10px] font-bold text-green-600 block">✓ ATA/Documento Importado da Pauta:</span>
-                        <img id="chk-img-preview-ata" src="" class="max-h-32 mx-auto rounded border shadow-sm object-contain mt-1">
+                        <span class="text-[10px] font-bold text-green-600 block">✓ ATA Anexada ao Formulário:</span>
+                        <img id="chk-img-preview-ata" src="" class="max-h-28 mx-auto rounded border shadow-sm object-contain">
                     </div>
                 </div>
 
                 <div class="pt-2 border-t flex gap-2 font-bold">
                     <button type="button" onclick="enviarChecklistWhatsApp()" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl shadow text-xs flex items-center justify-center gap-1">
-                        <i class="fa-brands fa-whatsapp"></i> Enviar WhatsApp
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp ADM
+                    </button>
+                    <button type="button" onclick="enviarChecklistEmail()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl shadow text-xs flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-envelope"></i> E-mail Cortez
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL DE BACKUP COMPLETO (COM TODAS AS 5 OPÇÕES) -->
+    <!-- MODAL DE BACKUP E EXPORTAÇÃO E ZERAR TUDO -->
     <div id="modal-backup" class="fixed inset-0 z-50 bg-black/60 modal-blur hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border dark:border-gray-700">
             <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-extrabold text-sm text-brand-red flex items-center gap-1">
-                    <i class="fa-solid fa-database"></i> Central de Backup & Autonomia
-                </h3>
+                <h3 class="font-extrabold text-sm text-brand-red"><i class="fa-solid fa-database mr-1"></i> Central de Backup & Autonomia</h3>
                 <button onclick="fecharModalBackup()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">&times;</button>
             </div>
             
-            <p class="text-xs text-gray-600 dark:text-gray-300">Escolha a opção de backup desejada:</p>
+            <p class="text-xs text-gray-600 dark:text-gray-300">Escolha a ação desejada abaixo:</p>
 
             <div class="space-y-2">
-                <button onclick="fazerBackupJSON()" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-solid fa-file-code"></i> 1. Salvar Backup no Celular (.JSON)
+                <button onclick="fazerBackupCelularJSON()" class="w-full bg-brand-red hover:bg-brand-darkred text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
+                    <i class="fa-solid fa-file-code"></i> 1. Salvar Backup no Celular/Drive (.JSON)
                 </button>
                 <button onclick="enviarBackupEmailPessoal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-solid fa-envelope"></i> 2. Enviar Cópia p/ Meu E-mail
+                    <i class="fa-solid fa-envelope"></i> 2. Enviar Cópia p/ Meu Próprio E-mail
                 </button>
                 <button onclick="exportarExcelMultiAbas()" class="w-full bg-green-700 hover:bg-green-800 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
                     <i class="fa-solid fa-file-excel text-lg"></i> 3. Exportar Excel Multi-Abas (.XLSX)
                 </button>
-                <button onclick="acionarRestauracao()" class="w-full bg-gray-800 hover:bg-gray-900 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
-                    <i class="fa-solid fa-upload"></i> 4. RESTAURAR BACKUP (.JSON)
+                <button onclick="acionarRestauracao()" class="w-full bg-green-700 hover:bg-green-800 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow border border-green-500">
+                    <i class="fa-solid fa-upload"></i> 4. RESTAURAR BACKUP DE CELULAR NOVO
                 </button>
                 
-                <button onclick="confirmarZerarTudoGeral()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-extrabold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1 border border-red-300 mt-2">
-                    <i class="fa-solid fa-triangle-exclamation"></i> ZERAR/DELETAR TODOS OS DADOS (RESET)
+                <button onclick="confirmarZerarTudoGeral()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-extrabold py-2 rounded-xl text-[11px] flex items-center justify-center gap-1 border border-red-300 pt-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i> ZERAR/DELETAR TODOS OS DADOS (APP NOVINHO)
                 </button>
             </div>
         </div>
@@ -279,22 +1055,45 @@
         const AUTH_USER = "diligence.br*";
         const AUTH_PASS = "320427";
         const WHATS_ADM = "5511978386574";
-        const EMAIL_PADRAO = "ec.cortez@uol.com.br";
+        const EMAIL_CORTEZ = "ec.cortez@uol.com.br";
 
-        const COMARCAS_PADRAO = [
-            "São Paulo - SP", "Campinas - SP", "Guarulhos - SP", "São Bernardo do Campo - SP", 
-            "Santo André - SP", "Osasco - SP", "Sorocaba - SP", "Ribeirão Preto - SP", 
-            "Santos - SP", "São José dos Campos - SP", "Barueri - SP", "Jundiaí - SP"
+        const MENSAGENS_INSPIRADORAS = [
+            `"Tudo posso naquele que me fortalece." — Filipenses 4:13`,
+            `"O Senhor é o meu pastor; nada me faltará." — Salmos 23:1`,
+            `"Eu sou o caminho, a verdade e a vida." — João 14:6`,
+            `"Seja forte e corajoso! Não se apavore nem desanime, pois o Senhor estará com você." — Josué 1:9`,
+            `"Ora, a fé é a certeza daquelas coisas que esperamos e a prova das coisas que não vemos." — Hebreus 11:1`
         ];
 
-        let db = { perfil: { email: EMAIL_PADRAO }, atos: [], caixa: [], contatos: [], comarcasSalvas: COMARCAS_PADRAO };
-        let tempAtaBase64Pauta = null;
-        let imagemAtaChecklistTemp = null;
+        const COMARCAS_PADRAO = [
+            "Embu das Artes - SP", "Embu-Guaçu - SP", "São Paulo - SP", "Carapicuíba - SP",
+            "Osasco - SP", "Barueri - SP", "Cotia - SP", "Itapecerica da Serra - SP"
+        ];
+
+        let db = {
+            perfil: { nome: '', doc: '', cidade: '', pix: '', email: '', celular: '' },
+            atos: [],
+            contatos: [],
+            caixa: [],
+            comarcasSalvas: [],
+            reciboSeq: 1001,
+            notas: '',
+            ultimoBackup: null
+        };
+
+        function sortearMensagemInspiradora() {
+            const indice = Math.floor(Math.random() * MENSAGENS_INSPIRADORAS.length);
+            const elMsg = document.getElementById('txt-mensagem-rotativa');
+            if (elMsg) elMsg.innerText = MENSAGENS_INSPIRADORAS[indice];
+        }
 
         function updateClock() {
             const now = new Date();
-            document.getElementById('clock-time').innerText = now.toLocaleTimeString('pt-BR');
-            document.getElementById('clock-date').innerText = now.toLocaleDateString('pt-BR') + " (UTC-3)";
+            const options = { timeZone: 'America/Sao_Paulo', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const optionsDate = { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', year: 'numeric' };
+            
+            document.getElementById('clock-time').innerText = now.toLocaleTimeString('pt-BR', options);
+            document.getElementById('clock-date').innerText = now.toLocaleDateString('pt-BR', optionsDate) + " (UTC-3)";
         }
         setInterval(updateClock, 1000);
         updateClock();
@@ -304,66 +1103,165 @@
             if (document.getElementById('login-user').value === AUTH_USER && document.getElementById('login-pass').value === AUTH_PASS) {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app-content').classList.remove('hidden');
+                sortearMensagemInspiradora();
                 loadData();
             } else {
-                alert("Usuário ou senha incorretos!");
+                document.getElementById('login-error').classList.remove('hidden');
             }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.replace('text-brand-red', 'text-gray-500'));
+            
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById('btn-' + tabId).classList.replace('text-gray-500', 'text-brand-red');
+
+            if (tabId === 'tab-relatorios') renderRelatorios();
+            if (tabId === 'tab-financeiro') renderFinanceiro();
+            if (tabId === 'tab-caixa') renderCaixa();
+            if (tabId === 'tab-contatos') renderContatos();
+            if (tabId === 'tab-atos') renderAtos();
         }
 
         function saveData() { 
             localStorage.setItem('diligence_db', JSON.stringify(db)); 
-            atualizarDatalistComarcas();
+            localStorage.setItem('diligence_db_mirror', JSON.stringify(db));
         }
 
         function loadData() {
             const saved = localStorage.getItem('diligence_db');
             if (saved) db = JSON.parse(saved);
             
-            if(!db.comarcasSalvas || db.comarcasSalvas.length === 0) db.comarcasSalvas = COMARCAS_PADRAO;
-            if(!db.atos) db.atos = [];
-            if(!db.caixa) db.caixa = [];
             if(!db.contatos) db.contatos = [];
-            if(!db.perfil) db.perfil = { email: EMAIL_PADRAO };
+            if(!db.caixa) db.caixa = [];
+            if(!db.comarcasSalvas) db.comarcasSalvas = [];
+            if(!db.perfil.celular) db.perfil.celular = '';
 
-            atualizarDatalistComarcas();
+            document.getElementById('perfil-nome').value = db.perfil.nome || '';
+            document.getElementById('perfil-doc').value = db.perfil.doc || '';
+            document.getElementById('perfil-cidade').value = db.perfil.cidade || '';
+            document.getElementById('perfil-pix').value = db.perfil.pix || '';
+            document.getElementById('perfil-email').value = db.perfil.email || '';
+            document.getElementById('perfil-celular').value = db.perfil.celular || '';
+            document.getElementById('bloco-notas').value = db.notas || '';
+            document.getElementById('caixa-data').value = new Date().toISOString().split('T')[0];
+
             renderAtos();
+            renderContatos();
+            renderCaixa();
+            renderFinanceiro();
+            renderRelatorios();
         }
 
-        function atualizarDatalistComarcas() {
-            const datalist = document.getElementById('lista-cidades-comarcas');
-            if (!datalist) return;
-            datalist.innerHTML = '';
-            db.comarcasSalvas.forEach(cidade => {
-                const opt = document.createElement('option');
-                opt.value = cidade;
-                datalist.appendChild(opt);
+        /* --- EXPORTAÇÃO INTELIGENTE PARA PLANILHA EXCEL MULTI-ABAS (.XLSX) --- */
+        function exportarExcelMultiAbas() {
+            if (typeof XLSX === 'undefined') {
+                alert("Carregando motor do Excel... Tente novamente em 2 segundos.");
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+
+            // 1. ABA CONSOLIDADO GERAL (FLUXO UNIFICADO: PAUTA + CAIXA)
+            const consolidadoData = [];
+            
+            // Inserir Atos da Pauta no Consolidado
+            db.atos.forEach(a => {
+                consolidadoData.push({
+                    "Data": a.data ? new Date(a.data).toLocaleDateString('pt-BR') : '',
+                    "Origem / Módulo": "PAUTA / HONORÁRIOS",
+                    "Descrição / Detalhe": `Proc. ${a.processo} (${a.cliente}) - ${a.cidade || 'N/I'}`,
+                    "Entradas (R$)": a.valor ? a.valor : 0,
+                    "Saídas (R$)": 0,
+                    "Status / Situação": a.status === 'pago' ? '🟢 PAGO' : '🟡 PENDENTE',
+                    "Data Pagamento": a.dataPagamento || 'Aguardando'
+                });
             });
-        }
 
-        function adicionarComarcaAuto(cidade) {
-            if (cidade && !db.comarcasSalvas.includes(cidade)) {
-                db.comarcasSalvas.push(cidade);
-                saveData();
+            // Inserir Lançamentos do Caixa no Consolidado
+            db.caixa.forEach(c => {
+                const ehEntrada = c.tipo === 'entrada';
+                consolidadoData.push({
+                    "Data": c.data ? new Date(c.data + 'T00:00:00').toLocaleDateString('pt-BR') : '',
+                    "Origem / Módulo": "LIVRO CAIXA",
+                    "Descrição / Detalhe": c.descricao || '',
+                    "Entradas (R$)": ehEntrada ? c.valor : 0,
+                    "Saídas (R$)": !ehEntrada ? c.valor : 0,
+                    "Status / Situação": ehEntrada ? '🟢 ENTRADA CAIXA' : '🔴 DESPESA CAIXA',
+                    "Data Pagamento": c.data ? new Date(c.data + 'T00:00:00').toLocaleDateString('pt-BR') : ''
+                });
+            });
+
+            if (consolidadoData.length === 0) {
+                consolidadoData.push({ "Aviso": "Nenhum lançamento registrado no sistema." });
             }
+
+            const wsConsolidado = XLSX.utils.json_to_sheet(consolidadoData);
+            XLSX.utils.book_append_sheet(wb, wsConsolidado, "Consolidado Geral");
+
+            // 2. ABA PAUTA DE DILIGÊNCIAS
+            const pautaData = db.atos.map(a => ({
+                "Processo": a.processo,
+                "Cliente": a.cliente,
+                "Data do Ato": a.data ? new Date(a.data).toLocaleString('pt-BR') : '',
+                "Vencimento": a.vencimento ? new Date(a.vencimento + 'T00:00:00').toLocaleDateString('pt-BR') : '',
+                "Cidade / Comarca": a.cidade || '',
+                "Modalidade": a.modalidade || '',
+                "Valor (R$)": a.valor,
+                "Status": a.status.toUpperCase(),
+                "Pago Em": a.dataPagamento || 'Pendente',
+                "Checklist Enviado": a.checklistEnviado ? 'SIM' : 'NÃO'
+            }));
+            const wsPauta = XLSX.utils.json_to_sheet(pautaData.length ? pautaData : [{"Aviso": "Sem dados"}]);
+            XLSX.utils.book_append_sheet(wb, wsPauta, "Pauta de Diligências");
+
+            // 3. ABA FINANCEIRO
+            const finData = db.atos.map(a => ({
+                "Processo": a.processo,
+                "Cliente": a.cliente,
+                "Valor Acordado (R$)": a.valor,
+                "Status Pagamento": a.status.toUpperCase(),
+                "Data da Baixa": a.dataPagamento || 'Não Quitado'
+            }));
+            const wsFinanceiro = XLSX.utils.json_to_sheet(finData.length ? finData : [{"Aviso": "Sem dados"}]);
+            XLSX.utils.book_append_sheet(wb, wsFinanceiro, "Financeiro & Baixas");
+
+            // 4. ABA LIVRO CAIXA
+            const caixaData = db.caixa.map(c => ({
+                "Data": c.data ? new Date(c.data + 'T00:00:00').toLocaleDateString('pt-BR') : '',
+                "Tipo": c.tipo === 'entrada' ? 'ENTRADA (+)' : 'SAÍDA / DESPESA (-)',
+                "Categoria": c.categoria || '',
+                "Descrição Detalhada": c.descricao || '',
+                "Valor (R$)": c.valor
+            }));
+            const wsCaixa = XLSX.utils.json_to_sheet(caixaData.length ? caixaData : [{"Aviso": "Sem dados"}]);
+            XLSX.utils.book_append_sheet(wb, wsCaixa, "Livro Caixa");
+
+            // 5. ABA AGENDA DE CONTATOS
+            const contatosData = db.contatos.map(c => ({
+                "Nome Completo": c.nome,
+                "OAB": c.oab || '',
+                "Celular": c.celular,
+                "CPF": c.cpf || '',
+                "RG": c.rg || '',
+                "E-mail": c.email || '',
+                "Observações": c.obs || ''
+            }));
+            const wsContatos = XLSX.utils.json_to_sheet(contatosData.length ? contatosData : [{"Aviso": "Sem dados"}]);
+            XLSX.utils.book_append_sheet(wb, wsContatos, "Agenda de Contatos");
+
+            // GERAR E FAZER DOWNLOAD DO ARQUIVO EXCEL MULTI-ABAS REAL (.XLSX)
+            const nomeArquivo = `Relatorio_Completo_DILIGENCE_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, nomeArquivo);
+            alert("📊 Planilha Excel Multi-Abas gerada com sucesso!");
         }
 
-        function previewImagemAta(evt) {
-            const file = evt.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    tempAtaBase64Pauta = e.target.result;
-                    document.getElementById('img-preview-ata').src = tempAtaBase64Pauta;
-                    document.getElementById('preview-ata-container').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
+        /* --- DEMAIS OPERAÇÕES DO SISTEMA --- */
         function saveAto(e) {
             e.preventDefault();
-            const cidadeDigitada = document.getElementById('ato-cidade').value.trim();
-            adicionarComarcaAuto(cidadeDigitada);
+            const statusSel = document.getElementById('ato-status-select').value;
+            if(!statusSel) return alert('Selecione o status!');
 
             const novoAto = {
                 id: Date.now(),
@@ -371,22 +1269,34 @@
                 cliente: document.getElementById('ato-cliente').value.trim(),
                 data: document.getElementById('ato-data').value,
                 vencimento: document.getElementById('ato-vencimento').value,
-                cidade: cidadeDigitada,
+                cidade: document.getElementById('ato-cidade').value.trim(),
+                modalidade: document.getElementById('ato-modalidade').value,
                 valor: parseFloat(document.getElementById('ato-valor').value),
-                status: document.getElementById('ato-status-select').value,
-                ataImg: tempAtaBase64Pauta || null,
-                checklistObs: ''
+                status: statusSel,
+                dataPagamento: statusSel === 'pago' ? new Date().toLocaleString('pt-BR') : null
             };
 
             db.atos.push(novoAto);
+
+            if (statusSel === 'pago') {
+                db.caixa.push({
+                    id: Date.now() + 1,
+                    atoRefId: novoAto.id,
+                    data: novoAto.data.substring(0, 10),
+                    tipo: 'entrada',
+                    categoria: 'Honorários de Pauta',
+                    descricao: `Honorários: Proc. ${novoAto.processo} - ${novoAto.cliente}`,
+                    valor: novoAto.valor
+                });
+            }
+
             saveData();
-            
             document.getElementById('form-ato').reset();
-            document.getElementById('preview-ata-container').classList.add('hidden');
-            tempAtaBase64Pauta = null;
-            
             renderAtos();
-            alert("Ato e ATA cadastrados com sucesso na Pauta!");
+            renderFinanceiro();
+            renderCaixa();
+            renderRelatorios();
+            alert('Ato cadastrado e sincronizado!');
         }
 
         function renderAtos() {
@@ -405,160 +1315,54 @@
                         </div>
                         <span class="font-bold text-brand-red text-sm">R$ ${ato.valor.toFixed(2)}</span>
                     </div>
-                    <div class="flex justify-between items-center pt-2 border-t">
-                        <button onclick="abrirModalChecklist(${ato.id})" class="bg-brand-red text-white px-2.5 py-1 rounded-lg font-bold">
-                            📋 Checklist Pós-Audiência
-                        </button>
-                    </div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function abrirModalChecklist(atoId) {
-            const ato = db.atos.find(a => a.id === atoId);
-            if (!ato) return;
-
-            document.getElementById('chk-ato-id').value = ato.id;
-            document.getElementById('chk-processo').value = ato.processo;
-            document.getElementById('chk-cidade').value = ato.cidade || '';
-            document.getElementById('chk-obs').value = ato.checklistObs || '';
-
-            const previewContainer = document.getElementById('chk-preview-ata-container');
-            const txtStatus = document.getElementById('chk-status-ata-texto');
-            
-            imagemAtaChecklistTemp = ato.ataImg || null;
-
-            if (imagemAtaChecklistTemp) {
-                document.getElementById('chk-img-preview-ata').src = imagemAtaChecklistTemp;
-                txtStatus.innerText = "✓ ATA/Documento Importado da Pauta:";
-                previewContainer.classList.remove('hidden');
-            } else {
-                previewContainer.classList.add('hidden');
-            }
-
-            document.getElementById('modal-checklist').classList.remove('hidden');
+        function renderFinanceiro() {
+            let entradas = 0, pendentes = 0;
+            db.atos.forEach(ato => {
+                if (ato.status === 'pago') entradas += ato.valor;
+                else pendentes += ato.valor;
+            });
+            document.getElementById('fin-entradas').innerText = `R$ ${entradas.toFixed(2)}`;
+            document.getElementById('fin-pendentes').innerText = `R$ ${pendentes.toFixed(2)}`;
         }
 
-        function fecharModalChecklist() {
-            document.getElementById('modal-checklist').classList.add('hidden');
+        function renderCaixa() {
+            let totalEntradas = 0, totalSaidas = 0;
+            db.caixa.forEach((c) => {
+                if (c.tipo === 'entrada') totalEntradas += c.valor;
+                else totalSaidas += c.valor;
+            });
+            document.getElementById('caixa-total-entradas').innerText = `R$ ${totalEntradas.toFixed(2)}`;
+            document.getElementById('caixa-total-saidas').innerText = `R$ ${totalSaidas.toFixed(2)}`;
+            document.getElementById('caixa-saldo-liquido').innerText = `R$ ${(totalEntradas - totalSaidas).toFixed(2)}`;
         }
 
-        function previewImagemAtaChecklist(evt) {
-            const file = evt.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagemAtaChecklistTemp = e.target.result;
-                    document.getElementById('chk-img-preview-ata').src = imagemAtaChecklistTemp;
-                    document.getElementById('chk-status-ata-texto').innerText = "✓ Nova ATA Anexada ao Checklist:";
-                    document.getElementById('chk-preview-ata-container').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
+        function renderRelatorios() {
+            let totalBruto = 0;
+            db.atos.forEach(a => totalBruto += a.valor);
+            document.getElementById('relatorio-valor-total').innerText = `R$ ${totalBruto.toFixed(2)}`;
         }
 
-        function enviarChecklistWhatsApp() {
-            const atoId = parseInt(document.getElementById('chk-ato-id').value);
-            const obs = document.getElementById('chk-obs').value.trim();
-            const ato = db.atos.find(a => a.id === atoId);
-
-            if (ato) {
-                ato.checklistObs = obs;
-                ato.ataImg = imagemAtaChecklistTemp;
-                saveData();
-            }
-
-            const texto = `DILIGENCE.BR - PÓS-AUDIÊNCIA\n\nProcesso: ${document.getElementById('chk-processo').value}\nObservações: ${obs}\nAnexo ATA: ${imagemAtaChecklistTemp ? '✓ Anexado' : '❌ Sem Foto'}`;
-            fecharModalChecklist();
-            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(texto)}`);
+        function savePerfil(e) {
+            e.preventDefault();
+            db.perfil = {
+                nome: document.getElementById('perfil-nome').value,
+                doc: document.getElementById('perfil-doc').value,
+                cidade: document.getElementById('perfil-cidade').value,
+                pix: document.getElementById('perfil-pix').value,
+                email: document.getElementById('perfil-email').value,
+                celular: document.getElementById('perfil-celular').value
+            };
+            saveData();
+            alert('Perfil salvo com sucesso!');
         }
 
-        /* --- CONTROLE E MODAL DE BACKUPS --- */
-        function abrirModalBackup() { document.getElementById('modal-backup').classList.remove('hidden'); }
         function fecharModalBackup() { document.getElementById('modal-backup').classList.add('hidden'); }
-
-        function fazerBackupJSON() {
-            const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `Backup_DILIGENCE_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            fecharModalBackup();
-        }
-
-        function enviarBackupEmailPessoal() {
-            const emailDestino = db.perfil.email || EMAIL_PADRAO;
-            const assunto = encodeURIComponent("CÓPIA DE BACKUP - DILIGENCE.BR");
-            const corpo = encodeURIComponent(JSON.stringify(db));
-            fecharModalBackup();
-            window.location.href = `mailto:${emailDestino}?subject=${assunto}&body=${corpo}`;
-        }
-
-        function exportarExcelMultiAbas() {
-            if (typeof XLSX === 'undefined') {
-                alert("Erro ao carregar o gerador de Excel.");
-                return;
-            }
-
-            const wb = XLSX.utils.book_new();
-
-            const dadosPauta = db.atos.map(a => ({
-                "Processo": a.processo,
-                "Cliente": a.cliente,
-                "Data": a.data,
-                "Vencimento": a.vencimento,
-                "Cidade": a.cidade,
-                "Valor (R$)": a.valor,
-                "Status": a.status,
-                "Observações Checklist": a.checklistObs || ''
-            }));
-            const wsPauta = XLSX.utils.json_to_sheet(dadosPauta.length ? dadosPauta : [{"Aviso": "Sem atos cadastrados"}]);
-            XLSX.utils.book_append_sheet(wb, wsPauta, "Pauta de Atos");
-
-            const wsCaixa = XLSX.utils.json_to_sheet(db.caixa.length ? db.caixa : [{"Aviso": "Sem lançamentos de caixa"}]);
-            XLSX.utils.book_append_sheet(wb, wsCaixa, "Livro Caixa");
-
-            const wsContatos = XLSX.utils.json_to_sheet(db.contatos.length ? db.contatos : [{"Aviso": "Sem contatos cadastrados"}]);
-            XLSX.utils.book_append_sheet(wb, wsContatos, "Agenda");
-
-            XLSX.writeFile(wb, `Relatorio_DILIGENCE_${new Date().toISOString().split('T')[0]}.xlsx`);
-            fecharModalBackup();
-        }
-
-        function acionarRestauracao() {
-            fecharModalBackup();
-            document.getElementById('input-restaurar-file').click();
-        }
-
-        function processarRestauracaoFile(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    try {
-                        db = JSON.parse(evt.target.result);
-                        saveData();
-                        loadData();
-                        alert("Backup restaurado com sucesso!");
-                    } catch (err) {
-                        alert("Arquivo de backup inválido.");
-                    }
-                };
-                reader.readAsText(file);
-            }
-        }
-
-        function confirmarZerarTudoGeral() {
-            if (confirm("ATENÇÃO: Deseja realmente zerar o aplicativo? Todos os processos, fotos e lançamentos serão apagados.")) {
-                localStorage.removeItem('diligence_db');
-                db = { perfil: { email: EMAIL_PADRAO }, atos: [], caixa: [], contatos: [], comarcasSalvas: COMARCAS_PADRAO };
-                saveData();
-                loadData();
-                fecharModalBackup();
-                alert("Aplicativo restaurado do zero!");
-            }
-        }
+        function abrirModalBackup() { document.getElementById('modal-backup').classList.remove('hidden'); }
     </script>
 </body>
 </html>
