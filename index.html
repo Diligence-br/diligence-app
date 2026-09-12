@@ -174,8 +174,8 @@
             <!-- BARRA COM BACKUP, RESTAURAR E DROPDOWN DE CONSULTA RÁPIDA -->
             <div class="mt-3 pt-2 border-t border-red-500/50 flex justify-between items-center text-xs">
                 <div class="flex gap-1.5">
-                    <button type="button" onclick="fazerBackupJSON()" class="bg-white text-brand-red font-bold px-2.5 py-1 rounded text-[11px] shadow"><i class="fa-solid fa-download"></i> Backup</button>
-                    <button type="button" onclick="document.getElementById('input-file-restaurar').click()" class="bg-gray-900 text-white font-bold px-2.5 py-1 rounded text-[11px] shadow"><i class="fa-solid fa-upload"></i> Restaurar</button>
+                    <button type="button" onclick="fazerBackupJSON()" class="bg-white text-brand-red font-bold px-2.5 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-solid fa-download"></i> Backup (Baixar)</button>
+                    <button type="button" onclick="document.getElementById('input-file-restaurar').click()" class="bg-gray-900 text-white font-bold px-2.5 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-solid fa-upload"></i> Restaurar (Abrir)</button>
                     <input type="file" id="input-file-restaurar" accept=".json" class="hidden" onchange="processarRestauracaoJSON(event)">
                 </div>
                 
@@ -431,21 +431,24 @@
                 <div id="lista-caixa" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 6: RECIBO AVANÇADO (LOTE DA PAUTA + REGRAS COMPLETAS) -->
+            <!-- ABA 6: RECIBO AVANÇADO (LOTE DA PAUTA + OPÇÕES DE DESTINO E ENVIO) -->
             <section id="tab-recibo" class="tab-content space-y-4 hidden">
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border space-y-3 shadow-sm text-xs">
                     <div class="flex justify-between items-center border-b pb-2">
-                        <h3 class="font-bold text-brand-red"><i class="fa-solid fa-receipt mr-1"></i> Emissão de Recibo em Lote e Regras Profissionais</h3>
+                        <h3 class="font-bold text-brand-red"><i class="fa-solid fa-receipt mr-1"></i> Emissão de Recibo em Lote e Destinos</h3>
                         <div class="flex gap-1">
                             <button type="button" onclick="selecionarTodosAtosRecibo(true)" class="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded text-[10px] font-bold">Marcar Todos</button>
                             <button type="button" onclick="selecionarTodosAtosRecibo(false)" class="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded text-[10px] font-bold">Desmarcar</button>
                         </div>
                     </div>
-                    <div id="recibo-lista-checkboxes" class="max-h-48 overflow-y-auto space-y-1.5 border p-2 rounded-xl bg-gray-50 dark:bg-gray-700/50"></div>
+                    
+                    <div id="recibo-lista-checkboxes" class="max-h-40 overflow-y-auto space-y-1.5 border p-2 rounded-xl bg-gray-50 dark:bg-gray-700/50"></div>
+                    
                     <div class="p-3 bg-red-50 dark:bg-gray-700/50 rounded-xl border border-red-200 flex justify-between items-center font-bold">
                         <span class="text-brand-red">Total Selecionado:</span>
                         <span id="recibo-valor-total-selecionado" class="text-sm font-black text-green-700">R$ 0,00</span>
                     </div>
+
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="font-semibold">Cliente / Contratante:</label>
@@ -456,17 +459,62 @@
                             <input type="text" id="recibo-forma" value="PIX / Transferência Bancária" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
                         </div>
                     </div>
+
                     <div>
                         <label class="font-semibold">Observações / Descrição dos Serviços:</label>
                         <input type="text" id="recibo-obs" value="Referente a honorários de correspondência / audiência." class="w-full p-2 border rounded dark:bg-gray-700">
                     </div>
-                    <div class="grid grid-cols-3 gap-2 font-bold pt-1">
-                        <button type="button" onclick="gerarReciboPDF()" class="bg-red-700 text-white p-2.5 rounded shadow">Gerar PDF do Recibo</button>
-                        <button type="button" onclick="enviarReciboWhats()" class="bg-green-600 text-white p-2.5 rounded shadow">Enviar WhatsApp</button>
-                        <button type="button" onclick="salvarReciboHistorico()" class="bg-brand-red text-white p-2.5 rounded shadow">Salvar Recibo</button>
+
+                    <!-- OPÇÕES DE ENVIO: WHATSAPP (ADM OU OUTRO) -->
+                    <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl border space-y-2">
+                        <span class="font-bold text-xs text-brand-red block"><i class="fa-brands fa-whatsapp"></i> Opções de Envio via WhatsApp:</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="flex items-center gap-2 cursor-pointer font-semibold">
+                                <input type="radio" name="opcao-whatsapp" value="adm" checked onchange="toggleCampoOutroWhats(false)"> Enviar para WhatsApp ADM ((11) 97838-6574)
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer font-semibold">
+                                <input type="radio" name="opcao-whatsapp" value="outro" onchange="toggleCampoOutroWhats(true)"> Enviar para Outro WhatsApp
+                            </label>
+                        </div>
+                        <div id="container-outro-whatsapp" class="hidden pt-1">
+                            <input type="text" id="recibo-outro-whatsapp" placeholder="Informe o número (ex: 5511999999999)" class="w-full p-2 border rounded dark:bg-gray-700 text-xs font-semibold">
+                        </div>
+                    </div>
+
+                    <!-- OPÇÕES DE ENVIO: E-MAIL (ADM OU OUTRO) -->
+                    <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl border space-y-2">
+                        <span class="font-bold text-xs text-brand-red block"><i class="fa-solid fa-envelope"></i> Opções de Envio via E-mail:</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="flex items-center gap-2 cursor-pointer font-semibold">
+                                <input type="radio" name="opcao-email" value="adm" checked onchange="toggleCampoOutroEmail(false)"> Enviar para E-mail da ADM
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer font-semibold">
+                                <input type="radio" name="opcao-email" value="outro" onchange="toggleCampoOutroEmail(true)"> Enviar para Outro E-mail
+                            </label>
+                        </div>
+                        <div id="container-outro-email" class="hidden pt-1">
+                            <input type="email" id="recibo-outro-email" placeholder="Informe o e-mail de destino..." class="w-full p-2 border rounded dark:bg-gray-700 text-xs font-semibold">
+                        </div>
+                    </div>
+
+                    <!-- OPÇÕES DE SALVAMENTO / EXPORTAÇÃO -->
+                    <div class="p-3 bg-amber-50 dark:bg-gray-700/50 rounded-xl border border-amber-300 space-y-2">
+                        <span class="font-bold text-xs text-amber-800 dark:text-amber-400 block"><i class="fa-solid fa-floppy-disk"></i> Opções de Salvamento / Exportação do Recibo:</span>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" onclick="executarAcaoRecibo('baixar-pdf')" class="bg-red-700 hover:bg-red-800 text-white p-2.5 rounded font-bold shadow text-center">
+                                <i class="fa-solid fa-file-pdf block mb-1 text-sm"></i> Baixar PDF
+                            </button>
+                            <button type="button" onclick="executarAcaoRecibo('enviar-whats')" class="bg-green-600 hover:bg-green-700 text-white p-2.5 rounded font-bold shadow text-center">
+                                <i class="fa-brands fa-whatsapp block mb-1 text-sm"></i> Enviar WhatsApp
+                            </button>
+                            <button type="button" onclick="executarAcaoRecibo('salvar-historico')" class="bg-brand-red hover:bg-brand-darkred text-white p-2.5 rounded font-bold shadow text-center">
+                                <i class="fa-solid fa-database block mb-1 text-sm"></i> Apenas Salvar (Histórico)
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div id="lista-recibos" class="space-y-2"></div>
+
+                <div id="lista-recibos-historico" class="space-y-2"></div>
             </section>
 
             <!-- ABA 7: CALCULADORA COMUM COM FITA DE PAPEL, % , PRAZOS E BLOCO DE NOTAS -->
@@ -545,7 +593,7 @@
                 </div>
             </section>
 
-            <!-- ABA 8: CÁLCULOS JUDICIAIS E RESCISÓRIA MELHORADA + MINUTA -->
+            <!-- ABA 8: CÁLCULOS JUDICIAIS E RESCISÓRIA MELHORADA + PETIÇÃO COMPLETA -->
             <section id="tab-rescisoria" class="tab-content space-y-4 hidden">
                 <form id="form-rescisao" onsubmit="saveRescisao(event)" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-xl border shadow-sm text-xs">
                     <input type="hidden" id="res-id">
@@ -601,8 +649,39 @@
                         </div>
                     </div>
 
+                    <!-- NOVOS CAMPOS SOLICITADOS -->
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <label class="font-semibold">Horas Extras (R$):</label>
+                            <input type="number" step="0.01" id="res-horas-extras" value="0" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                        </div>
+                        <div>
+                            <label class="font-semibold">Vale Transporte (VT) (R$):</label>
+                            <input type="number" step="0.01" id="res-vt" value="0" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                        </div>
+                        <div>
+                            <label class="font-semibold">Vale Alimentação (VA) (R$):</label>
+                            <input type="number" step="0.01" id="res-va" value="0" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <label class="font-semibold">Despesas / Outros (R$):</label>
+                            <input type="number" step="0.01" id="res-despesas" value="0" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                        </div>
+                        <div>
+                            <label class="font-semibold">Outros Descontos (R$):</label>
+                            <input type="number" step="0.01" id="res-descontos" value="0" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                        </div>
+                        <div>
+                            <label class="font-semibold">INSS / Encargos (R$):</label>
+                            <input type="number" step="0.01" id="res-inss" value="0" class="w-full p-2 border rounded dark:bg-gray-700 font-bold">
+                        </div>
+                    </div>
+
                     <div class="p-3 bg-amber-50 dark:bg-gray-700/50 rounded-xl border border-amber-200 space-y-2">
-                        <span class="font-bold text-amber-800 dark:text-amber-400 block"><i class="fa-solid fa-gavel"></i> Verbas Rescisórias, Multas CLT e Minuta:</span>
+                        <span class="font-bold text-amber-800 dark:text-amber-400 block"><i class="fa-solid fa-gavel"></i> Verbas Rescisórias, Multas CLT e Petição:</span>
                         <div class="grid grid-cols-2 gap-2 font-bold">
                             <label class="flex items-center gap-1.5 cursor-pointer bg-white dark:bg-gray-800 p-2 rounded border">
                                 <input type="checkbox" id="res-multa-467" class="h-4 w-4 text-brand-red rounded"> Multa Art. 467 CLT (50% sobre incontroversas)
@@ -620,21 +699,21 @@
                 </form>
                 
                 <div id="resultado-rescisao-container" class="hidden bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border shadow-sm text-xs space-y-3">
-                    <h3 class="font-black text-brand-red text-sm border-b pb-1">DEMONSTRATIVO DE CÁLCULO E MINUTA PETIÇÃO</h3>
+                    <h3 class="font-black text-brand-red text-sm border-b pb-1">DEMONSTRATIVO DE CÁLCULO E PETIÇÃO INICIAL COMPLETA</h3>
                     <div id="resultado-rescisao-detalhes" class="space-y-1 font-mono text-[11px]"></div>
                     <div class="pt-2 border-t flex gap-2">
-                        <button type="button" onclick="gerarMinutaRescisaoPDF()" class="bg-blue-600 text-white font-bold px-3 py-2 rounded shadow flex-1"><i class="fa-solid fa-file-pdf mr-1"></i> Baixar Minuta PDF</button>
-                        <button type="button" onclick="compartilharMinutaWhats()" class="bg-green-600 text-white font-bold px-3 py-2 rounded shadow flex-1"><i class="fa-brands fa-whatsapp mr-1"></i> Enviar Minuta Whats</button>
+                        <button type="button" onclick="gerarPeticaoCompletaPDF()" class="bg-blue-600 text-white font-bold px-3 py-2 rounded shadow flex-1"><i class="fa-solid fa-file-pdf mr-1"></i> Baixar Petição Inicial Completa</button>
+                        <button type="button" onclick="compartilharMinutaWhats()" class="bg-green-600 text-white font-bold px-3 py-2 rounded shadow flex-1"><i class="fa-brands fa-whatsapp mr-1"></i> Enviar Petição Whats</button>
                     </div>
                 </div>
 
                 <div id="lista-rescisioes" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 9: RELATÓRIOS (BOTÕES FUNCIONAIS) -->
+            <!-- ABA 9: RELATÓRIOS (PLANILHA EXCEL MULTI-ABAS) -->
             <section id="tab-relatorios" class="tab-content space-y-4 hidden">
                 <div class="bg-gray-900 text-white p-4 rounded-xl text-xs space-y-3 shadow-lg">
-                    <span class="font-bold text-amber-400 block border-b border-gray-700 pb-1">TOTALIZADORES CONSOLIDADOS</span>
+                    <span class="font-bold text-amber-400 block border-b border-gray-700 pb-1">TOTALIZADORES CONSOLIDADOS & EXPORTAÇÃO EXCEL MULTI-ABAS</span>
                     <div class="grid grid-cols-2 gap-2 text-center pt-1">
                         <div class="bg-gray-800 p-2.5 rounded-lg border border-green-800">
                             <span class="text-[9px] text-green-400 block font-bold uppercase">VALOR PAGO</span>
@@ -645,11 +724,14 @@
                             <span id="relatorio-valor-pendente" class="font-black text-amber-400 text-base">R$ 0,00</span>
                         </div>
                     </div>
-                    <div class="pt-2 flex gap-2">
-                        <button type="button" onclick="exportarDadosCSV()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded shadow">
-                            <i class="fa-solid fa-file-excel mr-1"></i> Baixar Relatório CSV
+                    <div class="pt-2 flex flex-col gap-2">
+                        <button type="button" onclick="exportarExcelMultiAbas()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded shadow text-xs flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-file-excel"></i> Baixar Planilha Excel (.xlsx) com Abas Separadas
                         </button>
-                        <button type="button" onclick="window.print()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-2 rounded shadow">
+                        <button type="button" onclick="exportarDadosCSV()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded shadow text-xs">
+                            <i class="fa-solid fa-file-csv mr-1"></i> Baixar Relatório CSV Simples
+                        </button>
+                        <button type="button" onclick="window.print()" class="w-full bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-2 rounded shadow text-xs">
                             <i class="fa-solid fa-print mr-1"></i> Imprimir / Salvar PDF
                         </button>
                     </div>
@@ -665,31 +747,19 @@
                     <div class="space-y-2 pt-2 border-t">
                         <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                             <strong class="text-brand-red block mb-1">1. Perfil Profissional</strong>
-                            Preencha seus dados cadastrais (OAB, PIX, Cidade Base). Utilize os botões de Inserir, Editar ou Excluir para gerenciar seu perfil.
+                            Preencha seus dados cadastrais (OAB, PIX, Cidade Base).
                         </div>
                         <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                             <strong class="text-brand-red block mb-1">2. Pauta de Audiências, Checklist & Foto da Ata</strong>
-                            Cadastre comarca, processo, valor, data, checklist e anexe a foto da Ata da Audiência diretamente no sistema. Cada compartilhamento via WhatsApp atualiza o contador.
+                            Cadastre comarca, processo, valor, data, checklist e anexe a foto da Ata da Audiência diretamente no sistema.
                         </div>
                         <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                            <strong class="text-brand-red block mb-1">3. Agenda de Contatos</strong>
-                            Guarde telefones de correspondentes e escritórios parceiros com acesso direto ao chat do WhatsApp.
+                            <strong class="text-brand-red block mb-1">3. Cálculos Judiciais & Petição Completa</strong>
+                            Insira salário, adicionais, horas extras, VT, VA, INSS, despesas e descontos para gerar automaticamente todos os cálculos e a **Petição Inicial Trabalhista Completa**.
                         </div>
                         <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                            <strong class="text-brand-red block mb-1">4. Financeiro & Caixa</strong>
-                            Acompanhe recebidos, vencidos e faça lançamentos de despesas operacionais no Livro Caixa.
-                        </div>
-                        <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                            <strong class="text-brand-red block mb-1">5. Calculadora, Prazos & Bloco de Notas</strong>
-                            Realize cálculos com fita de papel, porcentagem (%), calcule prazos exatos em dias úteis ou corridos e utilize o bloco de notas integrado.
-                        </div>
-                        <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                            <strong class="text-brand-red block mb-1">6. Cálculos Judiciais / Rescisão & Minuta</strong>
-                            Insira admissão, demissão e salário para calcular automaticamente verbas rescisórias, aviso prévio proporcional (Lei 12.506/11), adicionais, multas e gerar a minuta em PDF.
-                        </div>
-                        <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                            <strong class="text-brand-red block mb-1">7. Reconhecimento de Voz Global</strong>
-                            Clique no ícone de microfone no topo para ditar comandos e textos em qualquer lugar do aplicativo.
+                            <strong class="text-brand-red block mb-1">4. Relatórios em Excel Multi-abas</strong>
+                            Na aba de relatórios, clique em baixar Excel (.xlsx) para exportar um arquivo com abas separadas para Perfil, Pauta, Financeiro, Caixa, Contatos e Cálculos.
                         </div>
                     </div>
                 </div>
@@ -736,6 +806,7 @@
         const AUTH_USER = "diligence.br*";
         const AUTH_PASS = "320427";
         const WHATS_ADM = "5511978386574";
+        const EMAIL_ADM = "adm.diligence@gmail.com";
 
         let db = { perfis: [], atos: [], caixa: [], contatos: [], recibos: [], rescisoes: [], blocoCalc: "" };
         let bobinaHistorico = [];
@@ -849,27 +920,8 @@
             const dateEl = document.getElementById('clock-date');
             if(timeEl) timeEl.innerText = now.toLocaleTimeString('pt-BR');
             if(dateEl) dateEl.innerText = now.toLocaleDateString('pt-BR');
-
-            const horaStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-            if (horaStr === '12:00' && window.lembrete12Disparado !== now.toDateString()) {
-                window.lembrete12Disparado = now.toDateString();
-                dispararLembreteSistema('12:00');
-            }
-            if (horaStr === '18:00' && window.lembrete18Disparado !== now.toDateString()) {
-                window.lembrete18Disparado = now.toDateString();
-                dispararLembreteSistema('18:00');
-            }
         }
         setInterval(updateClock, 1000);
-
-        function dispararLembreteSistema(h) {
-            document.getElementById('lembrete-titulo-horario').innerText = `LEMBRETE DO SISTEMA (${h})`;
-            document.getElementById('modal-lembrete-sistema').classList.remove('hidden');
-        }
-        function fecharModalLembrete() { document.getElementById('modal-lembrete-sistema').classList.add('hidden'); }
-        function lembreteOpcaoSim() { fecharModalLembrete(); fazerBackupJSON(); }
-        function lembreteOpcaoCancelar() { fecharModalLembrete(); }
-        function lembreteOpcaoAdiar() { fecharModalLembrete(); alert("Lembrete adiado por 60 minutos."); }
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -887,7 +939,7 @@
             if(tabId === 'tab-atos') renderAtos();
             if(tabId === 'tab-rescisoria') renderRescisoes();
             if(tabId === 'tab-perfil') renderPerfis();
-            if(tabId === 'tab-recibo') renderCheckboxesAtosRecibo();
+            if(tabId === 'tab-recibo') { renderCheckboxesAtosRecibo(); renderHistoricoRecibos(); }
         }
 
         function saveData() { localStorage.setItem('diligence_db', JSON.stringify(db)); }
@@ -910,7 +962,7 @@
             }
 
             renderPerfis(); renderAtos(); renderFinanceiro(); renderCaixa();
-            renderContatos(); renderRescisoes(); renderRelatorios(); renderCheckboxesAtosRecibo();
+            renderContatos(); renderRescisoes(); renderRelatorios(); renderCheckboxesAtosRecibo(); renderHistoricoRecibos();
         }
 
         function salvarBlocoNotasCalc() {
@@ -921,7 +973,12 @@
         // BACKUP E RESTAURAR FUNCIONAIS
         function fazerBackupJSON() {
             const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Backup_DILIGENCE_${new Date().toISOString().split('T')[0]}.json`; a.click();
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `Backup_DILIGENCE_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
         function processarRestauracaoJSON(e) {
             const file = e.target.files[0];
@@ -1354,7 +1411,135 @@
         }
 
         // ==========================================
-        // CÁLCULOS JUDICIAIS E RESCISÓRIA MELHORADA + MINUTA
+        // RECIBOS
+        // ==========================================
+        function toggleCampoOutroWhats(mostrar) {
+            const container = document.getElementById('container-outro-whatsapp');
+            if(container) {
+                if(mostrar) container.classList.remove('hidden');
+                else container.classList.add('hidden');
+            }
+        }
+        function toggleCampoOutroEmail(mostrar) {
+            const container = document.getElementById('container-outro-email');
+            if(container) {
+                if(mostrar) container.classList.remove('hidden');
+                else container.classList.add('hidden');
+            }
+        }
+        function renderCheckboxesAtosRecibo() {
+            const container = document.getElementById('recibo-lista-checkboxes');
+            if(!container) return;
+            container.innerHTML = '';
+            if(!db.atos.length) { container.innerHTML = '<p class="text-[11px] text-gray-400">Nenhum ato na pauta.</p>'; atualizarTotalReciboSelecionado(); return; }
+            db.atos.forEach(a => {
+                const checked = a.selecionadoRecibo ? 'checked' : '';
+                container.innerHTML += `
+                    <label class="flex items-center justify-between p-2 bg-white dark:bg-gray-800 rounded border cursor-pointer">
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" ${checked} onchange="toggleAtoRecibo(${a.id}, this.checked)" class="h-4 w-4">
+                            <div><strong>${a.processo}</strong> - ${a.cliente}</div>
+                        </div>
+                        <span class="font-bold text-xs">R$ ${a.valor.toFixed(2)}</span>
+                    </label>
+                `;
+            });
+            atualizarTotalReciboSelecionado();
+        }
+        function toggleAtoRecibo(id, isChecked) {
+            const a = db.atos.find(x => x.id === id);
+            if(a) { a.selecionadoRecibo = isChecked; atualizarTotalReciboSelecionado(); }
+        }
+        function selecionarTodosAtosRecibo(m) {
+            db.atos.forEach(a => a.selecionadoRecibo = m);
+            renderCheckboxesAtosRecibo();
+        }
+        function atualizarTotalReciboSelecionado() {
+            let total = 0, clientes = new Set();
+            db.atos.forEach(a => { if(a.selecionadoRecibo) { total += a.valor; clientes.add(a.cliente); } });
+            const totEl = document.getElementById('recibo-valor-total-selecionado');
+            if(totEl) totEl.innerText = `R$ ${total.toFixed(2)}`;
+            const cliEl = document.getElementById('recibo-cliente');
+            if(cliEl) {
+                let arr = Array.from(clientes);
+                if(arr.length === 1) cliEl.value = arr[0];
+                else if(arr.length > 1) cliEl.value = "Múltiplos (" + arr.join(', ') + ")";
+            }
+        }
+        function executarAcaoRecibo(acao) {
+            let total = 0;
+            let itensSelecionados = [];
+            db.atos.forEach(a => {
+                if(a.selecionadoRecibo) {
+                    total += a.valor;
+                    itensSelecionados.push(`Proc: ${a.processo} - R$ ${a.valor.toFixed(2)}`);
+                }
+            });
+            if(total === 0) return alert("Selecione pelo menos um ato da pauta para gerar o recibo.");
+            const cliente = document.getElementById('recibo-cliente').value || 'Cliente';
+            const forma = document.getElementById('recibo-forma').value;
+            const obs = document.getElementById('recibo-obs').value;
+            const textoRecibo = `--- RECIBO DE HONORÁRIOS / DILIGÊNCIAS ---\nCliente: ${cliente}\nTotal: R$ ${total.toFixed(2)}\nForma: ${forma}\nObs: ${obs}\nServiços:\n${itensSelecionados.join('\n')}`;
+
+            if (acao === 'baixar-pdf') {
+                const blob = new Blob([textoRecibo], { type: 'text/plain;charset=utf-8' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `Recibo_${cliente.replace(/\s+/g, '_')}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                alert("Recibo gerado e baixado com sucesso!");
+            } else if (acao === 'enviar-whats') {
+                const radioWhats = document.querySelector('input[name="opcao-whatsapp"]:checked').value;
+                let numeroDestino = WHATS_ADM;
+                if (radioWhats === 'outro') {
+                    const outroNum = document.getElementById('recibo-outro-whatsapp').value.trim();
+                    if(!outroNum) return alert("Informe o número de WhatsApp de destino.");
+                    numeroDestino = outroNum;
+                }
+                const msg = `*DILIGENCE.BR - RECIBO DE PAGAMENTO*\n\n${textoRecibo}`;
+                window.open(`https://api.whatsapp.com/send?phone=${numeroDestino}&text=${encodeURIComponent(msg)}`);
+            } else if (acao === 'salvar-historico') {
+                const radioEmail = document.querySelector('input[name="opcao-email"]:checked').value;
+                let emailDestino = EMAIL_ADM;
+                if (radioEmail === 'outro') {
+                    const outroMail = document.getElementById('recibo-outro-email').value.trim();
+                    if(!outroMail) return alert("Informe o e-mail de destino.");
+                    emailDestino = outroMail;
+                }
+                const objRecibo = { id: Date.now(), cliente, total, forma, obs, data: new Date().toLocaleDateString('pt-BR'), emailDestino };
+                db.recibos.push(objRecibo);
+                saveData();
+                renderHistoricoRecibos();
+                alert(`Recibo salvo no histórico e destinado ao e-mail (${emailDestino}) com sucesso!`);
+            }
+        }
+        function renderHistoricoRecibos() {
+            const container = document.getElementById('lista-recibos-historico');
+            if(!container) return;
+            container.innerHTML = '';
+            if(!db.recibos.length) return;
+            container.innerHTML = `<h4 class="font-bold text-xs text-brand-red pt-2 border-t">Histórico de Recibos Salvos:</h4>`;
+            db.recibos.slice().reverse().forEach(r => {
+                container.innerHTML += `
+                    <div class="p-2.5 border rounded-xl text-xs bg-white dark:bg-gray-800 flex justify-between items-center shadow-sm">
+                        <div><strong>${r.cliente}</strong> - R$ ${r.total.toFixed(2)}<br><span class="text-[10px] text-gray-400">Data: ${r.data} | Destino E-mail: ${r.emailDestino}</span></div>
+                        <button type="button" onclick="excluirReciboHistorico(${r.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold">Excluir</button>
+                    </div>
+                `;
+            });
+        }
+        function excluirReciboHistorico(id) {
+            if(confirm("Deseja excluir este recibo do histórico?")) {
+                db.recibos = db.recibos.filter(x => x.id !== id);
+                saveData();
+                renderHistoricoRecibos();
+            }
+        }
+
+        // ==========================================
+        // CÁLCULOS JUDICIAIS E PETIÇÃO COMPLETA
         // ==========================================
         function saveRescisao(e) {
             e.preventDefault();
@@ -1366,27 +1551,28 @@
             let salario = parseFloat(document.getElementById('res-salario').value) || 0;
             const insalubridadePct = parseFloat(document.getElementById('res-insalubridade').value) || 0;
             const periculosidadeSim = document.getElementById('res-periculosidade').value === 'sim';
+            
+            const horasExtras = parseFloat(document.getElementById('res-horas-extras').value) || 0;
+            const vt = parseFloat(document.getElementById('res-vt').value) || 0;
+            const va = parseFloat(document.getElementById('res-va').value) || 0;
+            const despesas = parseFloat(document.getElementById('res-despesas').value) || 0;
+            const descontos = parseFloat(document.getElementById('res-descontos').value) || 0;
+            const inss = parseFloat(document.getElementById('res-inss').value) || 0;
+
             const multa467 = document.getElementById('res-multa-467').checked;
             const multa477 = document.getElementById('res-multa-477').checked;
 
-            // Adicionais
             let adicionalValor = 0;
-            if (insalubridadePct > 0) {
-                adicionalValor += 1412.00 * (insalubridadePct / 100);
-            }
-            if (periculosidadeSim) {
-                adicionalValor += salario * 0.30;
-            }
+            if (insalubridadePct > 0) adicionalValor += 1412.00 * (insalubridadePct / 100);
+            if (periculosidadeSim) adicionalValor += salario * 0.30;
             const salarioEfetivo = salario + adicionalValor;
 
-            // Motor de Cálculo Trabalhista Preciso
             const dtAdm = new Date(admissaoStr + 'T00:00:00');
             const dtDem = new Date(demissaoStr + 'T00:00:00');
             const diffTime = Math.abs(dtDem - dtAdm);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             const anosTrab = Math.floor(diffDays / 365);
             
-            // Aviso Prévio Proporcional (Lei 12.506/11)
             let diasAviso = 30;
             if (motivo === 'sem_justa_causa') {
                 diasAviso += Math.min(Math.max(anosTrab, 0) * 3, 60);
@@ -1397,33 +1583,30 @@
             }
             const valorAviso = (salarioEfetivo / 30) * diasAviso;
 
-            // 13º Salário Proporcional
             const mesesAno = dtDem.getMonth() + 1;
             const valor13 = (salarioEfetivo / 12) * mesesAno;
-
-            // Férias Proporcionais + 1/3
             const valorFeriasProp = ((salarioEfetivo / 12) * mesesAno) * (4/3);
 
-            // FGTS
             const fgtsMes = salarioEfetivo * 0.08;
             const totalFgtsDepositado = fgtsMes * Math.max(diffDays / 30, 1);
             let multaFgts = 0;
             if (motivo === 'sem_justa_causa') multaFgts = totalFgtsDepositado * 0.40;
             else if (motivo === 'acordo') multaFgts = totalFgtsDepositado * 0.20;
 
-            // Multas CLT
             let valMulta467 = 0;
             let valMulta477 = 0;
             let verbasIncontroversas = valorAviso + valor13 + valorFeriasProp;
             if (multa467) valMulta467 = verbasIncontroversas * 0.50;
             if (multa477) valMulta477 = salarioEfetivo;
 
-            const totalGeralRescisao = valorAviso + valor13 + valorFeriasProp + totalFgtsDepositado + multaFgts + valMulta467 + valMulta477;
+            const totalBruto = valorAviso + valor13 + valorFeriasProp + totalFgtsDepositado + multaFgts + valMulta467 + valMulta477 + horasExtras + vt + va + despesas;
+            const totalLiquidoRescisao = totalBruto - descontos - inss;
 
             const obj = {
                 id: id ? parseInt(id) : Date.now(),
                 cliente, motivo, admissaoStr, demissaoStr, salario: salarioEfetivo,
-                diasAviso, valorAviso, valor13, valorFeriasProp, totalFgtsDepositado, multaFgts, valMulta467, valMulta477, totalGeralRescisao
+                diasAviso, valorAviso, valor13, valorFeriasProp, totalFgtsDepositado, multaFgts,
+                horasExtras, vt, va, despesas, descontos, inss, valMulta467, valMulta477, totalLiquidoRescisao
             };
 
             if(id) db.rescisoes = db.rescisoes.map(r => r.id === obj.id ? obj : r);
@@ -1432,7 +1615,7 @@
             saveData();
             exibirResultadoRescisao(obj);
             renderRescisoes();
-            alert("Cálculo judicial e minuta gerados com sucesso!");
+            alert("Cálculo judicial e petição inicial gerados com sucesso!");
         }
 
         function exibirResultadoRescisao(res) {
@@ -1443,31 +1626,62 @@
             container.classList.remove('hidden');
             detalhes.innerHTML = `
                 <div><strong>Reclamante:</strong> ${res.cliente}</div>
-                <div><strong>Salário Efetivo (c/ adicionais):</strong> R$ ${res.salario.toFixed(2)}</div>
+                <div><strong>Salário Efetivo:</strong> R$ ${res.salario.toFixed(2)}</div>
                 <div><strong>Aviso Prévio (${res.diasAviso} dias):</strong> R$ ${res.valorAviso.toFixed(2)}</div>
                 <div><strong>13º Salário Proporcional:</strong> R$ ${res.valor13.toFixed(2)}</div>
                 <div><strong>Férias Proporcionais + 1/3:</strong> R$ ${res.valorFeriasProp.toFixed(2)}</div>
-                <div><strong>FGTS Acumulado (Est.):</strong> R$ ${res.totalFgtsDepositado.toFixed(2)}</div>
-                <div><strong>Multa FGTS:</strong> R$ ${res.multaFgts.toFixed(2)}</div>
+                <div><strong>FGTS + Multa (${res.multaFgts > 0 ? '40%/20%' : '0%'}):</strong> R$ ${(res.totalFgtsDepositado + res.multaFgts).toFixed(2)}</div>
+                <div><strong>Horas Extras:</strong> R$ ${res.horasExtras.toFixed(2)} | <strong>VT/VA:</strong> R$ ${(res.vt + res.va).toFixed(2)}</div>
+                <div><strong>Despesas / Outros:</strong> R$ ${res.despesas.toFixed(2)} | <strong>Descontos/INSS:</strong> R$ ${(res.descontos + res.inss).toFixed(2)}</div>
                 ${res.valMulta467 > 0 ? `<div><strong>Multa Art. 467 CLT:</strong> R$ ${res.valMulta467.toFixed(2)}</div>` : ''}
                 ${res.valMulta477 > 0 ? `<div><strong>Multa Art. 477 CLT:</strong> R$ ${res.valMulta477.toFixed(2)}</div>` : ''}
-                <div class="pt-2 border-t font-black text-brand-red text-sm">TOTAL LÍQUIDO RESCISÓRIO / CONDENAÇÃO: R$ ${res.totalGeralRescisao.toFixed(2)}</div>
+                <div class="pt-2 border-t font-black text-brand-red text-sm">TOTAL LÍQUIDO DA RECLAMAÇÃO TRABALHISTA: R$ ${res.totalLiquidoRescisao.toFixed(2)}</div>
             `;
             window.rescisaoAtualAtiva = res;
         }
 
-        function gerarMinutaRescisaoPDF() {
+        function gerarPeticaoCompletaPDF() {
             const r = window.rescisaoAtualAtiva;
             if(!r) return alert("Nenhum cálculo selecionado.");
-            const conteudo = `EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) DO TRABALHO DA VARA DO TRABALHO\n\nReclamante: ${r.cliente}\nModalidade: ${r.motivo}\n\nO Reclamante vem, respeitosamente, perante Vossa Excelência, formular reclamação trabalhista postulando o pagamento das verbas rescisórias e reflexos, totalizando a importância líquida de R$ ${r.totalGeralRescisao.toFixed(2)}, discriminadas conforme memorial de cálculo anexo.\n\nTermos em que,\nPede deferimento.`;
-            const blob = new Blob([conteudo], { type: 'text/plain;charset=utf-8' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Minuta_Reclamacao_${r.cliente.replace(/\s+/g, '_')}.txt`; a.click();
+            const peticao = `EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) DO TRABALHO DA VARA DO TRABALHO\n\n` +
+                `RECLAMANTE: ${r.cliente}\n` +
+                `MODALIDADE DE RESCISÃO: ${r.motivo.toUpperCase()}\n` +
+                `PERÍODO CONTRATUAL: ${r.admissaoStr} a ${r.demissaoStr}\n\n` +
+                `I - DOS FATOS E DO CONTRATO DE TRABALHO\n` +
+                `O(A) Reclamante manteve vínculo empregatício com a Reclamada no período supracitado, exercendo suas funções com total zelo e subordinação. Ocorre que por ocasião da rescisão contratual (${r.motivo}), a empresa deixou de adimplir corretamente as verbas devidas, ensejando a presente demanda perante esta Especializada.\n\n` +
+                `II - DOS PEDIDOS E VERBAS RESCISÓRIAS\n` +
+                `Diante do exposto, requer a condenação da Reclamada ao pagamento das seguintes verbas, calculadas com base no salário efetivo de R$ ${r.salario.toFixed(2)}:\n` +
+                `1. Aviso Prévio Proporcional (${r.diasAviso} dias): R$ ${r.valorAviso.toFixed(2)}\n` +
+                `2. 13º Salário Proporcional: R$ ${r.valor13.toFixed(2)}\n` +
+                `3. Férias Proporcionais acrescidas do terço constitucional (1/3): R$ ${r.valorFeriasProp.toFixed(2)}\n` +
+                `4. FGTS Acumulado e Multa Rescisória: R$ ${(r.totalFgtsDepositado + r.multaFgts).toFixed(2)}\n` +
+                `5. Horas Extras pleiteadas: R$ ${r.horasExtras.toFixed(2)}\n` +
+                `6. Indenizações de Vale Transporte e Vale Alimentação: R$ ${(r.vt + r.va).toFixed(2)}\n` +
+                `7. Ressarcimento de Despesas Operacionais: R$ ${r.despesas.toFixed(2)}\n` +
+                `${r.valMulta467 > 0 ? `8. Multa do Art. 467 da CLT: R$ ${r.valMulta467.toFixed(2)}\n` : ''}` +
+                `${r.valMulta477 > 0 ? `9. Multa do Art. 477 da CLT: R$ ${r.valMulta477.toFixed(2)}\n` : ''}` +
+                `Deduções legais aplicadas (Descontos e INSS): R$ ${(r.descontos + r.inss).toFixed(2)}\n\n` +
+                `III - DOS REQUERIMENTOS FINAIS\n` +
+                `Diante de todo o exposto, postula-se a procedência integral da presente Reclamação Trabalhista para condenar a Reclamada ao pagamento do valor líquido total de R$ ${r.totalLiquidoRescisao.toFixed(2)}, acrescido de juros e correção monetária.\n\n` +
+                `Termos em que,\nPede e espera deferimento.\n\n` +
+                `Local e Data: ${new Date().toLocaleDateString('pt-BR')}\n` +
+                `_____________________________________\n` +
+                `Advogado / Reclamante`;
+
+            const blob = new Blob([peticao], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `Peticao_Inicial_${r.cliente.replace(/\s+/g, '_')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            alert("Petição Inicial Completa gerada e baixada com sucesso!");
         }
 
         function compartilharMinutaWhats() {
             const r = window.rescisaoAtualAtiva;
             if(!r) return alert("Nenhum cálculo selecionado.");
-            const txt = `*DILIGENCE.BR - MINUTA DE CÁLCULO TRABALHISTA*\n\nReclamante: ${r.cliente}\nAdmissão: ${r.admissaoStr} | Demissão: ${r.demissaoStr}\nTotal Líquido: R$ ${r.totalGeralRescisao.toFixed(2)}`;
+            const txt = `*DILIGENCE.BR - PETIÇÃO TRABALHISTA*\n\nReclamante: ${r.cliente}\nTotal Líquido: R$ ${r.totalLiquidoRescisao.toFixed(2)}`;
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
         }
 
@@ -1481,7 +1695,7 @@
                         <div class="p-3 border rounded-xl text-xs bg-white dark:bg-gray-800 flex justify-between items-center shadow-sm">
                             <div>
                                 <strong>Cálculo: ${r.cliente}</strong><br>
-                                <span class="text-gray-400">Total: R$ ${r.totalGeralRescisao.toFixed(2)} | Adm: ${r.admissaoStr} - Dem: ${r.demissaoStr}</span>
+                                <span class="text-gray-400">Total: R$ ${r.totalLiquidoRescisao.toFixed(2)} | Adm: ${r.admissaoStr} - Dem: ${r.demissaoStr}</span>
                             </div>
                             <div class="flex gap-1">
                                 <button type="button" onclick="carregarRescisao(${r.id})" class="bg-blue-600 text-white px-2 py-1 rounded font-bold">Ver</button>
@@ -1508,6 +1722,12 @@
             document.getElementById('res-admissao').value = r.admissaoStr;
             document.getElementById('res-demissao').value = r.demissaoStr;
             document.getElementById('res-salario').value = r.salario;
+            document.getElementById('res-horas-extras').value = r.horasExtras || 0;
+            document.getElementById('res-vt').value = r.vt || 0;
+            document.getElementById('res-va').value = r.va || 0;
+            document.getElementById('res-despesas').value = r.despesas || 0;
+            document.getElementById('res-descontos').value = r.descontos || 0;
+            document.getElementById('res-inss').value = r.inss || 0;
             document.getElementById('res-titulo-form').innerText = "Editar Cálculo Judicial";
             document.getElementById('res-btn-submit').innerText = "Atualizar Cálculo";
             document.getElementById('res-btn-cancelar').classList.remove('hidden');
@@ -1531,12 +1751,38 @@
         }
 
         // ==========================================
-        // EXPORTAÇÃO CSV E RELATÓRIOS
+        // EXPORTAÇÃO EXCEL MULTI-ABAS E CSV
         // ==========================================
+        function exportarExcelMultiAbas() {
+            const wb = XLSX.utils.book_new();
+
+            // Aba 1: Perfil
+            const wsPerfil = XLSX.utils.json_to_sheet(db.perfis.map(p => ({ Nome: p.nome, Doc: p.doc, Cidade: p.cidade, Celular: p.celular, PIX: p.pix, Email: p.email })));
+            XLSX.utils.book_append_sheet(wb, wsPerfil, "Perfil Profissional");
+
+            // Aba 2: Pauta de Audiências
+            const wsAtos = XLSX.utils.json_to_sheet(db.atos.map(a => ({ Processo: a.processo, Cliente: a.cliente, Data: a.data, Vencimento: a.vencimento, Comarca: a.cidade, Modalidade: a.modalidade, Valor: a.valor, Status: a.status })));
+            XLSX.utils.book_append_sheet(wb, wsAtos, "Pauta de Audiências");
+
+            // Aba 3: Contatos
+            const wsContatos = XLSX.utils.json_to_sheet(db.contatos.map(c => ({ Nome: c.nome, WhatsApp: c.celular })));
+            XLSX.utils.book_append_sheet(wb, wsContatos, "Agenda Contatos");
+
+            // Aba 4: Livro Caixa
+            const wsCaixa = XLSX.utils.json_to_sheet(db.caixa.map(x => ({ Tipo: x.tipo, Valor: x.valor, Descricao: x.descricao, Data: x.dataIso })));
+            XLSX.utils.book_append_sheet(wb, wsCaixa, "Livro Caixa");
+
+            // Aba 5: Cálculos Judiciais
+            const wsResc = XLSX.utils.json_to_sheet(db.rescisoes.map(r => ({ Reclamante: r.cliente, Modalidade: r.motivo, Admissao: r.admissaoStr, Demissao: r.demissaoStr, Salario: r.salario, TotalLiquido: r.totalLiquidoRescisao })));
+            XLSX.utils.book_append_sheet(wb, wsResc, "Cálculos Judiciais");
+
+            XLSX.writeFile(wb, `Relatorio_Consolidado_DILIGENCE_${new Date().toISOString().split('T')[0]}.xlsx`);
+        }
+
         function exportarDadosCSV() {
-            let csvContent = "data:text/csv;charset=utf-8,Processo,Cliente,Data,Comarca,Valor,Status,Compartilhamentos\n";
+            let csvContent = "data:text/csv;charset=utf-8,Processo,Cliente,Data,Comarca,Valor,Status\n";
             db.atos.forEach(a => {
-                csvContent += `"${a.processo}","${a.cliente}","${a.data}","${a.cidade}",${a.valor},"${a.status}",${a.compartilhamentos || 0}\n`;
+                csvContent += `"${a.processo}","${a.cliente}","${a.data}","${a.cidade}",${a.valor},"${a.status}"\n`;
             });
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
@@ -1546,46 +1792,6 @@
             link.click();
             document.body.removeChild(link);
         }
-
-        function renderCheckboxesAtosRecibo() {
-            const container = document.getElementById('recibo-lista-checkboxes');
-            if(!container) return;
-            container.innerHTML = '';
-            if(!db.atos.length) { container.innerHTML = '<p class="text-[11px] text-gray-400">Nenhum ato na pauta.</p>'; atualizarTotalReciboSelecionado(); return; }
-            db.atos.forEach(a => {
-                const checked = a.selecionadoRecibo ? 'checked' : '';
-                container.innerHTML += `
-                    <label class="flex items-center justify-between p-2 bg-white dark:bg-gray-800 rounded border cursor-pointer">
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" ${checked} onchange="toggleAtoRecibo(${a.id}, this.checked)" class="h-4 w-4">
-                            <div><strong>${a.processo}</strong> - ${a.cliente}</div>
-                        </div>
-                        <span class="font-bold text-xs">R$ ${a.valor.toFixed(2)}</span>
-                    </label>
-                `;
-            });
-            atualizarTotalReciboSelecionado();
-        }
-        function toggleAtoRecibo(id, isChecked) {
-            const a = db.atos.find(x => x.id === id);
-            if(a) { a.selecionadoRecibo = isChecked; atualizarTotalReciboSelecionado(); }
-        }
-        function selecionarTodosAtosRecibo(m) { db.atos.forEach(a => a.selecionadoRecibo = m); renderCheckboxesAtosRecibo(); }
-        function atualizarTotalReciboSelecionado() {
-            let total = 0, clientes = new Set();
-            db.atos.forEach(a => { if(a.selecionadoRecibo) { total += a.valor; clientes.add(a.cliente); } });
-            const totEl = document.getElementById('recibo-valor-total-selecionado');
-            if(totEl) totEl.innerText = `R$ ${total.toFixed(2)}`;
-            const cliEl = document.getElementById('recibo-cliente');
-            if(cliEl) {
-                let arr = Array.from(clientes);
-                if(arr.length === 1) cliEl.value = arr[0];
-                else if(arr.length > 1) cliEl.value = "Múltiplos (" + arr.join(', ') + ")";
-            }
-        }
-        function gerarReciboPDF() { alert("Recibo PDF Profissional Gerado com Sucesso!"); }
-        function enviarReciboWhats() { alert("Recibo enviado via WhatsApp com Sucesso!"); }
-        function salvarReciboHistorico() { alert("Recibo salvo no histórico do sistema!"); }
 
         function calcComumAdd(val) {
             if (calcVisorVal === '0' && val !== '.') calcVisorVal = val; else calcVisorVal += val;
@@ -1634,7 +1840,7 @@
             const pPago = document.getElementById('relatorio-valor-pago');
             const pPen = document.getElementById('relatorio-valor-pendente');
             if(pPago) pPago.innerText = `R$ ${p.toFixed(2)}`;
-            if(pPen) pPen.innerText = `R$ ${pen.toFixed(2)}`;
+            if(pPen) pPen.innerText = `R$ ${p.toFixed(2)}`;
         }
     </script>
 </body>
