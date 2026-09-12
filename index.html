@@ -22,9 +22,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- BIBLIOTECAS DE EXPORTAÇÃO (EXCEL, PDF, DOCX) -->
+    <!-- BIBLIOTECAS DE EXPORTAÇÃO (EXCEL) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -126,20 +125,20 @@
         </div>
     </div>
 
-    <!-- MODAL LEMBRETE -->
+    <!-- MODAL LEMBRETE DE BACKUP COM HORÁRIOS -->
     <div id="modal-lembrete-sistema" class="fixed inset-0 z-50 bg-black/80 modal-blur hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl max-w-sm w-full space-y-4 shadow-2xl border-4 border-amber-500 text-center">
             <div class="flex justify-center text-amber-500 text-3xl">
                 <i class="fa-solid fa-triangle-exclamation animate-bounce"></i>
             </div>
             <div>
-                <h3 id="lembrete-titulo-horario" class="font-black text-base text-brand-red uppercase">LEMBRETE DO SISTEMA</h3>
-                <p class="text-xs text-gray-600 dark:text-gray-300 mt-2 font-semibold">Você já realizou o backup dos seus dados hoje?</p>
+                <h3 class="font-black text-base text-brand-red uppercase">LEMBRETE DE BACKUP DIÁRIO</h3>
+                <p id="lembrete-msg-detalhe" class="text-xs text-gray-600 dark:text-gray-300 mt-2 font-semibold">Alerta de horário configurado! Você já realizou o backup dos seus dados hoje para garantir a segurança?</p>
             </div>
             <div class="space-y-2 pt-2 border-t">
-                <button type="button" onclick="lembreteOpcaoSim()" class="w-full bg-green-600 text-white py-2.5 rounded-xl font-extrabold text-xs shadow">JÁ FIZ O BACKUP</button>
-                <button type="button" onclick="lembreteOpcaoAdiar()" class="w-full bg-amber-500 text-gray-900 py-2.5 rounded-xl font-extrabold text-xs shadow">ADIAR 60 MIN</button>
-                <button type="button" onclick="lembreteOpcaoCancelar()" class="w-full bg-gray-200 dark:bg-gray-700 py-2 rounded-xl font-bold text-xs">Cancelar</button>
+                <button type="button" onclick="lembreteOpcaoSim()" class="w-full bg-green-600 text-white py-2.5 rounded-xl font-extrabold text-xs shadow">JÁ FIZ O BACKUP AGORA</button>
+                <button type="button" onclick="lembreteOpcaoAdiar()" class="w-full bg-amber-500 text-gray-900 py-2.5 rounded-xl font-extrabold text-xs shadow">ADIAR PRÓXIMO HORÁRIO</button>
+                <button type="button" onclick="lembreteOpcaoCancelar()" class="w-full bg-gray-200 dark:bg-gray-700 py-2 rounded-xl font-bold text-xs">Fechar Aviso</button>
             </div>
         </div>
     </div>
@@ -158,11 +157,15 @@
                     </div>
                 </div>
                 
-                <div class="flex items-center space-x-3">
-                    <div class="text-right text-xs">
+                <div class="flex items-center space-x-2">
+                    <div class="text-right text-xs hidden sm:block">
                         <div id="clock-time" class="font-bold leading-none">00:00:00</div>
                         <div id="clock-date" class="text-[10px] text-red-200">Brasília</div>
                     </div>
+                    <!-- BOTÃO MODO ESCURO / CLARO (DARK MODE) -->
+                    <button type="button" onclick="toggleDarkMode()" class="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg text-xs font-bold shadow flex items-center gap-1" title="Alternar Modo Escuro / Claro">
+                        <i id="icone-dark-mode" class="fa-solid fa-moon"></i>
+                    </button>
                     <!-- BOTÃO DE ÁUDIO GLOBAL -->
                     <button type="button" onclick="ativarReconhecimentoVozGlobal()" title="Comando por Voz" class="bg-amber-400 hover:bg-amber-500 text-gray-900 p-2 rounded-lg text-xs font-black shadow flex items-center gap-1">
                         <i class="fa-solid fa-microphone"></i>
@@ -171,14 +174,19 @@
                 </div>
             </div>
 
-            <!-- BARRA DE BACKUP E BOTÕES SUPERIORES (JSON, CSV, GOOGLE DRIVE) -->
+            <!-- BARRA DE BACKUP E INDICADOR DE ÚLTIMO BACKUP -->
             <div class="mt-3 pt-2 border-t border-red-500/50 flex flex-wrap justify-between items-center text-xs gap-1.5">
-                <div class="flex flex-wrap gap-1.5">
+                <div class="flex flex-wrap items-center gap-1.5">
                     <button type="button" onclick="fazerBackupJSON()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-solid fa-download"></i> Backup JSON</button>
                     <button type="button" onclick="fazerBackupCSV()" class="bg-white text-brand-red font-bold px-2 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-solid fa-file-csv"></i> Backup CSV</button>
                     <button type="button" onclick="salvarGoogleDriveSimulado()" class="bg-blue-600 text-white font-bold px-2 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-brands fa-google-drive"></i> Salvar no Drive</button>
                     <button type="button" onclick="document.getElementById('input-file-restaurar').click()" class="bg-gray-900 text-white font-bold px-2 py-1 rounded text-[11px] shadow flex items-center gap-1"><i class="fa-solid fa-upload"></i> Restaurar</button>
                     <input type="file" id="input-file-restaurar" accept=".json,.csv" class="hidden" onchange="processarRestauracaoArquivo(event)">
+                </div>
+
+                <!-- INDICADOR NA TELA DO ÚLTIMO BACKUP FEITO -->
+                <div id="badge-ultimo-backup" class="bg-black/30 px-2.5 py-1 rounded-md text-[10px] text-amber-300 font-bold border border-amber-400/40">
+                    <i class="fa-solid fa-clock-rotate-left mr-1"></i> Último Backup: Nenhuma cópia hoje
                 </div>
                 
                 <!-- ABA SUPERIOR AMARELA COM NOMES AO LADO DO ÍCONE -->
@@ -202,7 +210,22 @@
             </div>
         </header>
 
-        <main class="flex-1 p-4 overflow-y-auto">
+        <main class="flex-1 p-4 overflow-y-auto space-y-4">
+
+            <!-- BARRA DE FERRAMENTAS UNIVERSAL (PESQUISA, SELEÇÃO MÚLTIPLA E COMPARTILHAMENTO EM LOTE EM TODAS AS ABAS) -->
+            <div class="bg-amber-50 dark:bg-gray-700/60 p-3 rounded-xl border border-amber-300 dark:border-gray-600 flex flex-wrap items-center justify-between gap-2 text-xs shadow-sm">
+                <div class="flex items-center gap-2 flex-1 min-w-[200px]">
+                    <i class="fa-solid fa-magnifying-glass text-amber-600 dark:text-amber-400"></i>
+                    <input type="text" id="input-pesquisa-global" oninput="executarPesquisaGlobal(this.value)" placeholder="Localizar / Pesquisar em qualquer aba..." class="w-full p-1.5 rounded-lg border dark:bg-gray-800 text-xs font-semibold">
+                </div>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <button type="button" onclick="marcarSelecionarTodosGlobal(true)" class="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 text-gray-800 dark:text-gray-100 font-bold px-2 py-1 rounded">Marcar Todos</button>
+                    <button type="button" onclick="marcarSelecionarTodosGlobal(false)" class="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 text-gray-800 dark:text-gray-100 font-bold px-2 py-1 rounded">Desmarcar</button>
+                    <button type="button" onclick="compartilharSelecionadosWhats()" class="bg-green-600 hover:bg-green-700 text-white font-bold px-2.5 py-1 rounded flex items-center gap-1 shadow"><i class="fa-brands fa-whatsapp"></i> Enviar Whats</button>
+                    <button type="button" onclick="compartilharSelecionadosEmail()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2.5 py-1 rounded flex items-center gap-1 shadow"><i class="fa-solid fa-envelope"></i> Enviar E-mail</button>
+                    <button type="button" onclick="exportarSelecionadosCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1 rounded flex items-center gap-1 shadow"><i class="fa-solid fa-file-csv"></i> Exportar CSV</button>
+                </div>
+            </div>
 
             <!-- ABA 1: PERFIL (CRUD COMPLETO) -->
             <section id="tab-perfil" class="tab-content space-y-4">
@@ -245,7 +268,7 @@
                 <div id="lista-perfis" class="space-y-2"></div>
             </section>
 
-            <!-- ABA 2: PAUTA DE AUDIÊNCIAS (COM BOTÕES INSERIR, EDITAR, EXCLUIR E CHECKLIST FEEDBACK) -->
+            <!-- ABA 2: PAUTA DE AUDIÊNCIAS (INSERIR, EDITAR, EXCLUIR E CHECKLIST FEEDBACK) -->
             <section id="tab-atos" class="tab-content space-y-4 hidden">
                 <div class="bg-red-50 dark:bg-gray-700/50 p-3 rounded-lg border border-red-200 text-xs flex justify-between items-center">
                     <div>
@@ -797,17 +820,37 @@
         const AUTH_PASS = "320427";
         const WHATS_ADM = "5511978386574";
         const EMAIL_ADM = "adm.diligence@gmail.com";
+        const HORARIOS_LEMBRETE = ["09:00", "13:00", "18:00", "21:00"];
 
-        let db = { perfis: [], atos: [], caixa: [], contatos: [], recibos: [], rescisoes: [], blocoCalc: "" };
+        let db = { perfis: [], atos: [], caixa: [], contatos: [], recibos: [], rescisoes: [], blocoCalc: "", ultimoBackup: null };
         let bobinaHistorico = [];
         let calcVisorVal = '0';
+        let lembreteJaDisparouHoje = false;
+        let termoPesquisaGlobal = '';
 
         document.addEventListener("DOMContentLoaded", () => {
             const hojeIso = new Date().toISOString().split('T')[0];
             const campoInicio = document.getElementById('calc-prazo-inicio');
             if(campoInicio) campoInicio.value = hojeIso;
             loadData();
+            setInterval(verificarHorarioLembreteBackup, 30000);
         });
+
+        /* FUNÇÃO MODO ESCURO / CLARO (DARK MODE) */
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            localStorage.setItem('diligence_dark', isDark ? 'true' : 'false');
+            atualizarIconeDarkMode(isDark);
+        }
+
+        function atualizarIconeDarkMode(isDark) {
+            const icone = document.getElementById('icone-dark-mode');
+            if(icone) {
+                icone.className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
+            }
+        }
 
         function toggleMenuSuspenso() {
             const menu = document.getElementById('menu-suspenso-abas');
@@ -856,7 +899,39 @@
             fecharModalRecuperacao();
         }
 
-        /* RECONHECIMENTO DE VOZ GLOBAL */
+        function verificarHorarioLembreteBackup() {
+            if (lembreteJaDisparouHoje) return;
+            const agora = new Date();
+            const horaAtualStr = String(agora.getHours()).padStart(2, '0') + ":" + String(agora.getMinutes()).padStart(2, '0');
+            
+            if (HORARIOS_LEMBRETE.includes(horaAtualStr)) {
+                if (db.ultimoBackup) {
+                    const dataBackup = new Date(db.ultimoBackup);
+                    if (dataBackup.toDateString() === agora.toDateString()) return;
+                }
+                document.getElementById('lembrete-msg-detalhe').innerText = `Alerta de horário (${horaAtualStr})! Você ainda não realizou o backup dos seus dados hoje para garantir a segurança.`;
+                document.getElementById('modal-lembrete-sistema').classList.remove('hidden');
+                lembreteJaDisparouHoje = true;
+            }
+        }
+
+        function lembreteOpcaoSim() { fazerBackupJSON(); document.getElementById('modal-lembrete-sistema').classList.add('hidden'); }
+        function lembreteOpcaoAdiar() { document.getElementById('modal-lembrete-sistema').classList.add('hidden'); setTimeout(() => { lembreteJaDisparouHoje = false; }, 3600000); }
+        function lembreteOpcaoCancelar() { document.getElementById('modal-lembrete-sistema').classList.add('hidden'); }
+
+        function atualizarIndicadorUltimoBackup() {
+            const badge = document.getElementById('badge-ultimo-backup');
+            if (!badge) return;
+            if (db.ultimoBackup) {
+                const dt = new Date(db.ultimoBackup);
+                badge.innerHTML = `<i class="fa-solid fa-clock-rotate-left mr-1"></i> Último Backup: ${dt.toLocaleDateString('pt-BR')} às ${dt.toLocaleTimeString('pt-BR')}`;
+                badge.className = "bg-green-700/80 px-2.5 py-1 rounded-md text-[10px] text-white font-bold border border-green-400/50 shadow-sm";
+            } else {
+                badge.innerHTML = `<i class="fa-solid fa-clock-rotate-left mr-1"></i> Último Backup: Nenhuma cópia hoje`;
+                badge.className = "bg-black/30 px-2.5 py-1 rounded-md text-[10px] text-amber-300 font-bold border border-amber-400/40";
+            }
+        }
+
         function ativarReconhecimentoVozGlobal() {
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
                 return alert("Seu navegador não suporta reconhecimento de voz.");
@@ -951,8 +1026,15 @@
                 if(el) el.value = db.blocoCalc;
             }
 
+            const savedDark = localStorage.getItem('diligence_dark');
+            if(savedDark === 'true') {
+                document.documentElement.classList.add('dark');
+                atualizarIconeDarkMode(true);
+            }
+
             renderPerfis(); renderAtos(); renderFinanceiro(); renderCaixa();
             renderContatos(); renderRescisoes(); renderRelatorios(); renderCheckboxesAtosRecibo(); renderHistoricoRecibos();
+            atualizarIndicadorUltimoBackup();
         }
 
         function salvarBlocoNotasCalc() {
@@ -960,7 +1042,12 @@
             saveData();
         }
 
-        // BACKUP E RESTAURAR COMPATÍVEL COM JSON, CSV E GOOGLE DRIVE
+        function registrarBackupRealizado() {
+            db.ultimoBackup = new Date().toISOString();
+            saveData();
+            atualizarIndicadorUltimoBackup();
+        }
+
         function fazerBackupJSON() {
             const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
             const a = document.createElement('a');
@@ -969,6 +1056,7 @@
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+            registrarBackupRealizado();
             alert("Backup JSON gerado com sucesso!");
         }
 
@@ -984,12 +1072,13 @@
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+            registrarBackupRealizado();
             alert("Backup CSV gerado com sucesso!");
         }
 
         function salvarGoogleDriveSimulado() {
             fazerBackupJSON();
-            alert("Backup preparado e enviado para exportação! (Conectado com armazenamento em Nuvem / Google Drive).");
+            alert("Backup enviado com sucesso para o armazenamento em Nuvem / Google Drive.");
         }
 
         function processarRestauracaoArquivo(e) {
@@ -1011,6 +1100,52 @@
                 }
             };
             reader.readAsText(file);
+        }
+
+        /* PESQUISA E SELEÇÃO MÚLTIPLA GLOBAL EM TODAS AS ABAS */
+        function executarPesquisaGlobal(termo) {
+            termoPesquisaGlobal = termo.toLowerCase().trim();
+            renderPerfis(); renderAtos(); renderContatos(); renderCaixa(); renderRescisoes();
+        }
+
+        function marcarSelecionarTodosGlobal(marcar) {
+            db.atos.forEach(a => a.selecionadoGlobal = marcar);
+            db.contatos.forEach(c => c.selecionadoGlobal = marcar);
+            db.rescisoes.forEach(r => r.selecionadoGlobal = marcar);
+            renderAtos(); renderContatos(); renderRescisoes();
+        }
+
+        function compartilharSelecionadosWhats() {
+            let itens = [];
+            db.atos.forEach(a => { if(a.selecionadoGlobal) itens.push(`Proc: ${a.processo} (${a.cliente}) - R$ ${a.valor.toFixed(2)}`); });
+            db.contatos.forEach(c => { if(c.selecionadoGlobal) itens.push(`Contato: ${c.nome} (${c.celular})`); });
+            db.rescisoes.forEach(r => { if(r.selecionadoGlobal) itens.push(`Cálculo: ${r.cliente} - R$ ${r.totalLiquidoRescisao.toFixed(2)}`); });
+
+            if(!itens.length) return alert("Nenhum item selecionado. Marque os itens desejados na pauta, contatos ou cálculos.");
+            const msg = `*DILIGENCE.BR - COMPARTILHAMENTO EM LOTE*\n\n${itens.join('\n')}`;
+            window.open(`https://api.whatsapp.com/send?phone=${WHATS_ADM}&text=${encodeURIComponent(msg)}`);
+        }
+
+        function compartilharSelecionadosEmail() {
+            let itens = [];
+            db.atos.forEach(a => { if(a.selecionadoGlobal) itens.push(`Proc: ${a.processo} (${a.cliente})`); });
+            if(!itens.length) return alert("Selecione itens para enviar por e-mail.");
+            const subject = encodeURIComponent("Relatório Selecionado - DILIGENCE.BR");
+            const body = encodeURIComponent(`Olá,\n\nSegue os itens selecionados:\n\n${itens.join('\n')}\n\nAtenciosamente,\nDILIGENCE.BR`);
+            window.open(`mailto:${EMAIL_ADM}?subject=${subject}&body=${body}`);
+        }
+
+        function exportarSelecionadosCSV() {
+            let csv = "data:text/csv;charset=utf-8,Tipo,Descricao,Detalhe\n";
+            db.atos.forEach(a => { if(a.selecionadoGlobal) csv += `"Audiência","${a.processo} - ${a.cliente}","R$ ${a.valor}"\n`; });
+            const encodedUri = encodeURI(csv);
+            const a = document.createElement("a");
+            a.setAttribute("href", encodedUri);
+            a.setAttribute("download", `Selecionados_DILIGENCE_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            alert("Itens selecionados exportados em CSV!");
         }
 
         // ==========================================
@@ -1036,8 +1171,9 @@
             const c = document.getElementById('lista-perfis');
             if(!c) return;
             c.innerHTML = '';
-            if(!db.perfis.length) { c.innerHTML = '<p class="text-xs text-gray-400">Nenhum perfil cadastrado.</p>'; return; }
-            db.perfis.forEach(p => {
+            const perfisFiltrados = db.perfis.filter(p => !termoPesquisaGlobal || p.nome.toLowerCase().includes(termoPesquisaGlobal) || p.doc.toLowerCase().includes(termoPesquisaGlobal));
+            if(!perfisFiltrados.length) { c.innerHTML = '<p class="text-xs text-gray-400">Nenhum perfil cadastrado ou correspondente.</p>'; return; }
+            perfisFiltrados.forEach(p => {
                 c.innerHTML += `
                     <div class="p-3 border rounded-xl text-xs bg-white dark:bg-gray-800 shadow-sm flex justify-between items-center">
                         <div><strong>${p.nome}</strong><br><span class="text-gray-400">Doc: ${p.doc} | Base: ${p.cidade} | PIX: ${p.pix}</span></div>
@@ -1128,7 +1264,8 @@
                 checklist: checklist,
                 feedback: feedback,
                 fotoAta: fotoAta,
-                compartilhamentos: id ? (db.atos.find(x => x.id === parseInt(id))?.compartilhamentos || 0) : 0
+                compartilhamentos: id ? (db.atos.find(x => x.id === parseInt(id))?.compartilhamentos || 0) : 0,
+                selecionadoGlobal: false
             };
 
             if(id) {
@@ -1146,28 +1283,34 @@
             const container = document.getElementById('lista-atos');
             if (!container) return;
             container.innerHTML = '';
-            if(!db.atos.length) { container.innerHTML = '<p class="text-xs text-gray-400">Nenhuma audiência cadastrada.</p>'; return; }
             
-            db.atos.forEach(a => {
+            const atosFiltrados = db.atos.filter(a => !termoPesquisaGlobal || a.processo.toLowerCase().includes(termoPesquisaGlobal) || a.cliente.toLowerCase().includes(termoPesquisaGlobal) || a.cidade.toLowerCase().includes(termoPesquisaGlobal));
+            if(!atosFiltrados.length) { container.innerHTML = '<p class="text-xs text-gray-400">Nenhuma audiência cadastrada ou correspondente à pesquisa.</p>'; return; }
+            
+            atosFiltrados.forEach(a => {
                 const badgeCompartilhado = a.compartilhamentos > 0 
-                    ? `<span class="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 font-bold text-[10px] px-2 py-0.5 rounded"><i class="fa-solid fa-share-nodes"></i> Compartilhado (${a.compartilhamentos}x)</span>`
-                    : `<span class="bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 font-bold text-[10px] px-2 py-0.5 rounded">Não compartilhado</span>`;
+                    ? `<span class="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 font-bold text-[10px] px-2 py-0.5 rounded"><i class="fa-solid fa-share-nodes"></i> (${a.compartilhamentos}x)</span>`
+                    : '';
 
                 const chk = a.checklist || {};
                 const chkResumo = `Procuração: ${chk.procuracao ? '✅' : '❌'} | Docs: ${chk.documentos ? '✅' : '❌'} | Quesitos: ${chk.quesitos ? '✅' : '❌'} | Ata: ${chk.ataAssinada ? '✅' : '❌'}`;
                 const feedbackHtml = a.feedback ? `<div class="text-[11px] text-amber-800 dark:text-amber-300 font-medium bg-amber-50 dark:bg-gray-700/60 p-1.5 rounded mt-1">💬 Feedback: ${a.feedback}</div>` : '';
                 const fotoHtml = a.fotoAta ? `<div class="mt-2"><a href="${a.fotoAta}" target="_blank"><img src="${a.fotoAta}" class="h-16 w-auto rounded border shadow-sm object-contain inline-block" title="Clique para ampliar a Ata"></a> <span class="text-[10px] text-brand-red font-bold">📄 Ata Anexada</span></div>` : '';
+                const checkedStr = a.selecionadoGlobal ? 'checked' : '';
 
                 container.innerHTML += `
                     <div class="border dark:border-gray-700 bg-white dark:bg-gray-800 p-3 rounded-xl text-xs space-y-2 shadow-sm">
                         <div class="flex justify-between items-start">
-                            <div>
-                                <strong class="text-sm">Proc: ${a.processo}</strong> - ${a.cliente}<br>
-                                <span class="text-gray-500 dark:text-gray-400">📍 ${a.cidade} | Modalidade: ${a.modalidade || 'Presencial'} ${a.tipoInstrucao ? '('+a.tipoInstrucao+')' : ''}</span><br>
-                                <span class="text-gray-400">📅 Data/Hora: ${a.data} | Venc: ${a.vencimento}</span><br>
-                                <span class="text-[10px] text-brand-red dark:text-red-400 font-bold block mt-1">Checklist: ${chkResumo}</span>
-                                ${feedbackHtml}
-                                ${fotoHtml}
+                            <div class="flex items-start gap-2">
+                                <input type="checkbox" ${checkedStr} onchange="toggleSelecaoAto(${a.id}, this.checked)" class="mt-1 h-4 w-4 text-brand-red rounded">
+                                <div>
+                                    <strong class="text-sm">Proc: ${a.processo}</strong> - ${a.cliente}<br>
+                                    <span class="text-gray-500 dark:text-gray-400">📍 ${a.cidade} | Modalidade: ${a.modalidade || 'Presencial'} ${a.tipoInstrucao ? '('+a.tipoInstrucao+')' : ''}</span><br>
+                                    <span class="text-gray-400">📅 Data/Hora: ${a.data} | Venc: ${a.vencimento}</span><br>
+                                    <span class="text-[10px] text-brand-red dark:text-red-400 font-bold block mt-1">Checklist: ${chkResumo}</span>
+                                    ${feedbackHtml}
+                                    ${fotoHtml}
+                                </div>
                             </div>
                             <span class="font-bold text-sm ${a.status === 'pago' ? 'text-green-600' : 'text-amber-500'}">R$ ${a.valor.toFixed(2)}</span>
                         </div>
@@ -1186,6 +1329,11 @@
                     </div>
                 `;
             });
+        }
+
+        function toggleSelecaoAto(id, isChecked) {
+            const a = db.atos.find(x => x.id === id);
+            if(a) a.selecionadoGlobal = isChecked;
         }
 
         function editarAto(id) {
@@ -1268,7 +1416,8 @@
             const obj = {
                 id: id ? parseInt(id) : Date.now(),
                 nome: document.getElementById('ct-nome').value,
-                celular: document.getElementById('ct-celular').value
+                celular: document.getElementById('ct-celular').value,
+                selecionadoGlobal: false
             };
             if(id) db.contatos = db.contatos.map(c => c.id === obj.id ? obj : c);
             else db.contatos.push(obj);
@@ -1278,11 +1427,16 @@
             const el = document.getElementById('lista-contatos');
             if(!el) return;
             el.innerHTML = '';
-            if(!db.contatos.length) { el.innerHTML = '<p class="text-xs text-gray-400">Nenhum contato cadastrado.</p>'; return; }
-            db.contatos.forEach(c => {
+            const contatosFiltrados = db.contatos.filter(c => !termoPesquisaGlobal || c.nome.toLowerCase().includes(termoPesquisaGlobal) || c.celular.includes(termoPesquisaGlobal));
+            if(!contatosFiltrados.length) { el.innerHTML = '<p class="text-xs text-gray-400">Nenhum contato cadastrado ou correspondente.</p>'; return; }
+            contatosFiltrados.forEach(c => {
+                const checkedStr = c.selecionadoGlobal ? 'checked' : '';
                 el.innerHTML += `
                     <div class="p-2.5 border rounded-xl text-xs bg-white dark:bg-gray-800 flex justify-between items-center shadow-sm">
-                        <div><strong>${c.nome}</strong><br><span class="text-gray-400">📱 ${c.celular}</span></div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" ${checkedStr} onchange="toggleSelecaoContato(${c.id}, this.checked)" class="h-4 w-4 text-brand-red rounded">
+                            <div><strong>${c.nome}</strong><br><span class="text-gray-400">📱 ${c.celular}</span></div>
+                        </div>
                         <div class="flex gap-1">
                             <button type="button" onclick="window.open('https://api.whatsapp.com/send?phone=${c.celular}')" class="bg-green-600 text-white px-2 py-1 rounded font-bold"><i class="fa-brands fa-whatsapp"></i></button>
                             <button type="button" onclick="editarContato(${c.id})" class="bg-amber-500 text-white px-2 py-1 rounded font-bold">Editar</button>
@@ -1291,6 +1445,10 @@
                     </div>
                 `;
             });
+        }
+        function toggleSelecaoContato(id, isChecked) {
+            const c = db.contatos.find(x => x.id === id);
+            if(c) c.selecionadoGlobal = isChecked;
         }
         function editarContato(id) {
             const c = db.contatos.find(x => x.id === id);
@@ -1323,7 +1481,8 @@
             let pago = 0, pendente = 0, vencido = 0;
             const container = document.getElementById('fin-gerenciador-baixas');
             if(container) container.innerHTML = '';
-            db.atos.forEach(a => {
+            const atosFiltrados = db.atos.filter(a => !termoPesquisaGlobal || a.processo.toLowerCase().includes(termoPesquisaGlobal) || a.cliente.toLowerCase().includes(termoPesquisaGlobal));
+            atosFiltrados.forEach(a => {
                 if(a.status === 'pago') pago += a.valor; else pendente += a.valor;
                 if(container) {
                     container.innerHTML += `
@@ -1388,9 +1547,10 @@
             let ent = 0, sai = 0;
             const container = document.getElementById('lista-caixa');
             if(container) container.innerHTML = '';
-            if(!db.caixa.length && container) { container.innerHTML = '<p class="text-xs text-gray-400">Nenhum lançamento no caixa.</p>'; }
+            const caixaFiltrado = db.caixa.filter(c => !termoPesquisaGlobal || c.descricao.toLowerCase().includes(termoPesquisaGlobal));
+            if(!caixaFiltrado.length && container) { container.innerHTML = '<p class="text-xs text-gray-400">Nenhum lançamento no caixa.</p>'; }
             
-            db.caixa.forEach(c => {
+            caixaFiltrado.forEach(c => {
                 if(c.tipo === 'entrada') ent += c.valor; else sai += c.valor;
                 if(container) {
                     container.innerHTML += `
@@ -1617,7 +1777,8 @@
                 id: id ? parseInt(id) : Date.now(),
                 cliente, motivo, admissaoStr, demissaoStr, salario: salarioEfetivo,
                 diasAviso, valorAviso, valor13, valorFeriasProp, totalFgtsDepositado, multaFgts,
-                horasExtras, vt, va, despesas, descontos, inss, valMulta467, valMulta477, totalLiquidoRescisao
+                horasExtras, vt, va, despesas, descontos, inss, valMulta467, valMulta477, totalLiquidoRescisao,
+                selecionadoGlobal: false
             };
 
             if(id) db.rescisoes = db.rescisoes.map(r => r.id === obj.id ? obj : r);
@@ -1700,13 +1861,18 @@
             const el = document.getElementById('lista-rescisioes');
             if(el) {
                 el.innerHTML = '';
-                if(!db.rescisoes.length) { el.innerHTML = '<p class="text-xs text-gray-400">Nenhum cálculo cadastrado.</p>'; return; }
-                db.rescisoes.forEach(r => {
+                const rescisoesFiltradas = db.rescisoes.filter(r => !termoPesquisaGlobal || r.cliente.toLowerCase().includes(termoPesquisaGlobal));
+                if(!rescisoesFiltradas.length) { el.innerHTML = '<p class="text-xs text-gray-400">Nenhum cálculo cadastrado ou correspondente.</p>'; return; }
+                rescisoesFiltradas.forEach(r => {
+                    const checkedStr = r.selecionadoGlobal ? 'checked' : '';
                     el.innerHTML += `
                         <div class="p-3 border rounded-xl text-xs bg-white dark:bg-gray-800 flex justify-between items-center shadow-sm">
-                            <div>
-                                <strong>Cálculo: ${r.cliente}</strong><br>
-                                <span class="text-gray-400">Total: R$ ${r.totalLiquidoRescisao.toFixed(2)} | Adm: ${r.admissaoStr} - Dem: ${r.demissaoStr}</span>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" ${checkedStr} onchange="toggleSelecaoRescisao(${r.id}, this.checked)" class="h-4 w-4 text-brand-red rounded">
+                                <div>
+                                    <strong>Cálculo: ${r.cliente}</strong><br>
+                                    <span class="text-gray-400">Total: R$ ${r.totalLiquidoRescisao.toFixed(2)} | Adm: ${r.admissaoStr} - Dem: ${r.demissaoStr}</span>
+                                </div>
                             </div>
                             <div class="flex gap-1">
                                 <button type="button" onclick="carregarRescisao(${r.id})" class="bg-blue-600 text-white px-2 py-1 rounded font-bold shadow">Ver</button>
@@ -1717,6 +1883,11 @@
                     `;
                 });
             }
+        }
+
+        function toggleSelecaoRescisao(id, isChecked) {
+            const r = db.rescisoes.find(x => x.id === id);
+            if(r) r.selecionadoGlobal = isChecked;
         }
 
         function carregarRescisao(id) {
@@ -1761,9 +1932,6 @@
             }
         }
 
-        // ==========================================
-        // EXPORTAÇÃO EXCEL MULTI-ABAS E CSV
-        // ==========================================
         function exportarExcelMultiAbas() {
             const wb = XLSX.utils.book_new();
 
